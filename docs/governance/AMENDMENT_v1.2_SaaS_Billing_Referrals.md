@@ -1,7 +1,7 @@
 # Governance Amendment v1.2: SaaS Billing & Referrals
 
 **Amendment Version:** 1.2  
-**Date:** November 23, 2025  
+**Date:** November 2025  
 **Status:** Approved  
 **Supersedes:** Governance Manifest v1.0  
 **Authority:** Enterprise Brief & Product Leadership
@@ -43,7 +43,7 @@ Post-MVP1, ProsDispatch will introduce subscription tiers for contractors to acc
 | **Billing Cycles** | Monthly or Annual only (no custom cycles) |
 | **Tax Calculation** | Automated via Stripe Tax |
 | **Invoice Generation** | Stripe-hosted invoices (no custom PDF generation for subscriptions) |
-| **Payment Methods** | Cards only (no ACH, crypto, or alternative payment methods in MVP2) |
+| **Payment Methods** | Cards only (no ACH, crypto, or alternative payment methods in Phase 2) |
 | **Proration** | Use Stripe's built-in proration logic |
 | **Trial Periods** | Maximum 14 days free trial (configurable) |
 
@@ -53,10 +53,15 @@ Post-MVP1, ProsDispatch will introduce subscription tiers for contractors to acc
 
 ```sql
 -- contractors table extension
-ALTER TABLE contractors ADD COLUMN stripe_customer_id TEXT UNIQUE;
+ALTER TABLE contractors ADD COLUMN stripe_customer_id TEXT;
 ALTER TABLE contractors ADD COLUMN subscription_tier TEXT DEFAULT 'free';
 ALTER TABLE contractors ADD COLUMN subscription_status TEXT DEFAULT 'inactive';
 ALTER TABLE contractors ADD COLUMN subscription_expires_at TIMESTAMPTZ;
+
+-- Create partial unique index to handle NULL values and prevent duplicates
+CREATE UNIQUE INDEX idx_contractors_stripe_customer_id 
+  ON contractors(stripe_customer_id) 
+  WHERE stripe_customer_id IS NOT NULL;
 ```
 
 **No Additional Tables:** Do not create custom subscription_plans, billing_history, or invoice tables. Query Stripe API for this data when needed. Cache only what's necessary for feature gating.
@@ -117,9 +122,14 @@ A referral program allowing existing contractors to invite new contractors in ex
 
 ```sql
 -- contractors table extension
-ALTER TABLE contractors ADD COLUMN referral_code TEXT UNIQUE;
+ALTER TABLE contractors ADD COLUMN referral_code TEXT;
 ALTER TABLE contractors ADD COLUMN referred_by UUID REFERENCES contractors(id);
 ALTER TABLE contractors ADD COLUMN referral_credits DECIMAL DEFAULT 0.00;
+
+-- Create unique index on non-NULL referral codes
+CREATE UNIQUE INDEX idx_contractors_referral_code 
+  ON contractors(referral_code) 
+  WHERE referral_code IS NOT NULL;
 
 -- referral_events table (for audit trail)
 CREATE TABLE referral_events (
