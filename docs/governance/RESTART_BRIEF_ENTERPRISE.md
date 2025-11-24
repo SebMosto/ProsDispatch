@@ -1,0 +1,59 @@
+# Restart Brief — Enterprise Edition
+
+## 1. Why the Restart Is Required
+
+The audit determined that the existing repository contains fundamental architectural conflicts that are impractical to untangle, including Next.js patterns inside a Vite app, hardcoded Supabase credentials, and a deeply embedded proposals/bidding system that violates the canonical "no marketplace" constraint. These findings, combined with deprecated dependencies and mixed data-fetching patterns, mean refactoring would consume 45-60 hours with high risk for regressions. Restarting from a clean Vite + React + Supabase template enables compliance with the audit's recommendation while avoiding inherited technical debt.
+
+Additionally, the absence of meaningful PRDs and the presence of marketplace-oriented flows (proposals, escrow placeholders, homeowner scope creep) show that the current codebase was built without enforceable guardrails. A fresh repository lets us rebuild only the contractor-focused MVP1, enforce environment-driven configuration from day one, and preserve only the audited modules that are safe to reuse.
+
+## 2. Salvage List (Copy Into New Repo)
+
+- `src/components/ui/`
+- `src/utils/security/`
+- `src/i18n/`
+- `src/schemas/`
+- `docs/ACCESSIBILITY.md`
+- `docs/SECURITY.md`
+- `docs/TESTING.md`
+
+## 3. Forbidden List (Never Copy Into New Repo)
+
+- `src/integrations/supabase/`
+- `src/utils/jobs/proposals/`
+- `src/components/jobs/proposals/`
+- `src/contexts/jobs/hooks/proposals/`
+- `src/payments/` (escrow patterns)
+- `supabase/migrations/` (marketplace schema)
+- Any file referencing proposals, bidding, or escrow flows
+- Hardcoded API keys
+- Next.js-specific code in a Vite app
+- Old `package.json` dependency set
+
+## 4. Payment Architecture
+
+### 4.1 (Updated): Payment Method Rules
+
+Contractor vaulting is **allowed** using Stripe Billing Customer objects.  
+Homeowner vaulting remains **strictly forbidden**.
+
+### 4.2 (New): Subscription Billing
+
+ProsDispatch uses Stripe Billing for contractor subscription management.
+
+### 4.3 (New): Referral Engine
+
+ProsDispatch operates a referral reward system:
+
+* Contractors earn **20%** of a referee's subscription for **6 months**
+* Commission is paid in **cash** via Stripe Connect Transfers
+* Payouts operate on **Net-30**
+* Referral tracking uses dedicated backend tables
+* Homeowners cannot participate
+
+### 4.4 (New): Revenue Stream Separation
+
+* SaaS Billing
+* Job Payments
+* Referral Commissions
+
+These must never interact.
