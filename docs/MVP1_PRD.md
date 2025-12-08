@@ -1,6 +1,6 @@
 # **📘 MVP1 MASTER PRD — ProsDispatch**
 
-**Version:** 1.1  
+**Version:** 1.1 (Patch v1.1)
  **Status:** Canonical & Binding  
  **Prepared by:** PRD Architect v1.5  
  **Audited by:** Gemini (Chief Architect & Risk Auditor)  
@@ -100,6 +100,8 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
+| Subscriptions & billing plans | ✔ |
+| Referral Engine | ✔ |
 
 ---
 
@@ -123,8 +125,49 @@ These features are **explicitly forbidden**, per Auditor mandate:
 | Advanced analytics | ❌ |
 | Multi-provider workflows | ❌ |
 | Contractor teams / roles | ❌ |
-| Subscriptions & billing plans | ❌ |
 | Inventory management | ❌ |
+
+---
+
+## **🔧 MVP1 Master PRD — Patch v1.1**
+
+### **In Scope (Updated)**
+
+#### **SaaS Billing**
+
+* Contractor subscription enrollment (Stripe Billing)
+* Contractor vaulting (Stripe Customer + PaymentMethod)
+* Billing Portal integration
+
+#### **Referral Engine (NEW)**
+
+* Referral code generation (contractor-specific)
+* Referral tracking (backend only)
+* Commission calculation on subscription payment events
+* Commission payouts (Stripe Connect Transfers, Net-30)
+* Referral earnings ledger (contractor-visible)
+
+---
+
+## **Data Model Additions**
+
+### **Table: referrals**
+
+`id uuid (pk)`
+`referrer_id uuid (contractor)`
+`referee_id uuid (contractor)`
+`referral_code text`
+`start_date date`
+`end_date date`
+`status text  // active | expired | canceled`
+
+### **Table: referral_commissions**
+
+`id uuid (pk)`
+`referral_id uuid (fk)`
+`billing_cycle date`
+`commission_amount numeric`
+`payout_status text  // pending | paid | withheld`
 
 ---
 
