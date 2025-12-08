@@ -1,0 +1,34 @@
+{
+  "layout": {
+    "brand": "ProsDispatch",
+    "languageLabel": "Sélection de la langue",
+    "languageEnglish": "English",
+    "languageFrench": "Français"
+  },
+  "hero": {
+    "title": "Répartition des entrepreneurs pensée pour les équipes mobiles",
+    "subtitle": "Gérez les travaux, les approbations et les paiements Stripe Connect avec des parcours bilingues.",
+    "primaryCta": "Commencer l'inscription",
+    "secondaryCta": "Consulter le cahier produit"
+  },
+  "features": {
+    "title": "Ce qui est disponible aujourd'hui",
+    "list": {
+      "billing": {
+        "title": "Accès par abonnement",
+        "description": "Maintenez les entrepreneurs actifs grâce à un statut d'abonnement clair et une intégration conforme."
+      },
+      "payments": {
+        "title": "Paiements directs uniquement",
+        "description": "Encaissez les paiements via Stripe Connect Standard sans escrow ni soldes conservés."
+      },
+      "compliance": {
+        "title": "Prêt pour le Canada",
+        "description": "Appliquez les codes postaux canadiens et une interface bilingue pour rester conforme dès le départ."
+      }
+    }
+  },
+  "footer": {
+    "note": "La mise en page mobile d'abord s'adapte aux écrans aussi petits que 320px."
+  }
+}
