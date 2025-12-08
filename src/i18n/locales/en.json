@@ -1,0 +1,34 @@
+{
+  "layout": {
+    "brand": "ProsDispatch",
+    "languageLabel": "Language selection",
+    "languageEnglish": "English",
+    "languageFrench": "Français"
+  },
+  "hero": {
+    "title": "Contractor dispatching built for mobile teams",
+    "subtitle": "Manage jobs, approvals, and Stripe Connect payments with bilingual workflows.",
+    "primaryCta": "Start onboarding",
+    "secondaryCta": "Review product brief"
+  },
+  "features": {
+    "title": "What you get today",
+    "list": {
+      "billing": {
+        "title": "Subscription access",
+        "description": "Keep contractors active with a clear subscription state and compliant onboarding."
+      },
+      "payments": {
+        "title": "Direct charges only",
+        "description": "Collect payment via Stripe Connect Standard without escrow or stored balances."
+      },
+      "compliance": {
+        "title": "Canada ready",
+        "description": "Enforce Canadian postal codes and bilingual UI to stay compliant from day one."
+      }
+    }
+  },
+  "footer": {
+    "note": "Mobile-first layout adapts to screens as small as 320px."
+  }
+}

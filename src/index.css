@@ -1,0 +1,232 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #f8fafc;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12), transparent 25%),
+    radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 22%),
+    #f8fafc;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  gap: 0.75rem;
+}
+
+.brand {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.language-switcher {
+  display: inline-flex;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 0.125rem;
+  background-color: #ffffff;
+}
+
+.language-button {
+  border: none;
+  background: transparent;
+  padding: 0.625rem 0.9rem;
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.language-button.is-active {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0.5rem 0 2.5rem;
+}
+
+.hero {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.25);
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  min-height: 44px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: 1.65rem;
+  line-height: 1.3;
+}
+
+.hero__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #cbd5e1;
+}
+
+.hero__actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
+.primary-button,
+.secondary-button {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #22c55e, #0ea5e9);
+  color: #0b1120;
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.35);
+}
+
+.secondary-button {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(226, 232, 240, 0.4);
+}
+
+.primary-button:active,
+.secondary-button:active {
+  transform: translateY(1px);
+}
+
+.feature-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.feature-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+.feature-card__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.feature-card__description {
+  margin: 0;
+  color: #475569;
+  font-size: 0.98rem;
+}
+
+.footer-note {
+  background: #e2e8f0;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.footer-note p {
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .app-shell {
+    padding: 1.5rem;
+  }
+
+  .hero {
+    padding: 2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+  }
+
+  .hero__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
