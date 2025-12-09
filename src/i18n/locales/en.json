@@ -30,5 +30,41 @@
   },
   "footer": {
     "note": "Mobile-first layout adapts to screens as small as 320px."
+  },
+  "auth": {
+    "shared": {
+      "email": "Email",
+      "password": "Password",
+      "loading": "Processing..."
+    },
+    "signIn": {
+      "title": "Sign in",
+      "subtitle": "Access your contractor dashboard",
+      "emailPlaceholder": "you@example.com",
+      "passwordPlaceholder": "Enter your password",
+      "button": "Sign in",
+      "noAccount": "Don't have an account yet?"
+    },
+    "signUp": {
+      "title": "Create account",
+      "subtitle": "Set up your contractor profile",
+      "fullName": "Full name",
+      "businessName": "Business name",
+      "fullNamePlaceholder": "Pat Lee",
+      "businessNamePlaceholder": "Pros Dispatch Co.",
+      "emailPlaceholder": "you@example.com",
+      "passwordPlaceholder": "Create a secure password",
+      "button": "Create account",
+      "haveAccount": "Already registered?"
+    },
+    "dashboard": {
+      "greeting": "Welcome back",
+      "title": "Dashboard",
+      "subtitle": "Your contractor profile is ready.",
+      "notProvided": "Not provided",
+      "role": "Role",
+      "sessionNote": "Your session is secured with Supabase Auth.",
+      "signOut": "Sign out"
+    }
   }
 }

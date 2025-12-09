@@ -30,5 +30,41 @@
   },
   "footer": {
     "note": "La mise en page mobile d'abord s'adapte aux écrans aussi petits que 320px."
+  },
+  "auth": {
+    "shared": {
+      "email": "Courriel",
+      "password": "Mot de passe",
+      "loading": "Traitement en cours..."
+    },
+    "signIn": {
+      "title": "Se connecter",
+      "subtitle": "Accédez à votre tableau de bord d'entrepreneur",
+      "emailPlaceholder": "vous@exemple.com",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "button": "Connexion",
+      "noAccount": "Pas encore de compte?"
+    },
+    "signUp": {
+      "title": "Créer un compte",
+      "subtitle": "Configurez votre profil d'entrepreneur",
+      "fullName": "Nom complet",
+      "businessName": "Nom de l'entreprise",
+      "fullNamePlaceholder": "Pat Lee",
+      "businessNamePlaceholder": "Pros Dispatch Inc.",
+      "emailPlaceholder": "vous@exemple.com",
+      "passwordPlaceholder": "Créez un mot de passe sécurisé",
+      "button": "Créer le compte",
+      "haveAccount": "Déjà inscrit?"
+    },
+    "dashboard": {
+      "greeting": "Bon retour",
+      "title": "Tableau de bord",
+      "subtitle": "Votre profil d'entrepreneur est prêt.",
+      "notProvided": "Non renseigné",
+      "role": "Rôle",
+      "sessionNote": "Votre session est sécurisée avec Supabase Auth.",
+      "signOut": "Se déconnecter"
+    }
   }
 }
