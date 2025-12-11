@@ -49,7 +49,16 @@ export interface Database {
       };
     };
     Views: {};
-    Functions: {};
+    Functions: {
+      handle_new_user: {
+        Args: Record<PropertyKey, never>;
+        Returns: Record<string, unknown>;
+      };
+      set_profile_updated_at: {
+        Args: Record<PropertyKey, never>;
+        Returns: Record<string, unknown>;
+      };
+    };
     Enums: {};
     CompositeTypes: {};
   };

@@ -4,8 +4,8 @@ create table if not exists public.profiles (
   full_name text,
   business_name text,
   role text not null default 'contractor',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
 );
 
 alter table public.profiles enable row level security;
@@ -58,7 +58,7 @@ begin
     security definer set search_path = public
     as $$
     begin
-      new.updated_at = now();
+      new.updated_at = timezone('utc', now());
       return new;
     end;
     $$;
