@@ -3,11 +3,14 @@ name: Pull Request Validation
 permissions:
   pull-requests: write
   issues: write
-  contents: read
 
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
 
 jobs:
   pr-requirements-check:

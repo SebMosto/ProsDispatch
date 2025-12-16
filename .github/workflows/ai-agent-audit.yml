@@ -56,7 +56,7 @@ jobs:
     needs: detect-ai-pr
     if: needs.detect-ai-pr.outputs.is_ai_generated == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       
