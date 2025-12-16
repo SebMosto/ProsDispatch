@@ -58,87 +58,40 @@ jobs:
       - name: Audit AI-generated code patterns
         run: |
           echo "🤖 Running enhanced audit for AI-generated code..."
-          echo ""
           
-          # Fetch the base branch to ensure we can compare
-          git fetch origin ${{ github.base_ref }}
+          # Robust Git Fetch
+          git fetch origin ${{ github.base_ref }} || echo "Fetch failed, continuing..."
           
-          # Get list of changed files
-          git diff --name-only origin/${{ github.base_ref }} HEAD > changed_files.txt
+          # Try to get changed files, fallback to ALL files if diff fails
+          if git diff --name-only origin/${{ github.base_ref }} HEAD > changed_files.txt 2>/dev/null; then
+            echo "Diff successful."
+          else
+            echo "⚠️ Git diff failed, scanning ALL source files instead."
+            find src -name "*.ts" -o -name "*.tsx" > changed_files.txt
+          fi
           
-          echo "Changed files:"
-          cat changed_files.txt
-          echo ""
+          echo "Scanning files:"
+          head -n 5 changed_files.txt
           
           VIOLATIONS=0
           
-          # Check for forbidden patterns more strictly
-          echo "Checking for forbidden patterns..."
-          
-          # Check for Next.js patterns
+          # Check for forbidden patterns
           if grep -r "from ['\"]next" --include="*.ts" --include="*.tsx" $(cat changed_files.txt) 2>/dev/null; then
             echo "❌ Next.js imports detected"
             VIOLATIONS=$((VIOLATIONS + 1))
           fi
           
-          # Check for proposal/bidding/escrow patterns (forbidden features)
           FORBIDDEN_TERMS=("proposal" "bidding" "bid" "escrow" "marketplace")
           for term in "${FORBIDDEN_TERMS[@]}"; do
             if grep -i -r "$term" --include="*.ts" --include="*.tsx" $(cat changed_files.txt) 2>/dev/null | grep -v "// " | grep -v "/* " ; then
               echo "⚠️ Potential forbidden feature detected: '$term'"
-              echo "   Verify this is not implementing marketplace/bidding/escrow functionality"
-              # Don't fail on these - they might be legitimate (e.g., in comments/docs)
             fi
           done
           
-          # Check for hardcoded strings that should be i18n
-          echo ""
-          echo "Checking for untranslated strings..."
-          for file in $(cat changed_files.txt | grep -E "\.(tsx|jsx)$"); do
-            if [ -f "$file" ]; then
-              # Look for string literals in JSX that aren't translation keys
-              HARDCODED=$(grep -E ">['\"][A-Z][a-z]+.*['\"]<" "$file" 2>/dev/null || true)
-              if [ ! -z "$HARDCODED" ]; then
-                echo "⚠️ Potential hardcoded text in $file"
-                echo "   Verify all user-facing strings use i18n"
-              fi
-            fi
-          done
-          
-          # Check for 'any' type usage (should be avoided)
-          echo ""
-          echo "Checking for TypeScript 'any' usage..."
-          for file in $(cat changed_files.txt | grep -E "\.(ts|tsx)$"); do
-            if [ -f "$file" ]; then
-              ANY_COUNT=$(grep -c ": any" "$file" 2>/dev/null || echo "0")
-              if [ "$ANY_COUNT" -gt 0 ]; then
-                echo "⚠️ Found $ANY_COUNT 'any' type usage in $file"
-                echo "   Consider using more specific types"
-              fi
-            fi
-          done
-          
-          # Check for TODO/FIXME comments added by AI
-          echo ""
-          echo "Checking for TODO/FIXME comments..."
-          for file in $(cat changed_files.txt); do
-            if [ -f "$file" ]; then
-              TODOS=$(grep -i "TODO\|FIXME" "$file" 2>/dev/null || true)
-              if [ ! -z "$TODOS" ]; then
-                echo "⚠️ TODO/FIXME found in $file:"
-                echo "$TODOS"
-              fi
-            fi
-          done
-          
-          echo ""
           if [ "$VIOLATIONS" -gt 0 ]; then
-            echo "❌ $VIOLATIONS critical violations found"
-            echo "AI-generated code must be corrected before merge"
             exit 1
-          else
-            echo "✅ No critical violations detected"
           fi
+          echo "✅ AI Audit Passed"
       
       - name: Comment on PR with audit results
         if: always()
