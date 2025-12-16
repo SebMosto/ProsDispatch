@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Debug - Show package.json
+        run: cat package.json
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -20,7 +23,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Run ESLint
         run: npm run lint
@@ -41,7 +44,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Build application (treat warnings as errors)
         run: npm run build
@@ -61,7 +64,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Run npm audit (fail on critical vulnerabilities)
         run: npm audit --audit-level=critical
@@ -86,7 +89,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Check for untranslated strings
         run: |
@@ -137,7 +140,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
@@ -146,7 +149,7 @@ jobs:
         run: npm run build
       
       - name: Install axe-core
-        run: npm install -D @axe-core/cli
+        run: npm install -D @axe-core/cli --legacy-peer-deps
       
       - name: Start preview server and run accessibility tests
         run: |
@@ -178,7 +181,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
@@ -265,7 +268,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Run tests (if test script exists)
         run: |
@@ -290,7 +293,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       
       - name: Check coverage configuration
         run: |
