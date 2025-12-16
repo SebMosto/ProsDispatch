@@ -11,7 +11,7 @@ jobs:
     name: Linting & Static Analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Debug - Show package.json
         run: cat package.json
@@ -35,7 +35,7 @@ jobs:
     name: Build & Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -55,7 +55,7 @@ jobs:
     name: Security Scanning
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -80,7 +80,7 @@ jobs:
     name: Localization Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -131,7 +131,7 @@ jobs:
     name: Accessibility Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -171,7 +171,7 @@ jobs:
     name: Responsive Layout Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -258,7 +258,7 @@ jobs:
     name: Unit and Integration Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -283,7 +283,7 @@ jobs:
     name: Code Coverage Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -305,7 +305,7 @@ jobs:
     name: Governance Policy Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Check for forbidden patterns
         run: |
