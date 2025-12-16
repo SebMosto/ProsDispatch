@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "check:i18n": "node scripts/check-i18n.js",
     "check:stack": "node scripts/check-stack.js",
-    "check:forbidden": "grep -rE 'bidding|escrow|marketplace' src/ && exit 1 || exit 0"
+    "check:forbidden": "grep -rE 'bidding|escrow|marketplace|proposal' src/ && exit 1 || exit 0"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^2.8.0",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@axe-core/cli": "^4.10.2",
-    "@playwright/test": "^1.48.2",
+    "@playwright/test": "^1.49.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@types/node": "^22.7.4",

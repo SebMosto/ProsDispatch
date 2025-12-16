@@ -8,6 +8,12 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
+const FORBIDDEN_DEPENDENCIES = [
+  'next',
+  '@supabase/auth-helpers-nextjs',
+  '@supabase/ssr'
+];
+
 const FORBIDDEN_IMPORTS = [
   { pattern: /from\s+['"]next['"]/, message: 'Next.js core import' },
   { pattern: /from\s+['"]next\//, message: 'Next.js module import' },
@@ -52,6 +58,40 @@ function checkStack() {
   let violations = [];
 
   try {
+    // First, check package.json for forbidden dependencies
+    console.log('Checking package.json for forbidden dependencies...');
+    const packageJsonPath = join(process.cwd(), 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+    
+    const allDependencies = {
+      ...packageJson.dependencies || {},
+      ...packageJson.devDependencies || {}
+    };
+    
+    FORBIDDEN_DEPENDENCIES.forEach(dep => {
+      if (allDependencies[dep]) {
+        violations.push({
+          file: 'package.json',
+          type: 'dependency',
+          message: `Forbidden dependency: ${dep}`,
+          dependency: dep
+        });
+      }
+    });
+    
+    if (violations.length > 0) {
+      console.error('❌ Forbidden dependencies detected in package.json!\n');
+      violations.forEach(({ dependency, message }) => {
+        console.error(`  - ${message}`);
+      });
+      console.error('\nThese dependencies are not allowed per governance constraints.');
+      console.error('Remove them and use approved alternatives.\n');
+    } else {
+      console.log('✓ No forbidden dependencies in package.json\n');
+    }
+
+    // Then check source files
+    console.log('Checking source files for forbidden patterns...');
     const files = getAllFiles(srcDir);
 
     files.forEach(file => {
