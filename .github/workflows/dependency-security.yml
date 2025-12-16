@@ -1,0 +1,97 @@
+name: Dependency Security
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      
+      - name: Run npm audit (all vulnerabilities)
+        run: npm audit --json > audit-report.json || true
+      
+      - name: Parse audit report
+        run: |
+          echo "Dependency Audit Report"
+          echo "======================="
+          
+          if [ -f audit-report.json ]; then
+            CRITICAL=$(cat audit-report.json | grep -o '"critical":[0-9]*' | head -1 | cut -d: -f2 || echo "0")
+            HIGH=$(cat audit-report.json | grep -o '"high":[0-9]*' | head -1 | cut -d: -f2 || echo "0")
+            MODERATE=$(cat audit-report.json | grep -o '"moderate":[0-9]*' | head -1 | cut -d: -f2 || echo "0")
+            LOW=$(cat audit-report.json | grep -o '"low":[0-9]*' | head -1 | cut -d: -f2 || echo "0")
+            
+            echo "Critical: $CRITICAL"
+            echo "High: $HIGH"
+            echo "Moderate: $MODERATE"
+            echo "Low: $LOW"
+            
+            if [ "$CRITICAL" -gt 0 ]; then
+              echo ""
+              echo "❌ CRITICAL vulnerabilities detected!"
+              echo "Per CI Guardrails: Critical vulnerabilities block the build"
+              npm audit
+              exit 1
+            elif [ "$HIGH" -gt 0 ]; then
+              echo ""
+              echo "⚠️ HIGH severity vulnerabilities detected"
+              echo "Consider addressing these before release"
+              npm audit
+            fi
+          fi
+          
+          echo "✓ No critical vulnerabilities found"
+      
+      - name: Check for outdated packages
+        run: |
+          echo "Checking for outdated packages..."
+          npm outdated || true
+          echo "Consider keeping dependencies up to date"
+
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      
+      - name: Check for license compatibility
+        run: |
+          echo "Checking package licenses..."
+          npx license-checker --summary || {
+            echo "⚠️ License checker not available"
+            echo "Consider adding license compliance checking"
+          }
+          
+          echo "Ensure all dependencies use compatible licenses (MIT, Apache-2.0, BSD, ISC)"

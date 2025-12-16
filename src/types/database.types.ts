@@ -48,6 +48,7 @@ export interface Database {
         ];
       };
     };
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     Views: {};
     Functions: {
       handle_new_user: {
@@ -59,7 +60,9 @@ export interface Database {
         Returns: Record<string, unknown>;
       };
     };
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     Enums: {};
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     CompositeTypes: {};
   };
 }

@@ -80,6 +80,7 @@ export const Routes = ({ children }: { children: ReactNode }) => {
   return null;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Route = (_props: RouteProps) => null;
 
 export const Navigate = ({ to, replace, state }: { to: string; replace?: boolean; state?: unknown }) => {

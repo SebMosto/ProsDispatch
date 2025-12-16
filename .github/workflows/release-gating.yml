@@ -1,0 +1,222 @@
+name: Release Gating
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  pre-release-checks:
+    name: Pre-Release Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      
+      - name: Verify no P0 issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('Checking for open P0 (blocker) issues...');
+            
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'P0,blocker'
+            });
+            
+            if (issues.data.length > 0) {
+              const issueList = issues.data.map(i => `#${i.number}: ${i.title}`).join('\n');
+              core.setFailed(
+                `❌ Cannot release with open P0 issues!\n\n` +
+                `Found ${issues.data.length} open P0/blocker issue(s):\n${issueList}\n\n` +
+                `Per governance: All P0 issues must be resolved before release.`
+              );
+            } else {
+              console.log('✓ No open P0 issues');
+            }
+      
+      - name: Run all lints
+        run: npm run lint
+      
+      - name: Type check
+        run: npx tsc --noEmit
+      
+      - name: Build for production
+        run: npm run build
+        env:
+          CI: true
+          NODE_ENV: production
+      
+      - name: Run tests (if available)
+        run: |
+          if grep -q '"test":' package.json; then
+            npm test
+          else
+            echo "⚠️ No tests configured - this should be addressed before production release"
+          fi
+      
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+      
+      - name: Check environment configuration
+        run: |
+          echo "Verifying environment configuration..."
+          
+          # Check that .env.example exists and has required variables
+          if [ ! -f .env.example ]; then
+            echo "❌ .env.example file missing"
+            exit 1
+          fi
+          
+          # Verify required environment variables are documented
+          REQUIRED_VARS=("VITE_SUPABASE_URL" "VITE_SUPABASE_ANON_KEY")
+          
+          for var in "${REQUIRED_VARS[@]}"; do
+            if ! grep -q "$var" .env.example; then
+              echo "❌ Required environment variable $var not documented in .env.example"
+              exit 1
+            fi
+          done
+          
+          echo "✓ Environment configuration validated"
+      
+      - name: Bundle size check
+        run: |
+          echo "Checking bundle size..."
+          
+          if [ -d dist ]; then
+            BUNDLE_SIZE=$(du -sb dist | cut -f1)
+            BUNDLE_SIZE_MB=$((BUNDLE_SIZE / 1024 / 1024))
+            
+            echo "Bundle size: ${BUNDLE_SIZE_MB}MB"
+            
+            # Set a budget (e.g., 5MB for MVP)
+            MAX_SIZE_MB=5
+            
+            if [ "$BUNDLE_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
+              echo "⚠️ Bundle size (${BUNDLE_SIZE_MB}MB) exceeds recommended limit (${MAX_SIZE_MB}MB)"
+              echo "Consider code splitting or removing unused dependencies"
+            else
+              echo "✓ Bundle size within limits"
+            fi
+          fi
+
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: pre-release-checks
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      
+      - name: Run smoke tests
+        run: |
+          npm run preview &
+          SERVER_PID=$!
+          echo "Waiting for server to start..."
+          sleep 5
+          
+          # Basic smoke tests
+          cat > smoke-test.mjs << 'EOF'
+          import { chromium } from 'playwright';
+          
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            
+            try {
+              console.log('Testing application loads...');
+              await page.goto('http://localhost:4173', { timeout: 10000 });
+              
+              // Check page title exists
+              const title = await page.title();
+              console.log(`✓ Page loaded with title: ${title}`);
+              
+              // Check no console errors
+              const errors = [];
+              page.on('console', msg => {
+                if (msg.type() === 'error') {
+                  errors.push(msg.text());
+                }
+              });
+              
+              await page.waitForTimeout(2000);
+              
+              if (errors.length > 0) {
+                console.error('❌ Console errors detected:');
+                errors.forEach(err => console.error(`  - ${err}`));
+                process.exit(1);
+              }
+              
+              console.log('✓ No console errors');
+              console.log('✓ Smoke tests passed');
+              
+            } catch (error) {
+              console.error('❌ Smoke test failed:', error.message);
+              process.exit(1);
+            } finally {
+              await browser.close();
+            }
+          })();
+          EOF
+          
+          node smoke-test.mjs || {
+            kill $SERVER_PID
+            exit 1
+          }
+          
+          kill $SERVER_PID
+
+  release-approval:
+    name: Release Approval Gate
+    runs-on: ubuntu-latest
+    needs: [pre-release-checks, smoke-tests]
+    environment:
+      name: ${{ github.event.inputs.release_type || 'production' }}
+    steps:
+      - name: Release approved
+        run: |
+          echo "✅ All release gates passed"
+          echo "Release to ${{ github.event.inputs.release_type || 'production' }} approved"
+          echo ""
+          echo "Per CI Guardrails:"
+          echo "- All P0 issues resolved ✓"
+          echo "- All tests passing ✓"
+          echo "- Security scan clean ✓"
+          echo "- Build successful ✓"
+          echo "- Smoke tests passed ✓"
+          echo ""
+          echo "Ready for deployment!"

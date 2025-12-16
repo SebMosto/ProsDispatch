@@ -9,3 +9,19 @@ pnpm-debug.log*
 dist
 .vscode
 .idea
+
+# Test coverage
+coverage
+*.lcov
+
+# Playwright
+playwright-report
+test-results
+
+# Vitest
+.vitest
+
+# TypeScript build artifacts
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
