@@ -60,6 +60,9 @@ jobs:
           echo "🤖 Running enhanced audit for AI-generated code..."
           echo ""
           
+          # Fetch the base branch to ensure we can compare
+          git fetch origin ${{ github.base_ref }}
+          
           # Get list of changed files
           git diff --name-only origin/${{ github.base_ref }} HEAD > changed_files.txt
           
