@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run ESLint
         run: npm run lint
@@ -41,7 +41,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Build application (treat warnings as errors)
         run: npm run build
@@ -61,7 +61,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run npm audit (fail on critical vulnerabilities)
         run: npm audit --audit-level=critical
@@ -86,7 +86,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Check for untranslated strings
         run: |
@@ -137,7 +137,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
@@ -178,7 +178,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
@@ -265,7 +265,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run tests (if test script exists)
         run: |
@@ -290,7 +290,7 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Check coverage configuration
         run: |
