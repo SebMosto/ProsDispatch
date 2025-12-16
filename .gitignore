@@ -9,3 +9,14 @@ pnpm-debug.log*
 dist
 .vscode
 .idea
+
+# Test coverage
+coverage
+*.lcov
+
+# Playwright
+playwright-report
+test-results
+
+# Vitest
+.vitest
