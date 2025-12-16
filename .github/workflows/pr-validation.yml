@@ -1,0 +1,168 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  pr-requirements-check:
+    name: PR Requirements Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR has spec reference
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const title = pr.title || '';
+            
+            // Check if PR references a spec, requirement, or issue
+            // Looking for patterns like: SPEC-001, #123, REQ-001, relates to #123, fixes #123
+            const specPatterns = [
+              /SPEC-\d+/i,
+              /REQ-\d+/i,
+              /#\d+/,
+              /relates to #\d+/i,
+              /fixes #\d+/i,
+              /closes #\d+/i,
+              /implements #\d+/i,
+              /addresses #\d+/i
+            ];
+            
+            const hasSpecReference = specPatterns.some(pattern => 
+              pattern.test(body) || pattern.test(title)
+            );
+            
+            if (!hasSpecReference) {
+              core.setFailed(
+                '❌ PR must reference a specification or requirement!\n\n' +
+                'Per governance: "No code without a spec" - Each PR should link to the relevant ' +
+                'requirement ID or user story (e.g., SPEC-001, #123, or "relates to #456").\n\n' +
+                'Please update the PR title or description to include a reference to:\n' +
+                '- A spec document (e.g., SPEC-001)\n' +
+                '- A requirement ID (e.g., REQ-001)\n' +
+                '- An issue number (e.g., #123, fixes #123, relates to #456)'
+              );
+            } else {
+              console.log('✓ PR contains spec/requirement reference');
+            }
+      
+      - name: Check PR has description
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = (pr.body || '').trim();
+            
+            if (body.length < 20) {
+              core.setFailed(
+                '❌ PR must have a meaningful description!\n\n' +
+                'Please add a description that explains:\n' +
+                '- What changes were made\n' +
+                '- Why these changes were necessary\n' +
+                '- What spec/requirement this addresses\n' +
+                '- Any testing done or needed'
+              );
+            } else {
+              console.log('✓ PR has adequate description');
+            }
+
+  pr-checklist:
+    name: PR Review Checklist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post review checklist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Only post checklist on PR open/reopen, not on every sync
+            if (!['opened', 'reopened'].includes(context.payload.action)) {
+              console.log('Skipping checklist post (not a PR open/reopen event)');
+              return;
+            }
+            
+            const checklist = `## Reviewer Checklist
+            
+            Per CI Guardrails, please verify:
+            
+            - [ ] **Spec Reference**: PR links to requirement ID or user story
+            - [ ] **Translations**: All user-facing strings use i18n (EN/FR-CA provided)
+            - [ ] **Mobile Layout**: Tested on mobile viewport (mobile-first design)
+            - [ ] **Accessibility**: No WCAG 2.1 AA violations (check axe report)
+            - [ ] **Tests**: New logic has corresponding tests
+            - [ ] **Security**: No hardcoded secrets, proper parameterization
+            - [ ] **Governance**: No forbidden patterns (Next.js, escrow, marketplace features)
+            - [ ] **Build**: Clean build with no warnings
+            - [ ] **Code Quality**: Follows project patterns and conventions
+            
+            All automated CI checks must pass before merge (P0 issues block merge).
+            `;
+            
+            // Check if checklist already exists
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number
+            });
+            
+            const hasChecklist = comments.data.some(comment => 
+              comment.body.includes('Reviewer Checklist') && 
+              comment.user.type === 'Bot'
+            );
+            
+            if (!hasChecklist) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: checklist
+              });
+              console.log('✓ Posted reviewer checklist');
+            } else {
+              console.log('Checklist already exists, skipping');
+            }
+
+  label-check:
+    name: Label Validation
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
+    steps:
+      - name: Suggest appropriate labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels.map(l => l.name);
+            
+            const title = pr.title.toLowerCase();
+            const body = (pr.body || '').toLowerCase();
+            const text = title + ' ' + body;
+            
+            // Suggest labels based on content
+            const suggestions = [];
+            
+            if (text.includes('security') || text.includes('vulnerability')) {
+              if (!labels.includes('security')) suggestions.push('security');
+            }
+            if (text.includes('accessibility') || text.includes('a11y') || text.includes('wcag')) {
+              if (!labels.includes('accessibility')) suggestions.push('accessibility');
+            }
+            if (text.includes('translation') || text.includes('i18n') || text.includes('locale')) {
+              if (!labels.includes('i18n')) suggestions.push('i18n');
+            }
+            if (text.includes('mobile') || text.includes('responsive')) {
+              if (!labels.includes('responsive')) suggestions.push('responsive');
+            }
+            if (text.includes('test') || text.includes('spec')) {
+              if (!labels.includes('testing')) suggestions.push('testing');
+            }
+            
+            if (suggestions.length > 0) {
+              console.log(`💡 Suggested labels: ${suggestions.join(', ')}`);
+              console.log('Consider adding appropriate labels to help categorize this PR');
+            } else {
+              console.log('✓ No additional labels suggested');
+            }
