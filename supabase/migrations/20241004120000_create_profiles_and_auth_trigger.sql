@@ -43,6 +43,7 @@ create trigger on_auth_user_created
 create function public.set_profile_updated_at()
 returns trigger
 language plpgsql
+security definer set search_path = public
 as $$
 begin
   new.updated_at = timezone('utc', now());
