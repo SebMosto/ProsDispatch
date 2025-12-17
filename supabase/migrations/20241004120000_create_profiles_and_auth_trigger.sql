@@ -62,7 +62,7 @@ alter table public.profiles enable row level security;
 
 -- Function: Auto-create profile when new user signs up
 -- Security: Runs with elevated privileges (security definer) to bypass RLS
--- Note: Uses ON CONFLICT DO UPDATE to keep email in sync if user already exists
+-- Note: Uses ON CONFLICT DO UPDATE to keep profile data in sync with auth.users
 --       For MVP1, all users are contractors (role is not updated on conflict)
 --       Extracts full_name and business_name from user metadata if provided
 create or replace function public.handle_new_user()
@@ -75,12 +75,14 @@ begin
   values (
     new.id, 
     new.email, 
-    coalesce(new.raw_user_meta_data->>'full_name', null),
-    coalesce(new.raw_user_meta_data->>'business_name', null),
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'business_name',
     'contractor'
   )
   on conflict (id) do update
   set email = excluded.email,
+      full_name = coalesce(excluded.full_name, profiles.full_name),
+      business_name = coalesce(excluded.business_name, profiles.business_name),
       updated_at = timezone('utc', now());
   return new;
 end;
