@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { supabase } from '../../lib/supabase';
 import { CANADIAN_PROVINCES, ClientAndPropertySchema } from '../../schemas/client';
+import type { Database } from '../../types/database.types';
 
 type FormValues = z.infer<typeof ClientAndPropertySchema>;
+type ClientInsert = Database['public']['Tables']['clients']['Insert'];
+type PropertyInsert = Database['public']['Tables']['properties']['Insert'];
 
 const TEXT = {
   title: 'Create client & property',
@@ -42,7 +44,6 @@ const TEXT = {
 const CreateClientForm: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-  const db = supabase as unknown as SupabaseClient;
 
   const {
     register,
@@ -74,14 +75,17 @@ const CreateClientForm: React.FC = () => {
     setSubmitSuccess(null);
 
     try {
-      const { data: clientData, error: clientError } = await db
+      const clientData: ClientInsert = {
+        type: values.type,
+        name: values.name,
+        email: values.email || null,
+        preferred_language: values.preferred_language,
+        contractor_id: '', // Will be set by RLS/auth context
+      };
+
+      const { data: insertedClient, error: clientError } = await supabase
         .from('clients')
-        .insert({
-          type: values.type,
-          name: values.name,
-          email: values.email || null,
-          preferred_language: values.preferred_language,
-        })
+        .insert(clientData)
         .select('id')
         .single();
 
@@ -89,12 +93,12 @@ const CreateClientForm: React.FC = () => {
         throw clientError;
       }
 
-      const clientId = clientData?.id;
+      const clientId = insertedClient?.id;
       if (!clientId) {
         throw new Error(TEXT.errors.missingClient);
       }
 
-      const { error: propertyError } = await db.from('properties').insert({
+      const propertyData: PropertyInsert = {
         client_id: clientId,
         address_line1: values.address_line1,
         address_line2: values.address_line2 || null,
@@ -102,7 +106,10 @@ const CreateClientForm: React.FC = () => {
         province: values.province,
         postal_code: values.postal_code,
         nickname: values.nickname || null,
-      });
+        contractor_id: '', // Will be set by RLS/auth context
+      };
+
+      const { error: propertyError } = await supabase.from('properties').insert(propertyData);
 
       if (propertyError) {
         throw propertyError;

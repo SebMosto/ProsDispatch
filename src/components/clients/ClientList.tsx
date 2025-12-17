@@ -1,12 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabase';
-
-type ClientRecord = {
-  id: string;
-  name: string | null;
-  city?: string | null;
-};
+import { useClients } from '../../hooks/useClients';
 
 const TEXT = {
   title: 'Clients',
@@ -18,26 +10,7 @@ const TEXT = {
 };
 
 const ClientList: React.FC = () => {
-  const [clients, setClients] = useState<ClientRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const db = supabase as unknown as SupabaseClient;
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      const { data, error: queryError } = await db.from('clients').select('*').is('deleted_at', null);
-
-      if (queryError) {
-        setError(queryError.message);
-      } else {
-        setClients(data ?? []);
-      }
-
-      setLoading(false);
-    };
-
-    void fetchClients();
-  }, []);
+  const { clients, loading, error } = useClients();
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -60,7 +33,7 @@ const ClientList: React.FC = () => {
             {clients.map((client) => (
               <li key={client.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
                 <p className="text-sm font-semibold text-slate-900">{client.name ?? TEXT.unnamed}</p>
-                <p className="text-xs text-slate-700">{client.city || TEXT.cityFallback}</p>
+                <p className="text-xs text-slate-700">{client.primary_property?.city || TEXT.cityFallback}</p>
               </li>
             ))}
           </ul>
