@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "react-hook-form": path.resolve(__dirname, "./src/vendor/react-hook-form"),
+      "@hookform/resolvers/zod": path.resolve(__dirname, "./src/vendor/hookform-resolvers-zod"),
     },
   },
   server: {
