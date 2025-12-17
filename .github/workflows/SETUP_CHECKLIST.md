@@ -96,6 +96,26 @@ Create the following labels if they don't exist:
 - [ ] Check: ✅ Allow GitHub Actions to create and approve pull requests
 - [ ] Click "Save"
 
+### 6. Supabase Configuration (Optional)
+
+**Path**: Settings → Secrets and variables → Actions → New repository secret
+
+If using Supabase integration, configure these secrets:
+
+- [ ] Click "New repository secret"
+- [ ] Name: `SUPABASE_ACCESS_TOKEN`
+- [ ] Value: Your Supabase access token (starts with `sbp_`)
+  - Get from: Supabase Dashboard → Account → Access Tokens
+- [ ] Click "Add secret"
+
+- [ ] Click "New repository secret" again
+- [ ] Name: `SUPABASE_PROJECT_ID`
+- [ ] Value: Your Supabase project reference ID (20-char alphanumeric)
+  - Get from: Supabase Dashboard → Project Settings → General → Reference ID
+- [ ] Click "Add secret"
+
+**Note**: If these secrets are not configured, the Supabase workflow will be automatically skipped.
+
 ## Verification Tests
 
 ### Test 1: Create a Test PR
