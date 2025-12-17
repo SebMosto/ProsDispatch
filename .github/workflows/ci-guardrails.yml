@@ -56,6 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch full git history for TruffleHog
       
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -73,8 +75,9 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
+          base: ${{ github.event.before }}
           head: HEAD
+          extra_args: --only-verified
 
   localization-check:
     name: Localization Check

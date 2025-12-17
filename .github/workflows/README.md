@@ -98,8 +98,19 @@ The workflows require the following to be configured in repository settings:
 
 ### Secrets (Repository Settings > Secrets and variables > Actions)
 
-None required for basic functionality. Optional:
+Basic CI/CD functionality:
 - `GITHUB_TOKEN`: Automatically provided by GitHub Actions
+
+Supabase integration (for `supabase-sync.yml` workflow):
+- `SUPABASE_ACCESS_TOKEN`: Your Supabase access token (format: `sbp_...`)
+  - Get from: Supabase Dashboard → Account → Access Tokens
+  - Must start with `sbp_` prefix
+  - Used for type generation and edge function deployment
+- `SUPABASE_PROJECT_ID`: Your Supabase project reference ID
+  - Get from: Supabase Dashboard → Project Settings → General → Reference ID
+  - Format: 20-character alphanumeric string
+
+**Note**: If Supabase secrets are not configured, the `supabase-sync.yml` workflow will be skipped automatically.
 
 ### Environment Protection Rules
 
