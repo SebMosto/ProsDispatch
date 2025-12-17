@@ -1,4 +1,4 @@
-name: Supabase Sync
+name: Supabase Guardrails & Deploy
 
 on:
   push:
@@ -7,37 +7,61 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-types:
+  # 1. GUARDRAIL: Ensure your code matches the DB
+  verify-types:
     runs-on: ubuntu-latest
-    env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      SUPABASE_PROJECT_ID: nctjhybvdmyxanqiphi
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+      
       - uses: supabase/setup-cli@v1
-      - name: Generate Supabase types
-        run: |
-          supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/supabaseTypes.ts
+        with:
+          version: latest
 
+      - name: Generate Types (Drift Check)
+        env:
+          # REQUIRED for CLI commands
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          # Generate types to a temp file
+          supabase gen types typescript --project-id $PROJECT_ID --schema public > src/types/database.types.ts
+          
+          # Check if the generated file matches your committed file
+          if [[ -n $(git status --porcelain src/types/database.types.ts) ]]; then
+            echo "❌ ERROR: Database types are out of sync with the DB."
+            echo "👉 ACTION: Run 'npm run typegen' locally and commit the result."
+            exit 1
+          else
+            echo "✅ Types are in sync."
+          fi
+
+  # 2. DEPLOY: Only runs if types are verified
   deploy-functions:
     runs-on: ubuntu-latest
-    needs: generate-types
-    env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      SUPABASE_PROJECT_ID: nctjhybvdmyxanqiphi
+    needs: verify-types
+    # Only deploy on push to main, not on PRs (optional safety)
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
+
       - name: Deploy Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
+          # Only run if functions dir exists
           if [ -d supabase/functions ]; then
-            for dir in supabase/functions/*/ ; do
-              fname=$(basename "$dir")
-              supabase functions deploy "$fname" --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
+            # Get list of function directories
+            functions=$(ls supabase/functions)
+            
+            for func in $functions; do
+              echo "Deploying $func..."
+              # REMOVED --no-verify-jwt (Secure by default)
+              supabase functions deploy "$func" --project-ref $PROJECT_ID
             done
           else
-            echo "No functions to deploy."
+             echo "No functions to deploy."
           fi
