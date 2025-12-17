@@ -75,12 +75,12 @@ const CreateClientForm: React.FC = () => {
     setSubmitSuccess(null);
 
     try {
-      const clientData: ClientInsert = {
+      // Omit contractor_id - it will be set automatically by RLS using auth.uid()
+      const clientData: Omit<ClientInsert, 'contractor_id'> = {
         type: values.type,
         name: values.name,
         email: values.email || null,
         preferred_language: values.preferred_language,
-        contractor_id: '', // Will be set by RLS/auth context
       };
 
       const { data: insertedClient, error: clientError } = await supabase
@@ -98,7 +98,8 @@ const CreateClientForm: React.FC = () => {
         throw new Error(TEXT.errors.missingClient);
       }
 
-      const propertyData: PropertyInsert = {
+      // Omit contractor_id - it will be set automatically by RLS using auth.uid()
+      const propertyData: Omit<PropertyInsert, 'contractor_id'> = {
         client_id: clientId,
         address_line1: values.address_line1,
         address_line2: values.address_line2 || null,
@@ -106,7 +107,6 @@ const CreateClientForm: React.FC = () => {
         province: values.province,
         postal_code: values.postal_code,
         nickname: values.nickname || null,
-        contractor_id: '', // Will be set by RLS/auth context
       };
 
       const { error: propertyError } = await supabase.from('properties').insert(propertyData);

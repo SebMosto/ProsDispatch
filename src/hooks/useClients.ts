@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
 
 type Client = Database['public']['Tables']['clients']['Row'];
-type Property = Database['public']['Tables']['properties']['Row'];
 
 export type ClientWithPrimaryProperty = Client & {
   primary_property?: {
@@ -23,7 +22,7 @@ export const useClients = () => {
       setError(null);
 
       try {
-        // Fetch clients with their properties (joining on the properties table)
+        // Fetch clients
         const { data: clientsData, error: clientsError } = await supabase
           .from('clients')
           .select('*')
@@ -34,24 +33,39 @@ export const useClients = () => {
           throw clientsError;
         }
 
-        // For each client, fetch their primary property (first non-deleted property)
-        const clientsWithProperties = await Promise.all(
-          (clientsData || []).map(async (client) => {
-            const { data: properties } = await supabase
-              .from('properties')
-              .select('city, address_line1')
-              .eq('client_id', client.id)
-              .is('deleted_at', null)
-              .order('created_at', { ascending: true })
-              .limit(1)
-              .single();
+        if (!clientsData || clientsData.length === 0) {
+          setClients([]);
+          return;
+        }
 
-            return {
-              ...client,
-              primary_property: properties || null,
-            };
-          })
-        );
+        // Fetch all properties for these clients in a single query
+        const clientIds = clientsData.map((c) => c.id);
+        const { data: propertiesData, error: propertiesError } = await supabase
+          .from('properties')
+          .select('client_id, city, address_line1, created_at')
+          .in('client_id', clientIds)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: true });
+
+        if (propertiesError) {
+          throw propertiesError;
+        }
+
+        // Map properties to clients (get first property per client)
+        const propertiesMap = new Map<string, { city: string; address_line1: string }>();
+        propertiesData?.forEach((prop) => {
+          if (!propertiesMap.has(prop.client_id)) {
+            propertiesMap.set(prop.client_id, {
+              city: prop.city,
+              address_line1: prop.address_line1,
+            });
+          }
+        });
+
+        const clientsWithProperties = clientsData.map((client) => ({
+          ...client,
+          primary_property: propertiesMap.get(client.id) || null,
+        }));
 
         setClients(clientsWithProperties);
       } catch (err) {
@@ -67,3 +81,4 @@ export const useClients = () => {
 
   return { clients, loading, error };
 };
+
