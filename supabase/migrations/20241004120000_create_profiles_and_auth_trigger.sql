@@ -1,10 +1,22 @@
--- 1. CLEANUP: Drop existing objects to ensure idempotency
+-- 1. CLEANUP: Drop existing objects (Safe Mode)
+-- We use a DO block to ensure we don't try to drop triggers/policies on a missing table
+do $$
+begin
+  -- Only attempt to drop objects if the 'profiles' table actually exists
+  if exists (select from pg_tables where schemaname = 'public' and tablename = 'profiles') then
+    drop trigger if exists set_profile_updated_at on public.profiles;
+    drop policy if exists "Users can view own profile" on public.profiles;
+    drop policy if exists "Users can update own profile" on public.profiles;
+  end if;
+end $$;
+
+-- Drop auth trigger (auth.users always exists, so this is safe)
 drop trigger if exists on_auth_user_created on auth.users;
-drop trigger if exists set_profile_updated_at on public.profiles;
+
+-- Drop functions (Safe to drop if exists)
 drop function if exists public.handle_new_user();
 drop function if exists public.set_profile_updated_at();
-drop policy if exists "Users can view own profile" on public.profiles;
-drop policy if exists "Users can update own profile" on public.profiles;
+
 
 -- 2. TABLE: Create profiles table if it doesn't exist
 create table if not exists public.profiles (
@@ -20,8 +32,9 @@ create table if not exists public.profiles (
 -- Enable RLS immediately
 alter table public.profiles enable row level security;
 
+
 -- 3. FUNCTIONS: Handle new user creation
--- Uses $func$ delimiter to avoid conflict with standard SQL syntax
+-- Uses CREATE OR REPLACE for idempotency
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -38,7 +51,7 @@ begin
   )
   on conflict (id) do update set
     email = excluded.email,
-    -- Only update if new data is provided, otherwise keep existing
+    -- Only update name/business if new data is provided, otherwise keep existing
     full_name = coalesce(excluded.full_name, profiles.full_name),
     business_name = coalesce(excluded.business_name, profiles.business_name),
     updated_at = timezone('utc', now());
@@ -46,11 +59,13 @@ begin
 end;
 $func$;
 
+
 -- 4. TRIGGER: Wire up the handle_new_user function
 create trigger on_auth_user_created
   after insert on auth.users
   for each row
   execute function public.handle_new_user();
+
 
 -- 5. FUNCTION: Auto-update timestamp
 create or replace function public.set_profile_updated_at()
@@ -64,13 +79,16 @@ begin
 end;
 $func$;
 
+
 -- 6. TRIGGER: Wire up the timestamp function
 create trigger set_profile_updated_at
   before update on public.profiles
   for each row 
   execute function public.set_profile_updated_at();
 
--- 7. POLICIES: Re-create RLS policies
+
+-- 7. POLICIES: Create RLS policies
+-- We already dropped these safely in Step 1, so we can just create them now
 create policy "Users can view own profile" on public.profiles
   for select using (auth.uid() = id);
 
