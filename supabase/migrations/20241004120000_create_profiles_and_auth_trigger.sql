@@ -64,6 +64,7 @@ alter table public.profiles enable row level security;
 -- Security: Runs with elevated privileges (security definer) to bypass RLS
 -- Note: Uses ON CONFLICT DO UPDATE to keep email in sync if user already exists
 --       For MVP1, all users are contractors (role is not updated on conflict)
+--       Extracts full_name and business_name from user metadata if provided
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -71,7 +72,13 @@ security definer set search_path = public
 as $func$
 begin
   insert into public.profiles (id, email, full_name, business_name, role)
-  values (new.id, new.email, null, null, 'contractor')
+  values (
+    new.id, 
+    new.email, 
+    coalesce(new.raw_user_meta_data->>'full_name', null),
+    coalesce(new.raw_user_meta_data->>'business_name', null),
+    'contractor'
+  )
   on conflict (id) do update
   set email = excluded.email,
       updated_at = timezone('utc', now());
