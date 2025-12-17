@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    # Only run if Supabase secrets are configured
-    if: ${{ secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
       
