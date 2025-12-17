@@ -5,6 +5,7 @@ import type { z } from 'zod';
 import { supabase } from '../../lib/supabase';
 import { CANADIAN_PROVINCES, ClientAndPropertySchema } from '../../schemas/client';
 import type { Database } from '../../types/database.types';
+import { useAuth } from '../../lib/auth';
 
 type FormValues = z.infer<typeof ClientAndPropertySchema>;
 type ClientInsert = Database['public']['Tables']['clients']['Insert'];
@@ -44,6 +45,7 @@ const TEXT = {
 const CreateClientForm: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const {
     register,
@@ -74,9 +76,14 @@ const CreateClientForm: React.FC = () => {
     setSubmitError(null);
     setSubmitSuccess(null);
 
+    if (!user) {
+      setSubmitError('You must be logged in to create a client.');
+      return;
+    }
+
     try {
-      // Omit contractor_id - it will be set automatically by RLS using auth.uid()
-      const clientData: Omit<ClientInsert, 'contractor_id'> = {
+      const clientData: ClientInsert = {
+        contractor_id: user.id,
         type: values.type,
         name: values.name,
         email: values.email || null,
@@ -98,8 +105,8 @@ const CreateClientForm: React.FC = () => {
         throw new Error(TEXT.errors.missingClient);
       }
 
-      // Omit contractor_id - it will be set automatically by RLS using auth.uid()
-      const propertyData: Omit<PropertyInsert, 'contractor_id'> = {
+      const propertyData: PropertyInsert = {
+        contractor_id: user.id,
         client_id: clientId,
         address_line1: values.address_line1,
         address_line2: values.address_line2 || null,
