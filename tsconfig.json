@@ -13,7 +13,12 @@
     "jsx": "react-jsx",
     "strict": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "react-hook-form": ["./src/vendor/react-hook-form"],
+      "@hookform/resolvers/zod": ["./src/vendor/hookform-resolvers-zod"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
