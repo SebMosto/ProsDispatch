@@ -10,6 +10,7 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
+-- Fix: Used $func$ delimiter to avoid conflict with outer $$ blocks
 do $$
 begin
   if not exists (
@@ -21,14 +22,14 @@ begin
     returns trigger
     language plpgsql
     security definer set search_path = public
-    as $$
+    as $func$
     begin
       insert into public.profiles (id, email, full_name, business_name, role)
       values (new.id, new.email, null, null, 'contractor')
       on conflict (id) do nothing;
       return new;
     end;
-    $$;
+    $func$;
   end if;
 end$$;
 
@@ -45,6 +46,7 @@ begin
   end if;
 end$$;
 
+-- Fix: Used $func$ delimiter here as well
 do $$
 begin
   if not exists (
@@ -56,12 +58,12 @@ begin
     returns trigger
     language plpgsql
     security definer set search_path = public
-    as $$
+    as $func$
     begin
       new.updated_at = timezone('utc', now());
       return new;
     end;
-    $$;
+    $func$;
   end if;
 end$$;
 
