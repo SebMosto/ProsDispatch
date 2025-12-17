@@ -27,6 +27,8 @@ drop function if exists public.set_profile_updated_at() cascade;
 
 -- Drop all possible policy variations to ensure clean slate
 -- (Handles cases where policy names may have changed over time)
+-- Note: Using explicit list rather than dynamic query to avoid accidentally
+--       dropping policies that should be kept in future versions
 do $policy_cleanup$
 begin
   -- Drop all existing policies on profiles table
@@ -60,7 +62,8 @@ alter table public.profiles enable row level security;
 
 -- Function: Auto-create profile when new user signs up
 -- Security: Runs with elevated privileges (security definer) to bypass RLS
--- Note: Uses ON CONFLICT DO UPDATE to keep email/role in sync if user already exists
+-- Note: Uses ON CONFLICT DO UPDATE to keep email in sync if user already exists
+--       For MVP1, all users are contractors (role is not updated on conflict)
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -71,7 +74,6 @@ begin
   values (new.id, new.email, null, null, 'contractor')
   on conflict (id) do update
   set email = excluded.email,
-      role = excluded.role,
       updated_at = timezone('utc', now());
   return new;
 end;
