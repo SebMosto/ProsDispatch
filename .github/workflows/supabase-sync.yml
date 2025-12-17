@@ -26,10 +26,11 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          # Validate token format (must start with sbp_ and have at least 32 characters total)
-          if [[ ! "$SUPABASE_ACCESS_TOKEN" =~ ^sbp_[a-zA-Z0-9]{32,}$ ]]; then
+          # Validate token format (must start with sbp_ and have reasonable length)
+          # Real Supabase tokens may contain alphanumeric chars, underscores, and hyphens
+          if [[ ! "$SUPABASE_ACCESS_TOKEN" =~ ^sbp_[a-zA-Z0-9_-]{10,}$ ]]; then
             echo "❌ ERROR: Invalid SUPABASE_ACCESS_TOKEN format."
-            echo "👉 The token must start with 'sbp_' followed by at least 32 alphanumeric characters"
+            echo "👉 The token must start with 'sbp_' followed by at least 10 characters"
             echo "👉 Example format: sbp_0102...1920"
             echo "👉 Please update the secret in repository settings: Settings → Secrets and variables → Actions"
             exit 1

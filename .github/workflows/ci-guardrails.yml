@@ -75,9 +75,9 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          # Use github.event.before for the base commit, but handle first commit case
-          # where before is all zeros (0000000000000000000000000000000000000000)
-          base: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before || '' }}
+          # For first commit (before == all zeros), base will be empty and TruffleHog scans entire repo
+          # For subsequent commits, base is the previous commit SHA for incremental scanning
+          base: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before != '' && github.event.before || '' }}
           head: HEAD
           extra_args: --only-verified
 
