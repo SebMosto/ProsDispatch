@@ -57,7 +57,7 @@ create trigger set_profile_updated_at
   for each row 
   execute function public.set_profile_updated_at();
 
--- RLS Policies
+-- RLS Policies (Corrected: Removed "if not exists")
 create policy "Users can view own profile" on public.profiles
   for select using (auth.uid() = id);
 
