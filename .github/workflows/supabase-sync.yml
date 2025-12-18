@@ -17,7 +17,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -36,7 +36,7 @@ jobs:
             echo "👉 Please update the secret in repository settings: Settings → Secrets and variables → Actions"
             exit 1
           fi
-          
+
           # Validate project ID is not empty
           if [[ -z "$PROJECT_ID" ]]; then
             echo "❌ ERROR: SUPABASE_PROJECT_ID is not set."
@@ -52,7 +52,7 @@ jobs:
         run: |
           # Generate types to a temp file
           supabase gen types typescript --project-id $PROJECT_ID --schema public > src/types/database.types.ts
-          
+
           # Check if the generated file matches your committed file
           if [[ -n $(git status --porcelain src/types/database.types.ts) ]]; then
             echo "❌ ERROR: Database types are out of sync with the DB."
@@ -82,7 +82,7 @@ jobs:
           if [ -d supabase/functions ]; then
             # Get list of function directories
             functions=$(ls supabase/functions)
-            
+
             for func in $functions; do
               echo "Deploying $func..."
               # REMOVED --no-verify-jwt (Secure by default)
