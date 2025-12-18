@@ -23,8 +23,8 @@ create table jobs (
   status job_status not null default 'draft',
   
   service_date date,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now()),
   deleted_at timestamptz -- Soft Delete for Tax Integrity
 );
 
@@ -34,7 +34,25 @@ create index jobs_client_id_idx on jobs(client_id);
 create index jobs_property_id_idx on jobs(property_id);
 create index jobs_status_idx on jobs(status);
 
--- 4. Security & RLS (Row Level Security)
+-- 4. Function: Auto-update timestamp
+create or replace function public.set_jobs_updated_at()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $func$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$func$;
+
+-- 5. Trigger: Wire up the timestamp function
+create trigger set_jobs_updated_at
+  before update on public.jobs
+  for each row
+  execute function public.set_jobs_updated_at();
+
+-- 6. Security & RLS (Row Level Security)
 alter table jobs enable row level security;
 
 -- Policy: Contractor can only select their own jobs
