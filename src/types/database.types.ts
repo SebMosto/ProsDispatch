@@ -133,6 +133,63 @@ export type Database = {
           },
         ]
       }
+      jobs: {
+        Row: {
+          client_id: string
+          contractor_id: string
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          id: string
+          property_id: string
+          service_date: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          contractor_id: string
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          property_id: string
+          service_date?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          contractor_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          property_id?: string
+          service_date?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -142,6 +199,7 @@ export type Database = {
     }
     Enums: {
       client_type: "individual" | "business"
+      job_status: "draft" | "sent" | "approved" | "in_progress" | "completed" | "invoiced" | "paid" | "archived"
       supported_locale: "en" | "fr"
     }
     CompositeTypes: {
@@ -271,6 +329,7 @@ export const Constants = {
   public: {
     Enums: {
       client_type: ["individual", "business"],
+      job_status: ["draft", "sent", "approved", "in_progress", "completed", "invoiced", "paid", "archived"],
       supported_locale: ["en", "fr"],
     },
   },
