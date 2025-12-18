@@ -61,7 +61,7 @@ deploy-functions:
   needs: verify-types
   # Only deploy on push to main, not on PRs (optional safety)
   # Also requires Supabase secrets to be configured
-  if: github.ref == 'refs/heads/main' && secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID
+  if: ${{ github.ref == 'refs/heads/main' && secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID }}
   steps:
     # ... deployment steps
 ```
