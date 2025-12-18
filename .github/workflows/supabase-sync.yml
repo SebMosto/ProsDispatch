@@ -10,11 +10,15 @@ jobs:
   # 1. GUARDRAIL: Ensure your code matches the DB
   verify-types:
     runs-on: ubuntu-latest
+    # Only run if Supabase secrets are configured
+    # This allows the workflow to pass in forks/repos without Supabase setup
+    # Run when *either* secret is present so misconfigurations surface as failures
+    if: ${{ secrets.SUPABASE_ACCESS_TOKEN || secrets.SUPABASE_PROJECT_ID }}
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -33,7 +37,7 @@ jobs:
             echo "👉 Please update the secret in repository settings: Settings → Secrets and variables → Actions"
             exit 1
           fi
-          
+
           # Validate project ID is not empty
           if [[ -z "$PROJECT_ID" ]]; then
             echo "❌ ERROR: SUPABASE_PROJECT_ID is not set."
@@ -49,7 +53,7 @@ jobs:
         run: |
           # Generate types to a temp file
           supabase gen types typescript --project-id $PROJECT_ID --schema public > src/types/database.types.ts
-          
+
           # Check if the generated file matches your committed file
           if [[ -n $(git status --porcelain src/types/database.types.ts) ]]; then
             echo "❌ ERROR: Database types are out of sync with the DB."
@@ -64,7 +68,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: verify-types
     # Only deploy on push to main, not on PRs (optional safety)
-    if: github.ref == 'refs/heads/main'
+    # Also requires Supabase secrets to be configured
+    # Run when any Supabase secret exists; misconfigurations are caught in verify-types
+    if: ${{ github.ref == 'refs/heads/main' && (secrets.SUPABASE_ACCESS_TOKEN || secrets.SUPABASE_PROJECT_ID) }}
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
@@ -78,7 +84,7 @@ jobs:
           if [ -d supabase/functions ]; then
             # Get list of function directories
             functions=$(ls supabase/functions)
-            
+
             for func in $functions; do
               echo "Deploying $func..."
               # REMOVED --no-verify-jwt (Secure by default)
