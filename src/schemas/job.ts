@@ -1,9 +1,22 @@
 import { z } from 'zod';
 
+// Job status enum from database
+export const JOB_STATUSES = [
+  'draft',
+  'sent',
+  'approved',
+  'in_progress',
+  'completed',
+  'invoiced',
+  'paid',
+  'archived',
+] as const;
+
 /**
  * JobCreateSchema - Schema for creating a new job
  * 
  * Required fields:
+ * - contractor_id: UUID of the contractor (owner)
  * - client_id: UUID of the client
  * - property_id: UUID of the property
  * - title: Short label for the job (e.g., "Kitchen faucet repair")
@@ -11,8 +24,10 @@ import { z } from 'zod';
  * Optional fields:
  * - description: Detailed description of the work
  * - service_date: Scheduled date for the service
+ * - status: Job status (defaults to 'draft')
  */
 export const JobCreateSchema = z.object({
+  contractor_id: z.string().uuid("Invalid contractor ID"),
   client_id: z.string().uuid("Invalid client ID"),
   property_id: z.string().uuid("Invalid property ID"),
   title: z.string()
@@ -28,22 +43,28 @@ export const JobCreateSchema = z.object({
     ),
     z.date()
   ]).optional(),
+  status: z.enum(JOB_STATUSES).default('draft'),
 });
 
 /**
  * JobUpdateSchema - Schema for updating job details
  * 
  * Note: Status changes must be handled via advanceJobStatus() helper only.
- * This schema is for editing title, description, and service_date fields.
+ * This schema is for editing title, description, service_date, and related fields.
+ * All fields are optional, but description and service_date can be set to null to clear them.
  */
 export const JobUpdateSchema = z.object({
+  contractor_id: z.string().uuid("Contractor ID must be a valid UUID").optional(),
+  client_id: z.string().uuid("Client ID must be a valid UUID").optional(),
+  property_id: z.string().uuid("Property ID must be a valid UUID").optional(),
   title: z.string()
     .min(2, "Title must be at least 2 characters")
     .max(80, "Title must not exceed 80 characters")
     .optional(),
-  description: z.string()
-    .max(2000, "Description must not exceed 2000 characters")
-    .optional(),
+  description: z.union([
+    z.string().max(2000, "Description must not exceed 2000 characters"),
+    z.null()
+  ]).optional(),
   service_date: z.union([
     z.string().regex(
       /^\d{4}-\d{2}-\d{2}$/,
@@ -52,7 +73,16 @@ export const JobUpdateSchema = z.object({
     z.date(),
     z.null()
   ]).optional(),
-});
+  status: z.enum(JOB_STATUSES).optional(),
+}).refine(
+  (data) => {
+    // Require at least one field to be present
+    return Object.keys(data).length > 0;
+  },
+  {
+    message: "At least one field is required to update a job",
+  }
+);
 
 // Type exports for TypeScript inference
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;

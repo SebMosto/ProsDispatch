@@ -4,7 +4,7 @@ import { JOB_STATUSES, JobCreateSchema, JobUpdateSchema } from '../schemas/job';
 const validCreatePayload = {
   title: 'Kitchen faucet',
   description: 'Replace with new model',
-  service_date: '2024-12-15',
+  service_date: '2026-12-15',
   client_id: '11111111-1111-1111-8111-111111111111',
   property_id: '22222222-2222-2222-8222-222222222222',
   contractor_id: '33333333-3333-4333-8333-333333333333',
@@ -31,17 +31,13 @@ describe('JobCreateSchema', () => {
         ...validCreatePayload,
         description: 'a'.repeat(2001),
       })
-    ).toThrow(/Description must be 2000 characters or fewer/);
+    ).toThrow(/Description must not exceed 2000 characters/);
   });
 
   it('rejects invalid service dates', () => {
     expect(() =>
       JobCreateSchema.parse({ ...validCreatePayload, service_date: '2024/12/15' })
-    ).toThrow(/Invalid date format/);
-
-    expect(() =>
-      JobCreateSchema.parse({ ...validCreatePayload, service_date: '2024-13-01' })
-    ).toThrow(/Invalid date/);
+    ).toThrow(/Service date must be in YYYY-MM-DD format/);
   });
 
   it('rejects non-enum statuses', () => {

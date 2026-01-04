@@ -5,6 +5,7 @@ describe('JobCreateSchema', () => {
   describe('Valid inputs', () => {
     it('should accept valid job creation with all fields', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Kitchen faucet repair',
@@ -18,6 +19,7 @@ describe('JobCreateSchema', () => {
 
     it('should accept valid job creation without optional fields', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Kitchen faucet repair',
@@ -29,6 +31,7 @@ describe('JobCreateSchema', () => {
 
     it('should accept title with minimum length of 2 characters', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'AB',
@@ -40,6 +43,7 @@ describe('JobCreateSchema', () => {
 
     it('should accept title with maximum length of 80 characters', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'A'.repeat(80),
@@ -51,6 +55,7 @@ describe('JobCreateSchema', () => {
 
     it('should accept description with maximum length of 2000 characters', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Test job',
@@ -63,6 +68,7 @@ describe('JobCreateSchema', () => {
 
     it('should accept Date object for service_date', () => {
       const validJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Kitchen faucet repair',
@@ -107,6 +113,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject invalid client_id format', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: 'not-a-uuid',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Kitchen faucet repair',
@@ -121,6 +128,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject invalid property_id format', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: 'not-a-uuid',
         title: 'Kitchen faucet repair',
@@ -135,6 +143,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject title shorter than 2 characters', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'A',
@@ -149,6 +158,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject title longer than 80 characters', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'A'.repeat(81),
@@ -163,6 +173,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject description longer than 2000 characters', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Test job',
@@ -178,6 +189,7 @@ describe('JobCreateSchema', () => {
 
     it('should reject invalid service_date format', () => {
       const invalidJob = {
+        contractor_id: '323e4567-e89b-12d3-a456-426614174000',
         client_id: '123e4567-e89b-12d3-a456-426614174000',
         property_id: '223e4567-e89b-12d3-a456-426614174000',
         title: 'Kitchen faucet repair',
@@ -251,11 +263,14 @@ describe('JobUpdateSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should accept empty update object', () => {
-      const validUpdate = {};
+    it('should reject empty update object', () => {
+      const invalidUpdate = {};
 
-      const result = JobUpdateSchema.safeParse(validUpdate);
-      expect(result.success).toBe(true);
+      const result = JobUpdateSchema.safeParse(invalidUpdate);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0].message).toContain('At least one field is required');
+      }
     });
   });
 
