@@ -39,21 +39,3 @@ Homeowner vaulting remains **strictly forbidden**.
 ### 4.2 (New): Subscription Billing
 
 ProsDispatch uses Stripe Billing for contractor subscription management.
-
-### 4.3 (New): Referral Engine
-
-ProsDispatch operates a referral reward system:
-
-* Contractors earn **20%** of a referee's subscription for **6 months**
-* Commission is paid in **cash** via Stripe Connect Transfers
-* Payouts operate on **Net-30**
-* Referral tracking uses dedicated backend tables
-* Homeowners cannot participate
-
-### 4.4 (New): Revenue Stream Separation
-
-* SaaS Billing
-* Job Payments
-* Referral Commissions
-
-These must never interact.

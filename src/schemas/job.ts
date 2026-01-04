@@ -1,50 +1,59 @@
 import { z } from 'zod';
-import { Constants } from '../types/database.types';
 
-export const JOB_STATUSES = Constants.public.Enums.job_status;
-
-const JobStatusSchema = z.enum(JOB_STATUSES);
-
-const ServiceDateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)')
-  .refine((value) => !Number.isNaN(Date.parse(value)), 'Invalid date')
-  .optional()
-  .nullable();
-
-const DescriptionSchema = z
-  .string()
-  .max(2000, 'Description must be 2000 characters or fewer')
-  .optional()
-  .nullable();
-
-const TitleSchema = z
-  .string()
-  .min(2, 'Title must be at least 2 characters')
-  .max(80, 'Title must be 80 characters or fewer');
-
-const UuidSchema = (fieldName: string) =>
-  z.string().uuid(`${fieldName} must be a valid UUID`);
-
+/**
+ * JobCreateSchema - Schema for creating a new job
+ * 
+ * Required fields:
+ * - client_id: UUID of the client
+ * - property_id: UUID of the property
+ * - title: Short label for the job (e.g., "Kitchen faucet repair")
+ * 
+ * Optional fields:
+ * - description: Detailed description of the work
+ * - service_date: Scheduled date for the service
+ */
 export const JobCreateSchema = z.object({
-  title: TitleSchema,
-  description: DescriptionSchema,
-  status: JobStatusSchema.default('draft'),
-  service_date: ServiceDateSchema,
-  client_id: UuidSchema('Client ID'),
-  property_id: UuidSchema('Property ID'),
-  contractor_id: UuidSchema('Contractor ID'),
+  client_id: z.string().uuid("Invalid client ID"),
+  property_id: z.string().uuid("Invalid property ID"),
+  title: z.string()
+    .min(2, "Title must be at least 2 characters")
+    .max(80, "Title must not exceed 80 characters"),
+  description: z.string()
+    .max(2000, "Description must not exceed 2000 characters")
+    .optional(),
+  service_date: z.union([
+    z.string().regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Service date must be in YYYY-MM-DD format"
+    ),
+    z.date()
+  ]).optional(),
 });
 
-export const JobUpdateSchema = z
-  .object({
-    title: TitleSchema.optional(),
-    description: DescriptionSchema,
-    status: JobStatusSchema.optional(),
-    service_date: ServiceDateSchema,
-    client_id: UuidSchema('Client ID').optional(),
-    property_id: UuidSchema('Property ID').optional(),
-  })
-  .refine((data) => Object.keys(data).length > 0, {
-    message: 'At least one field is required to update a job',
-  });
+/**
+ * JobUpdateSchema - Schema for updating job details
+ * 
+ * Note: Status changes must be handled via advanceJobStatus() helper only.
+ * This schema is for editing title, description, and service_date fields.
+ */
+export const JobUpdateSchema = z.object({
+  title: z.string()
+    .min(2, "Title must be at least 2 characters")
+    .max(80, "Title must not exceed 80 characters")
+    .optional(),
+  description: z.string()
+    .max(2000, "Description must not exceed 2000 characters")
+    .optional(),
+  service_date: z.union([
+    z.string().regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Service date must be in YYYY-MM-DD format"
+    ),
+    z.date(),
+    z.null()
+  ]).optional(),
+});
+
+// Type exports for TypeScript inference
+export type JobCreateInput = z.infer<typeof JobCreateSchema>;
+export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;

@@ -1,5 +1,8 @@
 # Governance Amendment v1.2: SaaS Billing & Referrals
 
+> **ARCHIVED:** This amendment is retained for historical context only. Referral and commission features were removed from MVP1
+> scope and are not active directives.
+
 **Amendment Version:** 1.2  
 **Date:** November 2025  
 **Status:** Approved  
