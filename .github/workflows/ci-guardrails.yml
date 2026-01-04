@@ -72,14 +72,11 @@ jobs:
         run: npm audit --audit-level=critical
       
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@v3.63.0
+        uses: trufflesecurity/trufflehog@v3.88.0
         with:
           path: ./
-          # For PR events, scan from base to head of the PR
-          # For push events with valid before SHA, scan from before to HEAD
-          # Otherwise scan the last commit only
-          base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before != '0000000000000000000000000000000000000000' && github.event.before != '' && github.event.before) || 'HEAD~1' }}
-          head: HEAD
+          base: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}"
+          head: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'HEAD' }}"
           extra_args: --only-verified
 
   localization-check:
