@@ -52,6 +52,7 @@ export const JobCreateSchema = z.object({
  * Note: Status changes must be handled via advanceJobStatus() helper only.
  * This schema is for editing title, description, service_date, and related fields.
  * All fields are optional, but description and service_date can be set to null to clear them.
+ * At least one field must be provided for a valid update.
  */
 export const JobUpdateSchema = z.object({
   contractor_id: z.string().uuid("Contractor ID must be a valid UUID").optional(),
@@ -73,11 +74,10 @@ export const JobUpdateSchema = z.object({
     z.date(),
     z.null()
   ]).optional(),
-  status: z.enum(JOB_STATUSES).optional(),
 }).refine(
   (data) => {
-    // Require at least one field to be present
-    return Object.keys(data).length > 0;
+    // Require at least one field to be present with a non-undefined value
+    return Object.values(data).some(value => value !== undefined);
   },
   {
     message: "At least one field is required to update a job",

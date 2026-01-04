@@ -77,10 +77,4 @@ describe('JobUpdateSchema', () => {
       JobUpdateSchema.parse({ client_id: 'not-a-uuid' })
     ).toThrow(/Client ID must be a valid UUID/);
   });
-
-  it('validates status enum on update', () => {
-    expect(() =>
-      JobUpdateSchema.parse({ status: 'done' as (typeof JOB_STATUSES)[number] })
-    ).toThrow();
-  });
 });
