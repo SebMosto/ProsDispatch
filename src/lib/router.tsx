@@ -56,6 +56,17 @@ interface RouteProps {
   element: ReactNode;
 }
 
+const matchPath = (routePath: string, currentPath: string) => {
+  if (routePath === currentPath) return true;
+
+  const routeSegments = routePath.split('/').filter(Boolean);
+  const pathSegments = currentPath.split('/').filter(Boolean);
+
+  if (routeSegments.length !== pathSegments.length) return false;
+
+  return routeSegments.every((segment, index) => segment.startsWith(':') || segment === pathSegments[index]);
+};
+
 export const Routes = ({ children }: { children: ReactNode }) => {
   const { path } = useRouter();
   const routeElements = Children.toArray(children) as ReactElement<RouteProps>[];
@@ -68,7 +79,7 @@ export const Routes = ({ children }: { children: ReactNode }) => {
       continue;
     }
 
-    if (route.props.path === path) {
+    if (matchPath(route.props.path, path)) {
       return <>{route.props.element}</>;
     }
   }

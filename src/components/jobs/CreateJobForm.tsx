@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,8 @@ const CreateJobForm = () => {
     initialValues,
   });
 
+  const hasAppliedDraft = useRef(false);
+
   const {
     register,
     handleSubmit,
@@ -47,10 +49,21 @@ const CreateJobForm = () => {
   });
 
   useEffect(() => {
-    if (draft.hydrated) {
-      draft.setValues(watch() as FormValues);
-    }
-  }, [watch, draft.hydrated, draft]);
+    if (!draft.hydrated || hasAppliedDraft.current) return;
+
+    reset(draft.values);
+    hasAppliedDraft.current = true;
+  }, [draft.values, draft.hydrated, reset]);
+
+  useEffect(() => {
+    if (!draft.hydrated) return undefined;
+
+    const subscription = watch((value) => {
+      draft.setValues(value as FormValues);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [draft, draft.hydrated, watch]);
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
