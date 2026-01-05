@@ -1,81 +1,28 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { JobCreateInput } from '../schemas/job';
-import { jobRepository, type JobRecord } from '../repositories/jobRepository';
-import type { RepositoryError } from '../repositories/base';
+import { useCreateJobMutation } from './useJobMutations';
 
 interface UseCreateJobOptions {
-  onSuccess?: (job: JobRecord) => void;
-}
-
-interface CreateJobResult {
-  job?: JobRecord;
-  error?: RepositoryError;
+  onSuccess?: () => void;
 }
 
 export const useCreateJob = (options?: UseCreateJobOptions) => {
-  const [optimisticJob, setOptimisticJob] = useState<JobRecord | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<RepositoryError | null>(null);
+  const mutation = useCreateJobMutation();
 
-  const buildOptimisticJob = useCallback(
-    (input: JobCreateInput): JobRecord => {
-      const now = new Date().toISOString();
-      return {
-        id: `temp-${crypto.randomUUID()}`,
-        contractor_id: input.contractor_id,
-        client_id: input.client_id,
-        property_id: input.property_id,
-        title: input.title,
-        description: input.description ?? null,
-        status: input.status ?? 'draft',
-        service_date: input.service_date
-          ? input.service_date instanceof Date
-            ? input.service_date.toISOString().slice(0, 10)
-            : input.service_date
-          : null,
-        created_at: now,
-        updated_at: now,
-        deleted_at: null,
-      };
-    },
-    [],
-  );
+  const wrappedCreate = async (input: JobCreateInput) => {
+    const job = await mutation.mutateAsync(input);
+    options?.onSuccess?.();
+    return job;
+  };
 
-  const createJob = useCallback(
-    async (input: JobCreateInput): Promise<CreateJobResult> => {
-      setIsLoading(true);
-      setError(null);
-
-      const optimistic = buildOptimisticJob(input);
-      setOptimisticJob(optimistic);
-
-      const result = await jobRepository.create(input);
-
-      setIsLoading(false);
-
-      if (result.error || !result.data) {
-        setError(result.error ?? null);
-        return { job: optimistic, error: result.error };
-      }
-
-      setOptimisticJob(null);
-      options?.onSuccess?.(result.data);
-      return { job: result.data };
-    },
-    [buildOptimisticJob, options],
-  );
-
-  const state = useMemo(
+  return useMemo(
     () => ({
-      createJob,
-      optimisticJob,
-      isLoading,
-      error,
+      createJob: wrappedCreate,
+      isLoading: mutation.isPending,
+      error: mutation.error ?? null,
     }),
-    [createJob, optimisticJob, isLoading, error],
+    [mutation.error, mutation.isPending, wrappedCreate],
   );
-
-  return state;
 };
 
 export type UseCreateJobReturn = ReturnType<typeof useCreateJob>;

@@ -1,43 +1,32 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { JobListParams, JobRecord } from '../repositories/jobRepository';
 import { jobRepository } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
 
-interface UseJobsOptions {
-  optimisticJobs?: JobRecord[];
-}
+const FIVE_MINUTES = 5 * 60 * 1000;
 
-export const useJobs = (params?: JobListParams, options?: UseJobsOptions) => {
-  const [jobs, setJobs] = useState<JobRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<RepositoryError | null>(null);
+export const useJobs = (params?: JobListParams) => {
+  const queryKey = useMemo(() => ['jobs', params ?? {}], [params]);
 
-  const fetchJobs = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const query = useQuery<JobRecord[], RepositoryError>({
+    queryKey,
+    queryFn: async () => {
+      const result = await jobRepository.list(params);
+      if (result.error) {
+        throw result.error;
+      }
+      return result.data ?? [];
+    },
+    staleTime: FIVE_MINUTES,
+  });
 
-    const result = await jobRepository.list(params);
-
-    if (result.error) {
-      setError(result.error);
-      setJobs([]); // On error, clear fetched jobs
-    } else {
-      setJobs(result.data ?? []); // Only store fetched jobs
-    }
-
-    setLoading(false);
-  }, [params]);
-
-  useEffect(() => {
-    void fetchJobs();
-  }, [fetchJobs]);
-
-  const combinedJobs = useMemo(() => {
-    // Combine optimistic jobs with fetched jobs for rendering.
-    return [...(options?.optimisticJobs ?? []), ...jobs];
-  }, [jobs, options?.optimisticJobs]);
-
-  return { jobs: combinedJobs, loading, error, refetch: fetchJobs };
+  return {
+    jobs: query.data ?? [],
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export type UseJobsReturn = ReturnType<typeof useJobs>;

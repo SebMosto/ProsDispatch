@@ -1,22 +1,17 @@
 import { z } from 'zod';
 
-// Job status enum from database
 export const JOB_STATUSES = [
   'draft',
-  'sent',
-  'approved',
+  'scheduled',
   'in_progress',
   'completed',
-  'invoiced',
-  'paid',
-  'archived',
+  'cancelled',
 ] as const;
 
 /**
  * JobCreateSchema - Schema for creating a new job
  * 
  * Required fields:
- * - contractor_id: UUID of the contractor (owner)
  * - client_id: UUID of the client
  * - property_id: UUID of the property
  * - title: Short label for the job (e.g., "Kitchen faucet repair")
@@ -27,22 +22,22 @@ export const JOB_STATUSES = [
  * - status: Job status (defaults to 'draft')
  */
 export const JobCreateSchema = z.object({
-  contractor_id: z.string().uuid("Invalid contractor ID"),
-  client_id: z.string().uuid("Invalid client ID"),
-  property_id: z.string().uuid("Invalid property ID"),
-  title: z.string()
-    .min(2, "Title must be at least 2 characters")
-    .max(80, "Title must not exceed 80 characters"),
-  description: z.string()
-    .max(2000, "Description must not exceed 2000 characters")
+  client_id: z.string().uuid('Invalid client ID'),
+  property_id: z.string().uuid('Invalid property ID'),
+  title: z
+    .string()
+    .min(2, 'Title must be at least 2 characters')
+    .max(80, 'Title must not exceed 80 characters'),
+  description: z
+    .string()
+    .max(2000, 'Description must not exceed 2000 characters')
     .optional(),
-  service_date: z.union([
-    z.string().regex(
-      /^\d{4}-\d{2}-\d{2}$/,
-      "Service date must be in YYYY-MM-DD format"
-    ),
-    z.date()
-  ]).optional(),
+  service_date: z
+    .union([
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Service date must be in YYYY-MM-DD format'),
+      z.date(),
+    ])
+    .optional(),
   status: z.enum(JOB_STATUSES).default('draft'),
 });
 
@@ -54,36 +49,37 @@ export const JobCreateSchema = z.object({
  * All fields are optional, but description and service_date can be set to null to clear them.
  * At least one field must be provided for a valid update.
  */
-export const JobUpdateSchema = z.object({
-  contractor_id: z.string().uuid("Contractor ID must be a valid UUID").optional(),
-  client_id: z.string().uuid("Client ID must be a valid UUID").optional(),
-  property_id: z.string().uuid("Property ID must be a valid UUID").optional(),
-  title: z.string()
-    .min(2, "Title must be at least 2 characters")
-    .max(80, "Title must not exceed 80 characters")
-    .optional(),
-  description: z.union([
-    z.string().max(2000, "Description must not exceed 2000 characters"),
-    z.null()
-  ]).optional(),
-  service_date: z.union([
-    z.string().regex(
-      /^\d{4}-\d{2}-\d{2}$/,
-      "Service date must be in YYYY-MM-DD format"
-    ),
-    z.date(),
-    z.null()
-  ]).optional(),
-}).refine(
-  (data) => {
-    // Require at least one field to be present with a non-undefined value
-    return Object.values(data).some(value => value !== undefined);
-  },
-  {
-    message: "At least one field is required to update a job",
-  }
-);
+export const JobUpdateSchema = z
+  .object({
+    client_id: z.string().uuid('Client ID must be a valid UUID').optional(),
+    property_id: z.string().uuid('Property ID must be a valid UUID').optional(),
+    title: z
+      .string()
+      .min(2, 'Title must be at least 2 characters')
+      .max(80, 'Title must not exceed 80 characters')
+      .optional(),
+    description: z
+      .union([z.string().max(2000, 'Description must not exceed 2000 characters'), z.null()])
+      .optional(),
+    service_date: z
+      .union([
+        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Service date must be in YYYY-MM-DD format'),
+        z.date(),
+        z.null(),
+      ])
+      .optional(),
+    status: z.enum(JOB_STATUSES).optional(),
+  })
+  .refine(
+    (data) => {
+      return Object.values(data).some((value) => value !== undefined);
+    },
+    {
+      message: 'At least one field is required to update a job',
+    },
+  );
 
 // Type exports for TypeScript inference
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;
 export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
+export type JobStatus = (typeof JOB_STATUSES)[number];

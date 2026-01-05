@@ -15,7 +15,6 @@ const DRAFT_STORAGE_KEY = 'job:create:draft';
 type FormValues = z.infer<typeof JobCreateSchema>;
 
 const initialValues: FormValues = {
-  contractor_id: '',
   client_id: '',
   property_id: '',
   title: '',
@@ -77,20 +76,22 @@ const CreateJobForm = () => {
       return;
     }
 
-    const payload = {
+    const parsed = JobCreateSchema.safeParse({
       ...values,
-      contractor_id: user.id,
       description: values.description || undefined,
       service_date: values.service_date || undefined,
-    } as FormValues;
-
-    const parsed = JobCreateSchema.safeParse(payload);
+    });
     if (!parsed.success) {
       setSubmitError(parsed.error.issues[0]?.message ?? t('jobs.create.errors.generic'));
       return;
     }
 
-    await createJob(parsed.data);
+    try {
+      await createJob(parsed.data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('jobs.create.errors.generic');
+      setSubmitError(message);
+    }
   };
 
   return (

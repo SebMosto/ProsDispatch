@@ -1,12 +1,13 @@
 import { reportApiOnline } from '../lib/network';
+import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
-import type { JobCreateInput, JobUpdateInput } from '../schemas/job';
+import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
 
 export type JobRecord = Database['public']['Tables']['jobs']['Row'];
 export type JobListParams = RepositoryListParams & {
-  status?: Database['public']['Enums']['job_status'][];
+  status?: JobStatus[];
   includeDeleted?: boolean;
 };
 
@@ -68,8 +69,32 @@ export class JobRepository
   }
 
   async create(input: JobCreateInput): Promise<RepositoryResult<JobRecord>> {
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    if (authError) {
+      return {
+        data: null,
+        error: {
+          message: authError.message,
+          reason: 'validation',
+          cause: authError,
+        },
+      };
+    }
+
+    if (!authData?.user) {
+      return {
+        data: null,
+        error: {
+          message: 'User must be authenticated to create a job',
+          reason: 'validation',
+        },
+      };
+    }
+
     const payload = {
       ...input,
+      contractor_id: authData.user.id,
       description: input.description ?? null,
       service_date: normalizeDate(input.service_date),
     } satisfies Database['public']['Tables']['jobs']['Insert'];
