@@ -2,7 +2,7 @@
 
 \# SPEC-003: Job Management (MVP1)
 
-\*\*Version:\*\* 1.1 (Canonical / Post-Auditor Decisions)  
+\*\*Version:\*\* 1.2 (Canonical / Post-Auditor Decisions)
 \*\*Status:\*\* APPROVED for Implementation  
 \*\*Phase:\*\* 1.3 (Core Mechanics)  
 \*\*Owner:\*\* Codex (Implementation) / Gemini (Audit)  

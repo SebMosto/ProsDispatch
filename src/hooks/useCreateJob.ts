@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { IllegalJobStatusTransitionError, advanceJobStatus } from '../lib/jobStatus';
 import type { JobCreateInput } from '../schemas/job';
 import { jobRepository, type JobRecord } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
@@ -16,6 +17,14 @@ export const useCreateJob = (options?: UseCreateJobOptions) => {
   const [optimisticJob, setOptimisticJob] = useState<JobRecord | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<RepositoryError | null>(null);
+
+  const normalizeStatus = useCallback((input: JobCreateInput) => {
+    if (input.status && input.status !== 'draft') {
+      return advanceJobStatus('draft', input.status);
+    }
+
+    return 'draft';
+  }, []);
 
   const buildOptimisticJob = useCallback(
     (input: JobCreateInput): JobRecord => {
@@ -46,10 +55,33 @@ export const useCreateJob = (options?: UseCreateJobOptions) => {
       setIsLoading(true);
       setError(null);
 
-      const optimistic = buildOptimisticJob(input);
+      let status = 'draft' as JobRecord['status'];
+      try {
+        status = normalizeStatus(input);
+      } catch (caughtError) {
+        const transitionError = caughtError as Error;
+        const repositoryError: RepositoryError = {
+          message:
+            transitionError instanceof IllegalJobStatusTransitionError
+              ? transitionError.message
+              : 'Invalid job status transition',
+          reason: 'validation',
+          cause: caughtError,
+        };
+        setError(repositoryError);
+        setIsLoading(false);
+        return { job: undefined, error: repositoryError };
+      }
+
+      const sanitizedInput: JobCreateInput = {
+        ...input,
+        status,
+      };
+
+      const optimistic = buildOptimisticJob(sanitizedInput);
       setOptimisticJob(optimistic);
 
-      const result = await jobRepository.create(input);
+      const result = await jobRepository.create(sanitizedInput);
 
       setIsLoading(false);
 

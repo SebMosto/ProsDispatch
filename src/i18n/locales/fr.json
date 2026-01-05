@@ -80,7 +80,7 @@
     "create": {
       "title": "Créer un travail",
       "subtitle": "Suivez le travail pour un client et une propriété.",
-      "descriptionWarning": "N'incluez pas de codes d'accès ou d'informations personnelles.",
+      "descriptionWarning": "N’inclus pas de codes d’accès ni de renseignements personnels.",
       "labels": {
         "title": "Titre du travail",
         "clientId": "ID client",
