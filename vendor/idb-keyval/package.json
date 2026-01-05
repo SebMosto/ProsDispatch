@@ -1,0 +1,10 @@
+{
+  "name": "idb-keyval",
+  "version": "6.2.1",
+  "description": "A minimal IndexedDB key-value store (vendored for offline builds)",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "license": "MIT"
+}
