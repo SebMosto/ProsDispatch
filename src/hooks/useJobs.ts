@@ -20,22 +20,21 @@ export const useJobs = (params?: JobListParams, options?: UseJobsOptions) => {
 
     if (result.error) {
       setError(result.error);
-      setJobs(options?.optimisticJobs ?? []);
+      setJobs([]); // On error, clear fetched jobs
     } else {
-      const fetched = result.data ?? [];
-      setJobs([...(options?.optimisticJobs ?? []), ...fetched]);
+      setJobs(result.data ?? []); // Only store fetched jobs
     }
 
     setLoading(false);
-  }, [options?.optimisticJobs, params]);
+  }, [params]);
 
   useEffect(() => {
     void fetchJobs();
   }, [fetchJobs]);
 
   const combinedJobs = useMemo(() => {
-    const optimisticMap = new Map(options?.optimisticJobs?.map((job) => [job.id, job]));
-    return jobs.map((job) => optimisticMap?.get(job.id) ?? job);
+    // Combine optimistic jobs with fetched jobs for rendering.
+    return [...(options?.optimisticJobs ?? []), ...jobs];
   }, [jobs, options?.optimisticJobs]);
 
   return { jobs: combinedJobs, loading, error, refetch: fetchJobs };
