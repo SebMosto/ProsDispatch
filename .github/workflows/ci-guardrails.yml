@@ -273,6 +273,9 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Run tests (if test script exists)
+        env:
+          VITE_SUPABASE_URL: "https://placeholder.supabase.co"
+          VITE_SUPABASE_ANON_KEY: "placeholder-anon-key-for-ci-testing"
         run: |
           if grep -q '"test":' package.json; then
             npm test
