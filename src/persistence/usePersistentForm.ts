@@ -41,12 +41,20 @@ export function usePersistentForm<T>({
 
     get<PersistedDraft<T>>(storageKey)
       .then((storedDraft) => {
-        if (!isActive || !storedDraft) return;
+        if (!isActive) return;
 
-        setValues(storedDraft.data);
-        setDraftStatus('saved_locally');
-        setIsDirty(true);
-        setLastSavedAt(storedDraft.lastSavedAt ?? null);
+        if (storedDraft) {
+          setValues(storedDraft.data);
+          setDraftStatus('saved_locally');
+          setIsDirty(true);
+          setLastSavedAt(storedDraft.lastSavedAt ?? null);
+        } else {
+          // No draft found for this key - reset to initial values
+          setValues(initialValues);
+          setDraftStatus('idle');
+          setIsDirty(false);
+          setLastSavedAt(null);
+        }
       })
       .catch(() => {
         // IndexedDB may be unavailable (SSR or private mode). Fail silently.
@@ -60,7 +68,7 @@ export function usePersistentForm<T>({
     return () => {
       isActive = false;
     };
-  }, [enabled, storageKey]);
+  }, [enabled, storageKey, initialValues]);
 
   useEffect(() => {
     if (!enabled || !hydrated) return undefined;
