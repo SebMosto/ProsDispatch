@@ -292,6 +292,9 @@ jobs:
             echo "Tests are required for production-ready code"
             echo "This is currently a warning but should be addressed"
           fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
   code-coverage:
     name: Code Coverage Check
