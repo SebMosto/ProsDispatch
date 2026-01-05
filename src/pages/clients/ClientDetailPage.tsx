@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate } from '../../lib/router';
+import { Link, useLocation, useNavigate } from '../../lib/router';
 import { clientRepository } from '../../repositories/clientRepository';
 import { useProperties } from '../../hooks/useProperties';
 
@@ -138,9 +138,18 @@ const ClientDetailPage = () => {
       </section>
 
       <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <header className="flex items-center justify-between">
+        <header className="flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-slate-900">{TEXT.propertiesHeader}</h2>
-          {loadingProperties ? <span className="text-xs text-slate-600">Loading...</span> : null}
+          <div className="flex items-center gap-3">
+            {loadingProperties ? <span className="text-xs text-slate-600">Loading...</span> : null}
+            <Link
+              to={`/clients/${client.id}/properties/new`}
+              state={{ clientId: client.id }}
+              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+            >
+              Add property
+            </Link>
+          </div>
         </header>
 
         {properties.length === 0 && !loadingProperties ? (

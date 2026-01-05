@@ -11,6 +11,11 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, RouterProvider, Routes, Link } from './lib/router';
 import { useAuth } from './lib/auth';
 import JobsListPage from './pages/jobs/JobsListPage';
+import ClientsListPage from './pages/clients/ClientsListPage';
+import CreateClientPage from './pages/clients/CreateClientPage';
+import CreatePropertyPage from './pages/clients/CreatePropertyPage';
+import ClientDetailPage from './pages/clients/ClientDetailPage';
+import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
@@ -34,12 +39,19 @@ const AppShell = ({ children }: { children: ReactNode }) => {
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/jobs/new">
                 New Job
               </Link>
+              <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
+                Clients
+              </Link>
             </>
           ) : null}
           <LanguageSwitcher />
         </nav>
       </header>
-      {children}
+      <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 pb-20 pt-6 sm:px-6 lg:px-8">
+        {user ? <Sidebar /> : null}
+        <div className="flex-1">{children}</div>
+      </div>
+      {user ? <BottomNav /> : null}
     </div>
   );
 };
@@ -81,6 +93,38 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <JobDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients"
+            element={
+              <ProtectedRoute>
+                <ClientsListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients/new"
+            element={
+              <ProtectedRoute>
+                <CreateClientPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients/:id"
+            element={
+              <ProtectedRoute>
+                <ClientDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clients/:id/properties/new"
+            element={
+              <ProtectedRoute>
+                <CreatePropertyPage />
               </ProtectedRoute>
             }
           />

@@ -43,15 +43,24 @@ const TEXT = {
   clientId: 'Client ID',
 };
 
-const CreatePropertyForm = () => {
+interface CreatePropertyFormProps {
+  clientId?: string;
+}
+
+const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
+  const baseValues = useMemo<FormValues>(() => ({
+    ...initialValues,
+    client_id: clientId ?? initialValues.client_id,
+  }), [clientId]);
+
   const draft = usePersistentForm<FormValues>({
     storageKey: DRAFT_STORAGE_KEY,
-    initialValues,
+    initialValues: baseValues,
   });
 
   const hasAppliedDraft = useRef(false);
@@ -74,6 +83,11 @@ const CreatePropertyForm = () => {
     reset(draft.values);
     hasAppliedDraft.current = true;
   }, [draft.values, draft.hydrated, reset]);
+
+  useEffect(() => {
+    if (!clientId || !draft.hydrated) return;
+    setValue('client_id', clientId);
+  }, [clientId, draft.hydrated, setValue]);
 
   useEffect(() => {
     if (!draft.hydrated) return undefined;
@@ -126,7 +140,7 @@ const CreatePropertyForm = () => {
       }
       setSubmitSuccess('Property saved.');
       await draft.clearDraft();
-      reset(initialValues);
+      reset(baseValues);
     } catch (error) {
       const message = error instanceof Error ? error.message : TEXT.errors.generic;
       setSubmitError(message);
