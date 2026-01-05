@@ -1,4 +1,4 @@
-# **✅ docs/specs/SPEC-003\_Job\_Management.md**
+# **✅ docs/specs/SPEC-003\_Job\_Management.md** <ARCHIVED>
 
 \# SPEC-003: Job Management (MVP1)
 
@@ -257,6 +257,8 @@ Must show on edit/create form near description:
 
 * No invoice\_id field  
 * No homeowner access  
-* No calendar UI  
+* No calendar UI
+
+* <this Spec document has been archived and replaced with the new: SPEC-003: Job Management (MVP1) Document>
 * Strictly follow `UX-Responsive-01`
 
