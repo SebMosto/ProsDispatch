@@ -1,11 +1,52 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables.');
-}
+const createSafeFallbackClient = (): SupabaseClient<Database> => {
+  const error = new Error('Supabase environment variables are missing. Using safe fallback client.');
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+  const createQueryProxy = () =>
+    new Proxy(
+      {},
+      {
+        get: () => () => Promise.reject(error),
+      },
+    );
+
+  return new Proxy(
+    {},
+    {
+      get: (_target, prop) => {
+        if (prop === 'auth') {
+          return {
+            getSession: async () => ({ data: { session: null }, error }),
+            onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } }, error }),
+            getUser: async () => ({ data: { user: null }, error }),
+            signOut: async () => ({ error }),
+          } satisfies SupabaseClient<Database>['auth'];
+        }
+
+        if (prop === 'from') {
+          return () => createQueryProxy();
+        }
+
+        return () => {
+          throw error;
+        };
+      },
+    },
+  ) as SupabaseClient<Database>;
+};
+
+const createSupabaseClient = () => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('[supabase] Missing environment variables. Falling back to safe client.');
+    return createSafeFallbackClient();
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseAnonKey);
+};
+
+export const supabase = createSupabaseClient();
