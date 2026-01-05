@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import SignUpPage from './pages/auth/SignUpPage';
 import SignInPage from './pages/auth/SignInPage';
 import DashboardPage from './pages/DashboardPage';
+import CreateJobPage from './pages/jobs/CreateJobPage';
+import JobDetailPage from './pages/jobs/JobDetailPage';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, RouterProvider, Routes } from './lib/router';
@@ -37,6 +39,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <ProtectedRoute>
+                <CreateJobPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs/:id"
+            element={
+              <ProtectedRoute>
+                <JobDetailPage />
               </ProtectedRoute>
             }
           />
