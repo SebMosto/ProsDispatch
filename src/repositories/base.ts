@@ -31,12 +31,29 @@ export interface Repository<TRecord, TCreateInput, TUpdateInput, TListParams = R
 
 const isNetworkRelatedError = (error: PostgrestError | null) => {
   if (!error) return false;
-  
-  // Treat errors without status codes as network errors (DNS failures, timeouts, "Failed to fetch")
-  if (!error.code) return true;
-  
-  // Explicit network-related HTTP status codes
-  return error.code === '408' || error.code === '503';
+
+  // Check for specific HTTP status codes indicating network or service unavailability
+  if (error.code === '408' || error.code === '503') {
+    return true;
+  }
+
+  // Check for common network-related messages (case-insensitive) that often appear
+  // in the error.message property for client-side network failures.
+  if (error.message) {
+    const errorMessage = error.message.toLowerCase();
+    if (
+      errorMessage.includes('failed to fetch') ||
+      errorMessage.includes('network request failed') ||
+      errorMessage.includes('connection refused') ||
+      errorMessage.includes('dns lookup failed') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('offline')
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 export abstract class BaseRepository {
