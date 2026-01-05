@@ -259,6 +259,6 @@ Must show on edit/create form near description:
 * No homeowner access  
 * No calendar UI
 
-* <this Spec document has been archived and replaced with the new: SPEC-003: Job Management (MVP1) Document>
+* <this Spec document has been archived and replaced with the new: [SPEC-003: Job Management (MVP1) Document](https://github.com/SebMosto/ProsDispatch/blob/main/SPEC-003_%20Job%20Management%20(MVP1).md)>
 * Strictly follow `UX-Responsive-01`
 
