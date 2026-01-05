@@ -75,5 +75,32 @@
       "onlineDraftPending": "📱 Ready to submit",
       "errorRetryable": "⚠️ Needs attention"
     }
+  },
+  "jobs": {
+    "create": {
+      "title": "Create job",
+      "subtitle": "Track work for a client and property.",
+      "descriptionWarning": "Do not include access codes or personal information.",
+      "labels": {
+        "title": "Job title",
+        "clientId": "Client ID",
+        "propertyId": "Property ID",
+        "description": "Description (optional)",
+        "serviceDate": "Service date (optional)"
+      },
+      "actions": {
+        "submit": "Create job",
+        "submitting": "Saving...",
+        "clearDraft": "Clear draft"
+      },
+      "statuses": {
+        "success": "Job saved successfully.",
+        "draftRestored": "Draft restored from offline storage."
+      },
+      "errors": {
+        "generic": "Unable to create job.",
+        "auth": "You must be signed in to create a job."
+      }
+    }
   }
 }
