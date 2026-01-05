@@ -33,6 +33,21 @@ describe('BaseRepository', () => {
       expect(network.reportApiOnline).not.toHaveBeenCalled();
     });
 
+    it('should handle errors with missing message property', () => {
+      const error = {
+        name: 'PostgrestError',
+        details: '',
+        hint: '',
+        code: '',
+      } as PostgrestError;
+
+      const result = repository.testToRepositoryError(error);
+
+      expect(result?.reason).toBe('server');
+      expect(network.reportApiOffline).not.toHaveBeenCalled();
+      expect(network.reportApiOnline).not.toHaveBeenCalled();
+    });
+
     it('should treat "failed to fetch" errors as network errors and report offline', () => {
       const error: PostgrestError = {
         name: 'PostgrestError',

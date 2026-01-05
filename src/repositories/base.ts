@@ -39,16 +39,18 @@ const isNetworkRelatedError = (error: PostgrestError | null) => {
 
   // Check for common network-related messages (case-insensitive) that often appear
   // in the error.message property for client-side network failures.
-  const errorMessage = error.message.toLowerCase();
-  if (
-    errorMessage.includes('failed to fetch') ||
-    errorMessage.includes('network request failed') ||
-    errorMessage.includes('connection refused') ||
-    errorMessage.includes('dns lookup failed') ||
-    errorMessage.includes('timeout') ||
-    errorMessage.includes('offline')
-  ) {
-    return true;
+  if (error.message) {
+    const errorMessage = error.message.toLowerCase();
+    if (
+      errorMessage.includes('failed to fetch') ||
+      errorMessage.includes('network request failed') ||
+      errorMessage.includes('connection refused') ||
+      errorMessage.includes('dns lookup failed') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('offline')
+    ) {
+      return true;
+    }
   }
 
   return false;
