@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -40,13 +40,18 @@ const CreateJobForm = () => {
     register,
     handleSubmit,
     reset,
-    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema),
     defaultValues: draft.values,
-    values: draft.values,
   });
+
+  useEffect(() => {
+    if (draft.hydrated) {
+      draft.setValues(watch() as FormValues);
+    }
+  }, [watch, draft.hydrated, draft]);
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
@@ -119,10 +124,6 @@ const CreateJobForm = () => {
             type="text"
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('title')}
-            onChange={(event) => {
-              setValue('title', event.target.value);
-              draft.setValues((current) => ({ ...current, title: event.target.value }));
-            }}
           />
           {errors.title?.message ? <p className="text-xs text-red-600">{errors.title.message}</p> : null}
         </div>
@@ -137,10 +138,6 @@ const CreateJobForm = () => {
               type="text"
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('client_id')}
-              onChange={(event) => {
-                setValue('client_id', event.target.value);
-                draft.setValues((current) => ({ ...current, client_id: event.target.value }));
-              }}
             />
             {errors.client_id?.message ? (
               <p className="text-xs text-red-600">{errors.client_id.message}</p>
@@ -156,10 +153,6 @@ const CreateJobForm = () => {
               type="text"
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('property_id')}
-              onChange={(event) => {
-                setValue('property_id', event.target.value);
-                draft.setValues((current) => ({ ...current, property_id: event.target.value }));
-              }}
             />
             {errors.property_id?.message ? (
               <p className="text-xs text-red-600">{errors.property_id.message}</p>
@@ -179,10 +172,6 @@ const CreateJobForm = () => {
             rows={4}
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('description')}
-            onChange={(event) => {
-              setValue('description', event.target.value || undefined);
-              draft.setValues((current) => ({ ...current, description: event.target.value || undefined }));
-            }}
           />
           {errors.description?.message ? (
             <p className="text-xs text-red-600">{errors.description.message}</p>
@@ -198,10 +187,6 @@ const CreateJobForm = () => {
             type="date"
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('service_date')}
-            onChange={(event) => {
-              setValue('service_date', event.target.value || undefined);
-              draft.setValues((current) => ({ ...current, service_date: event.target.value || undefined }));
-            }}
           />
           {errors.service_date?.message ? (
             <p className="text-xs text-red-600">{errors.service_date.message}</p>
