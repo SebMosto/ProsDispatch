@@ -1,4 +1,4 @@
-# **SPEC-002: Client & Property Registry (Shadow System)**
+# **SPEC-002: Client & Property Registry (Shadow System)** <ARCHIVED>
 
 **Status:** APPROVED (Post-Audit Patch v1.2)  
  **Phase:** 1.2  
@@ -216,3 +216,4 @@ This specification defines the **Shadow Registry** system. It allows **Contracto
 
 5. **Validation:** Ensure Zod schemas match strict types.
 
+<THIS DOCUMENT HAS BEEN ARCHIVED AND REPLACED WITH: SPEC-002: Client & Property Registry>
