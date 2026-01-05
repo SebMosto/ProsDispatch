@@ -44,16 +44,20 @@ export abstract class BaseRepository {
   protected toRepositoryError(error: PostgrestError | null): RepositoryError | null {
     if (!error) return null;
 
-    if (isNetworkRelatedError(error)) {
+    const isNetworkError = isNetworkRelatedError(error);
+
+    if (isNetworkError) {
       reportApiOffline();
     } else {
       reportApiOnline();
     }
 
+    const status = error.code ? Number.parseInt(error.code, 10) : NaN;
+
     return {
       message: error.message,
-      status: error.code ? Number.parseInt(error.code, 10) : undefined,
-      reason: isNetworkRelatedError(error) ? 'network' : 'server',
+      status: !Number.isNaN(status) ? status : undefined,
+      reason: isNetworkError ? 'network' : 'server',
       cause: error,
     };
   }
