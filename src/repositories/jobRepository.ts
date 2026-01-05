@@ -95,7 +95,6 @@ export class JobRepository
       ...input,
       description: input.description ?? null,
       service_date: normalizeDate(input.service_date ?? undefined),
-      updated_at: new Date().toISOString(),
     } satisfies Database['public']['Tables']['jobs']['Update'];
 
     const { data, error } = await this.client
