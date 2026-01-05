@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
@@ -10,32 +11,6 @@ import { JobCreateSchema } from '../../schemas/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
-
-const TEXT = {
-  title: 'Create job',
-  subtitle: 'Track work for a client and property.',
-  descriptionWarning: 'Do not include access codes or personal information.',
-  labels: {
-    title: 'Job title',
-    clientId: 'Client ID',
-    propertyId: 'Property ID',
-    description: 'Description (optional)',
-    serviceDate: 'Service date (optional)',
-  },
-  actions: {
-    submit: 'Create job',
-    submitting: 'Saving...',
-    clearDraft: 'Clear draft',
-  },
-  statuses: {
-    success: 'Job saved successfully.',
-    draftRestored: 'Draft restored from offline storage.',
-  },
-  errors: {
-    generic: 'Unable to create job.',
-    auth: 'You must be signed in to create a job.',
-  },
-};
 
 type FormValues = z.infer<typeof JobCreateSchema>;
 
@@ -50,6 +25,7 @@ const initialValues: FormValues = {
 };
 
 const CreateJobForm = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -74,7 +50,7 @@ const CreateJobForm = () => {
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
-      setSubmitSuccess(TEXT.statuses.success);
+      setSubmitSuccess(t('jobs.create.statuses.success'));
       void draft.clearDraft();
       reset(initialValues);
     },
@@ -92,7 +68,7 @@ const CreateJobForm = () => {
     setSubmitSuccess(null);
 
     if (!user) {
-      setSubmitError(TEXT.errors.auth);
+      setSubmitError(t('jobs.create.errors.auth'));
       return;
     }
 
@@ -105,7 +81,7 @@ const CreateJobForm = () => {
 
     const parsed = JobCreateSchema.safeParse(payload);
     if (!parsed.success) {
-      setSubmitError(parsed.error.issues[0]?.message ?? TEXT.errors.generic);
+      setSubmitError(parsed.error.issues[0]?.message ?? t('jobs.create.errors.generic'));
       return;
     }
 
@@ -116,8 +92,8 @@ const CreateJobForm = () => {
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <header className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{TEXT.title}</h2>
-          <p className="text-sm text-slate-600">{TEXT.subtitle}</p>
+          <h2 className="text-lg font-semibold text-slate-900">{t('jobs.create.title')}</h2>
+          <p className="text-sm text-slate-600">{t('jobs.create.subtitle')}</p>
         </div>
         <SyncBadge state={syncState} />
       </header>
@@ -136,7 +112,7 @@ const CreateJobForm = () => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="title">
-            {TEXT.labels.title}
+            {t('jobs.create.labels.title')}
           </label>
           <input
             id="title"
@@ -154,7 +130,7 @@ const CreateJobForm = () => {
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800" htmlFor="client_id">
-              {TEXT.labels.clientId}
+              {t('jobs.create.labels.clientId')}
             </label>
             <input
               id="client_id"
@@ -173,7 +149,7 @@ const CreateJobForm = () => {
 
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800" htmlFor="property_id">
-              {TEXT.labels.propertyId}
+              {t('jobs.create.labels.propertyId')}
             </label>
             <input
               id="property_id"
@@ -194,9 +170,9 @@ const CreateJobForm = () => {
         <div className="space-y-1">
           <div className="flex items-center justify-between">
             <label className="block text-sm font-medium text-slate-800" htmlFor="description">
-              {TEXT.labels.description}
+              {t('jobs.create.labels.description')}
             </label>
-            <span className="text-xs text-amber-700">{TEXT.descriptionWarning}</span>
+            <span className="text-xs text-amber-700">{t('jobs.create.descriptionWarning')}</span>
           </div>
           <textarea
             id="description"
@@ -215,7 +191,7 @@ const CreateJobForm = () => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="service_date">
-            {TEXT.labels.serviceDate}
+            {t('jobs.create.labels.serviceDate')}
           </label>
           <input
             id="service_date"
@@ -238,7 +214,7 @@ const CreateJobForm = () => {
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSubmitting || isLoading}
           >
-            {isSubmitting || isLoading ? TEXT.actions.submitting : TEXT.actions.submit}
+            {isSubmitting || isLoading ? t('jobs.create.actions.submitting') : t('jobs.create.actions.submit')}
           </button>
 
           <button
@@ -250,7 +226,7 @@ const CreateJobForm = () => {
             }}
             disabled={draft.draftStatus === 'idle' && !draft.isDirty}
           >
-            {TEXT.actions.clearDraft}
+            {t('jobs.create.actions.clearDraft')}
           </button>
         </div>
       </form>

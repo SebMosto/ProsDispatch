@@ -75,5 +75,32 @@
       "onlineDraftPending": "📱 Brouillon à envoyer",
       "errorRetryable": "⚠️ Action requise"
     }
+  },
+  "jobs": {
+    "create": {
+      "title": "Créer un travail",
+      "subtitle": "Suivez le travail pour un client et une propriété.",
+      "descriptionWarning": "N'incluez pas de codes d'accès ou d'informations personnelles.",
+      "labels": {
+        "title": "Titre du travail",
+        "clientId": "ID client",
+        "propertyId": "ID de la propriété",
+        "description": "Description (optionnelle)",
+        "serviceDate": "Date de service (optionnelle)"
+      },
+      "actions": {
+        "submit": "Créer le travail",
+        "submitting": "Enregistrement...",
+        "clearDraft": "Effacer le brouillon"
+      },
+      "statuses": {
+        "success": "Travail enregistré avec succès.",
+        "draftRestored": "Brouillon restauré depuis le stockage hors ligne."
+      },
+      "errors": {
+        "generic": "Impossible de créer le travail.",
+        "auth": "Vous devez être connecté pour créer un travail."
+      }
+    }
   }
 }
