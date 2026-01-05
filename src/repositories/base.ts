@@ -31,6 +31,11 @@ export interface Repository<TRecord, TCreateInput, TUpdateInput, TListParams = R
 
 const isNetworkRelatedError = (error: PostgrestError | null) => {
   if (!error) return false;
+  
+  // Treat errors without status codes as network errors (DNS failures, timeouts, "Failed to fetch")
+  if (!error.code) return true;
+  
+  // Explicit network-related HTTP status codes
   return error.code === '408' || error.code === '503';
 };
 
@@ -46,11 +51,15 @@ export abstract class BaseRepository {
 
     const isNetworkError = isNetworkRelatedError(error);
 
+    // Only report API as online for actual server errors with valid HTTP status codes
+    // Network errors (including those without status codes) should report offline
     if (isNetworkError) {
       reportApiOffline();
-    } else {
+    } else if (error.code && !isNaN(Number.parseInt(error.code, 10))) {
+      // Only report online if we have a valid HTTP status code (indicating we reached the server)
       reportApiOnline();
     }
+    // Otherwise, don't report status change (error has no code but isn't identified as network error)
 
     const status = error.code ? Number.parseInt(error.code, 10) : NaN;
 
