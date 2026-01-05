@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ReactNode } from 'react';
 
 export type QueryKey = unknown[];

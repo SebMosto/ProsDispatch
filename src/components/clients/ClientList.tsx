@@ -29,11 +29,29 @@ const ClientList: React.FC = () => {
         clients.length === 0 ? (
           <p className="text-sm text-slate-600">{TEXT.empty}</p>
         ) : (
-          <ul className="grid grid-cols-1 gap-3">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {clients.map((client) => (
               <li key={client.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-900">{client.name ?? TEXT.unnamed}</p>
-                <p className="text-xs text-slate-700">{client.primary_property?.city || TEXT.cityFallback}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-semibold text-slate-900">
+                      {client.name ?? TEXT.unnamed}
+                    </p>
+                    <p className="text-xs text-slate-700">{client.primary_property?.city || TEXT.cityFallback}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+                      client.type === 'business'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-emerald-100 text-emerald-800'
+                    }`}
+                  >
+                    {client.type === 'business' ? 'Business' : 'Individual'}
+                  </span>
+                </div>
+                {client.primary_property?.address_line1 ? (
+                  <p className="mt-2 text-xs text-slate-600">{client.primary_property.address_line1}</p>
+                ) : null}
               </li>
             ))}
           </ul>
