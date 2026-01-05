@@ -1,28 +1,28 @@
 import { z } from 'zod';
-
-// Full list for DB validity, UI can filter to ['QC', 'ON']
-export const CANADIAN_PROVINCES = [
-  'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'
-] as const;
+import { CANADIAN_PROVINCES, PropertySchema } from './property';
 
 export const ClientSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z
+    .string()
+    .trim()
+    .email('Invalid email')
+    .optional()
+    .or(z.literal('')),
   type: z.enum(['individual', 'business']).default('individual'),
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email").optional().or(z.literal('')),
   preferred_language: z.enum(['en', 'fr']).default('en'),
 });
 
-export const PropertySchema = z.object({
-  address_line1: z.string().min(5, "Address too short"),
-  address_line2: z.string().optional(),
-  city: z.string().min(2, "City required"),
-  province: z.enum(CANADIAN_PROVINCES), 
-  postal_code: z.string().regex(
-    /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 
-    "Invalid Format (A1A 1A1)"
-  ),
-  nickname: z.string().optional(),
-});
+export const ClientUpdateSchema = ClientSchema.partial().refine(
+  (data) => Object.values(data).some((value) => value !== undefined),
+  { message: 'At least one field is required to update a client' },
+);
 
-// Composite for "Add New Client & Property" flow
-export const ClientAndPropertySchema = ClientSchema.merge(PropertySchema);
+export const ClientAndPropertySchema = ClientSchema.merge(
+  PropertySchema.omit({ client_id: true }),
+);
+
+export type ClientCreateInput = z.infer<typeof ClientSchema>;
+export type ClientUpdateInput = z.infer<typeof ClientUpdateSchema>;
+
+export { CANADIAN_PROVINCES };
