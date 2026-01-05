@@ -1,14 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BaseRepository } from './base';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import * as network from '../lib/network';
 import type { Database } from '../types/database.types';
+
+// Mock the supabase module to avoid environment variable errors
+vi.mock('../lib/supabase', () => ({
+  supabase: {} as SupabaseClient,
+}));
 
 // Mock the network module
 vi.mock('../lib/network', () => ({
   reportApiOffline: vi.fn(),
   reportApiOnline: vi.fn(),
 }));
+
+// Import BaseRepository after mocks are set up
+import { BaseRepository } from './base';
 
 // Create a concrete implementation for testing
 class TestRepository extends BaseRepository {
