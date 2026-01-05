@@ -1,4 +1,4 @@
-# **SPEC-002: Client & Property Registry (Shadow System)** <ARCHIVED>
+# **SPEC-002: Client & Property Registry (Shadow System) <ARCHIVED>** 
 
 **Status:** APPROVED (Post-Audit Patch v1.2)  
  **Phase:** 1.2  
