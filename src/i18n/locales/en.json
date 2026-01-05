@@ -66,5 +66,14 @@
       "sessionNote": "Your session is secured with Supabase Auth.",
       "signOut": "Sign out"
     }
+  },
+  "sync": {
+    "badge": {
+      "onlineSynced": "✅ Synced",
+      "onlineSyncing": "⏳ Syncing…",
+      "offlineDraft": "📱 Saved on device",
+      "onlineDraftPending": "📱 Ready to submit",
+      "errorRetryable": "⚠️ Needs attention"
+    }
   }
 }
