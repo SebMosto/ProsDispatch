@@ -112,14 +112,14 @@ export const useUpdateClientMutation = (clientId: string) => {
 
 export const useClientMutations = (clientId?: string) => {
   const createMutation = useCreateClientMutation();
-  const updateMutation = clientId ? useUpdateClientMutation(clientId) : null;
+  const updateMutation = useUpdateClientMutation(clientId ?? '');
 
   return useMemo(
     () => ({
       createMutation,
-      updateMutation,
+      updateMutation: clientId ? updateMutation : null,
       buildOptimisticClient,
     }),
-    [createMutation, updateMutation],
+    [clientId, createMutation, updateMutation],
   );
 };

@@ -118,6 +118,7 @@ export class PropertyRepository
 
   async update(id: string, input: PropertyUpdateInput): Promise<RepositoryResult<PropertyRecord>> {
     const { country: _country, ...rest } = input;
+    void _country;
     const payload = {
       ...rest,
       address_line2: rest.address_line2 ?? undefined,
