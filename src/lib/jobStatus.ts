@@ -5,10 +5,7 @@
  * as defined in SPEC-003 section 3.
  */
 
-import { Database } from '../types/database.types';
-
-// Export JobStatus type derived from generated Supabase types
-export type JobStatus = Database['public']['Enums']['job_status'];
+import type { JobStatus } from '../schemas/job';
 
 /**
  * Custom error class for illegal job status transitions
@@ -31,14 +28,11 @@ export class IllegalJobStatusTransitionError extends Error {
  * Defines all allowed job status transitions according to SPEC-003 section 3
  */
 const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
-  draft: ['sent'],
-  sent: ['approved'],
-  approved: ['in_progress'],
-  in_progress: ['completed', 'archived'],
-  completed: ['invoiced', 'archived'],
-  invoiced: ['paid'],
-  paid: ['archived'],
-  archived: [], // Terminal state - no transitions allowed
+  draft: ['draft', 'scheduled', 'cancelled'],
+  scheduled: ['scheduled', 'in_progress', 'cancelled'],
+  in_progress: ['in_progress', 'completed', 'cancelled'],
+  completed: ['completed'],
+  cancelled: ['cancelled'],
 };
 
 /**
@@ -66,10 +60,10 @@ const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
 export function advanceJobStatus(current: JobStatus, target: JobStatus): JobStatus {
   // Check if transition is allowed
   const allowedTargets = ALLOWED_TRANSITIONS[current];
-  
+
   if (!allowedTargets.includes(target)) {
     throw new IllegalJobStatusTransitionError(current, target);
   }
-  
+
   return target;
 }
