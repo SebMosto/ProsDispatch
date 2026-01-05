@@ -21,7 +21,7 @@ export const useCreateJob = (options?: UseCreateJobOptions) => {
     (input: JobCreateInput): JobRecord => {
       const now = new Date().toISOString();
       return {
-        id: `temp-${Date.now()}`,
+        id: `temp-${crypto.randomUUID()}`,
         contractor_id: input.contractor_id,
         client_id: input.client_id,
         property_id: input.property_id,
