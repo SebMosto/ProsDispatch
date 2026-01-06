@@ -100,7 +100,7 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Subscriptions & billing plans | ✔ |
+| Contractor SaaS Subscription (Stripe Billing) | ✔ |
 
 ---
 
@@ -125,6 +125,7 @@ These features are **explicitly forbidden**, per Auditor mandate:
 | Multi-provider workflows | ❌ |
 | Contractor teams / roles | ❌ |
 | Inventory management | ❌ |
+| Referral & Commission Engine | ❌ (Explicitly Forbidden) |
 
 ---
 
@@ -455,6 +456,8 @@ Draft → Sent → Approved → In Progress → Completed → Invoiced → Paid 
 * Material catalog
 
 * Smart home integrations
+
+* Referral Program
 
 ---
 
