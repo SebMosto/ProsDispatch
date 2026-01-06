@@ -1,3 +1,8 @@
+# ⚠️ ARCHIVED / DEPRECATED
+# REASON: Referral Engine and Cash Payouts were cut from MVP1 scope by the Chief Auditor.
+# STATUS: VOID. Do not implement "Rule 3" or "Rule 4".
+# NOTE: The "SaaS Billing" (Stripe Subscription) logic IS still valid, but must be implemented via SPEC-004 directly, not this file.
+
 # Governance Amendment v1.2: SaaS Billing & Referrals
 
 > **ARCHIVED:** This amendment is retained for historical context only. Referral and commission features were removed from MVP1
