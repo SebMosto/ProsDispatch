@@ -3,7 +3,14 @@
     "brand": "ProsDispatch",
     "languageLabel": "Language selection",
     "languageEnglish": "English",
-    "languageFrench": "Français"
+    "languageFrench": "Français",
+    "nav": {
+      "dashboard": "Dashboard",
+      "jobs": "Jobs",
+      "newJob": "New Job",
+      "clients": "Clients",
+      "active": "Active"
+    }
   },
   "hero": {
     "title": "Contractor dispatching built for mobile teams",
@@ -102,5 +109,42 @@
         "auth": "You must be signed in to create a job."
       }
     }
+  },
+  "clients": {
+    "create": {
+      "title": "Create client",
+      "subtitle": "Capture client details.",
+      "labels": {
+        "type": "Client type",
+        "name": "Name",
+        "email": "Email (optional)",
+        "preferredLanguage": "Preferred language",
+        "types": {
+          "business": "Business",
+          "individual": "Individual"
+        },
+        "languages": {
+          "en": "English",
+          "fr": "Français"
+        }
+      },
+      "actions": {
+        "submit": "Save client",
+        "submitting": "Saving..."
+      },
+      "statuses": {
+        "success": "Client saved."
+      },
+      "errors": {
+        "generic": "Unable to save client.",
+        "auth": "You must be logged in to create a client."
+      }
+    }
+  },
+  "validation": {
+    "required": "Field required",
+    "invalidEmail": "Invalid email",
+    "updateRequired": "At least one field is required to update a client",
+    "nameRequired": "Name is required"
   }
 }
