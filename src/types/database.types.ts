@@ -190,6 +190,135 @@ export type Database = {
           },
         ]
       }
+      invoice_items: {
+        Row: {
+          amount: number
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          amount: number
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          unit_price: number
+        }
+        Update: {
+          amount?: number
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_tokens: {
+        Row: {
+          expires_at: string
+          invoice_id: string
+          opened_at: string | null
+          token: string
+        }
+        Insert: {
+          expires_at?: string
+          invoice_id: string
+          opened_at?: string | null
+          token: string
+        }
+        Update: {
+          expires_at?: string
+          invoice_id?: string
+          opened_at?: string | null
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_tokens_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          contractor_id: string
+          created_at: string
+          date_due: string
+          date_issued: string | null
+          id: string
+          invoice_number: string
+          job_id: string
+          paid_at: string | null
+          payment_method: Database["public"]["Enums"]["invoice_payment_method"] | null
+          payment_note: string | null
+          pdf_url: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          stripe_payment_intent_id: string | null
+          subtotal: number
+          tax_data: Json
+          total_amount: number
+        }
+        Insert: {
+          contractor_id: string
+          created_at?: string
+          date_due?: string
+          date_issued?: string | null
+          id?: string
+          invoice_number: string
+          job_id: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["invoice_payment_method"] | null
+          payment_note?: string | null
+          pdf_url?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          stripe_payment_intent_id?: string | null
+          subtotal?: number
+          tax_data?: Json
+          total_amount?: number
+        }
+        Update: {
+          contractor_id?: string
+          created_at?: string
+          date_due?: string
+          date_issued?: string | null
+          id?: string
+          invoice_number?: string
+          job_id?: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["invoice_payment_method"] | null
+          payment_note?: string | null
+          pdf_url?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          stripe_payment_intent_id?: string | null
+          subtotal?: number
+          tax_data?: Json
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -199,6 +328,8 @@ export type Database = {
     }
     Enums: {
       client_type: "individual" | "business"
+      invoice_payment_method: "stripe" | "cash" | "cheque" | "etransfer" | "other"
+      invoice_status: "draft" | "sent" | "paid" | "void" | "overdue"
       job_status: "draft" | "sent" | "approved" | "in_progress" | "completed" | "invoiced" | "paid" | "archived"
       supported_locale: "en" | "fr"
     }
@@ -329,6 +460,8 @@ export const Constants = {
   public: {
     Enums: {
       client_type: ["individual", "business"],
+      invoice_payment_method: ["stripe", "cash", "cheque", "etransfer", "other"],
+      invoice_status: ["draft", "sent", "paid", "void", "overdue"],
       job_status: ["draft", "sent", "approved", "in_progress", "completed", "invoiced", "paid", "archived"],
       supported_locale: ["en", "fr"],
     },
