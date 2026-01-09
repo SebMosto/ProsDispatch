@@ -15,7 +15,7 @@ const statusStyles: Record<string, string> = {
 };
 
 const InvoiceDetailPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const segments = pathname.split('/').filter(Boolean);
@@ -172,7 +172,9 @@ const InvoiceDetailPage = () => {
             </p>
             {invoice.paid_at ? (
               <p className="text-xs text-emerald-700">
-                {t('jobs.invoices.detailPage.paidOn', { date: new Date(invoice.paid_at).toLocaleDateString('en-CA') })}
+                {t('jobs.invoices.detailPage.paidOn', { 
+                  date: new Date(invoice.paid_at).toLocaleDateString(i18n.language === 'fr' ? 'fr-CA' : 'en-CA') 
+                })}
               </p>
             ) : null}
           </div>
