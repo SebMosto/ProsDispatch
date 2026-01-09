@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-type FieldValue = string | number | boolean | Date | undefined | null;
+type FieldValue = string | number | boolean | Date | undefined | null | Record<string, unknown> | Array<unknown>;
 
 export type FieldError = { message?: string };
 export type FieldErrors = Record<string, FieldError>;
