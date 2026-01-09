@@ -1,8 +1,0 @@
-{
-  "name": "@tanstack/react-query",
-  "version": "5.59.0",
-  "type": "module",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "license": "MIT"
-}
