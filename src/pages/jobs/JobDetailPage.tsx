@@ -60,7 +60,7 @@ const JobDetailPage = () => {
     }
 
     const previousJob = queryClient.getQueryData<JobRecord>(['job', jobId]);
-    const previousLists = queryClient.getQueriesData<JobRecord[]>(['jobs']);
+    const previousLists = queryClient.getQueriesData<JobRecord[]>({ queryKey: ['jobs'] });
     const optimisticJob = { ...job, status: nextStatus, updated_at: new Date().toISOString() } satisfies JobRecord;
 
     queryClient.setQueryData(['job', jobId], optimisticJob);

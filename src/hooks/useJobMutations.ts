@@ -44,7 +44,7 @@ export const useCreateJobMutation = () => {
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey: ['jobs'] });
 
-        let previousJobs = queryClient.getQueriesData<JobRecord[]>(['jobs']);
+        let previousJobs = queryClient.getQueriesData<JobRecord[]>({ queryKey: ['jobs'] });
 
         const optimisticJob = buildOptimisticJob(input, user?.id ?? 'local-contractor');
 
