@@ -108,6 +108,12 @@
         "generic": "Impossible de créer le travail.",
         "auth": "Vous devez être connecté pour créer un travail."
       }
+    },
+    "invoices": {
+      "title": "Factures",
+      "draftInvoice": "Créer une facture",
+      "errorLoading": "Impossible de charger les factures pour ce travail.",
+      "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer."
     }
   },
   "clients": {

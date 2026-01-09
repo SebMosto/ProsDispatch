@@ -108,6 +108,12 @@
         "generic": "Unable to create job.",
         "auth": "You must be signed in to create a job."
       }
+    },
+    "invoices": {
+      "title": "Invoices",
+      "draftInvoice": "Draft Invoice",
+      "errorLoading": "Unable to load invoices for this job.",
+      "emptyState": "No invoices yet. Create a draft to get started."
     }
   },
   "clients": {
