@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from '../../lib/router';
 import { clientRepository } from '../../repositories/clientRepository';
@@ -22,16 +22,20 @@ const ClientDetailPage = () => {
   const clientIdFromPath = pathname.split('/').filter(Boolean)[1];
   const clientId = clientIdFromState || clientIdFromPath;
 
+  const queryKey = useMemo(() => ['client', clientId], [clientId]);
+
+  const queryFn = useCallback(async () => {
+    const result = await clientRepository.get(clientId ?? '');
+    if (result.error || !result.data) {
+      throw result.error ?? new Error(TEXT.error);
+    }
+    return result.data;
+  }, [clientId]);
+
   const clientQuery = useQuery({
-    queryKey: ['client', clientId],
+    queryKey,
     enabled: Boolean(clientId),
-    queryFn: async () => {
-      const result = await clientRepository.get(clientId ?? '');
-      if (result.error || !result.data) {
-        throw result.error ?? new Error(TEXT.error);
-      }
-      return result.data;
-    },
+    queryFn,
   });
 
   const { properties, loading: loadingProperties } = useProperties(clientId);
