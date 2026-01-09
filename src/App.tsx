@@ -51,16 +51,16 @@ const AppShell = ({ children }: { children: ReactNode }) => {
           {user ? (
             <>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/dashboard">
-                Dashboard
+                {t('layout.nav.dashboard')}
               </Link>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/jobs">
-                Jobs
+                {t('layout.nav.jobs')}
               </Link>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/jobs/new">
-                New Job
+                {t('layout.nav.newJob')}
               </Link>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
-                Clients
+                {t('layout.nav.clients')}
               </Link>
             </>
           ) : null}

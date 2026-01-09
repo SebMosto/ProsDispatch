@@ -3,7 +3,14 @@
     "brand": "ProsDispatch",
     "languageLabel": "Sélection de la langue",
     "languageEnglish": "English",
-    "languageFrench": "Français"
+    "languageFrench": "Français",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "jobs": "Travaux",
+      "newJob": "Nouveau travail",
+      "clients": "Clients",
+      "active": "Actif"
+    }
   },
   "hero": {
     "title": "Répartition des entrepreneurs pensée pour les équipes mobiles",
@@ -102,5 +109,42 @@
         "auth": "Vous devez être connecté pour créer un travail."
       }
     }
+  },
+  "clients": {
+    "create": {
+      "title": "Créer un client",
+      "subtitle": "Saisir les détails du client.",
+      "labels": {
+        "type": "Type de client",
+        "name": "Nom",
+        "email": "Courriel (optionnel)",
+        "preferredLanguage": "Langue préférée",
+        "types": {
+          "business": "Entreprise",
+          "individual": "Particulier"
+        },
+        "languages": {
+          "en": "English",
+          "fr": "Français"
+        }
+      },
+      "actions": {
+        "submit": "Enregistrer le client",
+        "submitting": "Enregistrement..."
+      },
+      "statuses": {
+        "success": "Client enregistré."
+      },
+      "errors": {
+        "generic": "Impossible d'enregistrer le client.",
+        "auth": "Vous devez être connecté pour créer un client."
+      }
+    }
+  },
+  "validation": {
+    "required": "Champ requis",
+    "invalidEmail": "Adresse courriel invalide",
+    "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
+    "nameRequired": "Le nom est requis"
   }
 }

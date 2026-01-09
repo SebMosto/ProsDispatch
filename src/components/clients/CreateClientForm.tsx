@@ -6,12 +6,13 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { ClientSchema } from '../../schemas/client';
+import { getClientSchema, ClientSchema as StaticClientSchema } from '../../schemas/client';
 import { useCreateClientMutation } from '../../hooks/useClientMutations';
+import { useTranslation } from 'react-i18next';
 
 const DRAFT_STORAGE_KEY = 'client:create:draft';
 
-type FormValues = z.infer<typeof ClientSchema>;
+type FormValues = z.infer<typeof StaticClientSchema>;
 
 const initialValues: FormValues = {
   name: '',
@@ -20,18 +21,8 @@ const initialValues: FormValues = {
   preferred_language: 'en',
 };
 
-const TEXT = {
-  title: 'Create client',
-  subtitle: 'Capture client details.',
-  action: 'Save client',
-  loading: 'Saving...',
-  errors: {
-    generic: 'Unable to save client.',
-    auth: 'You must be logged in to create a client.',
-  },
-};
-
 const CreateClientForm: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -43,6 +34,9 @@ const CreateClientForm: React.FC = () => {
   });
 
   const hasAppliedDraft = useRef(false);
+
+  // Use useMemo to recreate the schema when the language changes
+  const ClientSchema = useMemo(() => getClientSchema(t), [t]);
 
   const {
     register,
@@ -87,7 +81,7 @@ const CreateClientForm: React.FC = () => {
     setSubmitSuccess(null);
 
     if (!user) {
-      setSubmitError(TEXT.errors.auth);
+      setSubmitError(t('clients.create.errors.auth'));
       return;
     }
 
@@ -97,17 +91,17 @@ const CreateClientForm: React.FC = () => {
     });
 
     if (!parsed.success) {
-      setSubmitError(parsed.error.issues[0]?.message ?? TEXT.errors.generic);
+      setSubmitError(parsed.error.issues[0]?.message ?? t('clients.create.errors.generic'));
       return;
     }
 
     try {
       await createMutation.mutateAsync(parsed.data);
-      setSubmitSuccess('Client saved.');
+      setSubmitSuccess(t('clients.create.statuses.success'));
       await draft.clearDraft();
       reset(initialValues);
     } catch (error) {
-      const message = error instanceof Error ? error.message : TEXT.errors.generic;
+      const message = error instanceof Error ? error.message : t('clients.create.errors.generic');
       setSubmitError(message);
     }
   };
@@ -116,8 +110,8 @@ const CreateClientForm: React.FC = () => {
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <header className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{TEXT.title}</h2>
-          <p className="text-sm text-slate-600">{TEXT.subtitle}</p>
+          <h2 className="text-lg font-semibold text-slate-900">{t('clients.create.title')}</h2>
+          <p className="text-sm text-slate-600">{t('clients.create.subtitle')}</p>
         </div>
         <SyncBadge state={syncState} />
       </header>
@@ -135,8 +129,8 @@ const CreateClientForm: React.FC = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-1">
-          <span className="block text-sm font-medium text-slate-800">Client type</span>
-          <div className="grid grid-cols-2 gap-2" role="group" aria-label="Client type">
+          <span className="block text-sm font-medium text-slate-800">{t('clients.create.labels.type')}</span>
+          <div className="grid grid-cols-2 gap-2" role="group" aria-label={t('clients.create.labels.type')}>
             {(['individual', 'business'] as const).map((option) => (
               <button
                 key={option}
@@ -148,7 +142,7 @@ const CreateClientForm: React.FC = () => {
                 }`}
                 onClick={() => setValue('type', option)}
               >
-                {option === 'business' ? 'Business' : 'Individual'}
+                {t(`clients.create.labels.types.${option}`)}
               </button>
             ))}
           </div>
@@ -157,7 +151,7 @@ const CreateClientForm: React.FC = () => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="name">
-            Name
+            {t('clients.create.labels.name')}
           </label>
           <input
             id="name"
@@ -170,7 +164,7 @@ const CreateClientForm: React.FC = () => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="email">
-            Email (optional)
+            {t('clients.create.labels.email')}
           </label>
           <input
             id="email"
@@ -183,15 +177,15 @@ const CreateClientForm: React.FC = () => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="preferred_language">
-            Preferred language
+            {t('clients.create.labels.preferredLanguage')}
           </label>
           <select
             id="preferred_language"
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('preferred_language')}
           >
-            <option value="en">English</option>
-            <option value="fr">Français</option>
+            <option value="en">{t('clients.create.labels.languages.en')}</option>
+            <option value="fr">{t('clients.create.labels.languages.fr')}</option>
           </select>
           {errors.preferred_language?.message ? (
             <p className="text-xs text-red-600">{errors.preferred_language.message}</p>
@@ -203,7 +197,7 @@ const CreateClientForm: React.FC = () => {
           className="flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSubmitting}
         >
-          {isSubmitting ? TEXT.loading : TEXT.action}
+          {isSubmitting ? t('clients.create.actions.submitting') : t('clients.create.actions.submit')}
         </button>
       </form>
     </section>

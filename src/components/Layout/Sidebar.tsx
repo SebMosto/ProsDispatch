@@ -1,15 +1,18 @@
 import { Link, useLocation } from '../../lib/router';
-
-const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Jobs', href: '/jobs' },
-  { label: 'Clients', href: '/clients' },
-];
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 
 const isActive = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
 const Sidebar = () => {
   const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const NAV_ITEMS = useMemo(() => [
+    { label: t('layout.nav.dashboard'), href: '/dashboard' },
+    { label: t('layout.nav.jobs'), href: '/jobs' },
+    { label: t('layout.nav.clients'), href: '/clients' },
+  ], [t]);
 
   return (
     <aside className="hidden w-56 shrink-0 md:block">
@@ -27,7 +30,7 @@ const Sidebar = () => {
               <span>{item.label}</span>
               {active ? (
                 <span className="text-xs font-medium text-white/80" aria-hidden>
-                  Active
+                  {t('layout.nav.active')}
                 </span>
               ) : null}
             </Link>
@@ -40,6 +43,13 @@ const Sidebar = () => {
 
 export const BottomNav = () => {
   const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const NAV_ITEMS = useMemo(() => [
+    { label: t('layout.nav.dashboard'), href: '/dashboard' },
+    { label: t('layout.nav.jobs'), href: '/jobs' },
+    { label: t('layout.nav.clients'), href: '/clients' },
+  ], [t]);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-10 border-t border-slate-200 bg-white shadow-inner md:hidden">
