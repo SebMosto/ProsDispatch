@@ -43,9 +43,15 @@ const PublicInvoicePage = () => {
   return (
     <main className="flex min-h-[60vh] flex-col gap-6">
       <header className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-sm text-slate-600">Invoice {invoice.invoice_number}</p>
-        <h1 className="text-2xl font-semibold text-slate-900">Invoice Summary</h1>
-        <p className="text-sm text-slate-600">Contractor: {contractorLabel}</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+            PD
+          </div>
+          <div>
+            <p className="text-sm text-slate-600">Invoice {invoice.invoice_number}</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Invoice from {contractorLabel}</h1>
+          </div>
+        </div>
         <div className="mt-3 text-lg font-semibold text-slate-900">
           Total Due: {formatCurrency(invoice.total_amount)}
         </div>
@@ -94,7 +100,7 @@ const PublicInvoicePage = () => {
       <section className="flex flex-wrap items-center gap-3">
         <button
           type="button"
-          onClick={() => console.info('Pay Now clicked', { invoice_id: invoice.id })}
+          onClick={() => console.log('Stripe Checkout')}
           className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
         >
           Pay Now
