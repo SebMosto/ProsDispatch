@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
 import { useNavigate } from '../../lib/router';
@@ -37,6 +38,7 @@ const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues
 };
 
 const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { createDraft, updateDraft, finalize } = useInvoiceMutations();
@@ -126,11 +128,11 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     const targetJobId = activeInvoice?.job_id ?? jobId;
 
     if (!contractorId) {
-      throw new Error('You must be signed in to save an invoice.');
+      throw new Error(t('jobs.invoices.form.errorAuth'));
     }
 
     if (!targetJobId) {
-      throw new Error('A job is required to create an invoice.');
+      throw new Error(t('jobs.invoices.form.errorJob'));
     }
 
     const input = buildDraftInput(values);
@@ -142,7 +144,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     setLocalInvoice(savedInvoice);
 
     if (!options?.silent) {
-      setActionSuccess('Draft saved successfully.');
+      setActionSuccess(t('jobs.invoices.form.successDraft'));
     }
 
     if (!activeInvoice?.id && savedInvoice?.id) {
@@ -159,7 +161,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     try {
       await saveDraft(values);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to save invoice draft.';
+      const message = error instanceof Error ? error.message : t('jobs.invoices.form.errorDraft');
       setActionError(message);
     }
   });
@@ -173,13 +175,13 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
       const invoiceId = savedInvoice?.id ?? activeInvoice?.id;
 
       if (!invoiceId) {
-        throw new Error('Please save the draft before finalizing.');
+        throw new Error(t('jobs.invoices.form.errorBeforeFinalize'));
       }
 
       await finalize.mutateAsync(invoiceId);
-      setActionSuccess('Invoice finalized and sent.');
+      setActionSuccess(t('jobs.invoices.form.successFinalized'));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to finalize invoice.';
+      const message = error instanceof Error ? error.message : t('jobs.invoices.form.errorFinalize');
       setActionError(message);
     }
   });
@@ -194,11 +196,11 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <header className="space-y-1">
-        <p className="text-sm font-medium text-slate-600">Invoice</p>
+        <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.form.header')}</p>
         <h2 className="text-lg font-semibold text-slate-900">
-          {activeInvoice ? `Invoice ${activeInvoice.invoice_number}` : 'Create Invoice'}
+          {activeInvoice ? t('jobs.invoices.form.invoiceTitle', { number: activeInvoice.invoice_number }) : t('jobs.invoices.form.createTitle')}
         </h2>
-        <p className="text-sm text-slate-600">Add line items, review totals, then save or finalize.</p>
+        <p className="text-sm text-slate-600">{t('jobs.invoices.form.subtitle')}</p>
       </header>
 
       {actionSuccess ? (
@@ -216,27 +218,27 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         <div className="grid gap-3 md:grid-cols-3">
           <div className="space-y-1 md:col-span-2">
             <label className="block text-sm font-medium text-slate-800" htmlFor="invoice_number">
-              Invoice Number
+              {t('jobs.invoices.form.invoiceNumberLabel')}
             </label>
             <input
               id="invoice_number"
               type="text"
-              value={activeInvoice?.invoice_number ?? 'Auto-generated on save'}
+              value={activeInvoice?.invoice_number ?? t('jobs.invoices.form.invoiceNumberPlaceholder')}
               readOnly
               className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm"
             />
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-800">Status</label>
+            <label className="block text-sm font-medium text-slate-800">{t('jobs.invoices.form.statusLabel')}</label>
             <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-              Draft
+              {t('jobs.invoices.form.statusDraft')}
             </div>
           </div>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">Line Items</h3>
+            <h3 className="text-sm font-semibold text-slate-900">{t('jobs.invoices.form.lineItemsTitle')}</h3>
             <button
               type="button"
               onClick={() =>
@@ -251,13 +253,13 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
               }
               className="text-sm font-semibold text-blue-600 hover:text-blue-700"
             >
-              + Add Item
+              {t('jobs.invoices.form.addItem')}
             </button>
           </div>
 
           {items.length === 0 ? (
             <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-              No items yet. Add your first line item.
+              {t('jobs.invoices.form.noItems')}
             </div>
           ) : null}
 
@@ -267,18 +269,18 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             return (
               <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-700">Item {index + 1}</p>
+                  <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
                     type="button"
                     onClick={() => setItems((prev) => prev.filter((_entry, entryIndex) => entryIndex !== index))}
                     className="text-xs font-semibold text-red-600 hover:text-red-700"
                   >
-                    Remove
+                    {t('jobs.invoices.form.removeItem')}
                   </button>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.description`}>
-                    Description
+                    {t('jobs.invoices.form.descriptionLabel')}
                   </label>
                   <input
                     id={`items.${index}.description`}
@@ -299,7 +301,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 <div className="grid gap-3 md:grid-cols-3">
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.quantity`}>
-                      Qty
+                      {t('jobs.invoices.form.qtyLabel')}
                     </label>
                     <input
                       id={`items.${index}.quantity`}
@@ -321,7 +323,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.unitPrice`}>
-                      Unit Price (CAD)
+                      {t('jobs.invoices.form.unitPriceLabel')}
                     </label>
                     <input
                       id={`items.${index}.unitPrice`}
@@ -344,7 +346,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                     {getItemError(index, 'unitPrice') ? <p className="text-xs text-red-600">{getItemError(index, 'unitPrice')}</p> : null}
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600">Amount</label>
+                    <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
                     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
                       {formatCurrency(lineAmount)}
                     </div>
@@ -357,7 +359,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
 
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="flex items-center justify-between text-sm text-slate-700">
-            <span>Subtotal</span>
+            <span>{t('jobs.invoices.form.subtotalLabel')}</span>
             <span className="font-semibold">{formatCurrency(totals.subtotal)}</span>
           </div>
           <div className="mt-2 space-y-1 text-sm text-slate-700">
@@ -369,7 +371,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             ))}
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
-            <span>Total Due</span>
+            <span>{t('jobs.invoices.form.totalDueLabel')}</span>
             <span>{formatCurrency(totals.total)}</span>
           </div>
         </div>
@@ -380,7 +382,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             disabled={loadingState}
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loadingState ? 'Saving...' : 'Save Draft'}
+            {loadingState ? t('jobs.invoices.form.saving') : t('jobs.invoices.form.saveDraft')}
           </button>
           <button
             type="button"
@@ -388,7 +390,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             disabled={loadingState}
             className="inline-flex items-center justify-center rounded-lg border border-amber-500 px-4 py-2 text-sm font-semibold text-amber-700 shadow-sm transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Finalize &amp; Send
+            {t('jobs.invoices.form.finalizeButton')}
           </button>
         </div>
       </form>
@@ -396,15 +398,15 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
       {showFinalizeDialog ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-slate-900">Finalize invoice?</h3>
-            <p className="mt-2 text-sm text-slate-600">This action cannot be undone.</p>
+            <h3 className="text-lg font-semibold text-slate-900">{t('jobs.invoices.form.finalizeDialogTitle')}</h3>
+            <p className="mt-2 text-sm text-slate-600">{t('jobs.invoices.form.finalizeDialogMessage')}</p>
             <div className="mt-4 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowFinalizeDialog(false)}
                 className="text-sm font-semibold text-slate-600 hover:text-slate-800"
               >
-                Cancel
+                {t('jobs.invoices.form.cancel')}
               </button>
               <button
                 type="button"
@@ -414,7 +416,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 }}
                 className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
               >
-                Confirm &amp; Send
+                {t('jobs.invoices.form.confirmSend')}
               </button>
             </div>
           </div>
