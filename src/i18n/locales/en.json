@@ -113,7 +113,22 @@
       "title": "Invoices",
       "draftInvoice": "Draft Invoice",
       "errorLoading": "Unable to load invoices for this job.",
-      "emptyState": "No invoices yet. Create a draft to get started."
+      "emptyState": "No invoices yet. Create a draft to get started.",
+      "markPaidModal": {
+        "title": "Record Manual Payment",
+        "subtitle": "Capture offline payment details.",
+        "paymentMethodLabel": "Payment Method",
+        "paymentMethods": {
+          "cash": "Cash",
+          "cheque": "Cheque",
+          "etransfer": "E-Transfer",
+          "other": "Other"
+        },
+        "noteLabel": "Note (optional)",
+        "cancel": "Cancel",
+        "confirm": "Confirm Payment",
+        "saving": "Saving..."
+      }
     }
   },
   "clients": {

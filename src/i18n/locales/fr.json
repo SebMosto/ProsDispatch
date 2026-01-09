@@ -113,7 +113,22 @@
       "title": "Factures",
       "draftInvoice": "Créer une facture",
       "errorLoading": "Impossible de charger les factures pour ce travail.",
-      "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer."
+      "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer.",
+      "markPaidModal": {
+        "title": "Enregistrer le paiement manuel",
+        "subtitle": "Capturer les détails du paiement hors ligne.",
+        "paymentMethodLabel": "Méthode de paiement",
+        "paymentMethods": {
+          "cash": "Comptant",
+          "cheque": "Chèque",
+          "etransfer": "Virement électronique",
+          "other": "Autre"
+        },
+        "noteLabel": "Note (optionnelle)",
+        "cancel": "Annuler",
+        "confirm": "Confirmer le paiement",
+        "saving": "Enregistrement..."
+      }
     }
   },
   "clients": {
