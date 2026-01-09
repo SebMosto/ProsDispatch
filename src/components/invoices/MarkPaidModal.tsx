@@ -1,13 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInvoiceMutations } from '../../hooks/useInvoices';
 import type { InvoicePaymentMethod } from '../../repositories/invoiceRepository';
-
-const PAYMENT_OPTIONS: { value: InvoicePaymentMethod; label: string }[] = [
-  { value: 'cash', label: 'Cash' },
-  { value: 'cheque', label: 'Cheque' },
-  { value: 'etransfer', label: 'E-Transfer' },
-  { value: 'other', label: 'Other' },
-];
 
 type MarkPaidModalProps = {
   invoiceId: string;
@@ -16,6 +10,7 @@ type MarkPaidModalProps = {
 };
 
 const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
+  const { t } = useTranslation();
   const { markAsPaid } = useInvoiceMutations();
   const [paymentMethod, setPaymentMethod] = useState<InvoicePaymentMethod>('cash');
   const [paymentNote, setPaymentNote] = useState('');
@@ -23,18 +18,20 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
 
   const isSubmitting = markAsPaid.isLoading;
 
-  useEffect(() => {
-    if (isOpen) {
-      // Reset form to defaults when modal opens. This setState call is intentional
-      // to reset form state and does not cause problematic cascading renders.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPaymentMethod('cash');
-      setPaymentNote('');
-      setErrorMessage(null);
-    }
-  }, [isOpen]);
+  const options = useMemo(() => [
+    { value: 'cash' as const, label: t('jobs.invoices.markPaidModal.paymentMethods.cash') },
+    { value: 'cheque' as const, label: t('jobs.invoices.markPaidModal.paymentMethods.cheque') },
+    { value: 'etransfer' as const, label: t('jobs.invoices.markPaidModal.paymentMethods.etransfer') },
+    { value: 'other' as const, label: t('jobs.invoices.markPaidModal.paymentMethods.other') },
+  ], [t]);
 
-  const options = useMemo(() => PAYMENT_OPTIONS, []);
+  const handleClose = () => {
+    // Reset form state when closing
+    setPaymentMethod('cash');
+    setPaymentNote('');
+    setErrorMessage(null);
+    onClose();
+  };
 
   const handleConfirm = async () => {
     setErrorMessage(null);
@@ -44,7 +41,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
         method: paymentMethod,
         note: paymentNote || undefined,
       });
-      onClose();
+      handleClose();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to mark invoice as paid.';
       setErrorMessage(message);
@@ -58,8 +55,8 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-        <h3 className="text-lg font-semibold text-slate-900">Record Manual Payment</h3>
-        <p className="mt-1 text-sm text-slate-600">Capture offline payment details.</p>
+        <h3 className="text-lg font-semibold text-slate-900">{t('jobs.invoices.markPaidModal.title')}</h3>
+        <p className="mt-1 text-sm text-slate-600">{t('jobs.invoices.markPaidModal.subtitle')}</p>
         {errorMessage ? (
           <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
             {errorMessage}
@@ -68,7 +65,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
         <div className="mt-4 space-y-3">
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-700" htmlFor="payment_method">
-              Payment Method
+              {t('jobs.invoices.markPaidModal.paymentMethodLabel')}
             </label>
             <select
               id="payment_method"
@@ -85,7 +82,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
           </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-700" htmlFor="payment_note">
-              Note (optional)
+              {t('jobs.invoices.markPaidModal.noteLabel')}
             </label>
             <textarea
               id="payment_note"
@@ -99,10 +96,10 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
         <div className="mt-4 flex items-center justify-end gap-3">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="text-sm font-semibold text-slate-600 hover:text-slate-800"
           >
-            Cancel
+            {t('jobs.invoices.markPaidModal.cancel')}
           </button>
           <button
             type="button"
@@ -110,7 +107,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
             disabled={isSubmitting}
             className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? 'Saving...' : 'Confirm Payment'}
+            {isSubmitting ? t('jobs.invoices.markPaidModal.saving') : t('jobs.invoices.markPaidModal.confirm')}
           </button>
         </div>
       </div>
