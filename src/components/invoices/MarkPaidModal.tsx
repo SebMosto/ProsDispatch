@@ -24,12 +24,11 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
   const isSubmitting = markAsPaid.isLoading;
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
+    if (isOpen) {
+      setPaymentMethod('cash');
+      setPaymentNote('');
+      setErrorMessage(null);
     }
-    setPaymentMethod('cash');
-    setPaymentNote('');
-    setErrorMessage(null);
   }, [isOpen]);
 
   const options = useMemo(() => PAYMENT_OPTIONS, []);
