@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate } from '../../lib/router';
+import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
+import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import { useNetworkStatus } from '../../lib/network';
+import { formatCurrency } from '../../lib/currency';
 
 const JobDetailPage = () => {
   const { pathname, state } = useLocation();
@@ -15,6 +17,7 @@ const JobDetailPage = () => {
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
+  const { invoices, loading: invoicesLoading, error: invoicesError } = useJobInvoices(jobId);
 
   const queryClient = useQueryClient();
   const updateMutation = useUpdateJobMutation(jobId ?? '');
@@ -231,6 +234,47 @@ const JobDetailPage = () => {
             <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
           </div>
         </dl>
+      </section>
+
+      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-slate-900">Invoices</h2>
+          <Link
+            to={routePaths.createInvoice(jobId)}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          >
+            Draft Invoice
+          </Link>
+        </div>
+        {invoicesLoading ? (
+          <div className="space-y-2">
+            <div className="h-12 animate-pulse rounded-lg bg-slate-100" />
+            <div className="h-12 animate-pulse rounded-lg bg-slate-100" />
+          </div>
+        ) : invoicesError ? (
+          <p className="text-sm text-red-700">Unable to load invoices for this job.</p>
+        ) : invoices.length === 0 ? (
+          <p className="text-sm text-slate-600">No invoices yet. Create a draft to get started.</p>
+        ) : (
+          <ul className="space-y-2">
+            {invoices.map((invoice) => (
+              <li key={invoice.id}>
+                <Link
+                  to={routePaths.invoiceDetail(invoice.id)}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-900">{invoice.invoice_number}</p>
+                    <p className="text-xs text-slate-500 capitalize">{invoice.status.replace('_', ' ')}</p>
+                  </div>
+                  <div className="text-sm font-semibold text-slate-900">
+                    {formatCurrency(invoice.total_amount ?? 0)}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
