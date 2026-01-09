@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useInvoiceMutations } from '../../hooks/useInvoices';
 import type { InvoicePaymentMethod } from '../../repositories/invoiceRepository';
 
@@ -23,13 +23,12 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
 
   const isSubmitting = markAsPaid.isLoading;
 
-  useEffect(() => {
-    if (isOpen) {
-      setPaymentMethod('cash');
-      setPaymentNote('');
-      setErrorMessage(null);
-    }
-  }, [isOpen]);
+  const handleClose = () => {
+    setPaymentMethod('cash');
+    setPaymentNote('');
+    setErrorMessage(null);
+    onClose();
+  };
 
   const options = useMemo(() => PAYMENT_OPTIONS, []);
 
@@ -41,7 +40,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
         method: paymentMethod,
         note: paymentNote || undefined,
       });
-      onClose();
+      handleClose();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to mark invoice as paid.';
       setErrorMessage(message);
@@ -96,7 +95,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
         <div className="mt-4 flex items-center justify-end gap-3">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="text-sm font-semibold text-slate-600 hover:text-slate-800"
           >
             Cancel
