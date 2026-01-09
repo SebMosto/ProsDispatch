@@ -163,6 +163,36 @@
         "finalizeDialogMessage": "This action cannot be undone.",
         "cancel": "Cancel",
         "confirmSend": "Confirm & Send"
+      },
+      "createPage": {
+        "header": "Invoices",
+        "title": "Create Invoice",
+        "subtitle": "Create a draft invoice for the job.",
+        "errorNoJob": "No job selected for this invoice.",
+        "backToJobs": "Back to Jobs"
+      },
+      "detailPage": {
+        "title": "Invoice Detail",
+        "invoiceLabel": "Invoice {{number}}",
+        "errorNoInvoice": "No invoice selected.",
+        "errorLoading": "Unable to load invoice details.",
+        "backToJobs": "Back to Jobs",
+        "viewAsHomeowner": "View as Homeowner",
+        "homeownerLinkUnavailable": "Homeowner link unavailable",
+        "markAsPaid": "Mark as Paid",
+        "void": "Void",
+        "voidConfirm": "Void this invoice? This action cannot be undone.",
+        "pdfLabel": "PDF",
+        "downloadPdf": "Download PDF",
+        "pdfNotAvailable": "Not available",
+        "paidVia": "Paid via {{method}}",
+        "paidOn": "Paid on {{date}}",
+        "unknown": "unknown",
+        "lineItemsTitle": "Line Items",
+        "noLineItems": "No line items were recorded.",
+        "qtyFormat": "Qty {{quantity}} × {{price}}",
+        "subtotalLabel": "Subtotal",
+        "totalDueLabel": "Total Due"
       }
     }
   },

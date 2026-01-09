@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import InvoiceForm from '../../components/invoices/InvoiceForm';
 import MarkPaidModal from '../../components/invoices/MarkPaidModal';
 import { useInvoice } from '../../hooks/useInvoices';
@@ -14,6 +15,7 @@ const statusStyles: Record<string, string> = {
 };
 
 const InvoiceDetailPage = () => {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const segments = pathname.split('/').filter(Boolean);
@@ -33,13 +35,13 @@ const InvoiceDetailPage = () => {
   if (!invoiceId) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">No invoice selected.</p>
+        <p className="text-sm text-red-700">{t('jobs.invoices.detailPage.errorNoInvoice')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.invoices.detailPage.backToJobs')}
         </button>
       </main>
     );
@@ -60,13 +62,13 @@ const InvoiceDetailPage = () => {
   if (error || !invoice) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">Unable to load invoice details.</p>
+        <p className="text-sm text-red-700">{t('jobs.invoices.detailPage.errorLoading')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.invoices.detailPage.backToJobs')}
         </button>
       </main>
     );
@@ -89,8 +91,8 @@ const InvoiceDetailPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-600">Invoice {invoice.invoice_number}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">Invoice Detail</h1>
+          <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.detailPage.invoiceLabel', { number: invoice.invoice_number })}</p>
+          <h1 className="text-2xl font-semibold text-slate-900">{t('jobs.invoices.detailPage.title')}</h1>
         </div>
         <span
           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize ${
@@ -107,11 +109,11 @@ const InvoiceDetailPage = () => {
             to={`/pay/${publicToken}`}
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
-            View as Homeowner
+            {t('jobs.invoices.detailPage.viewAsHomeowner')}
           </Link>
         ) : (
           <span className="rounded-lg border border-dashed border-slate-200 px-4 py-2 text-sm text-slate-400">
-            Homeowner link unavailable
+            {t('jobs.invoices.detailPage.homeownerLinkUnavailable')}
           </span>
         )}
         {invoice.status === 'sent' ? (
@@ -120,21 +122,21 @@ const InvoiceDetailPage = () => {
             onClick={() => setShowPaymentModal(true)}
             className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
           >
-            Mark as Paid
+            {t('jobs.invoices.detailPage.markAsPaid')}
           </button>
         ) : null}
         <button
           type="button"
           onClick={() => {
             setActionError(null);
-            if (!window.confirm('Void this invoice? This action cannot be undone.')) {
+            if (!window.confirm(t('jobs.invoices.detailPage.voidConfirm'))) {
               return;
             }
             console.info('Void invoice requested', { invoice_id: invoice.id });
           }}
           className="inline-flex items-center justify-center rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
         >
-          Void
+          {t('jobs.invoices.detailPage.void')}
         </button>
       </section>
 
@@ -147,7 +149,7 @@ const InvoiceDetailPage = () => {
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-sm text-slate-600">PDF</p>
+            <p className="text-sm text-slate-600">{t('jobs.invoices.detailPage.pdfLabel')}</p>
             {invoice.pdf_url ? (
               <a
                 href={invoice.pdf_url}
@@ -155,10 +157,10 @@ const InvoiceDetailPage = () => {
                 rel="noreferrer"
                 className="text-sm font-semibold text-blue-600 hover:underline"
               >
-                Download PDF
+                {t('jobs.invoices.detailPage.downloadPdf')}
               </a>
             ) : (
-              <p className="text-sm text-slate-500">Not available</p>
+              <p className="text-sm text-slate-500">{t('jobs.invoices.detailPage.pdfNotAvailable')}</p>
             )}
           </div>
         </div>
@@ -166,11 +168,11 @@ const InvoiceDetailPage = () => {
         {invoice.status === 'paid' ? (
           <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             <p>
-              Paid via <span className="font-semibold capitalize">{invoice.payment_method ?? 'unknown'}</span>
+              {t('jobs.invoices.detailPage.paidVia', { method: invoice.payment_method ?? t('jobs.invoices.detailPage.unknown') })}
             </p>
             {invoice.paid_at ? (
               <p className="text-xs text-emerald-700">
-                Paid on {new Date(invoice.paid_at).toLocaleDateString('en-CA')}
+                {t('jobs.invoices.detailPage.paidOn', { date: new Date(invoice.paid_at).toLocaleDateString('en-CA') })}
               </p>
             ) : null}
           </div>
@@ -178,7 +180,7 @@ const InvoiceDetailPage = () => {
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">Line Items</h2>
+        <h2 className="text-sm font-semibold text-slate-900">{t('jobs.invoices.detailPage.lineItemsTitle')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
@@ -188,19 +190,19 @@ const InvoiceDetailPage = () => {
                   <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount)}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Qty {item.quantity} × {formatCurrency(item.unit_price)}
+                  {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price) })}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">No line items were recorded.</p>
+            <p className="text-sm text-slate-500">{t('jobs.invoices.detailPage.noLineItems')}</p>
           )}
         </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
-          <span>Subtotal</span>
+          <span>{t('jobs.invoices.detailPage.subtotalLabel')}</span>
           <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
         </div>
         <div className="mt-2 space-y-1 text-sm text-slate-700">
@@ -212,7 +214,7 @@ const InvoiceDetailPage = () => {
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
-          <span>Total Due</span>
+          <span>{t('jobs.invoices.detailPage.totalDueLabel')}</span>
           <span>{formatCurrency(invoice.total_amount)}</span>
         </div>
       </section>

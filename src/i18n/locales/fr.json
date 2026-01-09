@@ -163,6 +163,36 @@
         "finalizeDialogMessage": "Cette action ne peut pas être annulée.",
         "cancel": "Annuler",
         "confirmSend": "Confirmer et envoyer"
+      },
+      "createPage": {
+        "header": "Factures",
+        "title": "Créer une facture",
+        "subtitle": "Créer un brouillon de facture pour le travail.",
+        "errorNoJob": "Aucun travail sélectionné pour cette facture.",
+        "backToJobs": "Retour aux travaux"
+      },
+      "detailPage": {
+        "title": "Détail de la facture",
+        "invoiceLabel": "Facture {{number}}",
+        "errorNoInvoice": "Aucune facture sélectionnée.",
+        "errorLoading": "Impossible de charger les détails de la facture.",
+        "backToJobs": "Retour aux travaux",
+        "viewAsHomeowner": "Voir en tant que propriétaire",
+        "homeownerLinkUnavailable": "Lien propriétaire non disponible",
+        "markAsPaid": "Marquer comme payé",
+        "void": "Annuler",
+        "voidConfirm": "Annuler cette facture? Cette action ne peut pas être annulée.",
+        "pdfLabel": "PDF",
+        "downloadPdf": "Télécharger le PDF",
+        "pdfNotAvailable": "Non disponible",
+        "paidVia": "Payé via {{method}}",
+        "paidOn": "Payé le {{date}}",
+        "unknown": "inconnu",
+        "lineItemsTitle": "Éléments de ligne",
+        "noLineItems": "Aucun élément de ligne enregistré.",
+        "qtyFormat": "Qté {{quantity}} × {{price}}",
+        "subtotalLabel": "Sous-total",
+        "totalDueLabel": "Total dû"
       }
     }
   },
