@@ -71,7 +71,7 @@ Every AI agent must internalize these three roles/tasks. You may be asked to per
 
 ### How to Code
 1.  **Strict Types:** No `any`. Define interfaces in `src/types` or relevant files.
-2.  **Localization:** Do not hardcode strings. Use `t('key')` and add keys to `src/i18n/en.json` (and `fr.json` placeholder).
+2.  **Localization:** Do not hardcode strings. Use `t('key')` and add keys to `src/i18n/locales/en.json` (and `src/i18n/locales/fr.json` placeholder).
 3.  **Error Handling:** Always handle `error` states in UI and async operations.
 
 ### How to Verify
