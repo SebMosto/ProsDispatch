@@ -120,6 +120,18 @@ export const Link = ({ to, children, className }: { to: string; children: ReactN
   );
 };
 
+export const routePatterns = {
+  createInvoice: '/jobs/:jobId/invoices/new',
+  invoiceDetail: '/invoices/:id',
+  publicInvoice: '/pay/:token',
+};
+
+export const routePaths = {
+  createInvoice: (jobId: string) => `/jobs/${jobId}/invoices/new`,
+  invoiceDetail: (id: string) => `/invoices/${id}`,
+  publicInvoice: (token: string) => `/pay/${token}`,
+};
+
 export const useLocation = () => {
   const { path, state } = useRouter();
   return { pathname: path, state };

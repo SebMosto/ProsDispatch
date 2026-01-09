@@ -11,7 +11,7 @@ import InvoiceDetailPage from './pages/invoices/InvoiceDetailPage';
 import PublicInvoicePage from './pages/public/PublicInvoicePage';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, RouterProvider, Routes, Link, useLocation } from './lib/router';
+import { Navigate, Route, RouterProvider, Routes, Link, useLocation, routePatterns } from './lib/router';
 import { useAuth } from './lib/auth';
 import JobsListPage from './pages/jobs/JobsListPage';
 import ClientsListPage from './pages/clients/ClientsListPage';
@@ -117,7 +117,7 @@ const App = () => (
             }
           />
           <Route
-            path="/jobs/:jobId/invoices/new"
+            path={routePatterns.createInvoice}
             element={
               <ProtectedRoute>
                 <CreateInvoicePage />
@@ -125,7 +125,7 @@ const App = () => (
             }
           />
           <Route
-            path="/invoices/:id"
+            path={routePatterns.invoiceDetail}
             element={
               <ProtectedRoute>
                 <InvoiceDetailPage />
@@ -172,7 +172,7 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          <Route path="/pay/:token" element={<PublicInvoicePage />} />
+          <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppShell>
