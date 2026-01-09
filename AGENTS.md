@@ -13,7 +13,7 @@
 ### Tech Stack (Non-Negotiable)
 - **Frontend:** React 18, Vite, TypeScript, Tailwind CSS
 - **Backend:** Supabase (PostgreSQL, Auth, RLS, Edge Functions)
-- **State Management:** React Query (Server state), Zustand/Context (Client state)
+- **State Management:** React Query (Server state), Context (Client state)
 - **Validation:** Zod (localized schemas)
 - **i18n:** i18next (EN/FR-CA)
 - **Testing:** Vitest (Unit/Integration)
