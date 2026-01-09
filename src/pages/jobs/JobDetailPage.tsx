@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
@@ -10,6 +11,7 @@ import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 
 const JobDetailPage = () => {
+  const { t } = useTranslation();
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
@@ -238,12 +240,12 @@ const JobDetailPage = () => {
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-slate-900">Invoices</h2>
+          <h2 className="text-base font-semibold text-slate-900">{t('jobs.invoices.title')}</h2>
           <Link
             to={routePaths.createInvoice(jobId)}
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
           >
-            Draft Invoice
+            {t('jobs.invoices.draftInvoice')}
           </Link>
         </div>
         {invoicesLoading ? (
@@ -252,9 +254,9 @@ const JobDetailPage = () => {
             <div className="h-12 animate-pulse rounded-lg bg-slate-100" />
           </div>
         ) : invoicesError ? (
-          <p className="text-sm text-red-700">Unable to load invoices for this job.</p>
+          <p className="text-sm text-red-700">{t('jobs.invoices.errorLoading')}</p>
         ) : invoices.length === 0 ? (
-          <p className="text-sm text-slate-600">No invoices yet. Create a draft to get started.</p>
+          <p className="text-sm text-slate-600">{t('jobs.invoices.emptyState')}</p>
         ) : (
           <ul className="space-y-2">
             {invoices.map((invoice) => (
