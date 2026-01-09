@@ -24,12 +24,13 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
   const isSubmitting = markAsPaid.isLoading;
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
+    if (isOpen) {
+      // Reset form to defaults when modal opens
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPaymentMethod('cash');
+      setPaymentNote('');
+      setErrorMessage(null);
     }
-    setPaymentMethod('cash');
-    setPaymentNote('');
-    setErrorMessage(null);
   }, [isOpen]);
 
   const options = useMemo(() => PAYMENT_OPTIONS, []);
