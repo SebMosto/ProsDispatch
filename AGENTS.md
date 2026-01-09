@@ -32,7 +32,7 @@ Every AI agent must internalize these three roles/tasks. You may be asked to per
 ### Task 1: The "Safety First" Protocol
 *Trigger: Before every `submit` or final code handover.*
 
-1.  **Type Check:** Run `npx tsc -b` (or `npm run typecheck`) to ensure no TypeScript regressions.
+1.  **Type Check:** Run `npm run typecheck` to ensure no TypeScript regressions.
 2.  **Lint Check:** Run `npm run lint`.
 3.  **Unit Tests:** Run `npm test` (Vitest).
     *   *Rule:* If you modify a file, you **must** run its related test.
