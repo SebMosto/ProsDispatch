@@ -6,9 +6,12 @@ import SignInPage from './pages/auth/SignInPage';
 import DashboardPage from './pages/DashboardPage';
 import CreateJobPage from './pages/jobs/CreateJobPage';
 import JobDetailPage from './pages/jobs/JobDetailPage';
+import CreateInvoicePage from './pages/invoices/CreateInvoicePage';
+import InvoiceDetailPage from './pages/invoices/InvoiceDetailPage';
+import PublicInvoicePage from './pages/public/PublicInvoicePage';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, RouterProvider, Routes, Link } from './lib/router';
+import { Navigate, Route, RouterProvider, Routes, Link, useLocation } from './lib/router';
 import { useAuth } from './lib/auth';
 import JobsListPage from './pages/jobs/JobsListPage';
 import ClientsListPage from './pages/clients/ClientsListPage';
@@ -20,6 +23,23 @@ import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { pathname } = useLocation();
+  const isPublicInvoice = pathname.startsWith('/pay/');
+
+  if (isPublicInvoice) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto flex w-full max-w-4xl items-center px-4 py-4 sm:px-6 lg:px-8">
+            <div className="text-lg font-semibold text-slate-900" aria-label={t('layout.brand')}>
+              {t('layout.brand')}
+            </div>
+          </div>
+        </header>
+        <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -97,6 +117,30 @@ const App = () => (
             }
           />
           <Route
+            path="/jobs/:jobId/invoices/new"
+            element={
+              <ProtectedRoute>
+                <CreateInvoicePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices/:id"
+            element={
+              <ProtectedRoute>
+                <InvoiceDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoices/:id/edit"
+            element={
+              <ProtectedRoute>
+                <InvoiceDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/clients"
             element={
               <ProtectedRoute>
@@ -128,6 +172,7 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route path="/pay/:token" element={<PublicInvoicePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppShell>

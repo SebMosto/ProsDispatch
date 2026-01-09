@@ -36,6 +36,31 @@ export const useInvoice = (id?: string) => {
   };
 };
 
+export const useInvoiceByToken = (token?: string) => {
+  const query = useQuery<InvoiceWithItems, RepositoryError>({
+    queryKey: ['invoice', 'public', token],
+    queryFn: async () => {
+      if (!token) {
+        throw { message: 'Invoice token is required', reason: 'validation' } satisfies RepositoryError;
+      }
+      const result = await invoiceRepository.getInvoiceByToken(token);
+      if (result.error || !result.data) {
+        throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+      }
+      return result.data;
+    },
+    enabled: Boolean(token),
+    staleTime: FIVE_MINUTES,
+  });
+
+  return {
+    invoice: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
+};
+
 export const useJobInvoices = (jobId?: string) => {
   const queryKey = useMemo(() => ['invoices', { jobId }], [jobId]);
 
