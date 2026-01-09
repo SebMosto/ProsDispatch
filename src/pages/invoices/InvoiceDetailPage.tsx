@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import InvoiceForm from '../../components/invoices/InvoiceForm';
-import { useInvoice, useInvoiceMutations } from '../../hooks/useInvoices';
-import { useLocation, useNavigate } from '../../lib/router';
+import MarkPaidModal from '../../components/invoices/MarkPaidModal';
+import { useInvoice } from '../../hooks/useInvoices';
+import { Link, useLocation, useNavigate } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
-import { INVOICE_PAYMENT_METHODS } from '../../schemas/invoice';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-700',
-  sent: 'bg-blue-100 text-blue-700',
+  sent: 'bg-amber-100 text-amber-700',
   paid: 'bg-emerald-100 text-emerald-700',
   void: 'bg-red-100 text-red-700',
   overdue: 'bg-amber-100 text-amber-700',
@@ -20,10 +20,7 @@ const InvoiceDetailPage = () => {
   const invoiceId = segments[1];
 
   const { invoice, loading, error } = useInvoice(invoiceId);
-  const { markAsPaid } = useInvoiceMutations();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<(typeof INVOICE_PAYMENT_METHODS)[number]>('cash');
-  const [paymentNote, setPaymentNote] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
 
   const taxData = useMemo(() => {
@@ -83,6 +80,11 @@ const InvoiceDetailPage = () => {
     );
   }
 
+  const publicToken =
+    (invoice as { public_token?: string; token?: string } | null)?.public_token ??
+    (invoice as { token?: string } | null)?.token ??
+    null;
+
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -98,6 +100,43 @@ const InvoiceDetailPage = () => {
           {invoice.status}
         </span>
       </header>
+
+      <section className="flex flex-wrap items-center gap-3">
+        {publicToken ? (
+          <Link
+            to={`/pay/${publicToken}`}
+            className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            View as Homeowner
+          </Link>
+        ) : (
+          <span className="rounded-lg border border-dashed border-slate-200 px-4 py-2 text-sm text-slate-400">
+            Homeowner link unavailable
+          </span>
+        )}
+        {invoice.status === 'sent' ? (
+          <button
+            type="button"
+            onClick={() => setShowPaymentModal(true)}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            Mark as Paid
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => {
+            setActionError(null);
+            if (!window.confirm('Void this invoice? This action cannot be undone.')) {
+              return;
+            }
+            console.info('Void invoice requested', { invoice_id: invoice.id });
+          }}
+          className="inline-flex items-center justify-center rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
+        >
+          Void
+        </button>
+      </section>
 
       {actionError ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
@@ -122,15 +161,6 @@ const InvoiceDetailPage = () => {
               <p className="text-sm text-slate-500">Not available</p>
             )}
           </div>
-          {invoice.status === 'sent' ? (
-            <button
-              type="button"
-              onClick={() => setShowPaymentModal(true)}
-              className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
-            >
-              Mark as Paid
-            </button>
-          ) : null}
         </div>
 
         {invoice.status === 'paid' ? (
@@ -187,70 +217,11 @@ const InvoiceDetailPage = () => {
         </div>
       </section>
 
-      {showPaymentModal ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-slate-900">Record Manual Payment</h3>
-            <p className="mt-1 text-sm text-slate-600">Capture offline payment details.</p>
-            <div className="mt-4 space-y-3">
-              <div className="space-y-1">
-                <label className="block text-sm font-medium text-slate-700" htmlFor="payment_method">
-                  Payment Method
-                </label>
-                <select
-                  id="payment_method"
-                  value={paymentMethod}
-                  onChange={(event) => setPaymentMethod(event.target.value as (typeof INVOICE_PAYMENT_METHODS)[number])}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                >
-                  {INVOICE_PAYMENT_METHODS.map((method) => (
-                    <option key={method} value={method}>
-                      {method}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="block text-sm font-medium text-slate-700" htmlFor="payment_note">
-                  Note (optional)
-                </label>
-                <textarea
-                  id="payment_note"
-                  rows={3}
-                  value={paymentNote}
-                  onChange={(event) => setPaymentNote(event.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowPaymentModal(false)}
-                className="text-sm font-semibold text-slate-600 hover:text-slate-800"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  setActionError(null);
-                  try {
-                    await markAsPaid.mutateAsync({ id: invoice.id, method: paymentMethod, note: paymentNote || undefined });
-                    setShowPaymentModal(false);
-                  } catch (error) {
-                    const message = error instanceof Error ? error.message : 'Unable to mark invoice as paid.';
-                    setActionError(message);
-                  }
-                }}
-                className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
-              >
-                Confirm Payment
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <MarkPaidModal
+        invoiceId={invoice.id}
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+      />
     </main>
   );
 };
