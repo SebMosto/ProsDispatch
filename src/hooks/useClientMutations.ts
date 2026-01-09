@@ -41,7 +41,7 @@ export const useCreateClientMutation = () => {
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey: ['clients'] });
 
-        let previousClients = queryClient.getQueriesData<CachedClient[]>(['clients']);
+        let previousClients = queryClient.getQueriesData<CachedClient[]>({ queryKey: ['clients'] });
 
         const optimisticClient = buildOptimisticClient(input, user?.id ?? 'local-contractor');
 
@@ -81,7 +81,7 @@ export const useUpdateClientMutation = (clientId: string) => {
       },
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey: ['clients'] });
-        const previousClients = queryClient.getQueriesData<CachedClient[]>(['clients']);
+        const previousClients = queryClient.getQueriesData<CachedClient[]>({ queryKey: ['clients'] });
 
         previousClients.forEach(([key, clients]) => {
           const updatedClients = (clients ?? []).map((client) =>
