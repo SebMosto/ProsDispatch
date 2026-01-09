@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
@@ -24,15 +24,19 @@ const JobDetailPage = () => {
   const queryClient = useQueryClient();
   const updateMutation = useUpdateJobMutation(jobId ?? '');
 
+  const queryKey = useMemo(() => ['job', jobId], [jobId]);
+
+  const queryFn = useCallback(async () => {
+    const result = await jobRepository.get(jobId ?? '');
+    if (result.error || !result.data) {
+      throw result.error ?? new Error('Job not found');
+    }
+    return result.data;
+  }, [jobId]);
+
   const query = useQuery({
-    queryKey: ['job', jobId],
-    queryFn: async () => {
-      const result = await jobRepository.get(jobId ?? '');
-      if (result.error || !result.data) {
-        throw result.error ?? new Error('Job not found');
-      }
-      return result.data;
-    },
+    queryKey,
+    queryFn,
     enabled: Boolean(jobId),
   });
 

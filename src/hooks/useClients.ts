@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { clientRepository, type ClientRecord } from '../repositories/clientRepository';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
@@ -26,34 +26,36 @@ const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
 export const useClients = () => {
   const queryKey = useMemo(() => ['clients'], []);
 
+  const queryFn = useCallback(async () => {
+    const clientsResult = await clientRepository.list();
+
+    if (clientsResult.error) {
+      throw clientsResult.error;
+    }
+
+    const clients = clientsResult.data ?? [];
+    if (!clients.length) return [];
+
+    const propertiesResult = await propertyRepository.list({
+      clientIds: clients.map((client) => client.id),
+    });
+
+    if (propertiesResult.error) {
+      throw propertiesResult.error;
+    }
+
+    const properties = propertiesResult.data ?? [];
+    const propertyMap = buildPrimaryPropertyMap(properties);
+
+    return clients.map((client) => ({
+      ...client,
+      primary_property: propertyMap.get(client.id) ?? null,
+    }));
+  }, []);
+
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
     queryKey,
-    queryFn: async () => {
-      const clientsResult = await clientRepository.list();
-
-      if (clientsResult.error) {
-        throw clientsResult.error;
-      }
-
-      const clients = clientsResult.data ?? [];
-      if (!clients.length) return [];
-
-      const propertiesResult = await propertyRepository.list({
-        clientIds: clients.map((client) => client.id),
-      });
-
-      if (propertiesResult.error) {
-        throw propertiesResult.error;
-      }
-
-      const properties = propertiesResult.data ?? [];
-      const propertyMap = buildPrimaryPropertyMap(properties);
-
-      return clients.map((client) => ({
-        ...client,
-        primary_property: propertyMap.get(client.id) ?? null,
-      }));
-    },
+    queryFn,
   });
 
   return {
