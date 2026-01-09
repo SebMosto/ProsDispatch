@@ -25,7 +25,8 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
 
   useEffect(() => {
     if (isOpen) {
-      // Reset form to defaults when modal opens
+      // Reset form to defaults when modal opens. This setState call is intentional
+      // to reset form state and does not cause problematic cascading renders.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPaymentMethod('cash');
       setPaymentNote('');
