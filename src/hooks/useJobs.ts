@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { JobListParams, JobRecord } from '../repositories/jobRepository';
 import { jobRepository } from '../repositories/jobRepository';
@@ -9,15 +9,17 @@ const FIVE_MINUTES = 5 * 60 * 1000;
 export const useJobs = (params?: JobListParams) => {
   const queryKey = useMemo(() => ['jobs', params ?? {}], [params]);
 
+  const queryFn = useCallback(async () => {
+    const result = await jobRepository.list(params);
+    if (result.error) {
+      throw result.error;
+    }
+    return result.data ?? [];
+  }, [params]);
+
   const query = useQuery<JobRecord[], RepositoryError>({
     queryKey,
-    queryFn: async () => {
-      const result = await jobRepository.list(params);
-      if (result.error) {
-        throw result.error;
-      }
-      return result.data ?? [];
-    },
+    queryFn,
     staleTime: FIVE_MINUTES,
   });
 
