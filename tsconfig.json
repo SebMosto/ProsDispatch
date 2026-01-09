@@ -14,11 +14,7 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "types": ["vite/client"],
-    "baseUrl": ".",
-    "paths": {
-      "react-hook-form": ["./src/vendor/react-hook-form"],
-      "@hookform/resolvers/zod": ["./src/vendor/hookform-resolvers-zod"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
