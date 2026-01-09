@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
@@ -12,18 +12,22 @@ import {
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
+  const queryFn = useCallback(async () => {
+    if (!id) {
+      throw { message: 'Invoice ID is required', reason: 'validation' } satisfies RepositoryError;
+    }
+    const result = await invoiceRepository.get(id);
+    if (result.error || !result.data) {
+      throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+    }
+    return result.data;
+  }, [id]);
+
+  const queryKey = useMemo(() => ['invoice', id], [id]);
+
   const query = useQuery<InvoiceWithItems, RepositoryError>({
-    queryKey: ['invoice', id],
-    queryFn: async () => {
-      if (!id) {
-        throw { message: 'Invoice ID is required', reason: 'validation' } satisfies RepositoryError;
-      }
-      const result = await invoiceRepository.get(id);
-      if (result.error || !result.data) {
-        throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
-      }
-      return result.data;
-    },
+    queryKey,
+    queryFn,
     enabled: Boolean(id),
     staleTime: FIVE_MINUTES,
   });
@@ -37,18 +41,22 @@ export const useInvoice = (id?: string) => {
 };
 
 export const useInvoiceByToken = (token?: string) => {
+  const queryFn = useCallback(async () => {
+    if (!token) {
+      throw { message: 'Invoice token is required', reason: 'validation' } satisfies RepositoryError;
+    }
+    const result = await invoiceRepository.getInvoiceByToken(token);
+    if (result.error || !result.data) {
+      throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+    }
+    return result.data;
+  }, [token]);
+
+  const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
+
   const query = useQuery<InvoiceWithItems, RepositoryError>({
-    queryKey: ['invoice', 'public', token],
-    queryFn: async () => {
-      if (!token) {
-        throw { message: 'Invoice token is required', reason: 'validation' } satisfies RepositoryError;
-      }
-      const result = await invoiceRepository.getInvoiceByToken(token);
-      if (result.error || !result.data) {
-        throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
-      }
-      return result.data;
-    },
+    queryKey,
+    queryFn,
     enabled: Boolean(token),
     staleTime: FIVE_MINUTES,
   });
@@ -64,18 +72,20 @@ export const useInvoiceByToken = (token?: string) => {
 export const useJobInvoices = (jobId?: string) => {
   const queryKey = useMemo(() => ['invoices', { jobId }], [jobId]);
 
+  const queryFn = useCallback(async () => {
+    if (!jobId) {
+      return [];
+    }
+    const result = await invoiceRepository.listByJob(jobId);
+    if (result.error) {
+      throw result.error;
+    }
+    return result.data ?? [];
+  }, [jobId]);
+
   const query = useQuery<InvoiceWithItems[], RepositoryError>({
     queryKey,
-    queryFn: async () => {
-      if (!jobId) {
-        return [];
-      }
-      const result = await invoiceRepository.listByJob(jobId);
-      if (result.error) {
-        throw result.error;
-      }
-      return result.data ?? [];
-    },
+    queryFn,
     enabled: Boolean(jobId),
     staleTime: FIVE_MINUTES,
   });
