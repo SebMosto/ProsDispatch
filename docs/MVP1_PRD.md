@@ -100,7 +100,7 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Contractor SaaS Subscription (Stripe Billing) | ✔ |
+| Contractor SaaS Subscription (Monetization) | ✔ — Contractors pay a monthly subscription (starting at $20/mo) to access the platform. Pricing is managed dynamically via Stripe Billing. |
 
 ---
 
@@ -478,29 +478,31 @@ Draft → Sent → Approved → In Progress → Completed → Invoiced → Paid 
 
 1. Auth \+ Profile
 
-2. Client \+ Property (Shadow Registry)
+2. Contractor SaaS Subscription (Monetization)
 
-3. Job Engine \+ State Machine
+3. Client \+ Property (Shadow Registry)
 
-4. Invite Flow
+4. Job Engine \+ State Machine
 
-5. Invoice Generator
+5. Invite Flow
 
-6. Stripe Checkout
+6. Invoice Generator
 
-7. Email Notifications
+7. Stripe Checkout
 
-8. Dashboard (Active/History)
+8. Email Notifications
 
-9. Settings
+9. Dashboard (Active/History)
 
-10. Admin Portal (read-only)
+10. Settings
 
-11. i18n
+11. Admin Portal (read-only)
 
-12. A11y
+12. i18n
 
-13. Final Audit
+13. A11y
+
+14. Final Audit
 
 ---
 
@@ -521,4 +523,3 @@ Next steps:
 Whenever you're ready:
 
 **"Begin SPEC: Auth & Profiles."**
-
