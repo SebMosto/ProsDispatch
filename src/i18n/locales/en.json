@@ -107,6 +107,31 @@
       "errors": {
         "generic": "Unable to create job.",
         "auth": "You must be signed in to create a job."
+    },
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "card": {
+      "jobNum": "Job #{{id}}",
+      "noDescription": "No description provided",
+      "clientId": "Client ID",
+      "propertyId": "Property ID",
+      "serviceDate": "Service Date",
+      "notScheduled": "Not scheduled",
+      "lastUpdated": "Last Updated",
+      "created": "Created {{date}}",
+      "viewDetails": "View Details"
+    },
+    "list": {
+      "error": "Unable to load jobs",
+      "retry": "Retry",
+      "title": "Jobs",
+      "empty": "No jobs found. Create your first job to get started.",
+      "total": "{{count}} total"
       }
     },
     "invoices": {
@@ -196,6 +221,24 @@
       }
     }
   },
+  "properties": {
+    "create": {
+      "title": "Create property",
+      "subtitle": "Add a property for an existing client.",
+      "labels": {
+        "clientId": "Client ID",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2 (optional)",
+        "city": "City",
+        "province": "Province",
+        "postalCode": "Postal code",
+        "nickname": "Property nickname (optional)"
+      },
+      "actions": {
+        "submit": "Save property"
+      }
+    }
+  },
   "clients": {
     "create": {
       "title": "Create client",
@@ -231,6 +274,33 @@
     "required": "Field required",
     "invalidEmail": "Invalid email",
     "updateRequired": "At least one field is required to update a client",
-    "nameRequired": "Name is required"
+    "nameRequired": "Name is required",
+    "descriptionRequired": "Description is required",
+    "qtyPositive": "Qty must be greater than zero",
+    "unitPriceNonNegative": "Unit price must be 0 or greater",
+    "titleRequired": "Title must be at least 2 characters",
+    "titleTooLong": "Title must not exceed 80 characters",
+    "descriptionTooLong": "Description must not exceed 2000 characters",
+    "invalidDate": "Service date must be in YYYY-MM-DD format",
+    "clientIdInvalid": "Invalid client ID",
+    "propertyIdInvalid": "Invalid property ID",
+    "jobUpdateRequired": "At least one field is required to update a job",
+    "addressTooShort": "Address too short",
+    "cityRequired": "City required",
+    "invalidPostalCode": "Invalid Format (A1A 1A1)",
+    "propertyUpdateRequired": "At least one field is required to update a property",
+    "amountInteger": "Amount must be an integer representing cents",
+    "amountNonNegative": "Amount must be zero or greater",
+    "taxLabelRequired": "Tax label is required",
+    "taxRateNonNegative": "Tax rate must be zero or greater",
+    "lineItemDescriptionRequired": "Line item description is required",
+    "quantityPositive": "Quantity must be greater than zero",
+    "jobIdUUID": "Job ID must be a valid UUID",
+    "contractorIdUUID": "Contractor ID must be a valid UUID",
+    "invoiceNumberRequired": "Invoice number is required",
+    "pdfUrlValid": "PDF URL must be valid",
+    "paymentNoteTooLong": "Payment note must be 1000 characters or less",
+    "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
+    "oneLineItemRequired": "At least one line item is required"
   }
 }

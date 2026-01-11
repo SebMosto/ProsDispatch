@@ -11,22 +11,19 @@ import { useInvoiceMutations } from '../../hooks/useInvoices';
 import type { InvoiceDraftInput } from '../../schemas/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
 
-const InvoiceItemFormSchema = z.object({
-  description: z.string().min(1, 'Description is required'),
-  quantity: z.number().positive('Qty must be greater than zero'),
-  unitPrice: z.number().min(0, 'Unit price must be 0 or greater'),
-});
-
-const InvoiceFormSchema = z.object({
-  items: z.array(InvoiceItemFormSchema),
-});
-
-type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
-
 type InvoiceFormProps = {
   jobId?: string;
   invoice?: InvoiceWithItems | null;
 };
+
+// Internal types for form state
+interface InvoiceFormValues {
+  items: {
+    description: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
+}
 
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
@@ -46,6 +43,19 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [showFinalizeDialog, setShowFinalizeDialog] = useState(false);
   const [localInvoice, setLocalInvoice] = useState<InvoiceWithItems | null>(invoice ?? null);
+
+  // Memoize the schema to react to language changes
+  const InvoiceFormSchema = useMemo(() => {
+    const InvoiceItemFormSchema = z.object({
+      description: z.string().min(1, t('validation.descriptionRequired')),
+      quantity: z.number().positive(t('validation.qtyPositive')),
+      unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),
+    });
+
+    return z.object({
+      items: z.array(InvoiceItemFormSchema),
+    });
+  }, [t]);
 
   useEffect(() => {
     setLocalInvoice(invoice ?? null);
