@@ -478,29 +478,31 @@ Draft → Sent → Approved → In Progress → Completed → Invoiced → Paid 
 
 1. Auth \+ Profile
 
-2. Client \+ Property (Shadow Registry)
+2. Contractor SaaS Subscription (Monetization)
 
-3. Job Engine \+ State Machine
+3. Client \+ Property (Shadow Registry)
 
-4. Invite Flow
+4. Job Engine \+ State Machine
 
-5. Invoice Generator
+5. Invite Flow
 
-6. Stripe Checkout
+6. Invoice Generator
 
-7. Email Notifications
+7. Stripe Checkout
 
-8. Dashboard (Active/History)
+8. Email Notifications
 
-9. Settings
+9. Dashboard (Active/History)
 
-10. Admin Portal (read-only)
+10. Settings
 
-11. i18n
+11. Admin Portal (read-only)
 
-12. A11y
+12. i18n
 
-13. Final Audit
+13. A11y
+
+14. Final Audit
 
 ---
 
