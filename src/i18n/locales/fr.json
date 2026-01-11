@@ -107,6 +107,31 @@
       "errors": {
         "generic": "Impossible de créer le travail.",
         "auth": "Vous devez être connecté pour créer un travail."
+    },
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Planifié",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "card": {
+      "jobNum": "Travail #{{id}}",
+      "noDescription": "Aucune description fournie",
+      "clientId": "ID Client",
+      "propertyId": "ID Propriété",
+      "serviceDate": "Date de service",
+      "notScheduled": "Non planifié",
+      "lastUpdated": "Dernière mise à jour",
+      "created": "Créé le {{date}}",
+      "viewDetails": "Voir les détails"
+    },
+    "list": {
+      "error": "Impossible de charger les travaux",
+      "retry": "Réessayer",
+      "title": "Travaux",
+      "empty": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
+      "total": "{{count}} total"
       }
     },
     "invoices": {
@@ -196,6 +221,24 @@
       }
     }
   },
+  "properties": {
+    "create": {
+      "title": "Créer une propriété",
+      "subtitle": "Ajouter une propriété pour un client existant.",
+      "labels": {
+        "clientId": "ID Client",
+        "addressLine1": "Ligne d'adresse 1",
+        "addressLine2": "Ligne d'adresse 2 (optionnelle)",
+        "city": "Ville",
+        "province": "Province",
+        "postalCode": "Code postal",
+        "nickname": "Surnom de la propriété (optionnel)"
+      },
+      "actions": {
+        "submit": "Enregistrer la propriété"
+      }
+    }
+  },
   "clients": {
     "create": {
       "title": "Créer un client",
@@ -231,6 +274,33 @@
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
     "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
-    "nameRequired": "Le nom est requis"
+    "nameRequired": "Le nom est requis",
+    "descriptionRequired": "La description est requise",
+    "qtyPositive": "La quantité doit être supérieure à zéro",
+    "unitPriceNonNegative": "Le prix unitaire doit être de 0 ou plus",
+    "titleRequired": "Le titre doit comporter au moins 2 caractères",
+    "titleTooLong": "Le titre ne doit pas dépasser 80 caractères",
+    "descriptionTooLong": "La description ne doit pas dépasser 2000 caractères",
+    "invalidDate": "La date de service doit être au format AAAA-MM-JJ",
+    "clientIdInvalid": "ID client invalide",
+    "propertyIdInvalid": "ID propriété invalide",
+    "jobUpdateRequired": "Au moins un champ est requis pour mettre à jour un travail",
+    "addressTooShort": "Adresse trop courte",
+    "cityRequired": "Ville requise",
+    "invalidPostalCode": "Format invalide (A1A 1A1)",
+    "propertyUpdateRequired": "Au moins un champ est requis pour mettre à jour une propriété",
+    "amountInteger": "Le montant doit être un entier représentant des cents",
+    "amountNonNegative": "Le montant doit être zéro ou plus",
+    "taxLabelRequired": "Le libellé de la taxe est requis",
+    "taxRateNonNegative": "Le taux de taxe doit être zéro ou plus",
+    "lineItemDescriptionRequired": "La description de l'élément de ligne est requise",
+    "quantityPositive": "La quantité doit être supérieure à zéro",
+    "jobIdUUID": "L'ID du travail doit être un UUID valide",
+    "contractorIdUUID": "L'ID de l'entrepreneur doit être un UUID valide",
+    "invoiceNumberRequired": "Le numéro de facture est requis",
+    "pdfUrlValid": "L'URL du PDF doit être valide",
+    "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
+    "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
+    "oneLineItemRequired": "Au moins un élément de ligne est requis"
   }
 }

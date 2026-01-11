@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from '../../lib/router';
 import { useNetworkStatus } from '../../lib/network';
 import type { JobRecord } from '../../repositories/jobRepository';
@@ -12,23 +13,16 @@ const STATUS_STYLES: Record<string, string> = {
   cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: 'Draft',
-  scheduled: 'Scheduled',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
-};
-
 interface JobCardProps {
   job: JobRecord;
 }
 
 const JobCard = ({ job }: JobCardProps) => {
   const { isOnline } = useNetworkStatus();
+  const { t } = useTranslation();
 
   const statusClass = STATUS_STYLES[job.status] ?? STATUS_STYLES.draft;
-  const statusLabel = STATUS_LABELS[job.status] ?? job.status;
+  const statusLabel = t(`jobs.status.${job.status}`, job.status);
 
   const syncState: SyncBadgeState = useMemo(() => {
     if (job.id.startsWith('temp-')) {
@@ -41,9 +35,9 @@ const JobCard = ({ job }: JobCardProps) => {
     <article className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-slate-500">Job #{job.id.slice(0, 8)}</p>
+          <p className="text-xs font-medium text-slate-500">{t('jobs.card.jobNum', { id: job.id.slice(0, 8) })}</p>
           <h3 className="text-lg font-semibold text-slate-900">{job.title}</h3>
-          <p className="text-sm text-slate-600 line-clamp-2">{job.description || 'No description provided'}</p>
+          <p className="text-sm text-slate-600 line-clamp-2">{job.description || t('jobs.card.noDescription')}</p>
         </div>
         <div className="flex items-center gap-2 self-start">
           <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusClass}`}>
@@ -55,30 +49,30 @@ const JobCard = ({ job }: JobCardProps) => {
 
       <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">Client ID</dt>
+          <dt className="text-slate-600">{t('jobs.card.clientId')}</dt>
           <dd className="font-medium text-slate-900">{job.client_id}</dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">Property ID</dt>
+          <dt className="text-slate-600">{t('jobs.card.propertyId')}</dt>
           <dd className="font-medium text-slate-900">{job.property_id}</dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">Service Date</dt>
-          <dd className="font-medium text-slate-900">{job.service_date || 'Not scheduled'}</dd>
+          <dt className="text-slate-600">{t('jobs.card.serviceDate')}</dt>
+          <dd className="font-medium text-slate-900">{job.service_date || t('jobs.card.notScheduled')}</dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">Last Updated</dt>
+          <dt className="text-slate-600">{t('jobs.card.lastUpdated')}</dt>
           <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
         </div>
       </dl>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs text-slate-500">Created {new Date(job.created_at).toLocaleString()}</div>
+        <div className="text-xs text-slate-500">{t('jobs.card.created', { date: new Date(job.created_at).toLocaleString() })}</div>
         <Link
           to={`/jobs/${job.id}`}
           className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          View Details
+          {t('jobs.card.viewDetails')}
         </Link>
       </div>
     </article>
