@@ -100,7 +100,7 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Contractor SaaS Subscription (Monetization) | ✔ — Contractors pay a monthly subscription (starting at $20/mo) to access the platform. Pricing is managed dynamically via Stripe Billing. |
+| Contractor SaaS Subscription (Monetization) | ✔ — SaaS Subscription ($20/mo, Dynamic Pricing via Stripe Lookup Keys). |
 
 ---
 
@@ -195,6 +195,10 @@ MVP1 permits:
 ---
 
 # **5\. MVP1 User Stories (Gherkin)**
+
+### **5.1 Roadmap (Spec Status)**
+
+* **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **READY FOR DEV**
 
 ### **Contractor Registration**
 
