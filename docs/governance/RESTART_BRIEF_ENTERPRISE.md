@@ -25,7 +25,6 @@ Additionally, the absence of meaningful PRDs and the presence of marketplace-ori
 - `src/payments/` (escrow patterns)
 - `supabase/migrations/` (marketplace schema)
 - Any file referencing proposals, bidding, or escrow flows
-- Vaulting Forbidden for Homeowners. ALLOWED for Contractors (strictly for SaaS Subscription billing via Stripe).
 - Hardcoded API keys
 - Next.js-specific code in a Vite app
 - Old `package.json` dependency set
