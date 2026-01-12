@@ -114,10 +114,13 @@
     },
     "status": {
       "draft": "Brouillon",
-      "scheduled": "Planifié",
+      "sent": "Envoyé",
+      "approved": "Approuvé",
       "in_progress": "En cours",
       "completed": "Terminé",
-      "cancelled": "Annulé"
+      "invoiced": "Facturé",
+      "paid": "Payé",
+      "archived": "Archivé"
     },
     "card": {
       "jobNum": "Travail #{{id}}",
