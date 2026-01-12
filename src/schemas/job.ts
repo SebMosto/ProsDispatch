@@ -3,10 +3,13 @@ import { TFunction } from 'i18next';
 
 export const JOB_STATUSES = [
   'draft',
-  'scheduled',
+  'sent',
+  'approved',
   'in_progress',
   'completed',
-  'cancelled',
+  'invoiced',
+  'paid',
+  'archived',
 ] as const;
 
 /**
