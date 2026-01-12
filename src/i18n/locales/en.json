@@ -38,6 +38,10 @@
   "footer": {
     "note": "Mobile-first layout adapts to screens as small as 320px."
   },
+  "offline": {
+    "title": "You’re offline",
+    "body": "Changes are saved on your device. You can submit when you’re back online."
+  },
   "auth": {
     "shared": {
       "email": "Email",
@@ -234,6 +238,9 @@
         "postalCode": "Postal code",
         "nickname": "Property nickname (optional)"
       },
+      "placeholders": {
+        "addressLine1": "123 Main St"
+      },
       "actions": {
         "submit": "Save property"
       }
@@ -267,6 +274,18 @@
       "errors": {
         "generic": "Unable to save client.",
         "auth": "You must be logged in to create a client."
+      }
+    },
+    "list": {
+      "title": "Clients",
+      "empty": "No clients yet. New clients will appear here.",
+      "error": "Unable to load clients.",
+      "cityFallback": "City unavailable",
+      "loading": "Loading...",
+      "unnamed": "Unnamed client",
+      "types": {
+        "business": "Business",
+        "individual": "Individual"
       }
     }
   },

@@ -38,6 +38,10 @@
   "footer": {
     "note": "La mise en page mobile d'abord s'adapte aux écrans aussi petits que 320px."
   },
+  "offline": {
+    "title": "Vous êtes hors ligne",
+    "body": "Les modifications sont enregistrées sur votre appareil. Vous pourrez soumettre une fois de retour en ligne."
+  },
   "auth": {
     "shared": {
       "email": "Courriel",
@@ -234,6 +238,9 @@
         "postalCode": "Code postal",
         "nickname": "Surnom de la propriété (optionnel)"
       },
+      "placeholders": {
+        "addressLine1": "123 rue Principale"
+      },
       "actions": {
         "submit": "Enregistrer la propriété"
       }
@@ -267,6 +274,18 @@
       "errors": {
         "generic": "Impossible d'enregistrer le client.",
         "auth": "Vous devez être connecté pour créer un client."
+      }
+    },
+    "list": {
+      "title": "Clients",
+      "empty": "Pas encore de clients. Les nouveaux clients apparaîtront ici.",
+      "error": "Impossible de charger les clients.",
+      "cityFallback": "Ville non disponible",
+      "loading": "Chargement...",
+      "unnamed": "Client sans nom",
+      "types": {
+        "business": "Entreprise",
+        "individual": "Particulier"
       }
     }
   },
