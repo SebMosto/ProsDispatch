@@ -100,7 +100,7 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Contractor SaaS Subscription (Monetization) | ✔ — Contractors pay a monthly subscription (starting at $20/mo) to access the platform. Pricing is managed dynamically via Stripe Billing. |
+| Contractor SaaS Subscription (Monetization) | ✔ — SaaS Subscription ($20/mo, Dynamic Pricing via Stripe Lookup Keys). |
 
 ---
 
@@ -196,35 +196,39 @@ MVP1 permits:
 
 # **5\. MVP1 User Stories (Gherkin)**
 
-### **Contractor Registration**
+### **5.1 Roadmap (Spec Status)**
+
+* **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **READY FOR DEV**
+
+### **5.2 Contractor Registration**
 
 Given I am a new contractor    
 When I provide my email, password, and business name    
 Then my account is created    
 And I am prompted to complete my profile  
 
-### **Create Job**
+### **5.3 Create Job**
 
 Given I am logged in    
 When I create a new job    
 And specify client, property, service date, and description    
 Then the job is saved in Draft state
 
-### **Send Job to Homeowner**
+### **5.4 Send Job to Homeowner**
 
 Given a job is in Draft    
 When I click "Send to Homeowner"    
 Then an email link is sent via Resend    
 And the job moves to Sent state
 
-### **Homeowner Approval**
+### **5.5 Homeowner Approval**
 
 Given I receive an invite link    
 When I open the link    
 Then I can Approve or Decline    
 And no login is required
 
-### **Invoice Payment**
+### **5.6 Invoice Payment**
 
 Given a job is Invoiced    
 When the homeowner clicks "Pay Invoice"    

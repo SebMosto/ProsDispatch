@@ -33,8 +33,7 @@ Additionally, the absence of meaningful PRDs and the presence of marketplace-ori
 
 ### 4.1 (Updated): Payment Method Rules
 
-Contractor vaulting is **allowed** using Stripe Billing Customer objects.  
-Homeowner vaulting remains **strictly forbidden**.
+Vaulting Forbidden for Homeowners. ALLOWED for Contractors (strictly for SaaS Subscription billing via Stripe).
 
 ### 4.2 (New): Subscription Billing
 
