@@ -75,7 +75,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
                 value={field.value}
                 onChange={field.onChange}
                 onSelect={applyAddressSelection}
-                placeholder="123 Main St"
+              placeholder={t('properties.create.placeholders.addressLine1')}
               />
             )}
           />
