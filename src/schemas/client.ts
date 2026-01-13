@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CANADIAN_PROVINCES, PropertySchema } from './property';
+import { CANADIAN_PROVINCES, PropertySchema, getPropertySchema } from './property';
 import { TFunction } from 'i18next';
 
 export const getClientSchema = (t: TFunction) => z.object({
@@ -38,7 +38,7 @@ export const ClientUpdateSchema = ClientSchema.partial().refine(
 );
 
 export const getClientAndPropertySchema = (t: TFunction) => getClientSchema(t).merge(
-  PropertySchema.omit({ client_id: true }),
+  getPropertySchema(t).omit({ client_id: true }),
 );
 
 export const ClientAndPropertySchema = ClientSchema.merge(

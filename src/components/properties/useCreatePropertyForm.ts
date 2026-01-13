@@ -110,7 +110,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     setSubmitSuccess(null);
 
     if (!user) {
-      setSubmitError(t('clients.create.errors.auth')); // reusing auth error key or create new one
+      setSubmitError(t('properties.create.errors.auth'));
       return;
     }
 
@@ -121,7 +121,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     });
 
     if (!parsed.success) {
-      setSubmitError(parsed.error.issues[0]?.message ?? t('clients.create.errors.generic'));
+      setSubmitError(parsed.error.issues[0]?.message ?? t('properties.create.errors.generic'));
       return;
     }
 
@@ -130,11 +130,11 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
       if (result.error) {
         throw result.error;
       }
-      setSubmitSuccess(t('clients.create.statuses.success')); // Generic success
+      setSubmitSuccess(t('properties.create.statuses.success'));
       await draft.clearDraft();
       reset(baseValues);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t('clients.create.errors.generic');
+      const message = error instanceof Error ? error.message : t('properties.create.errors.generic');
       setSubmitError(message);
     }
   };
