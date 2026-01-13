@@ -99,7 +99,7 @@ const InvoiceDetailPage = () => {
             statusStyles[invoice.status] ?? 'bg-slate-100 text-slate-700'
           }`}
         >
-          {invoice.status}
+          {t(`jobs.status.${invoice.status}`, { defaultValue: invoice.status })}
         </span>
       </header>
 

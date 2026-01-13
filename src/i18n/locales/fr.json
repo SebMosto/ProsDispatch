@@ -88,6 +88,11 @@
     }
   },
   "jobs": {
+    "createPage": {
+       "breadCrumb": "Travaux",
+       "header": "Créer et gérer les travaux",
+       "subHeader": "Les brouillons sont enregistrés localement même si vous rechargez."
+    },
     "create": {
       "title": "Créer un travail",
       "subtitle": "Suivez le travail pour un client et une propriété.",
@@ -111,6 +116,34 @@
       "errors": {
         "generic": "Impossible de créer le travail.",
         "auth": "Vous devez être connecté pour créer un travail."
+      }
+    },
+    "detail": {
+      "noSelection": "Aucun travail sélectionné.",
+      "backToJobs": "Retour aux travaux",
+      "errorLoading": "Impossible de charger les détails du travail.",
+      "noDescription": "Aucune description fournie",
+      "sectionTitle": "Détails",
+      "notScheduled": "Non planifié",
+      "quickActions": "Actions rapides",
+      "optimisticNote": "Utilise des mises à jour optimistes",
+      "labels": {
+        "status": "Statut",
+        "clientId": "ID Client",
+        "propertyId": "ID Propriété",
+        "serviceDate": "Date de service",
+        "created": "Créé",
+        "updated": "Mis à jour"
+      }
+    },
+    "actions": {
+      "send": "Envoyer au client",
+      "approve": "Marquer comme approuvé",
+      "start": "Commencer le travail",
+      "complete": "Terminer le travail",
+      "archive": "Archiver le travail",
+      "invoice": "Marquer comme facturé",
+      "paid": "Marquer comme payé"
     },
     "status": {
       "draft": "Brouillon",
@@ -134,12 +167,14 @@
       "viewDetails": "Voir les détails"
     },
     "list": {
+      "pageTitle": "Travaux",
+      "header": "Activité des travaux",
+      "subHeader": "Suivez l'état des travaux et les mises à jour récentes.",
       "error": "Impossible de charger les travaux",
       "retry": "Réessayer",
       "title": "Travaux",
       "empty": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
       "total": "{{count}} total"
-      }
     },
     "invoices": {
       "title": "Factures",
@@ -159,7 +194,8 @@
         "noteLabel": "Note (optionnelle)",
         "cancel": "Annuler",
         "confirm": "Confirmer le paiement",
-        "saving": "Enregistrement..."
+        "saving": "Enregistrement...",
+        "error": "Impossible de marquer la facture comme payée."
       },
       "form": {
         "header": "Facture",
@@ -229,6 +265,12 @@
     }
   },
   "properties": {
+     "createPage": {
+       "breadCrumb": "Propriétés",
+       "header": "Créer une propriété",
+       "subHeader": "Attribuer une propriété à un client existant.",
+       "backToClient": "Retour au client"
+     },
     "create": {
       "title": "Créer une propriété",
       "subtitle": "Ajouter une propriété pour un client existant.",
@@ -246,10 +288,23 @@
       },
       "actions": {
         "submit": "Enregistrer la propriété"
+      },
+      "statuses": {
+        "success": "Propriété enregistrée."
+      },
+      "errors": {
+        "generic": "Impossible d'enregistrer la propriété.",
+        "auth": "Vous devez être connecté pour créer une propriété."
       }
     }
   },
   "clients": {
+    "createPage": {
+       "breadCrumb": "Clients",
+       "header": "Créer un client",
+       "subHeader": "Ajouter un nouveau client au registre.",
+       "backToClients": "Retour aux clients"
+    },
     "create": {
       "title": "Créer un client",
       "subtitle": "Saisir les détails du client.",
@@ -280,6 +335,10 @@
       }
     },
     "list": {
+      "pageTitle": "Clients",
+      "header": "Registre des clients",
+      "subHeader": "Voir les clients et leurs propriétés principales.",
+      "newClient": "Nouveau client",
       "title": "Clients",
       "empty": "Pas encore de clients. Les nouveaux clients apparaîtront ici.",
       "error": "Impossible de charger les clients.",
@@ -289,6 +348,25 @@
       "types": {
         "business": "Entreprise",
         "individual": "Particulier"
+      }
+    },
+    "detail": {
+      "error": "Impossible de charger le client.",
+      "properties": "Propriétés",
+      "delete": "Supprimer le client",
+      "deleting": "Suppression...",
+      "deleted": "Client supprimé.",
+      "noSelection": "Aucun client sélectionné.",
+      "backToClients": "Retour aux clients",
+      "idLabel": "Client #{{id}}",
+      "noEmail": "Aucun courriel",
+      "loading": "Chargement...",
+      "addProperty": "Ajouter une propriété",
+      "noProperties": "Pas encore de propriétés.",
+      "primaryProperty": "Propriété principale",
+      "types": {
+         "business": "Entreprise",
+         "individual": "Particulier"
       }
     }
   },

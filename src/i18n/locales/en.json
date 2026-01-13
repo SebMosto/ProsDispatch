@@ -88,6 +88,11 @@
     }
   },
   "jobs": {
+    "createPage": {
+       "breadCrumb": "Jobs",
+       "header": "Create & Manage Jobs",
+       "subHeader": "Drafts are saved locally even if you reload."
+    },
     "create": {
       "title": "Create job",
       "subtitle": "Track work for a client and property.",
@@ -111,6 +116,34 @@
       "errors": {
         "generic": "Unable to create job.",
         "auth": "You must be signed in to create a job."
+      }
+    },
+    "detail": {
+      "noSelection": "No job selected.",
+      "backToJobs": "Back to Jobs",
+      "errorLoading": "Unable to load job details.",
+      "noDescription": "No description provided",
+      "sectionTitle": "Details",
+      "notScheduled": "Not scheduled",
+      "quickActions": "Quick Actions",
+      "optimisticNote": "Uses optimistic updates",
+      "labels": {
+        "status": "Status",
+        "clientId": "Client ID",
+        "propertyId": "Property ID",
+        "serviceDate": "Service Date",
+        "created": "Created",
+        "updated": "Updated"
+      }
+    },
+    "actions": {
+      "send": "Send to Client",
+      "approve": "Mark as Approved",
+      "start": "Start Job",
+      "complete": "Complete Job",
+      "archive": "Archive Job",
+      "invoice": "Mark as Invoiced",
+      "paid": "Mark as Paid"
     },
     "status": {
       "draft": "Draft",
@@ -134,12 +167,14 @@
       "viewDetails": "View Details"
     },
     "list": {
+      "pageTitle": "Jobs",
+      "header": "Job Activity",
+      "subHeader": "Track job status and view recent updates.",
       "error": "Unable to load jobs",
       "retry": "Retry",
       "title": "Jobs",
       "empty": "No jobs found. Create your first job to get started.",
       "total": "{{count}} total"
-      }
     },
     "invoices": {
       "title": "Invoices",
@@ -159,7 +194,8 @@
         "noteLabel": "Note (optional)",
         "cancel": "Cancel",
         "confirm": "Confirm Payment",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "error": "Unable to mark invoice as paid."
       },
       "form": {
         "header": "Invoice",
@@ -229,6 +265,12 @@
     }
   },
   "properties": {
+     "createPage": {
+       "breadCrumb": "Properties",
+       "header": "Create Property",
+       "subHeader": "Assign a property to an existing client.",
+       "backToClient": "Back to Client"
+     },
     "create": {
       "title": "Create property",
       "subtitle": "Add a property for an existing client.",
@@ -246,10 +288,23 @@
       },
       "actions": {
         "submit": "Save property"
+      },
+      "statuses": {
+        "success": "Property saved."
+      },
+      "errors": {
+        "generic": "Unable to save property.",
+        "auth": "You must be logged in to create a property."
       }
     }
   },
   "clients": {
+    "createPage": {
+       "breadCrumb": "Clients",
+       "header": "Create Client",
+       "subHeader": "Add a new client to the registry.",
+       "backToClients": "Back to Clients"
+    },
     "create": {
       "title": "Create client",
       "subtitle": "Capture client details.",
@@ -280,6 +335,10 @@
       }
     },
     "list": {
+      "pageTitle": "Clients",
+      "header": "Client Registry",
+      "subHeader": "View customers and their primary properties.",
+      "newClient": "New Client",
       "title": "Clients",
       "empty": "No clients yet. New clients will appear here.",
       "error": "Unable to load clients.",
@@ -289,6 +348,25 @@
       "types": {
         "business": "Business",
         "individual": "Individual"
+      }
+    },
+    "detail": {
+      "error": "Unable to load client.",
+      "properties": "Properties",
+      "delete": "Delete client",
+      "deleting": "Deleting...",
+      "deleted": "Client deleted.",
+      "noSelection": "No client selected.",
+      "backToClients": "Back to Clients",
+      "idLabel": "Client #{{id}}",
+      "noEmail": "No email",
+      "loading": "Loading...",
+      "addProperty": "Add property",
+      "noProperties": "No properties yet.",
+      "primaryProperty": "Primary property",
+      "types": {
+         "business": "Business",
+         "individual": "Individual"
       }
     }
   },
