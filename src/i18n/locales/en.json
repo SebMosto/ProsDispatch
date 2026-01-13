@@ -114,10 +114,13 @@
     },
     "status": {
       "draft": "Draft",
-      "scheduled": "Scheduled",
+      "sent": "Sent",
+      "approved": "Approved",
       "in_progress": "In Progress",
       "completed": "Completed",
-      "cancelled": "Cancelled"
+      "invoiced": "Invoiced",
+      "paid": "Paid",
+      "archived": "Archived"
     },
     "card": {
       "jobNum": "Job #{{id}}",

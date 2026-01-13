@@ -28,11 +28,14 @@ export class IllegalJobStatusTransitionError extends Error {
  * Defines all allowed job status transitions according to SPEC-003 section 3
  */
 const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
-  draft: ['draft', 'scheduled', 'cancelled'],
-  scheduled: ['scheduled', 'in_progress', 'cancelled'],
-  in_progress: ['in_progress', 'completed', 'cancelled'],
-  completed: ['completed'],
-  cancelled: ['cancelled'],
+  draft: ['sent'],
+  sent: ['approved'],
+  approved: ['in_progress'],
+  in_progress: ['completed', 'archived'],
+  completed: ['invoiced', 'archived'],
+  invoiced: ['paid'],
+  paid: ['archived'],
+  archived: [],
 };
 
 /**

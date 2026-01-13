@@ -7,10 +7,13 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 
 const STATUS_STYLES: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-800 border-slate-200',
-  scheduled: 'bg-blue-50 text-blue-800 border-blue-200',
+  sent: 'bg-blue-50 text-blue-800 border-blue-200',
+  approved: 'bg-cyan-50 text-cyan-800 border-cyan-200',
   in_progress: 'bg-amber-50 text-amber-800 border-amber-200',
   completed: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  invoiced: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+  paid: 'bg-green-50 text-green-800 border-green-200',
+  archived: 'bg-gray-50 text-gray-700 border-gray-200',
 };
 
 interface JobCardProps {

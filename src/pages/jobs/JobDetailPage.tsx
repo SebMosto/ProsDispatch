@@ -93,28 +93,38 @@ const JobDetailPage = () => {
   const renderActions = () => {
     if (!job) return null;
 
+    // Draft: Can send to client
     if (job.status === 'draft') {
       return (
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('scheduled')}
+            onClick={() => performStatusChange('sent')}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
           >
-            Schedule Job
-          </button>
-          <button
-            type="button"
-            onClick={() => performStatusChange('cancelled')}
-            className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
-          >
-            Cancel
+            Send to Client
           </button>
         </>
       );
     }
 
-    if (job.status === 'scheduled') {
+    // Sent: Can mark as approved by client
+    if (job.status === 'sent') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('approved')}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            Mark as Approved
+          </button>
+        </>
+      );
+    }
+
+    // Approved: Can start work
+    if (job.status === 'approved') {
       return (
         <>
           <button
@@ -124,17 +134,11 @@ const JobDetailPage = () => {
           >
             Start Job
           </button>
-          <button
-            type="button"
-            onClick={() => performStatusChange('cancelled')}
-            className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
-          >
-            Cancel
-          </button>
         </>
       );
     }
 
+    // In Progress: Can complete or archive (cancel)
     if (job.status === 'in_progress') {
       return (
         <>
@@ -147,15 +151,68 @@ const JobDetailPage = () => {
           </button>
           <button
             type="button"
-            onClick={() => performStatusChange('cancelled')}
+            onClick={() => performStatusChange('archived')}
             className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
           >
-            Cancel
+            Archive Job
           </button>
         </>
       );
     }
 
+    // Completed: Can invoice or archive
+    if (job.status === 'completed') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('invoiced')}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          >
+            Mark as Invoiced
+          </button>
+          <button
+            type="button"
+            onClick={() => performStatusChange('archived')}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
+          >
+            Archive Job
+          </button>
+        </>
+      );
+    }
+
+    // Invoiced: Can mark as paid
+    if (job.status === 'invoiced') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('paid')}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            Mark as Paid
+          </button>
+        </>
+      );
+    }
+
+    // Paid: Can archive
+    if (job.status === 'paid') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('archived')}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
+          >
+            Archive Job
+          </button>
+        </>
+      );
+    }
+
+    // Archived: No actions available
     return null;
   };
 
