@@ -19,13 +19,14 @@ export const getClientUpdateSchema = (t: TFunction) => getClientSchema(t).partia
   { message: t('validation.updateRequired') },
 );
 
-// Fallback for static analysis or where t is not available immediately (though discouraged)
+// Fallback for static analysis or where t is not available immediately
+// We use keys or default Zod messages to avoid hardcoded English strings
 export const ClientSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1),
   email: z
     .string()
     .trim()
-    .email('Invalid email')
+    .email()
     .optional()
     .or(z.literal('')),
   type: z.enum(['individual', 'business']).default('individual'),
@@ -34,7 +35,7 @@ export const ClientSchema = z.object({
 
 export const ClientUpdateSchema = ClientSchema.partial().refine(
   (data) => Object.values(data).some((value) => value !== undefined),
-  { message: 'At least one field is required to update a client' },
+  { message: 'validation.updateRequired' },
 );
 
 export const getClientAndPropertySchema = (t: TFunction) => getClientSchema(t).merge(

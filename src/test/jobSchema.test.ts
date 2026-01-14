@@ -122,7 +122,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Invalid client ID');
+        expect(result.error.issues[0].message).toContain('validation.clientIdInvalid');
       }
     });
 
@@ -137,7 +137,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('Invalid property ID');
+        expect(result.error.issues[0].message).toContain('validation.propertyIdInvalid');
       }
     });
 
@@ -152,7 +152,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('at least 2 characters');
+        expect(result.error.issues[0].message).toContain('validation.titleRequired');
       }
     });
 
@@ -167,7 +167,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('not exceed 80 characters');
+        expect(result.error.issues[0].message).toContain('validation.titleTooLong');
       }
     });
 
@@ -183,7 +183,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('not exceed 2000 characters');
+        expect(result.error.issues[0].message).toContain('validation.descriptionTooLong');
       }
     });
 
@@ -199,7 +199,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('YYYY-MM-DD format');
+        expect(result.error.issues[0].message).toContain('validation.invalidDate');
       }
     });
   });
@@ -269,7 +269,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('At least one field is required');
+        expect(result.error.issues[0].message).toContain('validation.jobUpdateRequired');
       }
     });
   });
@@ -283,7 +283,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('at least 2 characters');
+        expect(result.error.issues[0].message).toContain('validation.titleRequired');
       }
     });
 
@@ -295,7 +295,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('not exceed 80 characters');
+        expect(result.error.issues[0].message).toContain('validation.titleTooLong');
       }
     });
 
@@ -307,7 +307,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('not exceed 2000 characters');
+        expect(result.error.issues[0].message).toContain('validation.descriptionTooLong');
       }
     });
 
@@ -319,7 +319,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('YYYY-MM-DD format');
+        expect(result.error.issues[0].message).toContain('validation.invalidDate');
       }
     });
   });

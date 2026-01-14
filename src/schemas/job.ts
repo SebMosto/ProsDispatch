@@ -26,19 +26,19 @@ export const JOB_STATUSES = [
  * - status: Job status (defaults to 'draft')
  */
 export const getJobCreateSchema = (t?: TFunction) => z.object({
-  client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'Invalid client ID'),
-  property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'Invalid property ID'),
+  client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
+  property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid'),
   title: z
     .string()
-    .min(2, t ? t('validation.titleRequired') : 'Title must be at least 2 characters')
-    .max(80, t ? t('validation.titleTooLong') : 'Title must not exceed 80 characters'),
+    .min(2, t ? t('validation.titleRequired') : 'validation.titleRequired')
+    .max(80, t ? t('validation.titleTooLong') : 'validation.titleTooLong'),
   description: z
     .string()
-    .max(2000, t ? t('validation.descriptionTooLong') : 'Description must not exceed 2000 characters')
+    .max(2000, t ? t('validation.descriptionTooLong') : 'validation.descriptionTooLong')
     .optional(),
   service_date: z
     .union([
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'Service date must be in YYYY-MM-DD format'),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'validation.invalidDate'),
       z.date(),
     ])
     .optional(),
@@ -55,19 +55,19 @@ export const getJobCreateSchema = (t?: TFunction) => z.object({
  */
 export const getJobUpdateSchema = (t?: TFunction) => z
   .object({
-    client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'Client ID must be a valid UUID').optional(),
-    property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'Property ID must be a valid UUID').optional(),
+    client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid').optional(),
+    property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid').optional(),
     title: z
       .string()
-      .min(2, t ? t('validation.titleRequired') : 'Title must be at least 2 characters')
-      .max(80, t ? t('validation.titleTooLong') : 'Title must not exceed 80 characters')
+      .min(2, t ? t('validation.titleRequired') : 'validation.titleRequired')
+      .max(80, t ? t('validation.titleTooLong') : 'validation.titleTooLong')
       .optional(),
     description: z
-      .union([z.string().max(2000, t ? t('validation.descriptionTooLong') : 'Description must not exceed 2000 characters'), z.null()])
+      .union([z.string().max(2000, t ? t('validation.descriptionTooLong') : 'validation.descriptionTooLong'), z.null()])
       .optional(),
     service_date: z
       .union([
-        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'Service date must be in YYYY-MM-DD format'),
+        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'validation.invalidDate'),
         z.date(),
         z.null(),
       ])
@@ -79,7 +79,7 @@ export const getJobUpdateSchema = (t?: TFunction) => z
       return Object.values(data).some((value) => value !== undefined);
     },
     {
-      message: t ? t('validation.jobUpdateRequired') : 'At least one field is required to update a job',
+      message: t ? t('validation.jobUpdateRequired') : 'validation.jobUpdateRequired',
     },
   );
 
