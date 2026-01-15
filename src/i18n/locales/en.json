@@ -261,6 +261,20 @@
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
         "totalDueLabel": "Total Due"
+      },
+      "publicPage": {
+        "notAvailable": "Invoice not available",
+        "expiredLink": "The invoice link may have expired or is invalid.",
+        "invoiceNumber": "Invoice {{number}}",
+        "invoiceFrom": "Invoice from {{name}}",
+        "contractorDefault": "Contractor",
+        "totalDue": "Total Due",
+        "lineItems": "Line Items",
+        "noLineItems": "No line items were provided.",
+        "qtyFormat": "Qty {{quantity}} × {{price}}",
+        "subtotal": "Subtotal",
+        "payNow": "Pay Now",
+        "downloadPdf": "Download PDF"
       }
     }
   },

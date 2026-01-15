@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
 import { useLocation } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
 
 const PublicInvoicePage = () => {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   const segments = pathname.split('/').filter(Boolean);
   const token = segments[1];
@@ -20,7 +22,7 @@ const PublicInvoicePage = () => {
   const contractorLabel =
     (invoice as { contractor_name?: string } | null)?.contractor_name ??
     invoice?.contractor_id ??
-    'Contractor';
+    t('jobs.invoices.publicPage.contractorDefault');
 
   if (loading) {
     return (
@@ -34,8 +36,8 @@ const PublicInvoicePage = () => {
   if (error || !invoice) {
     return (
       <main className="flex min-h-[60vh] flex-col gap-2">
-        <h1 className="text-xl font-semibold text-slate-900">Invoice not available</h1>
-        <p className="text-sm text-slate-600">The invoice link may have expired or is invalid.</p>
+        <h1 className="text-xl font-semibold text-slate-900">{t('jobs.invoices.publicPage.notAvailable')}</h1>
+        <p className="text-sm text-slate-600">{t('jobs.invoices.publicPage.expiredLink')}</p>
       </main>
     );
   }
@@ -48,17 +50,17 @@ const PublicInvoicePage = () => {
             PD
           </div>
           <div>
-            <p className="text-sm text-slate-600">Invoice {invoice.invoice_number}</p>
-            <h1 className="text-2xl font-semibold text-slate-900">Invoice from {contractorLabel}</h1>
+            <p className="text-sm text-slate-600">{t('jobs.invoices.publicPage.invoiceNumber', { number: invoice.invoice_number })}</p>
+            <h1 className="text-2xl font-semibold text-slate-900">{t('jobs.invoices.publicPage.invoiceFrom', { name: contractorLabel })}</h1>
           </div>
         </div>
         <div className="mt-3 text-lg font-semibold text-slate-900">
-          Total Due: {formatCurrency(invoice.total_amount)}
+          {t('jobs.invoices.publicPage.totalDue')}: {formatCurrency(invoice.total_amount)}
         </div>
       </header>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">Line Items</h2>
+        <h2 className="text-sm font-semibold text-slate-900">{t('jobs.invoices.publicPage.lineItems')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
@@ -68,19 +70,19 @@ const PublicInvoicePage = () => {
                   <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount)}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Qty {item.quantity} × {formatCurrency(item.unit_price)}
+                  {t('jobs.invoices.publicPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price) })}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">No line items were provided.</p>
+            <p className="text-sm text-slate-500">{t('jobs.invoices.publicPage.noLineItems')}</p>
           )}
         </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
-          <span>Subtotal</span>
+          <span>{t('jobs.invoices.publicPage.subtotal')}</span>
           <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
         </div>
         <div className="mt-2 space-y-1 text-sm text-slate-700">
@@ -92,7 +94,7 @@ const PublicInvoicePage = () => {
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
-          <span>Total Due</span>
+          <span>{t('jobs.invoices.publicPage.totalDue')}</span>
           <span>{formatCurrency(invoice.total_amount)}</span>
         </div>
       </section>
@@ -103,7 +105,7 @@ const PublicInvoicePage = () => {
           onClick={() => console.log('Stripe Checkout')}
           className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
         >
-          Pay Now
+          {t('jobs.invoices.publicPage.payNow')}
         </button>
         {invoice.pdf_url ? (
           <a
@@ -112,7 +114,7 @@ const PublicInvoicePage = () => {
             rel="noreferrer"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
-            Download PDF
+            {t('jobs.invoices.publicPage.downloadPdf')}
           </a>
         ) : null}
       </section>

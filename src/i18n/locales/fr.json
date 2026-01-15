@@ -261,6 +261,20 @@
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
         "totalDueLabel": "Total dû"
+      },
+      "publicPage": {
+        "notAvailable": "Facture non disponible",
+        "expiredLink": "Le lien de la facture a peut-être expiré ou est invalide.",
+        "invoiceNumber": "Facture {{number}}",
+        "invoiceFrom": "Facture de {{name}}",
+        "contractorDefault": "Entrepreneur",
+        "totalDue": "Total dû",
+        "lineItems": "Éléments de ligne",
+        "noLineItems": "Aucun élément de ligne fourni.",
+        "qtyFormat": "Qté {{quantity}} × {{price}}",
+        "subtotal": "Sous-total",
+        "payNow": "Payer maintenant",
+        "downloadPdf": "Télécharger le PDF"
       }
     }
   },

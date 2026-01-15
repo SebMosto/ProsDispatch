@@ -196,11 +196,9 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     }
   });
 
-  const loadingState = isSubmitting || createDraft.isLoading || updateDraft.isLoading || finalize.isLoading;
+  const loadingState = isSubmitting || createDraft.isPending || updateDraft.isPending || finalize.isPending;
   const getItemError = (index: number, field: 'description' | 'quantity' | 'unitPrice') => {
-    const key = `items.${index}.${field}` as const;
-    const error = errors[key];
-    return error?.message;
+    return errors.items?.[index]?.[field]?.message;
   };
 
   return (
