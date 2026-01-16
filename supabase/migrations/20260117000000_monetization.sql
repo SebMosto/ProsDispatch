@@ -20,6 +20,9 @@ alter table public.profiles
     'paused'
   ));
 
+-- Index for subscription_status (checked on every authenticated route)
+create index profiles_subscription_status_idx on public.profiles (subscription_status);
+
 -- 2. Stripe events table
 create table public.stripe_events (
   id text primary key,
