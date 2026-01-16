@@ -260,7 +260,8 @@
         "noLineItems": "Aucun élément de ligne enregistré.",
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
-        "totalDueLabel": "Total dû"
+        "totalDueLabel": "Total dû",
+        "downloadPdf": "Télécharger le PDF"
       }
     }
   },
@@ -402,5 +403,15 @@
     "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
+  },
+  "publicInvoice": {
+    "notAvailable": "Facture non disponible",
+    "invalidLink": "Le lien de la facture a peut-être expiré ou est invalide.",
+    "invoiceNumber": "Facture {{number}}",
+    "invoiceFrom": "Facture de {{contractor}}",
+    "lineItems": "Éléments de ligne",
+    "noItems": "Aucun élément de ligne fourni.",
+    "subtotal": "Sous-total",
+    "totalDue": "Total dû"
   }
 }
