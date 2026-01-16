@@ -54,12 +54,13 @@ create policy "Users can update own profile" on public.profiles
   for update 
   using (auth.uid() = id)
   with check (
-    auth.uid() = id
     -- Prevent users from modifying billing fields by requiring new values match current values
     -- Using "IS NOT DISTINCT FROM" to handle NULL values correctly
-    and (stripe_customer_id is not distinct from (select stripe_customer_id from public.profiles where id = auth.uid()))
-    and (subscription_status is not distinct from (select subscription_status from public.profiles where id = auth.uid()))
-    and (subscription_end_date is not distinct from (select subscription_end_date from public.profiles where id = auth.uid()))
+    -- Single subquery for performance (avoids multiple table scans)
+    (stripe_customer_id, subscription_status, subscription_end_date) is not distinct from 
+    (select stripe_customer_id, subscription_status, subscription_end_date 
+     from public.profiles 
+     where id = auth.uid())
   );
 
 -- Service role can update billing fields (for webhook handlers)
