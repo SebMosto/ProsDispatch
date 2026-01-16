@@ -33,7 +33,43 @@ create table public.stripe_events (
   constraint stripe_events_status_check check (status in ('pending', 'processed', 'failed'))
 );
 
--- 3. RLS
+-- 3. RLS for profiles billing fields
+-- 
+-- SECURITY: Billing fields (stripe_customer_id, subscription_status, subscription_end_date)
+-- must ONLY be writable by service_role (webhook handlers), not by authenticated users.
+-- 
+-- Per SPEC-005 §3.4: "Stripe is canonical" - these fields mirror Stripe state via webhooks.
+-- Allowing user updates would enable self-service privilege escalation (e.g., marking 
+-- subscription_status='active' to bypass paywall).
+--
+-- Strategy:
+-- 1. Recreate user update policy with CHECK constraint that blocks billing field changes
+-- 2. Add service_role-only policy for webhook handlers to update billing fields
+
+drop policy if exists "Users can update own profile" on public.profiles;
+
+-- Users can update their own profile, but NOT billing fields
+-- The WITH CHECK clause ensures the new values match the current values for billing fields
+create policy "Users can update own profile" on public.profiles
+  for update 
+  using (auth.uid() = id)
+  with check (
+    auth.uid() = id
+    -- Prevent users from modifying billing fields by requiring new values match current values
+    -- Using "IS NOT DISTINCT FROM" to handle NULL values correctly
+    and (stripe_customer_id is not distinct from (select stripe_customer_id from public.profiles where id = auth.uid()))
+    and (subscription_status is not distinct from (select subscription_status from public.profiles where id = auth.uid()))
+    and (subscription_end_date is not distinct from (select subscription_end_date from public.profiles where id = auth.uid()))
+  );
+
+-- Service role can update billing fields (for webhook handlers)
+create policy "Service role can update billing fields" on public.profiles
+  for update
+  to service_role
+  using (true)
+  with check (true);
+
+-- 4. RLS for stripe_events
 alter table public.stripe_events enable row level security;
 
 create policy "stripe_events_service_role_only"
