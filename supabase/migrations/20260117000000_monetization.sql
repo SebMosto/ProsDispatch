@@ -33,6 +33,10 @@ create table public.stripe_events (
   constraint stripe_events_status_check check (status in ('pending', 'processed', 'failed'))
 );
 
+-- Indexes for stripe_events
+create index on public.stripe_events (status);
+create index on public.stripe_events (type);
+
 -- 3. RLS
 alter table public.stripe_events enable row level security;
 
