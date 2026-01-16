@@ -24,13 +24,11 @@ alter table public.profiles
 create table public.stripe_events (
   id text primary key,
   type text not null,
+  event_created_at timestamptz not null,
   created_at timestamptz not null default timezone('utc', now()),
-  status text not null default 'pending'
+  status text not null default 'pending',
+  constraint stripe_events_status_check check (status in ('pending', 'processed', 'failed'))
 );
-
-alter table public.stripe_events
-  add constraint stripe_events_status_check
-  check (status in ('pending', 'processed', 'failed'));
 
 -- 3. RLS
 alter table public.stripe_events enable row level security;
