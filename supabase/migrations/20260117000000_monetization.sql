@@ -2,12 +2,8 @@
 alter table public.profiles
   add column stripe_customer_id text,
   add column subscription_status text not null default 'incomplete',
-  add column subscription_end_date timestamptz;
-
-alter table public.profiles
-  add constraint profiles_stripe_customer_id_key unique (stripe_customer_id);
-
-alter table public.profiles
+  add column subscription_end_date timestamptz,
+  add constraint profiles_stripe_customer_id_key unique (stripe_customer_id),
   add constraint profiles_subscription_status_check
   check (subscription_status in (
     'trialing',
