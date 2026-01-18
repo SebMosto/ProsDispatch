@@ -16,6 +16,7 @@ i18n
     resources,
     fallbackLng: 'en',
     supportedLngs: ['en', 'fr'],
+    load: 'languageOnly',
     interpolation: {
       escapeValue: false,
     },

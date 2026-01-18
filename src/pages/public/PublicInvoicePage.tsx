@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
 import { useLocation } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
 
 const PublicInvoicePage = () => {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   const segments = pathname.split('/').filter(Boolean);
   const token = segments[1];
@@ -34,8 +36,8 @@ const PublicInvoicePage = () => {
   if (error || !invoice) {
     return (
       <main className="flex min-h-[60vh] flex-col gap-2">
-        <h1 className="text-xl font-semibold text-slate-900">Invoice not available</h1>
-        <p className="text-sm text-slate-600">The invoice link may have expired or is invalid.</p>
+        <h1 className="text-xl font-semibold text-slate-900">{t('public.invoice.notAvailable')}</h1>
+        <p className="text-sm text-slate-600">{t('public.invoice.expired')}</p>
       </main>
     );
   }
@@ -48,17 +50,17 @@ const PublicInvoicePage = () => {
             PD
           </div>
           <div>
-            <p className="text-sm text-slate-600">Invoice {invoice.invoice_number}</p>
-            <h1 className="text-2xl font-semibold text-slate-900">Invoice from {contractorLabel}</h1>
+            <p className="text-sm text-slate-600">{t('public.invoice.header', { number: invoice.invoice_number })}</p>
+            <h1 className="text-2xl font-semibold text-slate-900">{t('public.invoice.from', { name: contractorLabel })}</h1>
           </div>
         </div>
         <div className="mt-3 text-lg font-semibold text-slate-900">
-          Total Due: {formatCurrency(invoice.total_amount)}
+          {t('public.invoice.totalDue')}: {formatCurrency(invoice.total_amount)}
         </div>
       </header>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">Line Items</h2>
+        <h2 className="text-sm font-semibold text-slate-900">{t('public.invoice.lineItems')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
@@ -68,31 +70,31 @@ const PublicInvoicePage = () => {
                   <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount)}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Qty {item.quantity} × {formatCurrency(item.unit_price)}
+                  {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price) })}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">No line items were provided.</p>
+            <p className="text-sm text-slate-500">{t('public.invoice.noItems')}</p>
           )}
         </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
-          <span>Subtotal</span>
+          <span>{t('public.invoice.subtotal')}</span>
           <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
         </div>
         <div className="mt-2 space-y-1 text-sm text-slate-700">
           {taxData.map((tax) => (
             <div key={tax.label} className="flex items-center justify-between">
-              <span>{`${tax.label} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+              <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
               <span className="font-semibold">{formatCurrency(tax.amount)}</span>
             </div>
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
-          <span>Total Due</span>
+          <span>{t('public.invoice.totalDue')}</span>
           <span>{formatCurrency(invoice.total_amount)}</span>
         </div>
       </section>
@@ -103,7 +105,7 @@ const PublicInvoicePage = () => {
           onClick={() => console.log('Stripe Checkout')}
           className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
         >
-          Pay Now
+          {t('public.invoice.payNow')}
         </button>
         {invoice.pdf_url ? (
           <a
@@ -112,7 +114,7 @@ const PublicInvoicePage = () => {
             rel="noreferrer"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
-            Download PDF
+            {t('public.invoice.downloadPdf')}
           </a>
         ) : null}
       </section>
