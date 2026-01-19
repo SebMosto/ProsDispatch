@@ -22,7 +22,7 @@ const PublicInvoicePage = () => {
   const contractorLabel =
     (invoice as { contractor_name?: string } | null)?.contractor_name ??
     invoice?.contractor_id ??
-    'Contractor';
+    t('jobs.invoices.publicPage.contractorDefault');
 
   if (loading) {
     return (
