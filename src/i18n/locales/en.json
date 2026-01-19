@@ -371,6 +371,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Invoice not available",
+      "expired": "The invoice link may have expired or is invalid.",
+      "header": "Invoice {{number}}",
+      "from": "Invoice from {{name}}",
+      "totalDue": "Total Due",
+      "lineItems": "Line Items",
+      "noItems": "No line items were provided.",
+      "subtotal": "Subtotal",
+      "payNow": "Pay Now",
+      "downloadPdf": "Download PDF"
+    }
+  },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
@@ -404,14 +422,8 @@
     "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
     "oneLineItemRequired": "At least one line item is required"
   },
-  "publicInvoice": {
-    "notAvailable": "Invoice not available",
-    "invalidLink": "The invoice link may have expired or is invalid.",
-    "invoiceNumber": "Invoice {{number}}",
-    "invoiceFrom": "Invoice from {{contractor}}",
-    "lineItems": "Line Items",
-    "noItems": "No line items were provided.",
-    "subtotal": "Subtotal",
-    "totalDue": "Total Due"
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
   }
 }

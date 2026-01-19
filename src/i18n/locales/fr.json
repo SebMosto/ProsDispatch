@@ -371,6 +371,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Facture non disponible",
+      "expired": "Le lien de la facture a expiré ou est invalide.",
+      "header": "Facture {{number}}",
+      "from": "Facture de {{name}}",
+      "totalDue": "Total dû",
+      "lineItems": "Éléments de ligne",
+      "noItems": "Aucun élément de ligne fourni.",
+      "subtotal": "Sous-total",
+      "payNow": "Payer maintenant",
+      "downloadPdf": "Télécharger le PDF"
+    }
+  },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
@@ -404,14 +422,8 @@
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
   },
-  "publicInvoice": {
-    "notAvailable": "Facture non disponible",
-    "invalidLink": "Le lien de la facture a peut-être expiré ou est invalide.",
-    "invoiceNumber": "Facture {{number}}",
-    "invoiceFrom": "Facture de {{contractor}}",
-    "lineItems": "Éléments de ligne",
-    "noItems": "Aucun élément de ligne fourni.",
-    "subtotal": "Sous-total",
-    "totalDue": "Total dû"
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
   }
 }

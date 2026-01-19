@@ -101,7 +101,7 @@ export const InvoiceFinalSchema = InvoiceDraftSchema.extend({
   status: z.enum(INVOICE_STATUSES).refine((value) => value !== 'draft', {
     message: 'validation.finalInvoiceNoDraft',
   }),
-  items: z.array(InvoiceItemSchema).min(1),
+  items: z.array(InvoiceItemSchema).min(1, 'validation.oneLineItemRequired'),
   subtotal: CurrencySchema,
   tax_data: z.array(TaxLineSchema),
   total_amount: CurrencySchema,
