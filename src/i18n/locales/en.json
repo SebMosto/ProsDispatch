@@ -260,20 +260,7 @@
         "noLineItems": "No line items were recorded.",
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
-        "totalDueLabel": "Total Due"
-      },
-      "publicPage": {
-        "notAvailable": "Invoice not available",
-        "expiredLink": "The invoice link may have expired or is invalid.",
-        "invoiceNumber": "Invoice {{number}}",
-        "invoiceFrom": "Invoice from {{name}}",
-        "contractorDefault": "Contractor",
-        "totalDue": "Total Due",
-        "lineItems": "Line Items",
-        "noLineItems": "No line items were provided.",
-        "qtyFormat": "Qty {{quantity}} × {{price}}",
-        "subtotal": "Subtotal",
-        "payNow": "Pay Now",
+        "totalDueLabel": "Total Due",
         "downloadPdf": "Download PDF"
       }
     }
@@ -384,6 +371,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Invoice not available",
+      "expired": "The invoice link may have expired or is invalid.",
+      "header": "Invoice {{number}}",
+      "from": "Invoice from {{name}}",
+      "totalDue": "Total Due",
+      "lineItems": "Line Items",
+      "noItems": "No line items were provided.",
+      "subtotal": "Subtotal",
+      "payNow": "Pay Now",
+      "downloadPdf": "Download PDF"
+    }
+  },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
@@ -416,5 +421,9 @@
     "paymentNoteTooLong": "Payment note must be 1000 characters or less",
     "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
     "oneLineItemRequired": "At least one line item is required"
+  },
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
   }
 }

@@ -210,7 +210,7 @@ const InvoiceDetailPage = () => {
         <div className="mt-2 space-y-1 text-sm text-slate-700">
           {taxData.map((tax) => (
             <div key={tax.label} className="flex items-center justify-between">
-              <span>{`${tax.label} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+              <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
               <span className="font-semibold">{formatCurrency(tax.amount)}</span>
             </div>
           ))}

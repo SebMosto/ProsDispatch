@@ -260,20 +260,7 @@
         "noLineItems": "Aucun élément de ligne enregistré.",
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
-        "totalDueLabel": "Total dû"
-      },
-      "publicPage": {
-        "notAvailable": "Facture non disponible",
-        "expiredLink": "Le lien de la facture a peut-être expiré ou est invalide.",
-        "invoiceNumber": "Facture {{number}}",
-        "invoiceFrom": "Facture de {{name}}",
-        "contractorDefault": "Entrepreneur",
-        "totalDue": "Total dû",
-        "lineItems": "Éléments de ligne",
-        "noLineItems": "Aucun élément de ligne fourni.",
-        "qtyFormat": "Qté {{quantity}} × {{price}}",
-        "subtotal": "Sous-total",
-        "payNow": "Payer maintenant",
+        "totalDueLabel": "Total dû",
         "downloadPdf": "Télécharger le PDF"
       }
     }
@@ -384,6 +371,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Facture non disponible",
+      "expired": "Le lien de la facture a expiré ou est invalide.",
+      "header": "Facture {{number}}",
+      "from": "Facture de {{name}}",
+      "totalDue": "Total dû",
+      "lineItems": "Éléments de ligne",
+      "noItems": "Aucun élément de ligne fourni.",
+      "subtotal": "Sous-total",
+      "payNow": "Payer maintenant",
+      "downloadPdf": "Télécharger le PDF"
+    }
+  },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
@@ -416,5 +421,9 @@
     "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
+  },
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
   }
 }

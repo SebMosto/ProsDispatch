@@ -62,9 +62,50 @@ export const getInvoiceFinalSchema = (t?: TFunction) => getInvoiceDraftSchema(t)
 }).strict();
 
 // Fallback for static analysis
-export const InvoiceItemSchema = getInvoiceItemSchema();
-export const InvoiceDraftSchema = getInvoiceDraftSchema();
-export const InvoiceFinalSchema = getInvoiceFinalSchema();
+// Using keys or standard Zod messages
+const CurrencySchema = z
+  .number()
+  .int('validation.amountInteger')
+  .nonnegative('validation.amountNonNegative');
+
+const TaxLineSchema = z.object({
+  label: z.string().min(1, 'validation.taxLabelRequired'),
+  rate: z.number().min(0, 'validation.taxRateNonNegative'),
+  amount: CurrencySchema,
+});
+
+export const InvoiceItemSchema = z.object({
+  description: z.string().min(1, 'validation.lineItemDescriptionRequired'),
+  quantity: z.number().positive('validation.quantityPositive'),
+  unit_price: CurrencySchema,
+  amount: CurrencySchema,
+});
+
+export const InvoiceDraftSchema = z.object({
+  job_id: z.string().uuid('validation.jobIdUUID'),
+  contractor_id: z.string().uuid('validation.contractorIdUUID'),
+  invoice_number: z.string().min(1, 'validation.invoiceNumberRequired'),
+  status: z.enum(INVOICE_STATUSES).default('draft'),
+  items: z.array(InvoiceItemSchema).optional(),
+  subtotal: CurrencySchema.optional(),
+  tax_data: z.array(TaxLineSchema).optional(),
+  total_amount: CurrencySchema.optional(),
+  pdf_url: z.string().url('validation.pdfUrlValid').nullable().optional(),
+  payment_method: z.enum(INVOICE_PAYMENT_METHODS).nullable().optional(),
+  payment_note: z.string().max(1000, 'validation.paymentNoteTooLong').nullable().optional(),
+  paid_at: z.string().datetime().nullable().optional(),
+  stripe_payment_intent_id: z.string().nullable().optional(),
+});
+
+export const InvoiceFinalSchema = InvoiceDraftSchema.extend({
+  status: z.enum(INVOICE_STATUSES).refine((value) => value !== 'draft', {
+    message: 'validation.finalInvoiceNoDraft',
+  }),
+  items: z.array(InvoiceItemSchema).min(1, 'validation.oneLineItemRequired'),
+  subtotal: CurrencySchema,
+  tax_data: z.array(TaxLineSchema),
+  total_amount: CurrencySchema,
+}).strict();
 
 export type InvoiceItemInput = z.infer<typeof InvoiceItemSchema>;
 export type InvoiceDraftInput = z.infer<typeof InvoiceDraftSchema>;
