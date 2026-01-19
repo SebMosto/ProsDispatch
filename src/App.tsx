@@ -49,7 +49,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
         </div>
         <nav aria-label="Main navigation" className="flex items-center gap-3">
           {user ? (
-            <>
+            <div className="flex items-center gap-3 md:hidden">
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/dashboard">
                 {t('layout.nav.dashboard')}
               </Link>
@@ -62,7 +62,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
                 {t('layout.nav.clients')}
               </Link>
-            </>
+            </div>
           ) : null}
           <LanguageSwitcher />
         </nav>
