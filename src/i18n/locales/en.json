@@ -260,7 +260,8 @@
         "noLineItems": "No line items were recorded.",
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
-        "totalDueLabel": "Total Due"
+        "totalDueLabel": "Total Due",
+        "downloadPdf": "Download PDF"
       }
     }
   },

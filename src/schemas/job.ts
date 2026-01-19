@@ -84,6 +84,7 @@ export const getJobUpdateSchema = (t?: TFunction) => z
   );
 
 // Fallback for static analysis and Type Inference
+// Using keys instead of t() to ensure valid strings if used without i18next
 export const JobCreateSchema = getJobCreateSchema();
 export const JobUpdateSchema = getJobUpdateSchema();
 

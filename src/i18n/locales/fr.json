@@ -260,7 +260,8 @@
         "noLineItems": "Aucun élément de ligne enregistré.",
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
-        "totalDueLabel": "Total dû"
+        "totalDueLabel": "Total dû",
+        "downloadPdf": "Télécharger le PDF"
       }
     }
   },
