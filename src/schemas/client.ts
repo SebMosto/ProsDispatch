@@ -22,11 +22,11 @@ export const getClientUpdateSchema = (t: TFunction) => getClientSchema(t).partia
 // Fallback for static analysis or where t is not available immediately
 // We use keys or default Zod messages to avoid hardcoded English strings
 export const ClientSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, 'validation.nameRequired'),
   email: z
     .string()
     .trim()
-    .email()
+    .email('validation.invalidEmail')
     .optional()
     .or(z.literal('')),
   type: z.enum(['individual', 'business']).default('individual'),

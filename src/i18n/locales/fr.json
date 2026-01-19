@@ -402,5 +402,9 @@
     "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
+  },
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
   }
 }

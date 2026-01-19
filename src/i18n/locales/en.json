@@ -402,5 +402,9 @@
     "paymentNoteTooLong": "Payment note must be 1000 characters or less",
     "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
     "oneLineItemRequired": "At least one line item is required"
+  },
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
   }
 }
