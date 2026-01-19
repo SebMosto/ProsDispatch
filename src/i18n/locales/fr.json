@@ -370,6 +370,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "TPS",
+    "QST": "TVQ"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Facture non disponible",
+      "expired": "Le lien de la facture a expiré ou est invalide.",
+      "header": "Facture {{number}}",
+      "from": "Facture de {{name}}",
+      "totalDue": "Total dû",
+      "lineItems": "Éléments de ligne",
+      "noItems": "Aucun élément de ligne fourni.",
+      "subtotal": "Sous-total",
+      "payNow": "Payer maintenant",
+      "downloadPdf": "Télécharger le PDF"
+    }
+  },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",

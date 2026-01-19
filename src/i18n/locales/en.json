@@ -370,6 +370,24 @@
       }
     }
   },
+  "taxes": {
+    "GST": "GST",
+    "QST": "QST"
+  },
+  "public": {
+    "invoice": {
+      "notAvailable": "Invoice not available",
+      "expired": "The invoice link may have expired or is invalid.",
+      "header": "Invoice {{number}}",
+      "from": "Invoice from {{name}}",
+      "totalDue": "Total Due",
+      "lineItems": "Line Items",
+      "noItems": "No line items were provided.",
+      "subtotal": "Subtotal",
+      "payNow": "Pay Now",
+      "downloadPdf": "Download PDF"
+    }
+  },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
