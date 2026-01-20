@@ -19,43 +19,43 @@ export const INVOICE_PAYMENT_METHODS = [
 
 const getCurrencySchema = (t?: TFunction) => z
   .number()
-  .int(t ? t('validation.amountInteger') : 'Amount must be an integer representing cents')
-  .nonnegative(t ? t('validation.amountNonNegative') : 'Amount must be zero or greater');
+  .int(t ? t('validation.amountInteger') : 'validation.amountInteger')
+  .nonnegative(t ? t('validation.amountNonNegative') : 'validation.amountNonNegative');
 
 const getTaxLineSchema = (t?: TFunction) => z.object({
-  label: z.string().min(1, t ? t('validation.taxLabelRequired') : 'Tax label is required'),
-  rate: z.number().min(0, t ? t('validation.taxRateNonNegative') : 'Tax rate must be zero or greater'),
+  label: z.string().min(1, t ? t('validation.taxLabelRequired') : 'validation.taxLabelRequired'),
+  rate: z.number().min(0, t ? t('validation.taxRateNonNegative') : 'validation.taxRateNonNegative'),
   amount: getCurrencySchema(t),
 });
 
 export const getInvoiceItemSchema = (t?: TFunction) => z.object({
-  description: z.string().min(1, t ? t('validation.lineItemDescriptionRequired') : 'Line item description is required'),
-  quantity: z.number().positive(t ? t('validation.quantityPositive') : 'Quantity must be greater than zero'),
+  description: z.string().min(1, t ? t('validation.lineItemDescriptionRequired') : 'validation.lineItemDescriptionRequired'),
+  quantity: z.number().positive(t ? t('validation.quantityPositive') : 'validation.quantityPositive'),
   unit_price: getCurrencySchema(t),
   amount: getCurrencySchema(t),
 });
 
 export const getInvoiceDraftSchema = (t?: TFunction) => z.object({
-  job_id: z.string().uuid(t ? t('validation.jobIdUUID') : 'Job ID must be a valid UUID'),
-  contractor_id: z.string().uuid(t ? t('validation.contractorIdUUID') : 'Contractor ID must be a valid UUID'),
-  invoice_number: z.string().min(1, t ? t('validation.invoiceNumberRequired') : 'Invoice number is required'),
+  job_id: z.string().uuid(t ? t('validation.jobIdUUID') : 'validation.jobIdUUID'),
+  contractor_id: z.string().uuid(t ? t('validation.contractorIdUUID') : 'validation.contractorIdUUID'),
+  invoice_number: z.string().min(1, t ? t('validation.invoiceNumberRequired') : 'validation.invoiceNumberRequired'),
   status: z.enum(INVOICE_STATUSES).default('draft'),
   items: z.array(getInvoiceItemSchema(t)).optional(),
   subtotal: getCurrencySchema(t).optional(),
   tax_data: z.array(getTaxLineSchema(t)).optional(),
   total_amount: getCurrencySchema(t).optional(),
-  pdf_url: z.string().url(t ? t('validation.pdfUrlValid') : 'PDF URL must be valid').nullable().optional(),
+  pdf_url: z.string().url(t ? t('validation.pdfUrlValid') : 'validation.pdfUrlValid').nullable().optional(),
   payment_method: z.enum(INVOICE_PAYMENT_METHODS).nullable().optional(),
-  payment_note: z.string().max(1000, t ? t('validation.paymentNoteTooLong') : 'Payment note must be 1000 characters or less').nullable().optional(),
+  payment_note: z.string().max(1000, t ? t('validation.paymentNoteTooLong') : 'validation.paymentNoteTooLong').nullable().optional(),
   paid_at: z.string().datetime().nullable().optional(),
   stripe_payment_intent_id: z.string().nullable().optional(),
 });
 
 export const getInvoiceFinalSchema = (t?: TFunction) => getInvoiceDraftSchema(t).extend({
   status: z.enum(INVOICE_STATUSES).refine((value) => value !== 'draft', {
-    message: t ? t('validation.finalInvoiceNoDraft') : 'Final invoices cannot remain in draft status',
+    message: t ? t('validation.finalInvoiceNoDraft') : 'validation.finalInvoiceNoDraft',
   }),
-  items: z.array(getInvoiceItemSchema(t)).min(1, t ? t('validation.oneLineItemRequired') : 'At least one line item is required'),
+  items: z.array(getInvoiceItemSchema(t)).min(1, t ? t('validation.oneLineItemRequired') : 'validation.oneLineItemRequired'),
   subtotal: getCurrencySchema(t),
   tax_data: z.array(getTaxLineSchema(t)),
   total_amount: getCurrencySchema(t),
