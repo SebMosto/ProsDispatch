@@ -1,24 +1,28 @@
 import type { ReactNode } from 'react';
+import { lazy, Suspense } from 'react';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import HomePage from './pages/HomePage';
-import SignUpPage from './pages/auth/SignUpPage';
-import SignInPage from './pages/auth/SignInPage';
-import DashboardPage from './pages/DashboardPage';
-import CreateJobPage from './pages/jobs/CreateJobPage';
-import JobDetailPage from './pages/jobs/JobDetailPage';
-import CreateInvoicePage from './pages/invoices/CreateInvoicePage';
-import InvoiceDetailPage from './pages/invoices/InvoiceDetailPage';
-import PublicInvoicePage from './pages/public/PublicInvoicePage';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, RouterProvider, Routes, Link, useLocation, routePatterns } from './lib/router';
 import { useAuth } from './lib/auth';
-import JobsListPage from './pages/jobs/JobsListPage';
-import ClientsListPage from './pages/clients/ClientsListPage';
-import CreateClientPage from './pages/clients/CreateClientPage';
-import CreatePropertyPage from './pages/clients/CreatePropertyPage';
-import ClientDetailPage from './pages/clients/ClientDetailPage';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
+import { PageLoader } from './components/ui/PageLoader';
+
+// Lazy loaded pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const SignUpPage = lazy(() => import('./pages/auth/SignUpPage'));
+const SignInPage = lazy(() => import('./pages/auth/SignInPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const CreateJobPage = lazy(() => import('./pages/jobs/CreateJobPage'));
+const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
+const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
+const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
+const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
+const JobsListPage = lazy(() => import('./pages/jobs/JobsListPage'));
+const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
+const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
+const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage'));
+const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
@@ -80,101 +84,103 @@ const App = () => (
   <RouterProvider>
     <AuthProvider>
       <AppShell>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<SignInPage />} />
-          <Route path="/register" element={<SignUpPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/jobs"
-            element={
-              <ProtectedRoute>
-                <JobsListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/jobs/new"
-            element={
-              <ProtectedRoute>
-                <CreateJobPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/jobs/:id"
-            element={
-              <ProtectedRoute>
-                <JobDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={routePatterns.createInvoice}
-            element={
-              <ProtectedRoute>
-                <CreateInvoicePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={routePatterns.invoiceDetail}
-            element={
-              <ProtectedRoute>
-                <InvoiceDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/invoices/:id/edit"
-            element={
-              <ProtectedRoute>
-                <InvoiceDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clients"
-            element={
-              <ProtectedRoute>
-                <ClientsListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clients/new"
-            element={
-              <ProtectedRoute>
-                <CreateClientPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clients/:id"
-            element={
-              <ProtectedRoute>
-                <ClientDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clients/:id/properties/new"
-            element={
-              <ProtectedRoute>
-                <CreatePropertyPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<SignInPage />} />
+            <Route path="/register" element={<SignUpPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs"
+              element={
+                <ProtectedRoute>
+                  <JobsListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs/new"
+              element={
+                <ProtectedRoute>
+                  <CreateJobPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs/:id"
+              element={
+                <ProtectedRoute>
+                  <JobDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={routePatterns.createInvoice}
+              element={
+                <ProtectedRoute>
+                  <CreateInvoicePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={routePatterns.invoiceDetail}
+              element={
+                <ProtectedRoute>
+                  <InvoiceDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <InvoiceDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clients"
+              element={
+                <ProtectedRoute>
+                  <ClientsListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clients/new"
+              element={
+                <ProtectedRoute>
+                  <CreateClientPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clients/:id"
+              element={
+                <ProtectedRoute>
+                  <ClientDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clients/:id/properties/new"
+              element={
+                <ProtectedRoute>
+                  <CreatePropertyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </AppShell>
     </AuthProvider>
   </RouterProvider>
