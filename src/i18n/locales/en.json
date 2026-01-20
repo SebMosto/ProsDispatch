@@ -1,6 +1,7 @@
 {
   "layout": {
     "brand": "ProsDispatch",
+    "initials": "PD",
     "languageLabel": "Language selection",
     "languageEnglish": "English",
     "languageFrench": "Français",
@@ -178,6 +179,9 @@
     },
     "invoices": {
       "title": "Invoices",
+      "publicPage": {
+        "contractorDefault": "Pros Dispatch Contractor"
+      },
       "draftInvoice": "Draft Invoice",
       "errorLoading": "Unable to load invoices for this job.",
       "emptyState": "No invoices yet. Create a draft to get started.",

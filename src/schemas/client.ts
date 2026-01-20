@@ -3,11 +3,11 @@ import { CANADIAN_PROVINCES, PropertySchema, getPropertySchema } from './propert
 import { TFunction } from 'i18next';
 
 export const getClientSchema = (t?: TFunction) => z.object({
-  name: z.string().min(1, t ? t('validation.nameRequired') : 'Name is required'),
+  name: z.string().min(1, t ? t('validation.nameRequired') : 'validation.nameRequired'),
   email: z
     .string()
     .trim()
-    .email(t ? t('validation.invalidEmail') : 'Invalid email')
+    .email(t ? t('validation.invalidEmail') : 'validation.invalidEmail')
     .optional()
     .or(z.literal('')),
   type: z.enum(['individual', 'business']).default('individual'),
@@ -16,7 +16,7 @@ export const getClientSchema = (t?: TFunction) => z.object({
 
 export const getClientUpdateSchema = (t?: TFunction) => getClientSchema(t).partial().refine(
   (data) => Object.values(data).some((value) => value !== undefined),
-  { message: t ? t('validation.updateRequired') : 'At least one field is required to update a client' },
+  { message: t ? t('validation.updateRequired') : 'validation.updateRequired' },
 );
 
 // Fallback for static analysis or where t is not available immediately

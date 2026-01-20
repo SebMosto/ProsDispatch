@@ -1,6 +1,7 @@
 {
   "layout": {
     "brand": "ProsDispatch",
+    "initials": "PD",
     "languageLabel": "Sélection de la langue",
     "languageEnglish": "English",
     "languageFrench": "Français",
@@ -178,6 +179,9 @@
     },
     "invoices": {
       "title": "Factures",
+      "publicPage": {
+        "contractorDefault": "Entrepreneur Pros Dispatch"
+      },
       "draftInvoice": "Créer une facture",
       "errorLoading": "Impossible de charger les factures pour ce travail.",
       "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer.",
