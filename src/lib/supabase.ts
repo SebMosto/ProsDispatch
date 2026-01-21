@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient, type AuthError } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -21,11 +21,11 @@ const createSafeFallbackClient = (): SupabaseClient<Database> => {
       get: (_target, prop) => {
         if (prop === 'auth') {
           return {
-            getSession: async () => ({ data: { session: null }, error }),
-            onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } }, error }),
-            getUser: async () => ({ data: { user: null }, error }),
-            signOut: async () => ({ error }),
-          } satisfies SupabaseClient<Database>['auth'];
+            getSession: async () => ({ data: { session: null }, error: error as unknown as AuthError }),
+            onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {}, id: '', callback: () => {} } } }),
+            getUser: async () => ({ data: { user: null }, error: error as unknown as AuthError }),
+            signOut: async () => ({ error: error as unknown as AuthError }),
+          } as unknown as SupabaseClient<Database>['auth'];
         }
 
         if (prop === 'from') {

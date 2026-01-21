@@ -19,6 +19,7 @@ export class IllegalJobStatusTransitionError extends Error {
     this.name = 'IllegalJobStatusTransitionError';
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if ('captureStackTrace' in Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (Error as any).captureStackTrace(this, IllegalJobStatusTransitionError);
     }
   }
