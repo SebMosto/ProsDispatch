@@ -18,8 +18,8 @@ export class IllegalJobStatusTransitionError extends Error {
     super(`Illegal transition from "${current}" to "${target}"`);
     this.name = 'IllegalJobStatusTransitionError';
     // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, IllegalJobStatusTransitionError);
+    if ('captureStackTrace' in Error) {
+      (Error as any).captureStackTrace(this, IllegalJobStatusTransitionError);
     }
   }
 }
