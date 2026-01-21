@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Direct charges only",
-        "description": "Collect payment via Stripe Connect Standard without escrow or stored balances."
+        "description": "Collect payment via Stripe Connect Standard without stored balances."
       },
       "compliance": {
         "title": "Canada ready",
