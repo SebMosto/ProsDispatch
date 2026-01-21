@@ -9,19 +9,18 @@ interface UseCreateJobOptions {
 export const useCreateJob = (options?: UseCreateJobOptions) => {
   const mutation = useCreateJobMutation();
 
-  const wrappedCreate = async (input: JobCreateInput) => {
-    const job = await mutation.mutateAsync(input);
-    options?.onSuccess?.();
-    return job;
-  };
-
   return useMemo(
     () => ({
-      createJob: wrappedCreate,
+      createJob: async (input: JobCreateInput) => {
+        const job = await mutation.mutateAsync(input);
+        options?.onSuccess?.();
+        return job;
+      },
       isLoading: mutation.isPending,
       error: mutation.error ?? null,
     }),
-    [mutation.error, mutation.isPending, wrappedCreate],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mutation.error, mutation.isPending, mutation.mutateAsync],
   );
 };
 
