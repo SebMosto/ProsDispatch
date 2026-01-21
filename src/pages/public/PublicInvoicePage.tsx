@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
 import { useLocation } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
+import { isSafeUrl } from '../../lib/security';
 
 const PublicInvoicePage = () => {
   const { t } = useTranslation();
@@ -107,7 +108,7 @@ const PublicInvoicePage = () => {
         >
           {t('public.invoice.payNow')}
         </button>
-        {invoice.pdf_url ? (
+        {invoice.pdf_url && isSafeUrl(invoice.pdf_url) ? (
           <a
             href={invoice.pdf_url}
             target="_blank"

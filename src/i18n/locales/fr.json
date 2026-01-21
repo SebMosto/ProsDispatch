@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Paiements directs uniquement",
-        "description": "Encaissez les paiements via Stripe Connect Standard sans escrow ni soldes conservés."
+        "description": "Encaissez les paiements via Stripe Connect Standard sans détention de fonds ni soldes conservés."
       },
       "compliance": {
         "title": "Prêt pour le Canada",
