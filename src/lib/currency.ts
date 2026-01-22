@@ -4,8 +4,7 @@ export const toCents = (value: number) => Math.round(value * 100);
 
 export const fromCents = (value: number) => value / 100;
 
-// Cache for Intl.NumberFormat instances to improve performance
-const formatters = new Map<string, Intl.NumberFormat>();
+const formatterCache = new Map<string, Intl.NumberFormat>();
 
 export const formatCurrency = (amountInCents: number, currency: string = 'CAD') => {
   const language = i18n.language || 'en';
@@ -20,6 +19,17 @@ export const formatCurrency = (amountInCents: number, currency: string = 'CAD') 
       currency,
     });
     formatters.set(key, formatter);
+  }
+
+  const cacheKey = `${locale}-${currency}`;
+  let formatter = formatterCache.get(cacheKey);
+
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+    });
+    formatterCache.set(cacheKey, formatter);
   }
 
   return formatter.format(amountInCents / 100);
