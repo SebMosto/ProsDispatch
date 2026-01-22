@@ -2,6 +2,8 @@ import i18n from '../i18n';
 
 type DateFormatOptions = Intl.DateTimeFormatOptions;
 
+const formatterCache = new Map<string, Intl.DateTimeFormat>();
+
 /**
  * Formats a date string or object according to the active locale.
  *
@@ -23,5 +25,15 @@ export const formatDate = (date: string | Date, options?: DateFormatOptions) => 
     day: 'numeric',
   };
 
-  return new Intl.DateTimeFormat(locale, options || defaultOptions).format(dateObj);
+  const finalOptions = options || defaultOptions;
+  const cacheKey = `${locale}-${JSON.stringify(finalOptions)}`;
+
+  let formatter = formatterCache.get(cacheKey);
+
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, finalOptions);
+    formatterCache.set(cacheKey, formatter);
+  }
+
+  return formatter.format(dateObj);
 };
