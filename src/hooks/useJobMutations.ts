@@ -53,14 +53,14 @@ export const useCreateJobMutation = () => {
         }
 
         previousJobs.forEach(([key, jobs]) => {
-          queryClient.setQueryData<JobRecord[]>(key, (jobs ?? []).length ? [optimisticJob, ...(jobs ?? [])] : [optimisticJob]);
+          queryClient.setQueryData<JobRecord[]>(key as readonly unknown[], (jobs ?? []).length ? [optimisticJob, ...(jobs ?? [])] : [optimisticJob]);
         });
 
         return { previousJobs };
       },
       onError: (_err, _input, context) => {
         context?.previousJobs.forEach(([key, jobs]) => {
-          queryClient.setQueryData<JobRecord[] | undefined>(key, jobs);
+          queryClient.setQueryData<JobRecord[] | undefined>(key as readonly unknown[], jobs);
         });
       },
       onSettled: async () => {

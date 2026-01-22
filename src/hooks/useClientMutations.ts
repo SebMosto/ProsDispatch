@@ -50,14 +50,14 @@ export const useCreateClientMutation = () => {
         }
 
         previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[]>(key, (clients ?? []).length ? [optimisticClient, ...(clients ?? [])] : [optimisticClient]);
+          queryClient.setQueryData<CachedClient[]>(key as readonly unknown[], (clients ?? []).length ? [optimisticClient, ...(clients ?? [])] : [optimisticClient]);
         });
 
         return { previousClients };
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
         });
       },
       onSettled: async () => {
@@ -93,14 +93,14 @@ export const useUpdateClientMutation = (clientId: string) => {
                 }
               : client,
           );
-          queryClient.setQueryData<CachedClient[]>(key, updatedClients);
+          queryClient.setQueryData<CachedClient[]>(key as readonly unknown[], updatedClients);
         });
 
         return { previousClients };
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
         });
       },
       onSettled: async () => {
