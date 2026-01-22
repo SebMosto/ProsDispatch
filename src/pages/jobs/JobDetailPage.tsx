@@ -9,6 +9,7 @@ import { jobRepository, type JobRecord } from '../../repositories/jobRepository'
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
+import { formatDate } from '../../lib/date';
 
 const JobDetailPage = () => {
   const { t } = useTranslation();
@@ -274,7 +275,7 @@ const JobDetailPage = () => {
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.status')}</dt>
-            <dd className="font-medium text-slate-900 capitalize">{job.status.replace('_', ' ')}</dd>
+            <dd className="font-medium text-slate-900">{t(`jobs.status.${job.status}`, job.status)}</dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.clientId')}</dt>
@@ -290,11 +291,11 @@ const JobDetailPage = () => {
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.created')}</dt>
-            <dd className="font-medium text-slate-900">{new Date(job.created_at).toLocaleString()}</dd>
+            <dd className="font-medium text-slate-900">{formatDate(job.created_at)}</dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.updated')}</dt>
-            <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
+            <dd className="font-medium text-slate-900">{formatDate(job.updated_at)}</dd>
           </div>
         </dl>
       </section>
@@ -328,7 +329,7 @@ const JobDetailPage = () => {
                 >
                   <div>
                     <p className="font-semibold text-slate-900">{invoice.invoice_number}</p>
-                    <p className="text-xs text-slate-500 capitalize">{invoice.status.replace('_', ' ')}</p>
+                    <p className="text-xs text-slate-500">{t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`, invoice.status)}</p>
                   </div>
                   <div className="text-sm font-semibold text-slate-900">
                     {formatCurrency(invoice.total_amount ?? 0)}
