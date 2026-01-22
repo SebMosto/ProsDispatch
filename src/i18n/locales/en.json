@@ -55,6 +55,7 @@
       "emailPlaceholder": "you@example.com",
       "passwordPlaceholder": "Enter your password",
       "button": "Sign in",
+      "error": "Invalid email or password",
       "noAccount": "Don't have an account yet?"
     },
     "signUp": {
@@ -217,6 +218,10 @@
         "invoiceNumberPlaceholder": "Auto-generated on save",
         "statusLabel": "Status",
         "statusDraft": "Draft",
+        "statusSent": "Sent",
+        "statusPaid": "Paid",
+        "statusVoid": "Void",
+        "statusOverdue": "Overdue",
         "lineItemsTitle": "Line Items",
         "addItem": "+ Add Item",
         "noItems": "No items yet. Add your first line item.",

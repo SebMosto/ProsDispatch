@@ -112,7 +112,7 @@ const PublicInvoicePage = () => {
           <a
             href={invoice.pdf_url}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             {t('public.invoice.downloadPdf')}

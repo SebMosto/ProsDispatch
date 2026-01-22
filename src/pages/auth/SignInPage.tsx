@@ -31,7 +31,8 @@ const SignInPage = () => {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      console.error('Sign in error:', signInError);
+      setError(t('auth.signIn.error'));
       setLoading(false);
       return;
     }

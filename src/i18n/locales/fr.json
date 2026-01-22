@@ -55,6 +55,7 @@
       "emailPlaceholder": "vous@exemple.com",
       "passwordPlaceholder": "Entrez votre mot de passe",
       "button": "Connexion",
+      "error": "Courriel ou mot de passe invalide",
       "noAccount": "Pas encore de compte?"
     },
     "signUp": {
@@ -217,6 +218,10 @@
         "invoiceNumberPlaceholder": "Généré automatiquement lors de l'enregistrement",
         "statusLabel": "Statut",
         "statusDraft": "Brouillon",
+        "statusSent": "Envoyé",
+        "statusPaid": "Payé",
+        "statusVoid": "Annulé",
+        "statusOverdue": "En retard",
         "lineItemsTitle": "Éléments de ligne",
         "addItem": "+ Ajouter un élément",
         "noItems": "Aucun élément pour le moment. Ajoutez votre premier élément de ligne.",
