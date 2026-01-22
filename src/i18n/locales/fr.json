@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Paiements directs uniquement",
-        "description": "Encaissez les paiements via Stripe Connect Standard sans intermédiaire ni soldes conservés."
+        "description": "Encaissez les paiements via Stripe Connect Standard sans détention de fonds ni soldes conservés."
       },
       "compliance": {
         "title": "Prêt pour le Canada",
@@ -217,6 +217,10 @@
         "invoiceNumberPlaceholder": "Généré automatiquement lors de l'enregistrement",
         "statusLabel": "Statut",
         "statusDraft": "Brouillon",
+        "statusSent": "Envoyé",
+        "statusPaid": "Payé",
+        "statusVoid": "Annulé",
+        "statusOverdue": "En retard",
         "lineItemsTitle": "Éléments de ligne",
         "addItem": "+ Ajouter un élément",
         "noItems": "Aucun élément pour le moment. Ajoutez votre premier élément de ligne.",
@@ -420,6 +424,8 @@
     "quantityPositive": "La quantité doit être supérieure à zéro",
     "jobIdUUID": "L'ID du travail doit être un UUID valide",
     "contractorIdUUID": "L'ID de l'entrepreneur doit être un UUID valide",
+    "invoiceIdRequired": "L'ID de la facture est requis",
+    "invoiceTokenRequired": "Le jeton de facture est requis",
     "invoiceNumberRequired": "Le numéro de facture est requis",
     "pdfUrlValid": "L'URL du PDF doit être valide",
     "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
