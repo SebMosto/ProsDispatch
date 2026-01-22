@@ -5,6 +5,7 @@ import MarkPaidModal from '../../components/invoices/MarkPaidModal';
 import { useInvoice } from '../../hooks/useInvoices';
 import { Link, useLocation, useNavigate } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
+import { formatDate } from '../../lib/date';
 import { isSafeUrl } from '../../lib/security';
 
 const statusStyles: Record<string, string> = {
@@ -174,7 +175,7 @@ const InvoiceDetailPage = () => {
             {invoice.paid_at ? (
               <p className="text-xs text-emerald-700">
                 {t('jobs.invoices.detailPage.paidOn', { 
-                  date: new Date(invoice.paid_at).toLocaleDateString(i18n.language === 'fr' ? 'fr-CA' : 'en-CA') 
+                  date: formatDate(invoice.paid_at, { dateStyle: 'short' })
                 })}
               </p>
             ) : null}

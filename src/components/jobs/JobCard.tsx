@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '../../lib/router';
 import { useNetworkStatus } from '../../lib/network';
+import { formatDate } from '../../lib/date';
 import type { JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 
@@ -65,12 +66,16 @@ const JobCard = ({ job }: JobCardProps) => {
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">{t('jobs.card.lastUpdated')}</dt>
-          <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
+          <dd className="font-medium text-slate-900">
+            {formatDate(job.updated_at, { dateStyle: 'medium', timeStyle: 'short' })}
+          </dd>
         </div>
       </dl>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs text-slate-500">{t('jobs.card.created', { date: new Date(job.created_at).toLocaleString() })}</div>
+        <div className="text-xs text-slate-500">
+          {t('jobs.card.created', { date: formatDate(job.created_at, { dateStyle: 'medium', timeStyle: 'short' }) })}
+        </div>
         <Link
           to={`/jobs/${job.id}`}
           className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
