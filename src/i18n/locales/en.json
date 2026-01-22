@@ -55,6 +55,7 @@
       "emailPlaceholder": "you@example.com",
       "passwordPlaceholder": "Enter your password",
       "button": "Sign in",
+      "error": "Invalid email or password",
       "noAccount": "Don't have an account yet?"
     },
     "signUp": {
