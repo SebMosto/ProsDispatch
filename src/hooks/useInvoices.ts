@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
@@ -12,9 +13,11 @@ import {
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
+  const { t } = useTranslation();
+
   const queryFn = useCallback(async () => {
     if (!id) {
-      throw { message: 'Invoice ID is required', reason: 'validation' } satisfies RepositoryError;
+      throw { message: t('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
     }
     const result = await invoiceRepository.get(id);
     if (result.error || !result.data) {
@@ -41,9 +44,11 @@ export const useInvoice = (id?: string) => {
 };
 
 export const useInvoiceByToken = (token?: string) => {
+  const { t } = useTranslation();
+
   const queryFn = useCallback(async () => {
     if (!token) {
-      throw { message: 'Invoice token is required', reason: 'validation' } satisfies RepositoryError;
+      throw { message: t('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
     const result = await invoiceRepository.getInvoiceByToken(token);
     if (result.error || !result.data) {
