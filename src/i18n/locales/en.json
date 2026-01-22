@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Direct charges only",
-        "description": "Collect payment via Stripe Connect Standard without stored balances."
+        "description": "Collect payment via Stripe Connect Standard without holding funds or stored balances."
       },
       "compliance": {
         "title": "Canada ready",
@@ -424,6 +424,8 @@
     "quantityPositive": "Quantity must be greater than zero",
     "jobIdUUID": "Job ID must be a valid UUID",
     "contractorIdUUID": "Contractor ID must be a valid UUID",
+    "invoiceIdRequired": "Invoice ID is required",
+    "invoiceTokenRequired": "Invoice token is required",
     "invoiceNumberRequired": "Invoice number is required",
     "pdfUrlValid": "PDF URL must be valid",
     "paymentNoteTooLong": "Payment note must be 1000 characters or less",

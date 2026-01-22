@@ -1,27 +1,27 @@
 import i18n from '../i18n';
 
+type DateFormatOptions = Intl.DateTimeFormatOptions;
+
 /**
- * Formats a date string or object according to the current active locale.
- * Enforces 'en-CA' or 'fr-CA' to ensure consistent date formats (YYYY-MM-DD vs DD/MM/YYYY etc).
+ * Formats a date string or object according to the active locale.
+ *
+ * @param date - The date to format (string or Date object)
+ * @param options - Optional formatting options
+ * @returns The formatted date string
  */
-export const formatDate = (
-  date: Date | string | number,
-  options: Intl.DateTimeFormatOptions = {
+export const formatDate = (date: string | Date, options?: DateFormatOptions) => {
+  const language = i18n.language || 'en';
+  // Map 'fr' to 'fr-CA' and 'en' to 'en-CA' for date formatting defaults in Canada context
+  const locale = language.startsWith('fr') ? 'fr-CA' : 'en-CA';
+
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  // Default options if none provided
+  const defaultOptions: DateFormatOptions = {
     year: 'numeric',
-    month: 'numeric',
+    month: 'long',
     day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  },
-): string => {
-  const dateObj = new Date(date);
+  };
 
-  if (Number.isNaN(dateObj.getTime())) {
-    return 'Invalid Date';
-  }
-
-  const currentLang = i18n.language || 'en';
-  const locale = currentLang.startsWith('fr') ? 'fr-CA' : 'en-CA';
-
-  return new Intl.DateTimeFormat(locale, options).format(dateObj);
+  return new Intl.DateTimeFormat(locale, options || defaultOptions).format(dateObj);
 };

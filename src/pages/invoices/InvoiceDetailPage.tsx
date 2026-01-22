@@ -5,6 +5,7 @@ import MarkPaidModal from '../../components/invoices/MarkPaidModal';
 import { useInvoice } from '../../hooks/useInvoices';
 import { Link, useLocation, useNavigate } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
+import { isSafeUrl } from '../../lib/security';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-700',
@@ -150,7 +151,7 @@ const InvoiceDetailPage = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-slate-600">{t('jobs.invoices.detailPage.pdfLabel')}</p>
-            {invoice.pdf_url ? (
+            {invoice.pdf_url && isSafeUrl(invoice.pdf_url) ? (
               <a
                 href={invoice.pdf_url}
                 target="_blank"
