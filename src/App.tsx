@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
@@ -25,9 +25,13 @@ const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage
 const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
   const isPublicInvoice = pathname.startsWith('/pay/');
 
   if (isPublicInvoice) {

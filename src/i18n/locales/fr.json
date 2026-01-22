@@ -420,6 +420,8 @@
     "quantityPositive": "La quantité doit être supérieure à zéro",
     "jobIdUUID": "L'ID du travail doit être un UUID valide",
     "contractorIdUUID": "L'ID de l'entrepreneur doit être un UUID valide",
+    "invoiceIdRequired": "L'ID de la facture est requis",
+    "invoiceTokenRequired": "Le jeton de facture est requis",
     "invoiceNumberRequired": "Le numéro de facture est requis",
     "pdfUrlValid": "L'URL du PDF doit être valide",
     "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
