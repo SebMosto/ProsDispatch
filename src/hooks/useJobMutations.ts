@@ -60,7 +60,7 @@ export const useCreateJobMutation = () => {
       },
       onError: (_err, _input, context) => {
         context?.previousJobs.forEach(([key, jobs]) => {
-          queryClient.setQueryData<JobRecord[] | undefined>(key, jobs);
+          queryClient.setQueryData<JobRecord[] | undefined>(key as readonly unknown[], jobs);
         });
       },
       onSettled: async () => {

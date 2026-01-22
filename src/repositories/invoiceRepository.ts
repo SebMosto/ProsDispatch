@@ -226,7 +226,7 @@ export class InvoiceRepository extends BaseRepository {
 
   async getInvoiceByToken(token: string): Promise<RepositoryResult<InvoiceWithItems>> {
     const { data, error } = await this.client
-      .rpc('get_invoice_by_token', { access_token: token })
+      .rpc('get_invoice_by_token' as never, { access_token: token } as never)
       .single();
 
     const repositoryError = this.toRepositoryError(error);
@@ -236,7 +236,7 @@ export class InvoiceRepository extends BaseRepository {
     }
 
     reportApiOnline();
-    return { data: data as InvoiceWithItems };
+    return { data: data as unknown as InvoiceWithItems };
   }
 
   async markAsPaid(
