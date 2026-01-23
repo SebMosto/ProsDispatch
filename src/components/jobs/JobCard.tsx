@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '../../lib/router';
 import { useNetworkStatus } from '../../lib/network';
@@ -11,7 +11,7 @@ interface JobCardProps {
   job: JobRecord;
 }
 
-const JobCard = ({ job }: JobCardProps) => {
+const JobCard = memo(({ job }: JobCardProps) => {
   const { isOnline } = useNetworkStatus();
   const { t } = useTranslation();
 
@@ -66,6 +66,10 @@ const JobCard = ({ job }: JobCardProps) => {
       </div>
     </article>
   );
-};
+});
+
+// Optimization: Memoize JobCard to prevent unnecessary re-renders when parent list updates
+// but job data remains unchanged.
+JobCard.displayName = 'JobCard';
 
 export default JobCard;
