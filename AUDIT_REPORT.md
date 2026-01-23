@@ -4,6 +4,9 @@
 **Auditor:** Jules (AI Agent)
 **Context:** Preparation for `SPEC-005` (Monetization)
 
+> [!WARNING]
+> This is a point-in-time audit report. The findings and recommendations documented here were valid as of the date above. Some or all of these items may have been addressed since this report was generated.
+
 ---
 
 ## **Summary**
