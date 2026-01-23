@@ -7,7 +7,10 @@ const LanguageSwitcher = () => {
   const activeLanguage = i18n.language.startsWith('fr') ? 'fr' : 'en';
 
   const handleChange = (language: Language) => {
-    i18n.changeLanguage(language).catch((error) => {
+    i18n.changeLanguage(language).then(() => {
+      // Explicitly persist preference to ensure offline boot works
+      localStorage.setItem('i18nextLng', language);
+    }).catch((error) => {
       console.error('Language change failed', error);
     });
   };

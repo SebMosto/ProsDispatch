@@ -5,17 +5,7 @@ import { useNetworkStatus } from '../../lib/network';
 import { formatDate } from '../../lib/date';
 import type { JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
-
-const STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-800 border-slate-200',
-  sent: 'bg-blue-50 text-blue-800 border-blue-200',
-  approved: 'bg-cyan-50 text-cyan-800 border-cyan-200',
-  in_progress: 'bg-amber-50 text-amber-800 border-amber-200',
-  completed: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  invoiced: 'bg-indigo-50 text-indigo-800 border-indigo-200',
-  paid: 'bg-green-50 text-green-800 border-green-200',
-  archived: 'bg-gray-50 text-gray-700 border-gray-200',
-};
+import JobStatusBadge from './JobStatusBadge';
 
 interface JobCardProps {
   job: JobRecord;
@@ -24,9 +14,6 @@ interface JobCardProps {
 const JobCard = ({ job }: JobCardProps) => {
   const { isOnline } = useNetworkStatus();
   const { t } = useTranslation();
-
-  const statusClass = STATUS_STYLES[job.status] ?? STATUS_STYLES.draft;
-  const statusLabel = t(`jobs.status.${job.status}`, job.status);
 
   const syncState: SyncBadgeState = useMemo(() => {
     if (job.id.startsWith('temp-')) {
@@ -44,9 +31,7 @@ const JobCard = ({ job }: JobCardProps) => {
           <p className="text-sm text-slate-600 line-clamp-2">{job.description || t('jobs.card.noDescription')}</p>
         </div>
         <div className="flex items-center gap-2 self-start">
-          <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusClass}`}>
-            {statusLabel}
-          </span>
+          <JobStatusBadge status={job.status} />
           <SyncBadge state={syncState} />
         </div>
       </header>

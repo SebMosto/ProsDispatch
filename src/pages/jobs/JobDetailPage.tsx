@@ -7,6 +7,7 @@ import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
+import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
@@ -275,7 +276,9 @@ const JobDetailPage = () => {
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.status')}</dt>
-            <dd className="font-medium text-slate-900">{t(`jobs.status.${job.status}`, job.status)}</dd>
+            <dd className="font-medium text-slate-900">
+              <JobStatusBadge status={job.status} />
+            </dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.clientId')}</dt>
