@@ -46,6 +46,13 @@ Deno.serve(async (req) => {
     // but here we are just reading from the user context or we might need to query the profile.
     // Ideally, the profile should be fetched.
 
+    // Build success and cancel URLs with proper query parameter handling
+    const successUrl = new URL(returnUrl);
+    successUrl.searchParams.set("session_id", "{CHECKOUT_SESSION_ID}");
+    
+    const cancelUrl = new URL(returnUrl);
+    cancelUrl.searchParams.set("canceled", "true");
+
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -58,8 +65,8 @@ Deno.serve(async (req) => {
       ],
       client_reference_id: user.id, // Critical: links checkout to user
       customer_email: user.email,   // Pre-fills email
-      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${returnUrl}?canceled=true`,
+      success_url: successUrl.toString(),
+      cancel_url: cancelUrl.toString(),
       subscription_data: {
         trial_period_days: 14,
       },
