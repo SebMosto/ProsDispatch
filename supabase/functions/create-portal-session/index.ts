@@ -65,9 +65,10 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     const status = getErrorStatus(error);
-    console.error(`Error creating portal session (${status}):`, error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Error creating portal session (${status}):`, errorMessage);
     
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status,
     });
