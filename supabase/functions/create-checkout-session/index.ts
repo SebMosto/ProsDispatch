@@ -70,9 +70,32 @@ Deno.serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Error in create-checkout-session:", error);
+    
+    // Determine appropriate status code based on error type
+    let statusCode = 500; // Default to server error
+    let errorMessage = "Internal server error";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Authentication/Authorization errors -> 401
+      if (errorMessage === "Unauthorized" || errorMessage.includes("auth")) {
+        statusCode = 401;
+      }
+      // Client validation errors -> 400
+      else if (errorMessage.includes("Missing") || errorMessage.includes("Invalid")) {
+        statusCode = 400;
+      }
+      // Stripe API errors -> 500 (server-side issue)
+      else if (errorMessage.includes("Stripe") || error.name === "StripeError") {
+        statusCode = 500;
+      }
+    }
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
+      status: statusCode,
     });
   }
 });
