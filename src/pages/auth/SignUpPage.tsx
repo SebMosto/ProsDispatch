@@ -79,6 +79,7 @@ const SignUpPage = () => {
               autoComplete="name"
               value={fullName}
               onChange={(event) => setFullName(event.target.value)}
+              maxLength={100} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signUp.fullNamePlaceholder')}
             />
@@ -95,6 +96,7 @@ const SignUpPage = () => {
               autoComplete="organization"
               value={businessName}
               onChange={(event) => setBusinessName(event.target.value)}
+              maxLength={100} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signUp.businessNamePlaceholder')}
             />
@@ -112,6 +114,7 @@ const SignUpPage = () => {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              maxLength={254} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signUp.emailPlaceholder')}
             />
@@ -129,6 +132,7 @@ const SignUpPage = () => {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              maxLength={128} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signUp.passwordPlaceholder')}
             />
