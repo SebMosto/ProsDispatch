@@ -70,7 +70,7 @@ export type Database = {
           role: string
           updated_at: string
           stripe_customer_id: string | null
-          subscription_status: SubscriptionStatus
+          subscription_status: string
           subscription_end_date: string | null
         }
         Insert: {
@@ -82,7 +82,7 @@ export type Database = {
           role?: string
           updated_at?: string
           stripe_customer_id?: string | null
-          subscription_status?: SubscriptionStatus
+          subscription_status?: string
           subscription_end_date?: string | null
         }
         Update: {
@@ -94,7 +94,7 @@ export type Database = {
           role?: string
           updated_at?: string
           stripe_customer_id?: string | null
-          subscription_status?: SubscriptionStatus
+          subscription_status?: string
           subscription_end_date?: string | null
         }
         Relationships: []
