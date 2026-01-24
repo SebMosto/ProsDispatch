@@ -2,13 +2,13 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import Stripe from "https://esm.sh/stripe@13.10.0?target=deno";
+// Using Deno 2 compatible imports
+import { createClient } from "jsr:@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 
 console.log("Stripe Webhook Function Initialized");
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   const signature = req.headers.get("Stripe-Signature");
 
   if (!signature) {
