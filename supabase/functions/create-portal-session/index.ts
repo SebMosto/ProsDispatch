@@ -19,7 +19,10 @@ Deno.serve(async (req) => {
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
 
   if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey || !stripeKey) {
-    return new Response("Error: Missing Environment Variables", { status: 500 });
+    return new Response(JSON.stringify({ error: "Missing Environment Variables" }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 
   // Validate Authorization header
