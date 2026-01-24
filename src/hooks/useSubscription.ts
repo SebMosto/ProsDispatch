@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
-export function useSubscription() {
+export const useSubscription = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,12 +14,12 @@ export function useSubscription() {
       });
 
       if (error) throw error;
-      if (!data?.url) throw new Error('No checkout URL returned');
-
-      window.location.href = data.url;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       console.error('Checkout error:', err);
-      setError(err.message || 'Failed to start checkout');
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -32,21 +32,16 @@ export function useSubscription() {
       const { data, error } = await supabase.functions.invoke('create-portal-session');
 
       if (error) throw error;
-      if (!data?.url) throw new Error('No portal URL returned');
-
-      window.location.href = data.url;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       console.error('Portal error:', err);
-      setError(err.message || 'Failed to open billing portal');
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return {
-    checkout,
-    manageSubscription,
-    isLoading,
-    error,
-  };
-}
+  return { checkout, manageSubscription, isLoading, error };
+};
