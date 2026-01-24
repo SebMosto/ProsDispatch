@@ -41,6 +41,10 @@ Deno.serve(async (req) => {
       throw new Error("Missing priceId");
     }
 
+    if (!returnUrl) {
+      throw new Error("Missing returnUrl");
+    }
+
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
     const { data: profile } = await supabaseClient
