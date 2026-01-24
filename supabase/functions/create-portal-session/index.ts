@@ -116,9 +116,37 @@ Deno.serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Error in create-portal-session:", error);
+    
+    // Determine appropriate status code based on error type
+    let statusCode = 500; // Default to server error
+    let errorMessage = "Internal server error";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Authentication/Authorization errors -> 401
+      // Check for exact match first to avoid false positives
+      if (errorMessage === "Unauthorized") {
+        statusCode = 401;
+      }
+      // Client validation errors -> 400
+      // These are errors caused by missing or invalid request parameters
+      else if (errorMessage.startsWith("Missing ") || 
+               errorMessage.startsWith("Invalid ") ||
+               errorMessage === "No Stripe Customer found for this user") {
+        statusCode = 400;
+      }
+      // Stripe API errors -> 500 (server-side issue)
+      // Check error name for Stripe-specific errors
+      else if (error.name?.includes("Stripe")) {
+        statusCode = 500;
+      }
+    }
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
+      status: statusCode,
     });
   }
 });
