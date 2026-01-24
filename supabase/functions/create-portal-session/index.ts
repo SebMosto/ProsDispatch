@@ -13,11 +13,39 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate required environment variables
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey || !stripeSecretKey) {
+      return new Response(
+        JSON.stringify({ error: "Missing required environment variables" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
+    }
+
+    // Validate Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Missing Authorization header" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
+    }
+
     const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      supabaseUrl,
+      supabaseAnonKey,
       {
-        global: { headers: { Authorization: req.headers.get("Authorization")! } },
+        global: { headers: { Authorization: authHeader } },
       }
     );
 
@@ -32,8 +60,8 @@ Deno.serve(async (req) => {
     // We need the Stripe Customer ID from the profile
     // Use Service Role to ensure we can read the profile even if RLS is strict (though user should be able to read own)
     const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      supabaseUrl,
+      supabaseServiceKey
     );
 
     const { data: profile } = await supabaseAdmin
@@ -46,7 +74,7 @@ Deno.serve(async (req) => {
       throw new Error("No Stripe Customer found for this user");
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
       httpClient: Stripe.createFetchHttpClient(),
     });
