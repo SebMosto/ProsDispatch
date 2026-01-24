@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -62,13 +65,27 @@ jobs:
             echo "✅ Types are in sync."
           fi
 
+  # Fallback job when secrets are not configured
+  check-secrets:
+    runs-on: ubuntu-latest
+    if: ${{ !secrets.SUPABASE_ACCESS_TOKEN || !secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - name: Skip Supabase checks (secrets not configured)
+        run: |
+          echo "⚠️ Supabase secrets are not configured in this repository."
+          echo "Skipping Supabase type verification and deployment."
+          echo "To enable Supabase checks, configure the following secrets:"
+          echo "  - SUPABASE_ACCESS_TOKEN"
+          echo "  - SUPABASE_PROJECT_ID"
+          echo "✅ This workflow passes when secrets are not configured."
+
   # 2. DEPLOY: Only runs if types are verified
   deploy-functions:
     runs-on: ubuntu-latest
     needs: verify-types
     # Only deploy on push to main, not on PRs (optional safety)
     # Also requires Supabase secrets to be configured
-    if: ${{ github.ref == 'refs/heads/main' && secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID }}
+    if: ${{ always() && github.ref == 'refs/heads/main' && secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID && needs.verify-types.result == 'success' }}
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
