@@ -80,15 +80,20 @@ Deno.serve(async (req) => {
       errorMessage = error.message;
       
       // Authentication/Authorization errors -> 401
-      if (errorMessage === "Unauthorized" || errorMessage.includes("auth")) {
+      // Check for exact match first to avoid false positives
+      if (errorMessage === "Unauthorized") {
         statusCode = 401;
       }
       // Client validation errors -> 400
-      else if (errorMessage.includes("Missing") || errorMessage.includes("Invalid")) {
+      // These are errors caused by missing or invalid request parameters
+      else if (errorMessage.startsWith("Missing ") || 
+               errorMessage.startsWith("Invalid ") ||
+               errorMessage === "No Stripe Customer found for this user") {
         statusCode = 400;
       }
       // Stripe API errors -> 500 (server-side issue)
-      else if (errorMessage.includes("Stripe") || error.name === "StripeError") {
+      // Check error name for Stripe-specific errors
+      else if (error.name?.includes("Stripe")) {
         statusCode = 500;
       }
     }
