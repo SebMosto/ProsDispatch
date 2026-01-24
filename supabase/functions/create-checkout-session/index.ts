@@ -1,34 +1,12 @@
 // Using Deno 2 compatible imports
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+import { getErrorStatus } from "../_shared/errors.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-// Helper function to determine appropriate HTTP status code based on error
-function getErrorStatus(error: Error): number {
-  const message = error.message.toLowerCase();
-  
-  // 401 Unauthorized - authentication issues
-  if (message.includes("unauthorized") || message.includes("not authenticated")) {
-    return 401;
-  }
-  
-  // 404 Not Found - resource not found
-  if (message.includes("not found") || message.includes("no stripe customer")) {
-    return 404;
-  }
-  
-  // 400 Bad Request - client errors (missing fields, invalid input)
-  if (message.includes("missing") || message.includes("invalid") || message.includes("required")) {
-    return 400;
-  }
-  
-  // 500 Internal Server Error - unexpected errors, Stripe API errors, database errors
-  return 500;
-}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
