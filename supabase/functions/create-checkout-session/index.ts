@@ -42,11 +42,16 @@ Deno.serve(async (req) => {
     }
 
     // Fetch user's profile to check for existing Stripe customer ID
-    const { data: profile } = await supabaseClient
+    const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("stripe_customer_id")
       .eq("id", user.id)
       .single();
+
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+      throw new Error("Failed to fetch user profile");
+    }
 
     // Build checkout session parameters
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
