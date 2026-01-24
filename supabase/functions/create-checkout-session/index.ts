@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
 
     if (!supabaseUrl || !supabaseAnonKey || !stripeSecretKey) {
       return new Response(
-        JSON.stringify({ error: "Error: Missing Environment Variables" }),
+        JSON.stringify({ error: "Missing required environment variables" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 500,
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: "Error: Missing Authorization Header" }),
+        JSON.stringify({ error: "Missing Authorization header" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 401,
