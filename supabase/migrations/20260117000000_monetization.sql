@@ -1,26 +1,30 @@
 -- 1. Profiles additions
+-- We add these first so they exist for the policy check later
 alter table public.profiles
-  add column stripe_customer_id text,
-  add column subscription_status text not null default 'incomplete',
-  add column subscription_end_date timestamptz,
-  add constraint profiles_stripe_customer_id_key unique (stripe_customer_id),
-  add constraint profiles_subscription_status_check
-  check (subscription_status in (
-    'trialing',
-    'active',
-    'past_due',
-    'canceled',
-    'incomplete',
-    'incomplete_expired',
-    'unpaid',
-    'paused'
-  ));
+  add column if not exists stripe_customer_id text,
+  add column if not exists subscription_status text not null default 'incomplete',
+  add column if not exists subscription_end_date timestamptz;
 
--- Index for subscription_status (checked on every authenticated route)
-create index profiles_subscription_status_idx on public.profiles (subscription_status);
+-- Add constraints (safe to re-run due to unique names)
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'profiles_stripe_customer_id_key') then
+    alter table public.profiles add constraint profiles_stripe_customer_id_key unique (stripe_customer_id);
+  end if;
+
+  if not exists (select 1 from pg_constraint where conname = 'profiles_subscription_status_check') then
+    alter table public.profiles add constraint profiles_subscription_status_check
+    check (subscription_status in (
+      'trialing', 'active', 'past_due', 'canceled', 'incomplete', 'incomplete_expired', 'unpaid', 'paused'
+    ));
+  end if;
+end $$;
+
+-- Index for subscription_status
+create index if not exists profiles_subscription_status_idx on public.profiles (subscription_status);
 
 -- 2. Stripe events table
-create table public.stripe_events (
+create table if not exists public.stripe_events (
   id text primary key,
   type text not null,
   event_created_at timestamptz not null,
@@ -30,36 +34,26 @@ create table public.stripe_events (
 );
 
 -- 3. RLS for profiles billing fields
--- 
--- SECURITY: Billing fields (stripe_customer_id, subscription_status, subscription_end_date)
--- must ONLY be writable by service_role (webhook handlers), not by authenticated users.
--- 
--- Per SPEC-005 §3.4: "Stripe is canonical" - these fields mirror Stripe state via webhooks.
--- Allowing user updates would enable self-service privilege escalation (e.g., marking 
--- subscription_status='active' to bypass paywall).
---
--- Strategy:
--- 1. Recreate user update policy with CHECK constraint that blocks billing field changes
--- 2. Add service_role-only policy for webhook handlers to update billing fields
+-- FIXED: Using ROW() comparisons to avoid SQLSTATE 42601 error
 
 drop policy if exists "Users can update own profile" on public.profiles;
 
--- Users can update their own profile, but NOT billing fields
--- The WITH CHECK clause ensures the new values match the current values for billing fields
 create policy "Users can update own profile" on public.profiles
   for update 
   using (auth.uid() = id)
   with check (
-    -- Prevent users from modifying billing fields by requiring new values match current values
-    -- Using "IS NOT DISTINCT FROM" to handle NULL values correctly
-    -- Single subquery for performance (avoids multiple table scans)
-    (stripe_customer_id, subscription_status, subscription_end_date) is not distinct from 
-    (select stripe_customer_id, subscription_status, subscription_end_date 
-     from public.profiles 
-     where id = auth.uid())
+    -- Prevent users from modifying billing fields by requiring new values match current values.
+    -- We use ROW() explicitly to ensure we are comparing a composite value to a composite value.
+    ROW(stripe_customer_id, subscription_status, subscription_end_date) IS NOT DISTINCT FROM
+    (
+      select ROW(stripe_customer_id, subscription_status, subscription_end_date)
+      from public.profiles
+      where id = auth.uid()
+    )
   );
 
 -- Service role can update billing fields (for webhook handlers)
+drop policy if exists "Service role can update billing fields" on public.profiles;
 create policy "Service role can update billing fields" on public.profiles
   for update
   to service_role
@@ -69,6 +63,7 @@ create policy "Service role can update billing fields" on public.profiles
 -- 4. RLS for stripe_events
 alter table public.stripe_events enable row level security;
 
+drop policy if exists "stripe_events_service_role_only" on public.stripe_events;
 create policy "stripe_events_service_role_only"
   on public.stripe_events
   for all
