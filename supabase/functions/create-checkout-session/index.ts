@@ -47,11 +47,17 @@ Deno.serve(async (req) => {
 
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
-    const { data: profile } = await supabaseClient
+    const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("stripe_customer_id")
       .eq("id", user.id)
       .maybeSingle();
+
+    // If there's an error fetching the profile (e.g., RLS issue), log and continue
+    // This allows checkout to proceed even if profile fetch fails
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+    }
 
     // Build checkout session parameters
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
