@@ -18,6 +18,7 @@ const statusStyles: Record<string, string> = {
 
 const InvoiceDetailPage = () => {
   const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const segments = pathname.split('/').filter(Boolean);
@@ -191,10 +192,10 @@ const InvoiceDetailPage = () => {
               <div key={item.id} className="flex flex-col gap-2 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-800">{item.description}</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount)}</p>
+                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount / 100, 'CAD', locale)}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price) })}
+                  {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price / 100, 'CAD', locale) })}
                 </p>
               </div>
             ))
@@ -207,19 +208,19 @@ const InvoiceDetailPage = () => {
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
           <span>{t('jobs.invoices.detailPage.subtotalLabel')}</span>
-          <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
+          <span className="font-semibold">{formatCurrency(invoice.subtotal / 100, 'CAD', locale)}</span>
         </div>
         <div className="mt-2 space-y-1 text-sm text-slate-700">
           {taxData.map((tax) => (
             <div key={tax.label} className="flex items-center justify-between">
               <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
-              <span className="font-semibold">{formatCurrency(tax.amount)}</span>
+              <span className="font-semibold">{formatCurrency(tax.amount / 100, 'CAD', locale)}</span>
             </div>
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
           <span>{t('jobs.invoices.detailPage.totalDueLabel')}</span>
-          <span>{formatCurrency(invoice.total_amount)}</span>
+          <span>{formatCurrency(invoice.total_amount / 100, 'CAD', locale)}</span>
         </div>
       </section>
 
