@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from '../lib/router';
 
 const featureKeys = ['billing', 'payments', 'compliance'] as const;
 
@@ -14,12 +15,12 @@ const HomePage = () => {
         </h1>
         <p className="hero__subtitle">{t('hero.subtitle')}</p>
         <div className="hero__actions">
-          <button type="button" className="primary-button">
+          <Link to="/register" className="primary-button">
             {t('hero.primaryCta')}
-          </button>
-          <button type="button" className="secondary-button">
+          </Link>
+          <Link to="/login" className="secondary-button">
             {t('hero.secondaryCta')}
-          </button>
+          </Link>
         </div>
       </section>
 
