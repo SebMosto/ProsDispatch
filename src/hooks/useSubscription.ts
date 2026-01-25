@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/lib/supabase';
 
 export const useSubscription = () => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,12 +36,12 @@ export const useSubscription = () => {
         window.location.href = data.url;
       } else {
         console.error("🔴 No URL returned from backend:", data);
-        setError("Failed to start checkout: No URL returned.");
+        setError(t('errors.checkoutNoUrl'));
       }
 
     } catch (err: any) {
       console.error('🔴 Checkout Exception:', err);
-      setError(err.message || "An unexpected error occurred.");
+      setError(err.message || t('errors.unexpected'));
     } finally {
       setIsLoading(false);
     }

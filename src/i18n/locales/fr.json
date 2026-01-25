@@ -75,6 +75,10 @@
       "greeting": "Bon retour",
       "title": "Tableau de bord",
       "subtitle": "Votre profil d'entrepreneur est prêt.",
+      "subscriptionTest": "Test d'abonnement",
+      "testConnection": "Testez la connexion de paiement ci-dessous.",
+      "testUpgrade": "Test de mise à niveau (Stripe)",
+      "processing": "Traitement en cours...",
       "notProvided": "Non renseigné",
       "role": "Rôle",
       "sessionNote": "Votre session est sécurisée avec Supabase Auth.",
@@ -437,5 +441,9 @@
   "taxes": {
     "GST": "TPS",
     "QST": "TVQ"
+  },
+  "errors": {
+    "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
+    "unexpected": "Une erreur inattendue est survenue."
   }
 }

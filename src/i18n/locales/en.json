@@ -75,6 +75,10 @@
       "greeting": "Welcome back",
       "title": "Dashboard",
       "subtitle": "Your contractor profile is ready.",
+      "subscriptionTest": "Subscription Test",
+      "testConnection": "Test the payment connection below.",
+      "testUpgrade": "Test Upgrade (Stripe)",
+      "processing": "Processing...",
       "notProvided": "Not provided",
       "role": "Role",
       "sessionNote": "Your session is secured with Supabase Auth.",
@@ -437,5 +441,9 @@
   "taxes": {
     "GST": "GST",
     "QST": "QST"
+  },
+  "errors": {
+    "checkoutNoUrl": "Failed to start checkout: No URL returned.",
+    "unexpected": "An unexpected error occurred."
   }
 }
