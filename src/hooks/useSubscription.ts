@@ -8,11 +8,20 @@ export const useSubscription = () => {
   const checkout = async (priceId: string) => {
     setIsLoading(true);
     setError(null);
+
+    // 1. Get the current website URL (e.g., http://localhost:5173)
+    const returnUrl = window.location.origin;
+
     console.log("🔵 Checkout initiated for Price ID:", priceId);
+    console.log("📍 Return URL:", returnUrl);
 
     try {
+      // 2. Send both priceId AND returnUrl
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { priceId },
+        body: {
+          priceId,
+          returnUrl // <--- CRITICAL FIX
+        },
       });
 
       if (error) {
