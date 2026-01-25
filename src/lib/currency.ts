@@ -1,26 +1,33 @@
-import i18n from '../i18n';
-
-export const toCents = (value: number) => Math.round(value * 100);
-
-export const fromCents = (value: number) => value / 100;
-
 const formatterCache = new Map<string, Intl.NumberFormat>();
 
-export const formatCurrency = (amountInCents: number, currency: string = 'CAD') => {
-  const language = i18n.language || 'en';
-  // Map 'fr' to 'fr-CA' and 'en' to 'en-CA' for currency formatting defaults in Canada context
-  const locale = language.startsWith('fr') ? 'fr-CA' : 'en-CA';
-
+/**
+ * Formats a number as a currency string.
+ * @param amount - The numeric amount to format.
+ * @param currency - The currency code (e.g., 'USD', 'EUR', 'GBP'). Defaults to 'USD'.
+ * @param locale - The locale string (e.g., 'en-US', 'fr-FR'). Defaults to 'en-US'.
+ */
+export const formatCurrency = (amount: number, currency: string = 'USD', locale: string = 'en-US'): string => {
   const cacheKey = `${locale}-${currency}`;
   let formatter = formatterCache.get(cacheKey);
 
   if (!formatter) {
     formatter = new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency,
+      currency: currency,
     });
     formatterCache.set(cacheKey, formatter);
   }
 
-  return formatter.format(amountInCents / 100);
+  return formatter.format(amount);
+};
+
+/**
+ * Parses a currency string into a number.
+ * Removes non-numeric characters (except decimal points).
+ */
+export const parseCurrency = (input: string): number => {
+  if (!input) return 0;
+  // Remove currency symbols and non-numeric chars, keeping digits and dot
+  const clean = input.replace(/[^0-9.-]+/g, '');
+  return parseFloat(clean) || 0;
 };

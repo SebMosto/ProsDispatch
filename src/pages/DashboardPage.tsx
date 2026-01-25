@@ -1,9 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
+import { useSubscription } from '../hooks/useSubscription'; // <--- IMPORT THIS
 
 const DashboardPage = () => {
   const { t } = useTranslation();
   const { user, profile, signOut } = useAuth();
+  const { checkout, isLoading, error } = useSubscription(); // <--- USE HOOK
+
+  // TODO: Replace this with your ACTUAL Stripe Price ID from the Stripe Dashboard
+  // Go to Stripe > Product Catalog > Click a Product > Look for the "API ID" of the price (starts with price_)
+  const TEST_PRICE_ID = "price_1Sq0myL7ioFFaVuvoWjd7pgP";
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
@@ -12,6 +18,27 @@ const DashboardPage = () => {
         <h1 className="text-2xl font-semibold text-slate-900">{t('auth.dashboard.title')}</h1>
         <p className="text-sm text-slate-600">{t('auth.dashboard.subtitle')}</p>
       </header>
+
+      {/* --- TEMPORARY SUBSCRIPTION TEST SECTION --- */}
+      <section className="rounded-lg border border-blue-200 bg-blue-50 p-4 shadow-sm">
+        <h2 className="font-semibold text-blue-900">Subscription Test</h2>
+        <p className="mb-3 text-sm text-blue-700">Test the payment connection below.</p>
+
+        {error && (
+          <div className="mb-3 rounded bg-red-100 p-2 text-sm text-red-700">
+            Error: {error}
+          </div>
+        )}
+
+        <button
+          onClick={() => checkout(TEST_PRICE_ID)}
+          disabled={isLoading}
+          className="rounded bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {isLoading ? 'Processing...' : 'Test Upgrade (Stripe)'}
+        </button>
+      </section>
+      {/* ------------------------------------------- */}
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
