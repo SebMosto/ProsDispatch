@@ -6,10 +6,7 @@ const DashboardPage = () => {
   const { t } = useTranslation();
   const { user, profile, signOut } = useAuth();
   const { checkout, isLoading, error } = useSubscription(); // <--- USE HOOK
-
-  // TODO: Replace this with your ACTUAL Stripe Price ID from the Stripe Dashboard
-  // Go to Stripe > Product Catalog > Click a Product > Look for the "API ID" of the price (starts with price_)
-  const TEST_PRICE_ID = "REPLACE_WITH_YOUR_STRIPE_PRICE_ID";
+  const TEST_PRICE_ID = "price_1Sq0myL7ioFFaVuvoWjd7pgP";
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
