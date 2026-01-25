@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from '../lib/router';
+import { Link } from 'react-router-dom';
 
 const featureKeys = ['billing', 'payments', 'compliance'] as const;
 

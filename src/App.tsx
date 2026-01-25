@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, RouterProvider, Routes, Link, useLocation, routePatterns } from './lib/router';
+import { routePatterns } from './lib/router';
 import { useAuth } from './lib/auth';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
@@ -85,7 +86,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
 };
 
 const App = () => (
-  <RouterProvider>
+  <BrowserRouter>
     <AuthProvider>
       <AppShell>
         <Suspense fallback={<PageLoader />}>
@@ -187,7 +188,7 @@ const App = () => (
         </Suspense>
       </AppShell>
     </AuthProvider>
-  </RouterProvider>
+  </BrowserRouter>
 );
 
 export default App;
