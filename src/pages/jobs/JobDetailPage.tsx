@@ -13,7 +13,8 @@ import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
 
 const JobDetailPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
@@ -335,7 +336,7 @@ const JobDetailPage = () => {
                     <p className="text-xs text-slate-500">{t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`, invoice.status)}</p>
                   </div>
                   <div className="text-sm font-semibold text-slate-900">
-                    {formatCurrency(invoice.total_amount ?? 0)}
+                    {formatCurrency((invoice.total_amount ?? 0) / 100, 'CAD', locale)}
                   </div>
                 </Link>
               </li>
