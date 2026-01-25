@@ -39,7 +39,8 @@ const SignUpPage = () => {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      console.error('Sign up error:', signUpError);
+      setError(t('auth.signUp.error'));
       setLoading(false);
       return;
     }

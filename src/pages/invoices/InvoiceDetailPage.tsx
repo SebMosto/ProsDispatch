@@ -157,7 +157,7 @@ const InvoiceDetailPage = () => {
               <a
                 href={invoice.pdf_url}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="text-sm font-semibold text-blue-600 hover:underline"
               >
                 {t('jobs.invoices.detailPage.downloadPdf')}

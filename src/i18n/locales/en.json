@@ -68,6 +68,7 @@
       "emailPlaceholder": "you@example.com",
       "passwordPlaceholder": "Create a secure password",
       "button": "Create account",
+      "error": "Unable to create account. Please check your details and try again.",
       "haveAccount": "Already registered?"
     },
     "dashboard": {
