@@ -18,12 +18,12 @@ const DashboardPage = () => {
 
       {/* --- TEMPORARY SUBSCRIPTION TEST SECTION --- */}
       <section className="rounded-lg border border-blue-200 bg-blue-50 p-4 shadow-sm">
-        <h2 className="font-semibold text-blue-900">Subscription Test</h2>
-        <p className="mb-3 text-sm text-blue-700">Test the payment connection below.</p>
+        <h2 className="font-semibold text-blue-900">{t('auth.dashboard.subscriptionTest')}</h2>
+        <p className="mb-3 text-sm text-blue-700">{t('auth.dashboard.testConnection')}</p>
 
         {error && (
           <div className="mb-3 rounded bg-red-100 p-2 text-sm text-red-700">
-            Error: {error}
+            {error}
           </div>
         )}
 
@@ -32,7 +32,7 @@ const DashboardPage = () => {
           disabled={isLoading}
           className="rounded bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {isLoading ? 'Processing...' : 'Test Upgrade (Stripe)'}
+          {isLoading ? t('auth.dashboard.processing') : t('auth.dashboard.testUpgrade')}
         </button>
       </section>
       {/* ------------------------------------------- */}

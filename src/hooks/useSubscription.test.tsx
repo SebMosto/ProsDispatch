@@ -12,6 +12,13 @@ vi.mock('@/lib/supabase', () => ({
   },
 }));
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 describe('useSubscription', () => {
   beforeEach(() => {
     vi.clearAllMocks();
