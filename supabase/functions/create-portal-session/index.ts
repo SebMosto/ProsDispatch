@@ -2,6 +2,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -105,6 +106,18 @@ Deno.serve(async (req) => {
     });
 
     const { returnUrl } = await req.json();
+
+    if (!returnUrl) {
+      throw new Error("Missing returnUrl");
+    }
+
+    // Validate returnUrl to prevent Open Redirect
+    const siteUrl = Deno.env.get("SITE_URL");
+    const origin = req.headers.get("Origin");
+
+    if (!validateReturnUrl(returnUrl, origin, siteUrl)) {
+      throw new Error("Invalid returnUrl");
+    }
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
