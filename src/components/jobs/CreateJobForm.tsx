@@ -58,15 +58,28 @@ const CreateJobForm = () => {
     hasAppliedDraft.current = true;
   }, [draft.values, draft.hydrated, reset]);
 
+  const debounceRef = useRef<number | null>(null);
+  const { setValues, hydrated } = draft;
+
   useEffect(() => {
-    if (!draft.hydrated) return undefined;
+    if (!hydrated) return undefined;
 
     const subscription = watch((value) => {
-      draft.setValues(value as FormValues);
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = window.setTimeout(() => {
+        setValues(value as FormValues);
+      }, 300);
     });
 
-    return () => subscription.unsubscribe();
-  }, [draft, draft.hydrated, watch]);
+    return () => {
+      subscription.unsubscribe();
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+    };
+  }, [hydrated, setValues, watch]);
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
