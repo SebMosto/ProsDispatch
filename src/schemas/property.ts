@@ -18,14 +18,22 @@ export const CANADIAN_PROVINCES = [
   'YT',
 ] as const;
 
+const requiredOptions = (t?: TFunction, key?: string) => ({
+  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+  invalid_type_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+});
+
 export const getPropertySchema = (t?: TFunction) => z.object({
-  client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
-  address_line1: z.string().min(5, t ? t('validation.addressTooShort') : 'validation.addressTooShort'),
+  client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
+    .uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
+  address_line1: z.string(requiredOptions(t, 'validation.required'))
+    .min(5, t ? t('validation.addressTooShort') : 'validation.addressTooShort'),
   address_line2: z.string().optional(),
-  city: z.string().min(2, t ? t('validation.cityRequired') : 'validation.cityRequired'),
-  province: z.enum(CANADIAN_PROVINCES),
+  city: z.string(requiredOptions(t, 'validation.cityRequired'))
+    .min(2, t ? t('validation.cityRequired') : 'validation.cityRequired'),
+  province: z.enum(CANADIAN_PROVINCES, requiredOptions(t, 'validation.required')),
   postal_code: z
-    .string()
+    .string(requiredOptions(t, 'validation.required'))
     .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, t ? t('validation.invalidPostalCode') : 'validation.invalidPostalCode'),
   country: z.string().default('CA'),
   nickname: z.string().optional(),
@@ -38,13 +46,16 @@ export const getPropertyUpdateSchema = (t?: TFunction) => getPropertySchema(t).p
 
 // Fallback for static analysis
 export const PropertySchema = z.object({
-  client_id: z.string().uuid('validation.clientIdInvalid'),
-  address_line1: z.string().min(5, 'validation.addressTooShort'),
+  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
+    .uuid('validation.clientIdInvalid'),
+  address_line1: z.string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
+    .min(5, 'validation.addressTooShort'),
   address_line2: z.string().optional(),
-  city: z.string().min(2, 'validation.cityRequired'),
-  province: z.enum(CANADIAN_PROVINCES),
+  city: z.string({ required_error: 'validation.cityRequired', invalid_type_error: 'validation.cityRequired' })
+    .min(2, 'validation.cityRequired'),
+  province: z.enum(CANADIAN_PROVINCES, { required_error: 'validation.required', invalid_type_error: 'validation.required' }),
   postal_code: z
-    .string()
+    .string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
     .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 'validation.invalidPostalCode'),
   country: z.string().default('CA'),
   nickname: z.string().optional(),

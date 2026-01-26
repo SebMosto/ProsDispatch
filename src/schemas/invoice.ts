@@ -17,28 +17,39 @@ export const INVOICE_PAYMENT_METHODS = [
   'other',
 ] as const;
 
+const requiredOptions = (t?: TFunction, key?: string) => ({
+  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+  invalid_type_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+});
+
 const getCurrencySchema = (t?: TFunction) => z
-  .number()
+  .number(requiredOptions(t))
   .int(t ? t('validation.amountInteger') : 'validation.amountInteger')
   .nonnegative(t ? t('validation.amountNonNegative') : 'validation.amountNonNegative');
 
 const getTaxLineSchema = (t?: TFunction) => z.object({
-  label: z.string().min(1, t ? t('validation.taxLabelRequired') : 'validation.taxLabelRequired'),
-  rate: z.number().min(0, t ? t('validation.taxRateNonNegative') : 'validation.taxRateNonNegative'),
+  label: z.string(requiredOptions(t, 'validation.taxLabelRequired'))
+    .min(1, t ? t('validation.taxLabelRequired') : 'validation.taxLabelRequired'),
+  rate: z.number(requiredOptions(t)).min(0, t ? t('validation.taxRateNonNegative') : 'validation.taxRateNonNegative'),
   amount: getCurrencySchema(t),
 });
 
 export const getInvoiceItemSchema = (t?: TFunction) => z.object({
-  description: z.string().min(1, t ? t('validation.lineItemDescriptionRequired') : 'validation.lineItemDescriptionRequired'),
-  quantity: z.number().positive(t ? t('validation.quantityPositive') : 'validation.quantityPositive'),
+  description: z.string(requiredOptions(t, 'validation.lineItemDescriptionRequired'))
+    .min(1, t ? t('validation.lineItemDescriptionRequired') : 'validation.lineItemDescriptionRequired'),
+  quantity: z.number(requiredOptions(t))
+    .positive(t ? t('validation.quantityPositive') : 'validation.quantityPositive'),
   unit_price: getCurrencySchema(t),
   amount: getCurrencySchema(t),
 });
 
 export const getInvoiceDraftSchema = (t?: TFunction) => z.object({
-  job_id: z.string().uuid(t ? t('validation.jobIdUUID') : 'validation.jobIdUUID'),
-  contractor_id: z.string().uuid(t ? t('validation.contractorIdUUID') : 'validation.contractorIdUUID'),
-  invoice_number: z.string().min(1, t ? t('validation.invoiceNumberRequired') : 'validation.invoiceNumberRequired'),
+  job_id: z.string(requiredOptions(t, 'validation.jobIdUUID'))
+    .uuid(t ? t('validation.jobIdUUID') : 'validation.jobIdUUID'),
+  contractor_id: z.string(requiredOptions(t, 'validation.contractorIdUUID'))
+    .uuid(t ? t('validation.contractorIdUUID') : 'validation.contractorIdUUID'),
+  invoice_number: z.string(requiredOptions(t, 'validation.invoiceNumberRequired'))
+    .min(1, t ? t('validation.invoiceNumberRequired') : 'validation.invoiceNumberRequired'),
   status: z.enum(INVOICE_STATUSES).default('draft'),
   items: z.array(getInvoiceItemSchema(t)).optional(),
   subtotal: getCurrencySchema(t).optional(),
@@ -62,29 +73,35 @@ export const getInvoiceFinalSchema = (t?: TFunction) => getInvoiceDraftSchema(t)
 }).strict();
 
 // Fallback for static analysis
-// Using keys or standard Zod messages
 const CurrencySchema = z
-  .number()
+  .number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
   .int('validation.amountInteger')
   .nonnegative('validation.amountNonNegative');
 
 const TaxLineSchema = z.object({
-  label: z.string().min(1, 'validation.taxLabelRequired'),
-  rate: z.number().min(0, 'validation.taxRateNonNegative'),
+  label: z.string({ required_error: 'validation.taxLabelRequired', invalid_type_error: 'validation.taxLabelRequired' })
+    .min(1, 'validation.taxLabelRequired'),
+  rate: z.number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
+    .min(0, 'validation.taxRateNonNegative'),
   amount: CurrencySchema,
 });
 
 export const InvoiceItemSchema = z.object({
-  description: z.string().min(1, 'validation.lineItemDescriptionRequired'),
-  quantity: z.number().positive('validation.quantityPositive'),
+  description: z.string({ required_error: 'validation.lineItemDescriptionRequired', invalid_type_error: 'validation.lineItemDescriptionRequired' })
+    .min(1, 'validation.lineItemDescriptionRequired'),
+  quantity: z.number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
+    .positive('validation.quantityPositive'),
   unit_price: CurrencySchema,
   amount: CurrencySchema,
 });
 
 export const InvoiceDraftSchema = z.object({
-  job_id: z.string().uuid('validation.jobIdUUID'),
-  contractor_id: z.string().uuid('validation.contractorIdUUID'),
-  invoice_number: z.string().min(1, 'validation.invoiceNumberRequired'),
+  job_id: z.string({ required_error: 'validation.jobIdUUID', invalid_type_error: 'validation.jobIdUUID' })
+    .uuid('validation.jobIdUUID'),
+  contractor_id: z.string({ required_error: 'validation.contractorIdUUID', invalid_type_error: 'validation.contractorIdUUID' })
+    .uuid('validation.contractorIdUUID'),
+  invoice_number: z.string({ required_error: 'validation.invoiceNumberRequired', invalid_type_error: 'validation.invoiceNumberRequired' })
+    .min(1, 'validation.invoiceNumberRequired'),
   status: z.enum(INVOICE_STATUSES).default('draft'),
   items: z.array(InvoiceItemSchema).optional(),
   subtotal: CurrencySchema.optional(),
