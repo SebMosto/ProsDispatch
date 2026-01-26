@@ -148,33 +148,26 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("Error in create-checkout-session:", error);
     
-    // Determine appropriate status code based on error type
-    let statusCode = 500; // Default to server error
-    let errorMessage = "Internal server error";
+    const statusCode = getErrorStatus(error);
 
-    if (error instanceof Error) {
-      errorMessage = error.message;
+    // Security: Do not expose raw error messages to the client.
+    let publicMessage = "Internal Server Error";
+
+    if (statusCode === 400) {
+      // For 400s, it's often helpful to know *what* was wrong, but we must be careful.
+      // We will allow specific known safe errors.
+      publicMessage = "Bad Request";
       
-      // Authentication/Authorization errors -> 401
-      // Check for exact match first to avoid false positives
-      if (errorMessage === "Unauthorized") {
-        statusCode = 401;
+      if (error instanceof Error) {
+        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
+           publicMessage = error.message;
+        }
       }
-      // Client validation errors -> 400
-      // These are errors caused by missing or invalid request parameters
-      else if (errorMessage.startsWith("Missing ") || 
-               errorMessage.startsWith("Invalid ") ||
-               errorMessage === "No Stripe Customer found for this user") {
-        statusCode = 400;
-      }
-      // Stripe API errors -> 500 (server-side issue)
-      // Check error name for Stripe-specific errors
-      else if (error.name?.includes("Stripe")) {
-        statusCode = 500;
-      }
+    } else if (statusCode === 401) {
+      publicMessage = "Unauthorized";
     }
 
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    return new Response(JSON.stringify({ error: publicMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: statusCode,
     });
