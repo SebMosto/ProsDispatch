@@ -4,6 +4,15 @@ type DateFormatOptions = Intl.DateTimeFormatOptions;
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
+const DEFAULT_OPTIONS: DateFormatOptions = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+// Pre-calculate the stringified options to avoid doing it on every call for default cases
+const DEFAULT_OPTIONS_STRING = JSON.stringify(DEFAULT_OPTIONS);
+
 /**
  * Formats a date string or object according to the active locale.
  *
@@ -18,19 +27,14 @@ export const formatDate = (date: string | Date, options?: DateFormatOptions) => 
 
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  // Default options if none provided
-  const defaultOptions: DateFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
-
-  const finalOptions = options || defaultOptions;
-  const cacheKey = `${locale}-${JSON.stringify(finalOptions)}`;
+  // Use pre-calculated key part if options are not provided
+  const optionsKey = options ? JSON.stringify(options) : DEFAULT_OPTIONS_STRING;
+  const cacheKey = `${locale}-${optionsKey}`;
 
   let formatter = formatterCache.get(cacheKey);
 
   if (!formatter) {
+    const finalOptions = options || DEFAULT_OPTIONS;
     formatter = new Intl.DateTimeFormat(locale, finalOptions);
     formatterCache.set(cacheKey, formatter);
   }
