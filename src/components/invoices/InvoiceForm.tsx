@@ -377,7 +377,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {totals.taxData.map((tax) => (
               <div key={tax.label} className="flex items-center justify-between">
-                <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+                <span>{`${t(`taxes.${tax.label}`, tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
                 <span className="font-semibold">{formatCurrency(tax.amount / 100, 'CAD', locale)}</span>
               </div>
             ))}

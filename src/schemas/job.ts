@@ -12,24 +12,21 @@ export const JOB_STATUSES = [
   'archived',
 ] as const;
 
+const requiredOptions = (t?: TFunction, key?: string) => ({
+  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+  invalid_type_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
+});
+
 /**
  * JobCreateSchema - Schema for creating a new job
- * 
- * Required fields:
- * - client_id: UUID of the client
- * - property_id: UUID of the property
- * - title: Short label for the job (e.g., "Kitchen faucet repair")
- * 
- * Optional fields:
- * - description: Detailed description of the work
- * - service_date: Scheduled date for the service
- * - status: Job status (defaults to 'draft')
  */
 export const getJobCreateSchema = (t?: TFunction) => z.object({
-  client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
-  property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid'),
+  client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
+    .uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
+  property_id: z.string(requiredOptions(t, 'validation.propertyIdInvalid'))
+    .uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid'),
   title: z
-    .string()
+    .string(requiredOptions(t, 'validation.titleRequired'))
     .min(2, t ? t('validation.titleRequired') : 'validation.titleRequired')
     .max(80, t ? t('validation.titleTooLong') : 'validation.titleTooLong'),
   description: z
@@ -47,11 +44,6 @@ export const getJobCreateSchema = (t?: TFunction) => z.object({
 
 /**
  * JobUpdateSchema - Schema for updating job details
- * 
- * Note: Status changes must be handled via advanceJobStatus() helper only.
- * This schema is for editing title, description, service_date, and related fields.
- * All fields are optional, but description and service_date can be set to null to clear them.
- * At least one field must be provided for a valid update.
  */
 export const getJobUpdateSchema = (t?: TFunction) => z
   .object({
@@ -84,8 +76,28 @@ export const getJobUpdateSchema = (t?: TFunction) => z
   );
 
 // Fallback for static analysis and Type Inference
-// Using keys instead of t() to ensure valid strings if used without i18next
-export const JobCreateSchema = getJobCreateSchema();
+export const JobCreateSchema = z.object({
+  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
+    .uuid('validation.clientIdInvalid'),
+  property_id: z.string({ required_error: 'validation.propertyIdInvalid', invalid_type_error: 'validation.propertyIdInvalid' })
+    .uuid('validation.propertyIdInvalid'),
+  title: z
+    .string({ required_error: 'validation.titleRequired', invalid_type_error: 'validation.titleRequired' })
+    .min(2, 'validation.titleRequired')
+    .max(80, 'validation.titleTooLong'),
+  description: z
+    .string()
+    .max(2000, 'validation.descriptionTooLong')
+    .optional(),
+  service_date: z
+    .union([
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'validation.invalidDate'),
+      z.date(),
+    ])
+    .optional(),
+  status: z.enum(JOB_STATUSES).default('draft'),
+});
+
 export const JobUpdateSchema = getJobUpdateSchema();
 
 // Type exports for TypeScript inference
