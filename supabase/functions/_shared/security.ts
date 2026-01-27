@@ -20,9 +20,6 @@ export function validateReturnUrl(returnUrl: string, requestOrigin: string | nul
     if (siteUrl) {
       try {
         const site = new URL(siteUrl);
-        return url.origin === site.origin;
-      try {
-        const site = new URL(siteUrl);
         // If SITE_URL is valid and matches, allow it.
         if (url.origin === site.origin) {
           return true;
@@ -33,6 +30,9 @@ export function validateReturnUrl(returnUrl: string, requestOrigin: string | nul
         // If SITE_URL is provided but invalid, it's a misconfiguration. Fail closed.
         return false;
       }
+    }
+
+    // 3. Check against Request Origin
     if (requestOrigin) {
       try {
         const origin = new URL(requestOrigin);
@@ -40,7 +40,8 @@ export function validateReturnUrl(returnUrl: string, requestOrigin: string | nul
           return true;
         }
       } catch {
-        // Invalid Origin header, ignore it
+        // If Origin header is provided but invalid, it's suspicious. Fail closed.
+        return false;
       }
     }
 
