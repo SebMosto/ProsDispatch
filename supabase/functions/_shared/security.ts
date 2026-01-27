@@ -21,16 +21,18 @@ export function validateReturnUrl(returnUrl: string, requestOrigin: string | nul
       try {
         const site = new URL(siteUrl);
         return url.origin === site.origin;
+      try {
+        const site = new URL(siteUrl);
+        // If SITE_URL is valid and matches, allow it.
+        if (url.origin === site.origin) {
+          return true;
+        }
+        // If SITE_URL is valid but doesn't match, explicitly deny.
+        return false;
       } catch {
-        // Invalid SITE_URL config, fall through or fail?
-        // Failing safe: if config is present but invalid, ignore it (treat as not set) or block?
-        // Let's treat as not set to avoid breaking everything if someone types a bad URL in env.
-        // But for security, maybe we should block.
-        // Given the prompt context, I'll fall through (ignore invalid config).
+        // If SITE_URL is provided but invalid, it's a misconfiguration. Fail closed.
+        return false;
       }
-    }
-
-    // 3. Check against Request Origin
     if (requestOrigin) {
       try {
         const origin = new URL(requestOrigin);
