@@ -4,11 +4,11 @@ type DateFormatOptions = Intl.DateTimeFormatOptions;
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
-const DEFAULT_OPTIONS: DateFormatOptions = {
+const DEFAULT_OPTIONS: DateFormatOptions = Object.freeze({
   year: 'numeric',
   month: 'long',
   day: 'numeric',
-};
+});
 
 // Pre-calculate the stringified options to avoid doing it on every call for default cases
 const DEFAULT_OPTIONS_STRING = JSON.stringify(DEFAULT_OPTIONS);
