@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import type { JobStatus } from '../../schemas/job';
+import { JOB_STATUSES, type JobStatus } from '../../schemas/job';
 
 const STATUS_STYLES: Record<JobStatus, string> = {
   draft: 'bg-slate-100 text-slate-800 border-slate-200',
@@ -14,19 +14,23 @@ const STATUS_STYLES: Record<JobStatus, string> = {
 };
 
 interface JobStatusBadgeProps {
-  status: string; // Using string to be lenient with potential DB data, but ideally JobStatus
+  status: string; // Accepts string to handle potential raw DB values, but normalizes to JobStatus
   className?: string;
 }
 
 const JobStatusBadge = ({ status, className }: JobStatusBadgeProps) => {
   const { t } = useTranslation();
 
-  // Cast to JobStatus if valid, else default to draft style but keep original text if unknown
-  const safeStatus = (Object.keys(STATUS_STYLES).includes(status) ? status : 'draft') as JobStatus;
+  // Validate status against the schema source of truth
+  const safeStatus = (JOB_STATUSES as ReadonlyArray<string>).includes(status)
+    ? (status as JobStatus)
+    : 'draft';
+
   const statusClass = STATUS_STYLES[safeStatus];
 
-  // Try to translate. If status is "draft", t('jobs.status.draft') -> "Draft" or "Brouillon"
-  // Use safeStatus to ensure we don't try to translate garbage keys like "draft / brouillon"
+  // Strict translation: rely on i18next to return the localized string.
+  // We provide the key and a fallback value that matches the key's last segment (the status itself),
+  // but strictly speaking, we expect the translation file to be complete.
   const label = t(`jobs.status.${safeStatus}`, safeStatus);
 
   return (
