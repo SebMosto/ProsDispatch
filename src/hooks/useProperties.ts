@@ -23,12 +23,15 @@ export const useProperties = (clientId?: string) => {
     queryFn,
   });
 
-  return {
-    properties: query.data ?? [],
-    loading: query.isLoading,
-    error: query.error ?? null,
-    refetch: query.refetch,
-  };
+  return useMemo(
+    () => ({
+      properties: query.data ?? [],
+      loading: query.isLoading,
+      error: query.error ?? null,
+      refetch: query.refetch,
+    }),
+    [query.data, query.error, query.isLoading, query.refetch],
+  );
 };
 
 export type UsePropertiesReturn = ReturnType<typeof useProperties>;
