@@ -45,26 +45,9 @@ export const getPropertyUpdateSchema = (t?: TFunction) => getPropertySchema(t).p
 );
 
 // Fallback for static analysis
-export const PropertySchema = z.object({
-  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
-    .uuid('validation.clientIdInvalid'),
-  address_line1: z.string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .min(5, 'validation.addressTooShort'),
-  address_line2: z.string().optional(),
-  city: z.string({ required_error: 'validation.cityRequired', invalid_type_error: 'validation.cityRequired' })
-    .min(2, 'validation.cityRequired'),
-  province: z.enum(CANADIAN_PROVINCES, { required_error: 'validation.required', invalid_type_error: 'validation.required' }),
-  postal_code: z
-    .string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 'validation.invalidPostalCode'),
-  country: z.string().default('CA'),
-  nickname: z.string().optional(),
-});
+export const PropertySchema = getPropertySchema();
 
-export const PropertyUpdateSchema = PropertySchema.partial().refine(
-  (data) => Object.values(data).some((value) => value !== undefined),
-  { message: 'validation.propertyUpdateRequired' },
-);
+export const PropertyUpdateSchema = getPropertyUpdateSchema();
 
 export type PropertyCreateInput = z.infer<typeof PropertySchema>;
 export type PropertyUpdateInput = z.infer<typeof PropertyUpdateSchema>;

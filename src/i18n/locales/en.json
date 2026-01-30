@@ -6,6 +6,7 @@
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "mainNavigation": "Main navigation",
       "dashboard": "Dashboard",
       "jobs": "Jobs",
       "newJob": "New Job",

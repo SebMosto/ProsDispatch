@@ -32,33 +32,9 @@ export const getClientUpdateSchema = (t?: TFunction) => getClientSchema(t).parti
 
 // Fallback for static analysis or where t is not available immediately
 // We use keys or default Zod messages to avoid hardcoded English strings
-export const ClientSchema = z.object({
-  name: z.string({
-    required_error: 'validation.nameRequired',
-    invalid_type_error: 'validation.nameRequired',
-  }).min(1, 'validation.nameRequired'),
-  email: z
-    .string({
-      invalid_type_error: 'validation.invalidEmail',
-    })
-    .trim()
-    .email('validation.invalidEmail')
-    .optional()
-    .or(z.literal('')),
-  type: z.enum(['individual', 'business'], {
-    required_error: 'validation.required',
-    invalid_type_error: 'validation.required',
-  }).default('individual'),
-  preferred_language: z.enum(['en', 'fr'], {
-    required_error: 'validation.required',
-    invalid_type_error: 'validation.required',
-  }).default('en'),
-});
+export const ClientSchema = getClientSchema();
 
-export const ClientUpdateSchema = ClientSchema.partial().refine(
-  (data) => Object.values(data).some((value) => value !== undefined),
-  { message: 'validation.updateRequired' },
-);
+export const ClientUpdateSchema = getClientUpdateSchema();
 
 export const getClientAndPropertySchema = (t?: TFunction) => getClientSchema(t).merge(
   getPropertySchema(t).omit({ client_id: true }),

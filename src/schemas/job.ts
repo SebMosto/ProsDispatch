@@ -76,27 +76,7 @@ export const getJobUpdateSchema = (t?: TFunction) => z
   );
 
 // Fallback for static analysis and Type Inference
-export const JobCreateSchema = z.object({
-  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
-    .uuid('validation.clientIdInvalid'),
-  property_id: z.string({ required_error: 'validation.propertyIdInvalid', invalid_type_error: 'validation.propertyIdInvalid' })
-    .uuid('validation.propertyIdInvalid'),
-  title: z
-    .string({ required_error: 'validation.titleRequired', invalid_type_error: 'validation.titleRequired' })
-    .min(2, 'validation.titleRequired')
-    .max(80, 'validation.titleTooLong'),
-  description: z
-    .string()
-    .max(2000, 'validation.descriptionTooLong')
-    .optional(),
-  service_date: z
-    .union([
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'validation.invalidDate'),
-      z.date(),
-    ])
-    .optional(),
-  status: z.enum(JOB_STATUSES).default('draft'),
-});
+export const JobCreateSchema = getJobCreateSchema();
 
 export const JobUpdateSchema = getJobUpdateSchema();
 

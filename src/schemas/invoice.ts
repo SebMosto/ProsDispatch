@@ -73,56 +73,15 @@ export const getInvoiceFinalSchema = (t?: TFunction) => getInvoiceDraftSchema(t)
 }).strict();
 
 // Fallback for static analysis
-const CurrencySchema = z
-  .number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-  .int('validation.amountInteger')
-  .nonnegative('validation.amountNonNegative');
+const CurrencySchema = getCurrencySchema();
 
-const TaxLineSchema = z.object({
-  label: z.string({ required_error: 'validation.taxLabelRequired', invalid_type_error: 'validation.taxLabelRequired' })
-    .min(1, 'validation.taxLabelRequired'),
-  rate: z.number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .min(0, 'validation.taxRateNonNegative'),
-  amount: CurrencySchema,
-});
+const TaxLineSchema = getTaxLineSchema();
 
-export const InvoiceItemSchema = z.object({
-  description: z.string({ required_error: 'validation.lineItemDescriptionRequired', invalid_type_error: 'validation.lineItemDescriptionRequired' })
-    .min(1, 'validation.lineItemDescriptionRequired'),
-  quantity: z.number({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .positive('validation.quantityPositive'),
-  unit_price: CurrencySchema,
-  amount: CurrencySchema,
-});
+export const InvoiceItemSchema = getInvoiceItemSchema();
 
-export const InvoiceDraftSchema = z.object({
-  job_id: z.string({ required_error: 'validation.jobIdUUID', invalid_type_error: 'validation.jobIdUUID' })
-    .uuid('validation.jobIdUUID'),
-  contractor_id: z.string({ required_error: 'validation.contractorIdUUID', invalid_type_error: 'validation.contractorIdUUID' })
-    .uuid('validation.contractorIdUUID'),
-  invoice_number: z.string({ required_error: 'validation.invoiceNumberRequired', invalid_type_error: 'validation.invoiceNumberRequired' })
-    .min(1, 'validation.invoiceNumberRequired'),
-  status: z.enum(INVOICE_STATUSES).default('draft'),
-  items: z.array(InvoiceItemSchema).optional(),
-  subtotal: CurrencySchema.optional(),
-  tax_data: z.array(TaxLineSchema).optional(),
-  total_amount: CurrencySchema.optional(),
-  pdf_url: z.string().url('validation.pdfUrlValid').nullable().optional(),
-  payment_method: z.enum(INVOICE_PAYMENT_METHODS).nullable().optional(),
-  payment_note: z.string().max(1000, 'validation.paymentNoteTooLong').nullable().optional(),
-  paid_at: z.string().datetime().nullable().optional(),
-  stripe_payment_intent_id: z.string().nullable().optional(),
-});
+export const InvoiceDraftSchema = getInvoiceDraftSchema();
 
-export const InvoiceFinalSchema = InvoiceDraftSchema.extend({
-  status: z.enum(INVOICE_STATUSES).refine((value) => value !== 'draft', {
-    message: 'validation.finalInvoiceNoDraft',
-  }),
-  items: z.array(InvoiceItemSchema).min(1, 'validation.oneLineItemRequired'),
-  subtotal: CurrencySchema,
-  tax_data: z.array(TaxLineSchema),
-  total_amount: CurrencySchema,
-}).strict();
+export const InvoiceFinalSchema = getInvoiceFinalSchema();
 
 export type InvoiceItemInput = z.infer<typeof InvoiceItemSchema>;
 export type InvoiceDraftInput = z.infer<typeof InvoiceDraftSchema>;
