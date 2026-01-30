@@ -43,6 +43,7 @@ Creates a Stripe Checkout session for new subscriptions.
 - `STRIPE_SECRET_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
+- `SITE_URL` (Required for `returnUrl` validation)
 
 ### 3. create-portal-session
 Creates a Stripe Customer Portal session for managing subscriptions.
@@ -68,6 +69,7 @@ Creates a Stripe Customer Portal session for managing subscriptions.
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `SITE_URL` (Required for `returnUrl` validation)
 
 ## Development
 

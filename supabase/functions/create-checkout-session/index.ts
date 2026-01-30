@@ -2,6 +2,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -96,6 +97,8 @@ Deno.serve(async (req) => {
     if (!returnUrl) {
       throw new Error("Missing returnUrl");
     }
+
+    validateReturnUrl(returnUrl);
 
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet

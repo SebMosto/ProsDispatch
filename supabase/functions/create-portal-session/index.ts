@@ -2,6 +2,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -105,6 +106,10 @@ Deno.serve(async (req) => {
     });
 
     const { returnUrl } = await req.json();
+
+    if (returnUrl) {
+      validateReturnUrl(returnUrl);
+    }
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,

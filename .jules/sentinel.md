@@ -14,3 +14,8 @@
 **Vulnerability:** Supabase Edge Functions were using `SUPABASE_SERVICE_ROLE_KEY` to read user profiles when the user's own Auth token (`supabaseClient`) would have sufficed.
 **Learning:** Over-reliance on Service Role keys in server-side functions bypasses Row Level Security (RLS), increasing the blast radius if the function is compromised or contains logic errors.
 **Prevention:** Always default to using the client provided `Authorization` header to create a Supabase client. Only upgrade to Service Role if strictly necessary (e.g., accessing data the user explicitly cannot see but the system needs).
+
+## 2025-10-24 - Open Redirect in Payment Flows
+**Vulnerability:** Supabase Edge Functions (`create-checkout-session`, `create-portal-session`) accepted a `returnUrl` from the client body and used it directly in Stripe API calls without validation.
+**Learning:** Even internal backend functions are vulnerable to Open Redirects if they blindly trust client input. Attackers could theoretically craft calls (or trick users) to redirect to malicious sites after payment.
+**Prevention:** Implement strict validation for all URL inputs using an allowlist (e.g., `SITE_URL` env var) and enforcing exact origin matching.
