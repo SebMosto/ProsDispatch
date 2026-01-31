@@ -23,12 +23,15 @@ export const useJobs = (params?: JobListParams) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return {
-    jobs: query.data ?? [],
-    loading: query.isLoading,
-    error: query.error ?? null,
-    refetch: query.refetch,
-  };
+  return useMemo(
+    () => ({
+      jobs: query.data ?? [],
+      loading: query.isLoading,
+      error: query.error ?? null,
+      refetch: query.refetch,
+    }),
+    [query.data, query.isLoading, query.error, query.refetch],
+  );
 };
 
 export type UseJobsReturn = ReturnType<typeof useJobs>;
