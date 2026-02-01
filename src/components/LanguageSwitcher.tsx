@@ -10,6 +10,8 @@ const LanguageSwitcher = () => {
     i18n.changeLanguage(language).then(() => {
       // Explicitly persist preference to ensure offline boot works
       localStorage.setItem('i18nextLng', language);
+      // Force reload to update external scripts (e.g., Google Maps)
+      window.location.reload();
     }).catch((error) => {
       console.error('Language change failed', error);
     });
