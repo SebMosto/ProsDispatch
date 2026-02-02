@@ -1,44 +1,63 @@
 /**
  * Validates a return URL to prevent Open Redirect vulnerabilities.
  *
+ * SECURITY: This function REQUIRES SITE_URL to be configured. It will reject
+ * all requests when SITE_URL is not set, preventing open redirect attacks
+ * in misconfigured environments (staging, local, or production).
+ *
  * @param returnUrl The URL to validate
- * @param requestOrigin The Origin header from the request (optional) - DEPRECATED/UNUSED for security
- * @param siteUrl The configured SITE_URL environment variable (optional)
- * @returns true if the URL is safe to redirect to, false otherwise
+ * @param siteUrl The configured SITE_URL environment variable (REQUIRED)
+ * @returns The validated URL string if safe, throws an error otherwise
+ * @throws Error if the URL is invalid or doesn't match the allowlist
  */
-export function validateReturnUrl(returnUrl: string, requestOrigin: string | null, siteUrl?: string): boolean {
-  try {
-    const url = new URL(returnUrl);
-
-    // 1. Strict Protocol Check
-    if (!['http:', 'https:'].includes(url.protocol)) {
-      return false;
-    }
-
-    // 2. Check against SITE_URL (Strict Mode)
-    // If SITE_URL is configured, we ONLY allow redirects to that origin.
-    if (siteUrl) {
-      try {
-        const site = new URL(siteUrl);
-        return url.origin === site.origin;
-      } catch {
-        // Invalid SITE_URL config, ignore it.
-      }
-    }
-
-    // 3. (Removed) Check against Request Origin
-    // We do NOT trust the Origin header as it allows any malicious site to use this endpoint
-    // as an open redirector by matching the returnUrl to their own origin.
-
-    // 4. Localhost Fallback (for local development without SITE_URL)
-    // Only reach here if SITE_URL was NOT set (or invalid)
-    const hostname = url.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return true;
-    }
-
-    return false;
-  } catch {
-    return false;
+export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined): string {
+  // 1. Require SITE_URL to be configured
+  if (!siteUrl) {
+    throw new Error(
+      'Invalid returnUrl: SITE_URL is not configured. Refusing to validate without an explicit allowlist.'
+    );
   }
+
+  try {
+    url = new URL(returnUrl);
+  } catch {
+    throw new Error("Invalid returnUrl: Malformed URL");
+  }
+
+    // 2. Strict Protocol Check
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid returnUrl: Only http and https protocols are allowed');
+    }
+
+    // 3. Parse and validate SITE_URL
+    let siteOrigin: string;
+    try {
+      const site = new URL(siteUrl);
+      siteOrigin = site.origin;
+    } catch {
+      throw new Error('Invalid returnUrl: SITE_URL configuration is malformed');
+    }
+
+    // 4. Strict Origin Matching
+    if (url.origin !== siteOrigin) {
+      throw new Error(
+        `Invalid returnUrl: Origin mismatch. Expected ${siteOrigin}, got ${url.origin}`
+      );
+    }
+    return;
+  }
+
+    // Return the validated URL
+    return returnUrl;
+  } catch (error) {
+    // Re-throw our custom errors
+    if (error instanceof Error && error.message.startsWith('Invalid returnUrl')) {
+      throw error;
+    }
+    // Malformed URL
+    throw new Error('Invalid returnUrl: Malformed URL');
+  }
+
+  // 3. Fail safe if we can't validate against anything
+  throw new Error("Invalid returnUrl: Configuration missing (SITE_URL)");
 }
