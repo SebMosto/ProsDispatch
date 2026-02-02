@@ -130,8 +130,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${returnUrl}?canceled=true`,
+      success_url: `${validatedUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${validatedUrl}?canceled=true`,
       subscription_data: {
         trial_period_days: 14,
       },
