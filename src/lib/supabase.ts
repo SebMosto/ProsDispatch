@@ -1,12 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
 
-// HARDWIRED CONFIGURATION (Temporary Bypass)
-const supabaseUrl = 'http://127.0.0.1:54321';
-const supabaseAnonKey = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log('🔌 Supabase Client Initializing...');
-console.log('📍 URL:', supabaseUrl);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase environment variables. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file.'
+  );
+}
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -22,6 +24,9 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 });
 
 // Helper to check connection
-supabase.auth.onAuthStateChange((event, session) => {
-  console.log('🔐 Auth State Change:', event);
+supabase.auth.onAuthStateChange((event) => {
+  // Only log auth state changes in development for debugging purposes.
+  if (import.meta.env.DEV) {
+    console.log('🔐 Auth State Change:', event);
+  }
 });
