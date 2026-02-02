@@ -16,9 +16,11 @@ export const validateReturnUrl = (returnUrl: string, requestOrigin?: string | nu
     }
     return returnUrl;
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith("Invalid returnUrl")) {
-        throw error;
+    // A TypeError is thrown by `new URL()` for malformed URLs.
+    if (error instanceof TypeError) {
+      throw new Error("Invalid returnUrl format");
     }
-    throw new Error("Invalid returnUrl format");
+    // Re-throw our custom origin mismatch error or other unexpected errors.
+    throw error;
   }
 };
