@@ -97,6 +97,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
 
   // Re-validate when language changes to update error messages
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
       // Clear old errors and re-trigger validation with new language

@@ -54,6 +54,7 @@ const CreateClientForm: React.FC = () => {
 
   // Re-validate when language changes to update error messages
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
       clearErrors();
