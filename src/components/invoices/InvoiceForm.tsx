@@ -105,7 +105,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         // Validation errors are expected and will be shown in the UI
       });
     }
-  }, [i18n.language, clearErrors, trigger, errors]);
+  }, [i18n.language, clearErrors, trigger]);
 
   const [items, setItems] = useState<InvoiceFormValues['items']>(buildDefaultItems(invoice));
 

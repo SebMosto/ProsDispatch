@@ -82,7 +82,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
         // Validation errors are expected and will be shown in the UI
       });
     }
-  }, [i18n.language, clearErrors, trigger, errors]);
+  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;
