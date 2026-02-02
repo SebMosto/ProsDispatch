@@ -45,7 +45,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
         </header>
-        <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+          {children}
+        </div>
       </div>
     );
   }
@@ -78,7 +80,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
       </header>
       <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 pb-20 pt-6 sm:px-6 lg:px-8">
         {user ? <Sidebar /> : null}
-        <div className="flex-1">{children}</div>
+        <div className="flex-1">
+          {children}
+        </div>
       </div>
       {user ? <BottomNav /> : null}
     </div>
