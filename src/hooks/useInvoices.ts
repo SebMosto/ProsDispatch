@@ -24,7 +24,7 @@ export const useInvoice = (id?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [id, t]);
+  }, [id]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
 
@@ -35,15 +35,12 @@ export const useInvoice = (id?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoice: query.data ?? null,
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error]
-  );
+  return {
+    invoice: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export const useInvoiceByToken = (token?: string) => {
@@ -58,7 +55,7 @@ export const useInvoiceByToken = (token?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [token, t]);
+  }, [token]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 
@@ -69,15 +66,12 @@ export const useInvoiceByToken = (token?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoice: query.data ?? null,
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error]
-  );
+  return {
+    invoice: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export const useJobInvoices = (jobId?: string) => {
@@ -101,15 +95,12 @@ export const useJobInvoices = (jobId?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoices: query.data ?? [],
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error]
-  );
+  return {
+    invoices: query.data ?? [],
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export type CreateInvoiceDraftArgs = {
