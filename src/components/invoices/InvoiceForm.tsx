@@ -25,12 +25,20 @@ interface InvoiceFormValues {
   }[];
 }
 
+interface InvoiceItemState {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+}
+
 const toCents = (value: number) => Math.round(value * 100);
 const fromCents = (value: number) => value / 100;
 
-const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
+const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceItemState[] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
+    id: crypto.randomUUID(),
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
@@ -51,9 +59,24 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   // Memoize the schema to react to language changes
   const InvoiceFormSchema = useMemo(() => {
     const InvoiceItemFormSchema = z.object({
-      description: z.string().min(1, t('validation.descriptionRequired')),
-      quantity: z.number().positive(t('validation.qtyPositive')),
-      unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),
+      description: z
+        .string({
+          required_error: t('validation.descriptionRequired'),
+          invalid_type_error: t('validation.descriptionRequired'),
+        })
+        .min(1, t('validation.descriptionRequired')),
+      quantity: z
+        .number({
+          required_error: t('validation.qtyPositive'),
+          invalid_type_error: t('validation.qtyPositive'),
+        })
+        .positive(t('validation.qtyPositive')),
+      unitPrice: z
+        .number({
+          required_error: t('validation.unitPriceNonNegative'),
+          invalid_type_error: t('validation.unitPriceNonNegative'),
+        })
+        .min(0, t('validation.unitPriceNonNegative')),
     });
 
     return z.object({
@@ -70,6 +93,8 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   const {
     handleSubmit,
     setValue,
+    clearErrors,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<InvoiceFormValues>({
     resolver: zodResolver(InvoiceFormSchema),
@@ -78,7 +103,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     },
   });
 
-  const [items, setItems] = useState<InvoiceFormValues['items']>(buildDefaultItems(invoice));
+  const [items, setItems] = useState<InvoiceItemState[]>([]);
 
   useEffect(() => {
     setItems(buildDefaultItems(invoice));
@@ -257,6 +282,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 setItems((prev) => [
                   ...prev,
                   {
+                    id: crypto.randomUUID(),
                     description: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -279,7 +305,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button

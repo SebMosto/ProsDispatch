@@ -45,7 +45,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
         </header>
-        <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+          {children}
+        </div>
       </div>
     );
   }
@@ -78,117 +80,126 @@ const AppShell = ({ children }: { children: ReactNode }) => {
       </header>
       <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 pb-20 pt-6 sm:px-6 lg:px-8">
         {user ? <Sidebar /> : null}
-        <div className="flex-1">{children}</div>
+        <div className="flex-1">
+          {children}
+        </div>
       </div>
       {user ? <BottomNav /> : null}
     </div>
   );
 };
 
-const App = () => (
-  <BrowserRouter>
-    <AuthProvider>
-      <AppShell>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<SignInPage />} />
-            <Route path="/register" element={<SignUpPage />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs"
-              element={
-                <ProtectedRoute>
-                  <JobsListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs/new"
-              element={
-                <ProtectedRoute>
-                  <CreateJobPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs/:id"
-              element={
-                <ProtectedRoute>
-                  <JobDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routePatterns.createInvoice}
-              element={
-                <ProtectedRoute>
-                  <CreateInvoicePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routePatterns.invoiceDetail}
-              element={
-                <ProtectedRoute>
-                  <InvoiceDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/invoices/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <InvoiceDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients"
-              element={
-                <ProtectedRoute>
-                  <ClientsListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/new"
-              element={
-                <ProtectedRoute>
-                  <CreateClientPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/:id"
-              element={
-                <ProtectedRoute>
-                  <ClientDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/:id/properties/new"
-              element={
-                <ProtectedRoute>
-                  <CreatePropertyPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </AppShell>
-    </AuthProvider>
-  </BrowserRouter>
-);
+const App = () => {
+  // Use a key based on the language to force a full re-render of the app shell
+  // when the language changes. This ensures that all components, including
+  // those using Zod resolvers or memoized translations, are refreshed.
+  const { i18n } = useTranslation();
+
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppShell key={i18n.language}>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<SignInPage />} />
+              <Route path="/register" element={<SignUpPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/jobs"
+                element={
+                  <ProtectedRoute>
+                    <JobsListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/jobs/new"
+                element={
+                  <ProtectedRoute>
+                    <CreateJobPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/jobs/:id"
+                element={
+                  <ProtectedRoute>
+                    <JobDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routePatterns.createInvoice}
+                element={
+                  <ProtectedRoute>
+                    <CreateInvoicePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={routePatterns.invoiceDetail}
+                element={
+                  <ProtectedRoute>
+                    <InvoiceDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/invoices/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <InvoiceDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/clients"
+                element={
+                  <ProtectedRoute>
+                    <ClientsListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/clients/new"
+                element={
+                  <ProtectedRoute>
+                    <CreateClientPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/clients/:id"
+                element={
+                  <ProtectedRoute>
+                    <ClientDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/clients/:id/properties/new"
+                element={
+                  <ProtectedRoute>
+                    <CreatePropertyPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </AppShell>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;

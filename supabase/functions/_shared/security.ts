@@ -1,47 +1,63 @@
-
 /**
- * Validates the return URL to prevent Open Redirect vulnerabilities.
- * Ensures the URL belongs to the allowed domain (SITE_URL) or localhost in development.
+ * Validates a return URL to prevent Open Redirect vulnerabilities.
  *
- * @param url - The URL to validate
- * @returns The validated URL if safe
- * @throws Error if the URL is invalid or from an unauthorized origin
+ * SECURITY: This function REQUIRES SITE_URL to be configured. It will reject
+ * all requests when SITE_URL is not set, preventing open redirect attacks
+ * in misconfigured environments (staging, local, or production).
+ *
+ * @param returnUrl The URL to validate
+ * @param siteUrl The configured SITE_URL environment variable (REQUIRED)
+ * @returns The validated URL string if safe, throws an error otherwise
+ * @throws Error if the URL is invalid or doesn't match the allowlist
  */
-export const validateReturnUrl = (url: string): string => {
-  let siteUrl = "http://localhost:5173"; // Default to Vite local port for development
-
-  // Deno global is available in Supabase Edge Functions
-  // @ts-expect-error: Deno is not defined in standard Node environment
-  if (typeof Deno !== "undefined") {
-    // @ts-expect-error: Deno types are missing in this context
-    siteUrl = Deno.env.get("SITE_URL") || siteUrl;
+export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined): string {
+  // 1. Require SITE_URL to be configured
+  if (!siteUrl) {
+    throw new Error(
+      'Invalid returnUrl: SITE_URL is not configured. Refusing to validate without an explicit allowlist.'
+    );
   }
 
   try {
-    const returnUrlObj = new URL(url);
-    const siteUrlObj = new URL(siteUrl);
-
-    // Check if SITE_URL implies a development environment (localhost/127.0.0.1)
-    const isDev = siteUrlObj.hostname === "localhost" || siteUrlObj.hostname === "127.0.0.1";
-
-    if (isDev) {
-      // In dev, allow localhost and 127.0.0.1 explicitly to handle variations
-      if (returnUrlObj.hostname === "localhost" || returnUrlObj.hostname === "127.0.0.1") {
-        return url;
-      }
-    }
-
-    // Strict origin check for production (and dev if exact match)
-    if (returnUrlObj.origin === siteUrlObj.origin) {
-      return url;
-    }
-
-    // Explicitly throw to trigger catch block
-    throw new Error("Invalid returnUrl origin");
-
-  } catch (error) {
-    // Log the actual error for debugging
-    console.error(`Security validation failed for URL: ${url}`, error);
-    throw new Error("Invalid returnUrl");
+    url = new URL(returnUrl);
+  } catch {
+    throw new Error("Invalid returnUrl: Malformed URL");
   }
-};
+
+    // 2. Strict Protocol Check
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid returnUrl: Only http and https protocols are allowed');
+    }
+
+    // 3. Parse and validate SITE_URL
+    let siteOrigin: string;
+    try {
+      const site = new URL(siteUrl);
+      siteOrigin = site.origin;
+    } catch {
+      throw new Error('Invalid returnUrl: SITE_URL configuration is malformed');
+    }
+
+    // 4. Strict Origin Matching
+    if (url.origin !== siteOrigin) {
+      throw new Error(
+        `Invalid returnUrl: Origin mismatch. Expected ${siteOrigin}, got ${url.origin}`
+      );
+    }
+    return;
+  }
+
+    // Return the validated URL
+    return returnUrl;
+  } catch (error) {
+    // Re-throw our custom errors
+    if (error instanceof Error && error.message.startsWith('Invalid returnUrl')) {
+      throw error;
+    }
+    // Malformed URL
+    throw new Error('Invalid returnUrl: Malformed URL');
+  }
+
+  // 3. Fail safe if we can't validate against anything
+  throw new Error("Invalid returnUrl: Configuration missing (SITE_URL)");
+}
