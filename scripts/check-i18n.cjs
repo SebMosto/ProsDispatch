@@ -44,8 +44,11 @@ try {
   const enKeys = getKeys(enObj);
   const frKeys = getKeys(frObj);
 
-  const missingInFr = enKeys.filter(key => !frKeys.includes(key));
-  const missingInEn = frKeys.filter(key => !enKeys.includes(key));
+  const enKeysSet = new Set(enKeys);
+  const frKeysSet = new Set(frKeys);
+
+  const missingInFr = enKeys.filter(key => !frKeysSet.has(key));
+  const missingInEn = frKeys.filter(key => !enKeysSet.has(key));
 
   if (missingInFr.length > 0) {
     console.error('❌ Missing keys in FR:', missingInFr);
