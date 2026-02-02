@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { JOB_STATUSES, type JobStatus } from '../../schemas/job';
+import { type JobStatus, JOB_STATUSES } from '../../schemas/job';
 
 const STATUS_STYLES: Record<JobStatus, string> = {
   draft: 'bg-slate-100 text-slate-800 border-slate-200',
@@ -14,24 +14,19 @@ const STATUS_STYLES: Record<JobStatus, string> = {
 };
 
 interface JobStatusBadgeProps {
-  status: string; // Accepts string to handle potential raw DB values, but normalizes to JobStatus
+  status: string; // Accepts string to handle potential database data issues safely
   className?: string;
 }
 
 const JobStatusBadge = ({ status, className }: JobStatusBadgeProps) => {
   const { t } = useTranslation();
 
-  // Validate status against the schema source of truth
-  const safeStatus = (JOB_STATUSES as ReadonlyArray<string>).includes(status)
-    ? (status as JobStatus)
-    : 'draft';
+  // STRICT VALIDATION: Ensure we never try to translate mixed/concatenated strings (e.g. "draft / brouillon")
+  // If the status is not in our allowed list, we fall back to 'draft' to prevent UI glitches.
+  const normalizedStatus = (JOB_STATUSES.includes(status as JobStatus) ? status : 'draft') as JobStatus;
 
-  const statusClass = STATUS_STYLES[safeStatus];
-
-  // Strict translation: rely on i18next to return the localized string.
-  // We provide the key and a fallback value that matches the key's last segment (the status itself),
-  // but strictly speaking, we expect the translation file to be complete.
-  const label = t(`jobs.status.${safeStatus}`, safeStatus);
+  const statusClass = STATUS_STYLES[normalizedStatus];
+  const label = t(`jobs.status.${normalizedStatus}`);
 
   return (
     <span
