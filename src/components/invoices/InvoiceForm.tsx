@@ -86,7 +86,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     },
   });
 
-  const [items, setItems] = useState<InvoiceItemState[]>(buildDefaultItems(invoice));
+  const [items, setItems] = useState<InvoiceItemState[]>([]);
 
   useEffect(() => {
     setItems(buildDefaultItems(invoice));
