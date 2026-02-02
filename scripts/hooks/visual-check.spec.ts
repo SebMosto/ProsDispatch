@@ -13,7 +13,7 @@ test('Visual Verification of Login/Landing', async ({ page }) => {
   }
 
   try {
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle' });
+    await page.goto('/', { waitUntil: 'networkidle' });
   } catch (e) {
     console.error('Failed to load page:', e);
     throw e;
