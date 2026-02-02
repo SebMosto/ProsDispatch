@@ -163,6 +163,8 @@ Deno.serve(async (req) => {
       // We will allow specific known safe errors.
       publicMessage = "Bad Request";
       
+      // SECURITY: We expose certain client-facing errors but hide server configuration errors.
+      // Note: This string-matching approach could be improved by using custom error classes.
       if (error instanceof Error) {
         if (error.message.startsWith("Missing ") || 
             (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error"))) {

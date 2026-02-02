@@ -5,7 +5,7 @@
  * @param allowedOrigin The Origin header from the request (optional fallback)
  * @throws Error with specific message if validation fails
  */
-export function validateReturnUrl(returnUrl: string, allowedOrigin?: string) {
+export function validateReturnUrl(returnUrl: string, allowedOrigin?: string): void {
   let url: URL;
   try {
     url = new URL(returnUrl);

@@ -141,7 +141,8 @@ Deno.serve(async (req) => {
       publicMessage = "Not Found";
     }
 
-    // Exception: Allow specific business logic errors that are safe to expose
+    // SECURITY: We expose certain client-facing errors but hide server configuration errors.
+    // Note: This string-matching approach could be improved by using custom error classes.
     if (error instanceof Error) {
        if (error.message === "No Stripe Customer found for this user" ||
            (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error")) ||
