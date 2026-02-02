@@ -28,11 +28,14 @@ export class IllegalJobStatusTransitionError extends Error {
  * Defines all allowed job status transitions according to SPEC-003 section 3
  */
 const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
-  draft: ['draft', 'scheduled', 'cancelled'],
-  scheduled: ['scheduled', 'in_progress', 'cancelled'],
-  in_progress: ['in_progress', 'completed', 'cancelled'],
-  completed: ['completed'],
-  cancelled: ['cancelled'],
+  draft: ['sent'],
+  sent: ['approved'],
+  approved: ['in_progress'],
+  in_progress: ['completed', 'archived'],
+  completed: ['invoiced', 'archived'],
+  invoiced: ['paid'],
+  paid: ['archived'],
+  archived: [],
 };
 
 /**
@@ -60,6 +63,11 @@ const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
 export function advanceJobStatus(current: JobStatus, target: JobStatus): JobStatus {
   // Check if transition is allowed
   const allowedTargets = ALLOWED_TRANSITIONS[current];
+
+  if (!allowedTargets) {
+     // If the current status is not in the map (should not happen if types are correct), throw
+     throw new Error(`Unknown status: ${current}`);
+  }
 
   if (!allowedTargets.includes(target)) {
     throw new IllegalJobStatusTransitionError(current, target);

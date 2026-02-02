@@ -6,18 +6,24 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 
 const STATUS_STYLES: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-800 border-slate-200',
-  scheduled: 'bg-blue-50 text-blue-800 border-blue-200',
+  sent: 'bg-blue-50 text-blue-800 border-blue-200',
+  approved: 'bg-indigo-50 text-indigo-800 border-indigo-200',
   in_progress: 'bg-amber-50 text-amber-800 border-amber-200',
   completed: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  invoiced: 'bg-purple-50 text-purple-800 border-purple-200',
+  paid: 'bg-green-50 text-green-800 border-green-200',
+  archived: 'bg-gray-50 text-gray-800 border-gray-200',
 };
 
 const STATUS_LABELS: Record<string, string> = {
   draft: 'Draft',
-  scheduled: 'Scheduled',
+  sent: 'Sent',
+  approved: 'Approved',
   in_progress: 'In Progress',
   completed: 'Completed',
-  cancelled: 'Cancelled',
+  invoiced: 'Invoiced',
+  paid: 'Paid',
+  archived: 'Archived',
 };
 
 interface JobCardProps {

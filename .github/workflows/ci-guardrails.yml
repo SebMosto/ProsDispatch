@@ -312,11 +312,7 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Check coverage configuration
-        run: |
-          echo "⚠️ Code coverage threshold enforcement not yet implemented"
-          echo "Required: 80% coverage threshold"
-          echo "TODO: Add test framework with coverage (e.g., Vitest with c8)"
-          echo "This is currently a warning but must be implemented before release"
+        run: npm run coverage
 
   governance-audit:
     name: Governance Policy Audit
