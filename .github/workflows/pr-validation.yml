@@ -1,9 +1,5 @@
 name: Pull Request Validation
 
-permissions:
-  pull-requests: write
-  issues: write
-
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]

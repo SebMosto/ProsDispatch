@@ -12,7 +12,7 @@ permissions:
 jobs:
   detect-ai-pr:
     name: Detect AI-Generated PR
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       is_ai_generated: ${{ steps.check.outputs.is_ai }}
     steps:
@@ -52,7 +52,7 @@ jobs:
 
   ai-code-audit:
     name: AI Code Pattern Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: detect-ai-pr
     if: needs.detect-ai-pr.outputs.is_ai_generated == 'true'
     steps:

@@ -20,7 +20,7 @@ fi
 # 3. Start Server
 echo "🚀 Starting dev server..."
 # Kill any zombies first
-kill $(lsof -ti:5173) &>/dev/null || true
+fuser -k 5173/tcp || true
 
 # We use 'exec' to ensure we can kill it easily or just background it
 # Using --host to ensure network accessibility if needed, though localhost is fine
