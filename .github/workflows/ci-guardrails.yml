@@ -9,7 +9,7 @@ on:
 jobs:
   lint-and-static-analysis:
     name: Linting & Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -33,7 +33,7 @@ jobs:
 
   build-and-type-check:
     name: Build & Type Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -55,7 +55,7 @@ jobs:
 
   security-scanning:
     name: Security Scanning
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
@@ -83,7 +83,7 @@ jobs:
 
   localization-check:
     name: Localization Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -134,7 +134,7 @@ jobs:
 
   accessibility-audit:
     name: Accessibility Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -177,7 +177,7 @@ jobs:
 
   responsive-layout-tests:
     name: Responsive Layout Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -267,7 +267,7 @@ jobs:
 
   test-suite:
     name: Unit and Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -298,7 +298,7 @@ jobs:
 
   code-coverage:
     name: Code Coverage Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -320,7 +320,7 @@ jobs:
 
   governance-audit:
     name: Governance Policy Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       
@@ -356,7 +356,7 @@ jobs:
 
   all-checks-complete:
     name: All CI Guardrails Passed
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: 
       - lint-and-static-analysis
       - build-and-type-check
