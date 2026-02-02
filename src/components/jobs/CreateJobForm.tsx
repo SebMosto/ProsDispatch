@@ -24,7 +24,7 @@ const initialValues: FormValues = {
 };
 
 const CreateJobForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -45,11 +45,24 @@ const CreateJobForm = () => {
     handleSubmit,
     reset,
     watch,
+    clearErrors,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema),
     defaultValues: draft.values,
   });
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+  }, [i18n.language, clearErrors, trigger, errors]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;

@@ -39,7 +39,7 @@ interface UseCreatePropertyFormProps {
 }
 
 export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -68,7 +68,21 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     reset,
     watch,
     setValue,
+    clearErrors,
+    trigger,
+    formState: { errors },
   } = formMethods;
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+  }, [i18n.language, clearErrors, trigger, errors]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;
