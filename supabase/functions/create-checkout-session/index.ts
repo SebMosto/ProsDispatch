@@ -127,8 +127,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${validatedUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${validatedUrl}?canceled=true`,
+      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnUrl}?canceled=true`,
       subscription_data: {
         trial_period_days: 14,
       },
@@ -164,8 +164,11 @@ Deno.serve(async (req) => {
       // We will allow specific known safe errors.
       publicMessage = "Bad Request";
       
+      // SECURITY: We expose certain client-facing errors but hide server configuration errors.
+      // Note: This string-matching approach could be improved by using custom error classes.
       if (error instanceof Error) {
-        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
+        if (error.message.startsWith("Missing ") || 
+            (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error"))) {
            publicMessage = error.message;
         }
       }

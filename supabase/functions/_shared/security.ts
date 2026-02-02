@@ -19,7 +19,10 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
   }
 
   try {
-    const url = new URL(returnUrl);
+    url = new URL(returnUrl);
+  } catch {
+    throw new Error("Invalid returnUrl: Malformed URL");
+  }
 
     // 2. Strict Protocol Check
     if (!['http:', 'https:'].includes(url.protocol)) {
@@ -41,6 +44,8 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
         `Invalid returnUrl: Origin mismatch. Expected ${siteOrigin}, got ${url.origin}`
       );
     }
+    return;
+  }
 
     // Return the validated URL
     return returnUrl;
@@ -52,4 +57,7 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
     // Malformed URL
     throw new Error('Invalid returnUrl: Malformed URL');
   }
+
+  // 3. Fail safe if we can't validate against anything
+  throw new Error("Invalid returnUrl: Configuration missing (SITE_URL)");
 }
