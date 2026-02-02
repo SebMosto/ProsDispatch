@@ -1,41 +1,61 @@
 /**
  * Validates a return URL to prevent Open Redirect vulnerabilities.
  *
+ * SECURITY: This function REQUIRES SITE_URL to be configured. It will reject
+ * all requests when SITE_URL is not set, preventing open redirect attacks
+ * in misconfigured environments (staging, local, or production).
+ *
  * @param returnUrl The URL to validate
- * @param allowedOrigin The Origin header from the request (optional fallback)
- * @throws Error with specific message if validation fails
+ * @param siteUrl The configured SITE_URL environment variable (REQUIRED)
+ * @returns The validated URL string if safe, throws an error otherwise
+ * @throws Error if the URL is invalid or doesn't match the allowlist
  */
-export function validateReturnUrl(returnUrl: string, allowedOrigin?: string): void {
-  let url: URL;
+export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined): string {
+  // 1. Require SITE_URL to be configured
+  if (!siteUrl) {
+    throw new Error(
+      'Invalid returnUrl: SITE_URL is not configured. Refusing to validate without an explicit allowlist.'
+    );
+  }
+
   try {
     url = new URL(returnUrl);
   } catch {
     throw new Error("Invalid returnUrl: Malformed URL");
   }
 
-  const siteUrl = Deno.env.get("SITE_URL");
-
-  // 1. If SITE_URL is configured, strictly match it
-  if (siteUrl) {
-    let site: URL;
-    try {
-      site = new URL(siteUrl);
-    } catch {
-      console.error(`Server configuration error: Invalid SITE_URL: ${siteUrl}`);
-      throw new Error("Internal Server Error: Site URL misconfigured");
+    // 2. Strict Protocol Check
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid returnUrl: Only http and https protocols are allowed');
     }
-    if (url.origin !== site.origin) {
-      throw new Error("Invalid returnUrl: Domain mismatch with SITE_URL");
+
+    // 3. Parse and validate SITE_URL
+    let siteOrigin: string;
+    try {
+      const site = new URL(siteUrl);
+      siteOrigin = site.origin;
+    } catch {
+      throw new Error('Invalid returnUrl: SITE_URL configuration is malformed');
+    }
+
+    // 4. Strict Origin Matching
+    if (url.origin !== siteOrigin) {
+      throw new Error(
+        `Invalid returnUrl: Origin mismatch. Expected ${siteOrigin}, got ${url.origin}`
+      );
     }
     return;
   }
 
-  // 2. Fallback: Match the request's Origin (if provided)
-  if (allowedOrigin) {
-    if (url.origin !== allowedOrigin) {
-      throw new Error("Invalid returnUrl: Domain mismatch with Origin");
+    // Return the validated URL
+    return returnUrl;
+  } catch (error) {
+    // Re-throw our custom errors
+    if (error instanceof Error && error.message.startsWith('Invalid returnUrl')) {
+      throw error;
     }
-    return;
+    // Malformed URL
+    throw new Error('Invalid returnUrl: Malformed URL');
   }
 
   // 3. Fail safe if we can't validate against anything
