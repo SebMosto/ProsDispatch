@@ -25,12 +25,20 @@ interface InvoiceFormValues {
   }[];
 }
 
+interface InvoiceItemState {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+}
+
 const toCents = (value: number) => Math.round(value * 100);
 const fromCents = (value: number) => value / 100;
 
-const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
+const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceItemState[] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
+    id: crypto.randomUUID(),
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
@@ -95,20 +103,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     },
   });
 
-  // Re-validate when language changes to update error messages
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
-    const hasErrors = Object.keys(errors).length > 0;
-    if (hasErrors) {
-      // Clear old errors and re-trigger validation with new language
-      clearErrors();
-      trigger().catch(() => {
-        // Validation errors are expected and will be shown in the UI
-      });
-    }
-  }, [i18n.language, clearErrors, trigger]);
-
-  const [items, setItems] = useState<InvoiceFormValues['items']>(buildDefaultItems(invoice));
+  const [items, setItems] = useState<InvoiceItemState[]>([]);
 
   useEffect(() => {
     setItems(buildDefaultItems(invoice));
@@ -287,6 +282,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 setItems((prev) => [
                   ...prev,
                   {
+                    id: crypto.randomUUID(),
                     description: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -309,7 +305,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button

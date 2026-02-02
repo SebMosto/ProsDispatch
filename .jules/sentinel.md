@@ -14,3 +14,8 @@
 **Vulnerability:** Supabase Edge Functions were using `SUPABASE_SERVICE_ROLE_KEY` to read user profiles when the user's own Auth token (`supabaseClient`) would have sufficed.
 **Learning:** Over-reliance on Service Role keys in server-side functions bypasses Row Level Security (RLS), increasing the blast radius if the function is compromised or contains logic errors.
 **Prevention:** Always default to using the client provided `Authorization` header to create a Supabase client. Only upgrade to Service Role if strictly necessary (e.g., accessing data the user explicitly cannot see but the system needs).
+
+## 2025-10-23 - Hardcoded Credentials in Source Code
+**Vulnerability:** Hardcoded Supabase URL and Anonymous Key were found in `src/lib/supabase.ts`, bypassing environment variables.
+**Learning:** Hardcoding credentials, even "public" ones, prevents environment switching (e.g., local vs. prod) and creates a false sense of security. It also breaks the 12-Factor App methodology.
+**Prevention:** Always use `import.meta.env` (or equivalent) for configuration. Implement runtime checks to fail fast if valid configuration is missing.
