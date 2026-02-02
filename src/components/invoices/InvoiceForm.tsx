@@ -85,6 +85,8 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   const {
     handleSubmit,
     setValue,
+    clearErrors,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<InvoiceFormValues>({
     resolver: zodResolver(InvoiceFormSchema),
@@ -92,6 +94,19 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
       items: buildDefaultItems(invoice),
     },
   });
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      // Clear old errors and re-trigger validation with new language
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+  }, [i18n.language, clearErrors, trigger]);
 
   const [items, setItems] = useState<InvoiceFormValues['items']>(buildDefaultItems(invoice));
 
