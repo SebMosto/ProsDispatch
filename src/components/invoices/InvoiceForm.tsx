@@ -32,7 +32,7 @@ const fromCents = (value: number) => value / 100;
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
-    id: crypto.randomUUID(),
+    id: item.id,
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
