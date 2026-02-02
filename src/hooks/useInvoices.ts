@@ -42,7 +42,7 @@ export const useInvoice = (id?: string) => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.isLoading, query.error, query.refetch]
+    [query.data, query.isLoading, query.error]
   );
 };
 
