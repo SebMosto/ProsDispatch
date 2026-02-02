@@ -59,13 +59,13 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         .min(1, t('validation.descriptionRequired')),
       quantity: z
         .number({
-          required_error: t('validation.required'),
+          required_error: t('validation.qtyPositive'),
           invalid_type_error: t('validation.qtyPositive'),
         })
         .positive(t('validation.qtyPositive')),
       unitPrice: z
         .number({
-          required_error: t('validation.required'),
+          required_error: t('validation.unitPriceNonNegative'),
           invalid_type_error: t('validation.unitPriceNonNegative'),
         })
         .min(0, t('validation.unitPriceNonNegative')),
