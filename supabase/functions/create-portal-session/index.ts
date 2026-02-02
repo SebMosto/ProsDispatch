@@ -112,12 +112,9 @@ Deno.serve(async (req) => {
     }
 
     // Validate returnUrl to prevent Open Redirect
+    // This will throw an error if validation fails
     const siteUrl = Deno.env.get("SITE_URL");
-    const origin = req.headers.get("Origin");
-
-    if (!validateReturnUrl(returnUrl, origin, siteUrl)) {
-      throw new Error("Invalid returnUrl");
-    }
+    const validatedUrl = validateReturnUrl(returnUrl, siteUrl);
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
