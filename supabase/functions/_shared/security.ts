@@ -3,7 +3,12 @@ export const validateReturnUrl = (returnUrl: string, requestOrigin?: string | nu
 
   // Primary: Use SITE_URL if configured
   // Fallback: Use request origin (for local development/deploy previews)
-  const allowedOrigin = siteUrl ? new URL(siteUrl).origin : requestOrigin;
+  let allowedOrigin: string | undefined | null;
+  try {
+    allowedOrigin = siteUrl ? new URL(siteUrl).origin : requestOrigin;
+  } catch {
+    throw new Error("Configuration error: SITE_URL is not a valid URL.");
+  }
 
   if (!allowedOrigin) {
     throw new Error("Configuration error: No SITE_URL or Origin available");
