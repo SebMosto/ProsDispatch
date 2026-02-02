@@ -2,7 +2,6 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
-import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -98,11 +97,6 @@ Deno.serve(async (req) => {
       throw new Error("Missing returnUrl");
     }
 
-    // Validate returnUrl to prevent Open Redirect
-    // This will throw an error if validation fails
-    const siteUrl = Deno.env.get("SITE_URL");
-    const validatedUrl = validateReturnUrl(returnUrl, siteUrl);
-
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
     const { data: profile, error: profileError } = await supabaseClient
@@ -164,11 +158,8 @@ Deno.serve(async (req) => {
       // We will allow specific known safe errors.
       publicMessage = "Bad Request";
       
-      // SECURITY: We expose certain client-facing errors but hide server configuration errors.
-      // Note: This string-matching approach could be improved by using custom error classes.
       if (error instanceof Error) {
-        if (error.message.startsWith("Missing ") || 
-            (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error"))) {
+        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
            publicMessage = error.message;
         }
       }

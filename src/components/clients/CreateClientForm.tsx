@@ -22,7 +22,7 @@ const initialValues: FormValues = {
 };
 
 const CreateClientForm: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -44,25 +44,11 @@ const CreateClientForm: React.FC = () => {
     reset,
     watch,
     setValue,
-    clearErrors,
-    trigger,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(ClientSchema),
     defaultValues: draft.values,
   });
-
-  // Re-validate when language changes to update error messages
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
-    const hasErrors = Object.keys(errors).length > 0;
-    if (hasErrors) {
-      clearErrors();
-      trigger().catch(() => {
-        // Validation errors are expected and will be shown in the UI
-      });
-    }
-  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;

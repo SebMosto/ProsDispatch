@@ -8,8 +8,8 @@ const LanguageSwitcher = () => {
 
   const handleChange = (language: Language) => {
     i18n.changeLanguage(language).then(() => {
-      // Force reload to ensure external dependencies (e.g. Google Maps) re-initialize with correct locale
-      window.location.reload();
+      // Explicitly persist preference to ensure offline boot works
+      localStorage.setItem('i18nextLng', language);
     }).catch((error) => {
       console.error('Language change failed', error);
     });
