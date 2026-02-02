@@ -22,9 +22,7 @@ const JobStatusBadge = ({ status, className }: JobStatusBadgeProps) => {
   const { t } = useTranslation();
 
   // Validate status against the schema source of truth
-  const safeStatus = (JOB_STATUSES as ReadonlyArray<string>).includes(status)
-    ? (status as JobStatus)
-    : 'draft';
+  const safeStatus = JOB_STATUSES.find((s) => s === status) ?? 'draft';
 
   const statusClass = STATUS_STYLES[safeStatus];
 
