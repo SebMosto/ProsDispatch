@@ -98,7 +98,13 @@ Deno.serve(async (req) => {
       throw new Error("Missing returnUrl");
     }
 
-    const validatedUrl = validateReturnUrl(returnUrl, req.headers.get("origin"));
+    // Validate returnUrl to prevent Open Redirect
+    const siteUrl = Deno.env.get("SITE_URL");
+    const origin = req.headers.get("Origin");
+
+    if (!validateReturnUrl(returnUrl, origin, siteUrl)) {
+      throw new Error("Invalid returnUrl");
+    }
 
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
