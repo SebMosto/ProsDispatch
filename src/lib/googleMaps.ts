@@ -15,7 +15,13 @@ const createScript = (apiKey: string) => {
     }
 
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    let language = 'en';
+    try {
+      language = localStorage.getItem('i18nextLng') || 'en';
+    } catch {
+      // Ignore errors (e.g. security blocking) and default to 'en'
+    }
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=${language}`;
     script.async = true;
     script.defer = true;
     script.onload = () => resolve(window.google?.maps as GoogleMaps);
