@@ -99,12 +99,8 @@ Deno.serve(async (req) => {
     }
 
     // Validate returnUrl to prevent Open Redirect
-    const siteUrl = Deno.env.get("SITE_URL");
     const origin = req.headers.get("Origin");
-
-    if (!validateReturnUrl(returnUrl, origin, siteUrl)) {
-      throw new Error("Invalid returnUrl");
-    }
+    validateReturnUrl(returnUrl, origin || undefined);
 
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
@@ -130,8 +126,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${validatedUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${validatedUrl}?canceled=true`,
+      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnUrl}?canceled=true`,
       subscription_data: {
         trial_period_days: 14,
       },
@@ -168,7 +164,8 @@ Deno.serve(async (req) => {
       publicMessage = "Bad Request";
       
       if (error instanceof Error) {
-        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
+        if (error.message.startsWith("Missing ") || 
+            (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error"))) {
            publicMessage = error.message;
         }
       }

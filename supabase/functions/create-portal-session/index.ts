@@ -112,16 +112,12 @@ Deno.serve(async (req) => {
     }
 
     // Validate returnUrl to prevent Open Redirect
-    const siteUrl = Deno.env.get("SITE_URL");
     const origin = req.headers.get("Origin");
-
-    if (!validateReturnUrl(returnUrl, origin, siteUrl)) {
-      throw new Error("Invalid returnUrl");
-    }
+    validateReturnUrl(returnUrl, origin || undefined);
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: validatedUrl,
+      return_url: returnUrl,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
@@ -147,7 +143,9 @@ Deno.serve(async (req) => {
 
     // Exception: Allow specific business logic errors that are safe to expose
     if (error instanceof Error) {
-       if (error.message === "No Stripe Customer found for this user") {
+       if (error.message === "No Stripe Customer found for this user" ||
+           (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error")) ||
+           error.message.startsWith("Missing ")) {
          publicMessage = error.message;
        }
     }
