@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Check if PR is AI-generated
         id: check
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;
@@ -56,7 +56,7 @@ jobs:
     needs: detect-ai-pr
     if: needs.detect-ai-pr.outputs.is_ai_generated == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
@@ -70,7 +70,7 @@ jobs:
       
       - name: Comment on PR with audit results
         if: always()
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;

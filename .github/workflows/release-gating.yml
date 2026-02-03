@@ -19,10 +19,10 @@ jobs:
     name: Pre-Release Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -31,7 +31,7 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Verify no P0 issues
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             console.log('Checking for open P0 (blocker) issues...');
@@ -125,10 +125,10 @@ jobs:
     runs-on: ubuntu-24.04
     needs: pre-release-checks
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'

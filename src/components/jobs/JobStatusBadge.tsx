@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { type JobStatus, JOB_STATUSES } from '../../schemas/job';
+import type { JobStatus } from '../../schemas/job';
 
 const STATUS_STYLES: Record<JobStatus, string> = {
   draft: 'bg-slate-100 text-slate-800 border-slate-200',
@@ -14,19 +14,20 @@ const STATUS_STYLES: Record<JobStatus, string> = {
 };
 
 interface JobStatusBadgeProps {
-  status: string; // Accepts string to handle potential database data issues safely
+  status: string; // Using string to be lenient with potential DB data, but ideally JobStatus
   className?: string;
 }
 
 const JobStatusBadge = ({ status, className }: JobStatusBadgeProps) => {
   const { t } = useTranslation();
 
-  // STRICT VALIDATION: Ensure we never try to translate mixed/concatenated strings (e.g. "draft / brouillon")
-  // If the status is not in our allowed list, we fall back to 'draft' to prevent UI glitches.
-  const normalizedStatus = (JOB_STATUSES.includes(status as JobStatus) ? status : 'draft') as JobStatus;
+  // Cast to JobStatus if valid, else default to draft style but keep original text if unknown
+  const safeStatus = (Object.keys(STATUS_STYLES).includes(status) ? status : 'draft') as JobStatus;
+  const statusClass = STATUS_STYLES[safeStatus];
 
-  const statusClass = STATUS_STYLES[normalizedStatus];
-  const label = t(`jobs.status.${normalizedStatus}`);
+  // Try to translate. If status is "draft", t('jobs.status.draft') -> "Draft" or "Brouillon"
+  // Use safeStatus to ensure we don't try to translate garbage keys like "draft / brouillon"
+  const label = t(`jobs.status.${safeStatus}`, safeStatus);
 
   return (
     <span

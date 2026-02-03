@@ -2,7 +2,6 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
-import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -107,15 +106,6 @@ Deno.serve(async (req) => {
 
     const { returnUrl } = await req.json();
 
-    if (!returnUrl) {
-      throw new Error("Missing returnUrl");
-    }
-
-    // Validate returnUrl to prevent Open Redirect
-    // This will throw an error if validation fails
-    const siteUrl = Deno.env.get("SITE_URL");
-    const validatedUrl = validateReturnUrl(returnUrl, siteUrl);
-
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       return_url: returnUrl,
@@ -142,12 +132,9 @@ Deno.serve(async (req) => {
       publicMessage = "Not Found";
     }
 
-    // SECURITY: We expose certain client-facing errors but hide server configuration errors.
-    // Note: This string-matching approach could be improved by using custom error classes.
+    // Exception: Allow specific business logic errors that are safe to expose
     if (error instanceof Error) {
-       if (error.message === "No Stripe Customer found for this user" ||
-           (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error")) ||
-           error.message.startsWith("Missing ")) {
+       if (error.message === "No Stripe Customer found for this user") {
          publicMessage = error.message;
        }
     }
