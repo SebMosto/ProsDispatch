@@ -17,7 +17,6 @@ export function useAuth() {
       if (error) throw error;
     } catch (err: any) {
       setError(err.message);
-      setLoading(false); // Ensure loading is set false before throwing
       throw err;
     } finally {
       setLoading(false);
