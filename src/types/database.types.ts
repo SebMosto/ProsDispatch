@@ -6,16 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type SubscriptionStatus = 
-  | 'trialing'
-  | 'active'
-  | 'past_due'
-  | 'canceled'
-  | 'incomplete'
-  | 'incomplete_expired'
-  | 'unpaid'
-  | 'paused'
-
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -69,9 +59,6 @@ export type Database = {
           id: string
           role: string
           updated_at: string
-          stripe_customer_id: string | null
-          subscription_status: string
-          subscription_end_date: string | null
         }
         Insert: {
           business_name?: string | null
@@ -81,9 +68,6 @@ export type Database = {
           id: string
           role?: string
           updated_at?: string
-          stripe_customer_id?: string | null
-          subscription_status?: string
-          subscription_end_date?: string | null
         }
         Update: {
           business_name?: string | null
@@ -93,33 +77,6 @@ export type Database = {
           id?: string
           role?: string
           updated_at?: string
-          stripe_customer_id?: string | null
-          subscription_status?: string
-          subscription_end_date?: string | null
-        }
-        Relationships: []
-      }
-      stripe_events: {
-        Row: {
-          id: string
-          type: string
-          event_created_at: string
-          created_at: string
-          status: string
-        }
-        Insert: {
-          id: string
-          type: string
-          event_created_at: string
-          created_at?: string
-          status?: string
-        }
-        Update: {
-          id?: string
-          type?: string
-          event_created_at?: string
-          created_at?: string
-          status?: string
         }
         Relationships: []
       }

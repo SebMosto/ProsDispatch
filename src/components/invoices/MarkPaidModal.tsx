@@ -16,7 +16,7 @@ const MarkPaidModal = ({ invoiceId, isOpen, onClose }: MarkPaidModalProps) => {
   const [paymentNote, setPaymentNote] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const isSubmitting = markAsPaid.isPending;
+  const isSubmitting = markAsPaid.isLoading;
 
   const options = useMemo(() => [
     { value: 'cash' as const, label: t('jobs.invoices.markPaidModal.paymentMethods.cash') },

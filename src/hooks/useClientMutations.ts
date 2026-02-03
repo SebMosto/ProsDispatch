@@ -57,7 +57,7 @@ export const useCreateClientMutation = () => {
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
         });
       },
       onSettled: async () => {
@@ -100,7 +100,7 @@ export const useUpdateClientMutation = (clientId: string) => {
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
         });
       },
       onSettled: async () => {

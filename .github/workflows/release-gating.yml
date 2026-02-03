@@ -19,10 +19,10 @@ jobs:
     name: Pre-Release Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -31,7 +31,7 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Verify no P0 issues
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             console.log('Checking for open P0 (blocker) issues...');
@@ -122,13 +122,13 @@ jobs:
 
   smoke-tests:
     name: Smoke Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: pre-release-checks
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -202,7 +202,7 @@ jobs:
 
   release-approval:
     name: Release Approval Gate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: [pre-release-checks, smoke-tests]
     environment:
       name: ${{ github.event.inputs.release_type || 'production' }}

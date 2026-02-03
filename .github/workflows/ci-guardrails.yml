@@ -9,15 +9,15 @@ on:
 jobs:
   lint-and-static-analysis:
     name: Linting & Static Analysis
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Debug - Show package.json
         run: cat package.json
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -33,12 +33,12 @@ jobs:
 
   build-and-type-check:
     name: Build & Type Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -55,14 +55,14 @@ jobs:
 
   security-scanning:
     name: Security Scanning
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Fetch full git history for TruffleHog
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -74,7 +74,7 @@ jobs:
         run: npm audit --audit-level=critical
       
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@v3.92.5
+        uses: trufflesecurity/trufflehog@v3.88.0
         with:
           path: ./
           base: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}"
@@ -83,12 +83,12 @@ jobs:
 
   localization-check:
     name: Localization Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -134,12 +134,12 @@ jobs:
 
   accessibility-audit:
     name: Accessibility Audit
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -177,12 +177,12 @@ jobs:
 
   responsive-layout-tests:
     name: Responsive Layout Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -267,12 +267,12 @@ jobs:
 
   test-suite:
     name: Unit and Integration Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -298,12 +298,12 @@ jobs:
 
   code-coverage:
     name: Code Coverage Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -312,17 +312,13 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Check coverage configuration
-        run: |
-          echo "⚠️ Code coverage threshold enforcement not yet implemented"
-          echo "Required: 80% coverage threshold"
-          echo "TODO: Add test framework with coverage (e.g., Vitest with c8)"
-          echo "This is currently a warning but must be implemented before release"
+        run: npm run coverage
 
   governance-audit:
     name: Governance Policy Audit
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Check for forbidden patterns
         run: |
@@ -356,7 +352,7 @@ jobs:
 
   all-checks-complete:
     name: All CI Guardrails Passed
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: 
       - lint-and-static-analysis
       - build-and-type-check

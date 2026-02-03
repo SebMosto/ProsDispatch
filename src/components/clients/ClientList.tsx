@@ -1,26 +1,33 @@
-import { useTranslation } from 'react-i18next';
 import { useClients } from '../../hooks/useClients';
 
+const TEXT = {
+  title: 'Clients',
+  empty: 'No clients yet. New clients will appear here.',
+  error: 'Unable to load clients.',
+  cityFallback: 'City unavailable',
+  loading: 'Loading...',
+  unnamed: 'Unnamed client',
+};
+
 const ClientList: React.FC = () => {
-  const { t } = useTranslation();
   const { clients, loading, error } = useClients();
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <header>
-        <h2 className="text-lg font-semibold text-slate-900">{t('clients.list.title')}</h2>
+        <h2 className="text-lg font-semibold text-slate-900">{TEXT.title}</h2>
       </header>
 
-      {loading ? <p className="text-sm text-slate-600">{t('clients.list.loading')}</p> : null}
+      {loading ? <p className="text-sm text-slate-600">{TEXT.loading}</p> : null}
       {error ? (
         <p className="text-sm text-red-600" role="alert">
-          {t('clients.list.error')}
+          {TEXT.error}
         </p>
       ) : null}
 
       {!loading && !error ? (
         clients.length === 0 ? (
-          <p className="text-sm text-slate-600">{t('clients.list.empty')}</p>
+          <p className="text-sm text-slate-600">{TEXT.empty}</p>
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {clients.map((client) => (
@@ -28,9 +35,9 @@ const ClientList: React.FC = () => {
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
                     <p className="text-sm font-semibold text-slate-900">
-                      {client.name ?? t('clients.list.unnamed')}
+                      {client.name ?? TEXT.unnamed}
                     </p>
-                    <p className="text-xs text-slate-700">{client.primary_property?.city || t('clients.list.cityFallback')}</p>
+                    <p className="text-xs text-slate-700">{client.primary_property?.city || TEXT.cityFallback}</p>
                   </div>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
@@ -39,7 +46,7 @@ const ClientList: React.FC = () => {
                         : 'bg-emerald-100 text-emerald-800'
                     }`}
                   >
-                    {client.type === 'business' ? t('clients.list.types.business') : t('clients.list.types.individual')}
+                    {client.type === 'business' ? 'Business' : 'Individual'}
                   </span>
                 </div>
                 {client.primary_property?.address_line1 ? (
