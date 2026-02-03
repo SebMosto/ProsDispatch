@@ -9,9 +9,9 @@ create table public.profiles (
 
 alter table public.profiles enable row level security;
 
-create policy "Public profiles are viewable by everyone."
+create policy "Users can view their own profile."
   on public.profiles for select
-  using ( true );
+  using ( auth.uid() = id );
 
 create policy "Users can insert their own profile."
   on public.profiles for insert
