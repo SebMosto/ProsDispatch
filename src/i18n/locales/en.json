@@ -152,6 +152,9 @@
       "invoice": "Mark as Invoiced",
       "paid": "Mark as Paid"
     },
+    "confirmations": {
+      "archiveInProgress": "Archive this in-progress job? This action cannot be undone."
+    },
     "status": {
       "draft": "Draft",
       "sent": "Sent",

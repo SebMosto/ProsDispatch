@@ -152,6 +152,9 @@
       "invoice": "Marquer comme facturé",
       "paid": "Marquer comme payé"
     },
+    "confirmations": {
+      "archiveInProgress": "Archiver ce travail en cours? Cette action ne peut pas être annulée."
+    },
     "status": {
       "draft": "Brouillon",
       "sent": "Envoyé",
