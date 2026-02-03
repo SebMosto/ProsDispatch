@@ -8,16 +8,23 @@
  * @throws Error if the URL is invalid or from an unauthorized origin
  */
 export const validateReturnUrl = (url: string): string => {
-  let siteUrl = "http://localhost:5173"; // Default to Vite local port for development
-
   // Safe access to Deno global without confusing TS compilers of different environments (Node vs Deno)
   // Using globalThis prevents 'Deno is not defined' in Node
   // Casting to any prevents type errors in Node without triggering 'unused @ts-expect-error' in Deno
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const deno = (globalThis as any).Deno;
 
+  let siteUrl: string | undefined;
+  
   if (deno) {
-    siteUrl = deno.env.get("SITE_URL") || siteUrl;
+    siteUrl = deno.env.get("SITE_URL");
+  }
+
+  // Fail fast if SITE_URL is not configured
+  // This prevents production deployments from silently breaking with localhost fallback
+  if (!siteUrl) {
+    console.error("SITE_URL environment variable is not set. This is required for secure URL validation.");
+    throw new Error("Server configuration error: SITE_URL not configured");
   }
 
   try {
