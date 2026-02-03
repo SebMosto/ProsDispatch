@@ -115,7 +115,9 @@ export function LoginPage() {
               className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
             >
               {form.formState.isSubmitting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </span>
               ) : (
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                   <Lock
