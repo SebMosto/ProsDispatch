@@ -42,7 +42,7 @@ export const useInvoice = (id?: string) => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.error, query.isLoading],
+    [query.data, query.error, query.isLoading, query.refetch],
   );
 };
 
@@ -76,7 +76,7 @@ export const useInvoiceByToken = (token?: string) => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.error, query.isLoading],
+    [query.data, query.error, query.isLoading, query.refetch],
   );
 };
 
@@ -108,7 +108,7 @@ export const useJobInvoices = (jobId?: string) => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.error, query.isLoading],
+    [query.data, query.error, query.isLoading, query.refetch],
   );
 };
 
