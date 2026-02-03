@@ -152,14 +152,8 @@
       "invoice": "Mark as Invoiced",
       "paid": "Mark as Paid"
     },
-    "archiveModal": {
-      "title": "Archive In-Progress Job?",
-      "message": "You are about to archive \"{{title}}\" while it is still in progress.",
-      "warning": "This action cannot be undone. The job will be moved to your history.",
-      "cancel": "Cancel",
-      "confirm": "Archive Job",
-      "archiving": "Archiving...",
-      "error": "Unable to archive job."
+    "confirmations": {
+      "archiveInProgress": "Archive this in-progress job? This action cannot be undone."
     },
     "status": {
       "draft": "Draft",

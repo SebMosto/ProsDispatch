@@ -160,7 +160,11 @@ const JobDetailPage = () => {
           </button>
           <button
             type="button"
-            onClick={() => setShowArchiveModal(true)}
+            onClick={() => {
+              if (window.confirm(t('jobs.confirmations.archiveInProgress'))) {
+                performStatusChange('archived');
+              }
+            }}
             className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
           >
             {t('jobs.actions.archive')}
