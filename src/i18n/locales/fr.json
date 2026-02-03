@@ -158,7 +158,8 @@
       "warning": "Cette action ne peut pas être annulée. Le travail sera déplacé vers votre historique.",
       "cancel": "Annuler",
       "confirm": "Archiver le travail",
-      "archiving": "Archivage..."
+      "archiving": "Archivage...",
+      "error": "Impossible d'archiver le travail."
     },
     "status": {
       "draft": "Brouillon",

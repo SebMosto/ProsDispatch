@@ -158,7 +158,8 @@
       "warning": "This action cannot be undone. The job will be moved to your history.",
       "cancel": "Cancel",
       "confirm": "Archive Job",
-      "archiving": "Archiving..."
+      "archiving": "Archiving...",
+      "error": "Unable to archive job."
     },
     "status": {
       "draft": "Draft",

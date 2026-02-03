@@ -26,7 +26,7 @@ const ArchiveJobModal = ({ isOpen, onClose, onConfirm, jobTitle }: ArchiveJobMod
       await onConfirm();
       handleClose();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to archive job.';
+      const message = error instanceof Error ? error.message : t('jobs.archiveModal.error');
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
