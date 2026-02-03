@@ -9,15 +9,15 @@ on:
 jobs:
   lint-and-static-analysis:
     name: Linting & Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Debug - Show package.json
         run: cat package.json
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -33,12 +33,12 @@ jobs:
 
   build-and-type-check:
     name: Build & Type Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -55,14 +55,14 @@ jobs:
 
   security-scanning:
     name: Security Scanning
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch full git history for TruffleHog
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -74,7 +74,7 @@ jobs:
         run: npm audit --audit-level=critical
       
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@v3.88.0
+        uses: trufflesecurity/trufflehog@v3.92.5
         with:
           path: ./
           base: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}"
@@ -83,12 +83,12 @@ jobs:
 
   localization-check:
     name: Localization Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -134,12 +134,12 @@ jobs:
 
   accessibility-audit:
     name: Accessibility Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -177,12 +177,12 @@ jobs:
 
   responsive-layout-tests:
     name: Responsive Layout Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -267,12 +267,12 @@ jobs:
 
   test-suite:
     name: Unit and Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -298,12 +298,12 @@ jobs:
 
   code-coverage:
     name: Code Coverage Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -316,9 +316,9 @@ jobs:
 
   governance-audit:
     name: Governance Policy Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       
       - name: Check for forbidden patterns
         run: |
@@ -352,7 +352,7 @@ jobs:
 
   all-checks-complete:
     name: All CI Guardrails Passed
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: 
       - lint-and-static-analysis
       - build-and-type-check

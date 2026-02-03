@@ -31,7 +31,8 @@ const SignInPage = () => {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      console.error('Sign in error:', signInError);
+      setError(t('auth.signIn.error'));
       setLoading(false);
       return;
     }
@@ -61,6 +62,7 @@ const SignInPage = () => {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              maxLength={254} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signIn.emailPlaceholder')}
             />
@@ -78,6 +80,7 @@ const SignInPage = () => {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              maxLength={128} // Security: Limit input length to prevent DoS
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               placeholder={t('auth.signIn.passwordPlaceholder')}
             />

@@ -7,11 +7,14 @@ import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
+import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
+import { formatDate } from '../../lib/date';
 
 const JobDetailPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
@@ -93,42 +96,52 @@ const JobDetailPage = () => {
   const renderActions = () => {
     if (!job) return null;
 
+    // Draft: Can send to client
     if (job.status === 'draft') {
       return (
-        <button
-          type="button"
-          onClick={() => performStatusChange('sent')}
-          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
-        >
-          Send
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('sent')}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          >
+            {t('jobs.actions.send')}
+          </button>
+        </>
       );
     }
 
+    // Sent: Can mark as approved by client
     if (job.status === 'sent') {
       return (
-        <button
-          type="button"
-          onClick={() => performStatusChange('approved')}
-          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
-        >
-          Approve
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('approved')}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            {t('jobs.actions.approve')}
+          </button>
+        </>
       );
     }
 
+    // Approved: Can start work
     if (job.status === 'approved') {
       return (
-        <button
-          type="button"
-          onClick={() => performStatusChange('in_progress')}
-          className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
-        >
-          Start Job
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('in_progress')}
+            className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
+          >
+            {t('jobs.actions.start')}
+          </button>
+        </>
       );
     }
 
+    // In Progress: Can complete or archive (cancel)
     if (job.status === 'in_progress') {
       return (
         <>
@@ -137,44 +150,85 @@ const JobDetailPage = () => {
             onClick={() => performStatusChange('completed')}
             className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
           >
-            Complete Job
+            {t('jobs.actions.complete')}
+          </button>
+          <button
+            type="button"
+            onClick={() => performStatusChange('archived')}
+            className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
+          >
+            {t('jobs.actions.archive')}
+          </button>
+        </>
+      );
+    }
+
+    // Completed: Can invoice or archive
+    if (job.status === 'completed') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('invoiced')}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          >
+            {t('jobs.actions.invoice')}
           </button>
           <button
             type="button"
             onClick={() => performStatusChange('archived')}
             className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
           >
-            Archive
+            {t('jobs.actions.archive')}
           </button>
         </>
       );
     }
 
-    if (job.status === 'completed') {
+    // Invoiced: Can mark as paid
+    if (job.status === 'invoiced') {
       return (
-        <button
-          type="button"
-          onClick={() => performStatusChange('archived')}
-          className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
-        >
-          Archive
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('paid')}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            {t('jobs.actions.paid')}
+          </button>
+        </>
       );
     }
 
+    // Paid: Can archive
+    if (job.status === 'paid') {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => performStatusChange('archived')}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
+          >
+            {t('jobs.actions.archive')}
+          </button>
+        </>
+      );
+    }
+
+    // Archived: No actions available
     return null;
   };
 
   if (!jobId) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">No job selected.</p>
+        <p className="text-sm text-red-700">{t('jobs.detail.noSelection')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.detail.backToJobs')}
         </button>
       </main>
     );
@@ -195,13 +249,13 @@ const JobDetailPage = () => {
   if (query.error || !job) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">Unable to load job details.</p>
+        <p className="text-sm text-red-700">{t('jobs.detail.errorLoading')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.detail.backToJobs')}
         </button>
       </main>
     );
@@ -211,39 +265,41 @@ const JobDetailPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold text-slate-500">Job #{job.id}</p>
+          <p className="text-xs font-semibold text-slate-500">{t('jobs.card.jobNum', { id: job.id })}</p>
           <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
-          <p className="text-sm text-slate-600">{job.description || 'No description provided'}</p>
+          <p className="text-sm text-slate-600">{job.description || t('jobs.detail.noDescription')}</p>
         </div>
         <SyncBadge state={syncState} />
       </div>
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-base font-semibold text-slate-900">Details</h2>
+        <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.sectionTitle')}</h2>
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Status</dt>
-            <dd className="font-medium text-slate-900 capitalize">{job.status.replace('_', ' ')}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.status')}</dt>
+            <dd className="font-medium text-slate-900">
+              <JobStatusBadge status={job.status} />
+            </dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Client ID</dt>
+            <dt className="text-slate-600">{t('jobs.detail.labels.clientId')}</dt>
             <dd className="font-medium text-slate-900">{job.client_id}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Property ID</dt>
+            <dt className="text-slate-600">{t('jobs.detail.labels.propertyId')}</dt>
             <dd className="font-medium text-slate-900">{job.property_id}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Service Date</dt>
-            <dd className="font-medium text-slate-900">{job.service_date || 'Not scheduled'}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.serviceDate')}</dt>
+            <dd className="font-medium text-slate-900">{job.service_date || t('jobs.detail.notScheduled')}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Created</dt>
-            <dd className="font-medium text-slate-900">{new Date(job.created_at).toLocaleString()}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.created')}</dt>
+            <dd className="font-medium text-slate-900">{formatDate(job.created_at)}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Updated</dt>
-            <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.updated')}</dt>
+            <dd className="font-medium text-slate-900">{formatDate(job.updated_at)}</dd>
           </div>
         </dl>
       </section>
@@ -277,10 +333,10 @@ const JobDetailPage = () => {
                 >
                   <div>
                     <p className="font-semibold text-slate-900">{invoice.invoice_number}</p>
-                    <p className="text-xs text-slate-500 capitalize">{invoice.status.replace('_', ' ')}</p>
+                    <p className="text-xs text-slate-500">{t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`, invoice.status)}</p>
                   </div>
                   <div className="text-sm font-semibold text-slate-900">
-                    {formatCurrency(invoice.total_amount ?? 0)}
+                    {formatCurrency((invoice.total_amount ?? 0) / 100, 'CAD', locale)}
                   </div>
                 </Link>
               </li>
@@ -291,8 +347,8 @@ const JobDetailPage = () => {
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-slate-900">Quick Actions</h2>
-          <span className="text-xs text-slate-500">Uses optimistic updates</span>
+          <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.quickActions')}</h2>
+          <span className="text-xs text-slate-500">{t('jobs.detail.optimisticNote')}</span>
         </div>
         <div className="flex flex-wrap gap-2">{renderActions()}</div>
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
@@ -303,7 +359,7 @@ const JobDetailPage = () => {
         onClick={() => navigate('/jobs')}
         className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
       >
-        Back to Jobs
+        {t('jobs.detail.backToJobs')}
       </button>
     </main>
   );
