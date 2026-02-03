@@ -31,22 +31,18 @@ export const validateReturnUrl = (url: string): string => {
     const returnUrlObj = new URL(url);
     const siteUrlObj = new URL(siteUrl);
 
-    // Check if SITE_URL implies a development environment (localhost/127.0.0.1)
-    const isDev = siteUrlObj.hostname === "localhost" || siteUrlObj.hostname === "127.0.0.1";
+    const originsMatch = returnUrlObj.origin === siteUrlObj.origin;
 
-    if (isDev) {
-      // In dev, allow localhost and 127.0.0.1 explicitly to handle variations
-      if (returnUrlObj.hostname === "localhost" || returnUrlObj.hostname === "127.0.0.1") {
-        return url;
-      }
-    }
+    // Check if SITE_URL implies a development environment and if the return URL is also local.
+    const isSiteDev = siteUrlObj.hostname === "localhost" || siteUrlObj.hostname === "127.0.0.1";
+    const isReturnUrlLocal = returnUrlObj.hostname === "localhost" || returnUrlObj.hostname === "127.0.0.1";
+    const isDevAllowed = isSiteDev && isReturnUrlLocal;
 
-    // Strict origin check for production (and dev if exact match)
-    if (returnUrlObj.origin === siteUrlObj.origin) {
+    if (originsMatch || isDevAllowed) {
       return url;
     }
 
-    // Explicitly throw to trigger catch block
+    // If neither condition is met, the URL is invalid.
     throw new Error("Invalid returnUrl origin");
 
   } catch (error) {
