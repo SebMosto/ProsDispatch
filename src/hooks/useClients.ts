@@ -58,12 +58,15 @@ export const useClients = () => {
     queryFn,
   });
 
-  return {
-    clients: query.data ?? [],
-    loading: query.isLoading,
-    error: query.error ?? null,
-    refetch: query.refetch,
-  };
+  return useMemo(
+    () => ({
+      clients: query.data ?? [],
+      loading: query.isLoading,
+      error: query.error ?? null,
+      refetch: query.refetch,
+    }),
+    [query.data, query.error, query.isLoading, query.refetch],
+  );
 };
 
 export type UseClientsReturn = ReturnType<typeof useClients>;
