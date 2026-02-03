@@ -12,8 +12,8 @@ import { PageLoader } from './components/ui/PageLoader';
 
 // Lazy loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
-const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
-const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/auth/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const CreateJobPage = lazy(() => import('./pages/jobs/CreateJobPage'));
 const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
