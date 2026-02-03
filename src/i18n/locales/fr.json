@@ -5,6 +5,7 @@
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "mainNavigation": "Navigation principale",
       "dashboard": "Tableau de bord",
       "jobs": "Travaux",
       "newJob": "Nouveau travail",

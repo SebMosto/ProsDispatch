@@ -47,7 +47,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
         <div className="brand" aria-label={t('layout.brand')}>
           {t('layout.brand')}
         </div>
-        <nav aria-label="Main navigation" className="flex items-center gap-3">
+        <nav aria-label={t('layout.nav.mainNavigation')} className="flex items-center gap-3">
           {user ? (
             <>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/dashboard">
