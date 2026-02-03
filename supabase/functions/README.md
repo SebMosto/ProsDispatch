@@ -43,6 +43,7 @@ Creates a Stripe Checkout session for new subscriptions.
 - `STRIPE_SECRET_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
+- `SITE_URL` - Your application's URL for return URL validation (e.g., `https://your-app.com` or `http://localhost:5173` for local dev)
 
 ### 3. create-portal-session
 Creates a Stripe Customer Portal session for managing subscriptions.
@@ -68,6 +69,7 @@ Creates a Stripe Customer Portal session for managing subscriptions.
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `SITE_URL` - Your application's URL for return URL validation (e.g., `https://your-app.com` or `http://localhost:5173` for local dev)
 
 ## Development
 
@@ -101,6 +103,7 @@ supabase functions deploy stripe-webhook
 # Set environment variables (secrets)
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...
 supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
+supabase secrets set SITE_URL=https://your-app.com
 ```
 
 ## Configuration
