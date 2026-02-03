@@ -3,8 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import React from 'react';
 
-// Mocking i18n behavior
-const changeLanguageMock = vi.fn().mockResolvedValue(undefined);
+// Use vi.hoisted to ensure the mock is created before the module mock factory uses it
+const { changeLanguageMock } = vi.hoisted(() => {
+  return { changeLanguageMock: vi.fn().mockResolvedValue(undefined) };
+});
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
