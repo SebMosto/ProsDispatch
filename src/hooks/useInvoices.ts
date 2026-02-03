@@ -108,7 +108,7 @@ export const useJobInvoices = (jobId?: string) => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.error, query.isLoading, query.refetch],
+    [query.data, query.error, query.isLoading],
   );
 };
 
