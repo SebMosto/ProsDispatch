@@ -1,10 +1,8 @@
 import JobCard from './JobCard';
 import { useJobs } from '../../hooks/useJobs';
-import { useTranslation } from 'react-i18next';
 
 const JobList = () => {
   const { jobs, loading, error, refetch } = useJobs();
-  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -21,14 +19,14 @@ const JobList = () => {
   if (error) {
     return (
       <section className="space-y-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        <p className="font-semibold">{t('jobs.list.error')}</p>
+        <p className="font-semibold">Unable to load jobs</p>
         <p className="text-red-600">{error.message}</p>
         <button
           type="button"
           onClick={() => refetch()}
           className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-500"
         >
-          {t('jobs.list.retry')}
+          Retry
         </button>
       </section>
     );
@@ -37,8 +35,8 @@ const JobList = () => {
   if (!jobs.length) {
     return (
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-        <h3 className="text-base font-semibold text-slate-900">{t('jobs.list.title')}</h3>
-        <p className="text-slate-600">{t('jobs.list.empty')}</p>
+        <h3 className="text-base font-semibold text-slate-900">Jobs</h3>
+        <p className="text-slate-600">No jobs found. Create your first job to get started.</p>
       </section>
     );
   }
@@ -46,8 +44,8 @@ const JobList = () => {
   return (
     <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-slate-900">{t('jobs.list.title')}</h3>
-        <span className="text-xs text-slate-500">{t('jobs.list.total', { count: jobs.length })}</span>
+        <h3 className="text-base font-semibold text-slate-900">Jobs</h3>
+        <span className="text-xs text-slate-500">{jobs.length} total</span>
       </div>
       <div className="space-y-3">
         {jobs.map((job) => (

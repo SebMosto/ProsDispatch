@@ -26,7 +26,6 @@ export default defineConfig({
         'src/lib/jobStatus.ts',
         'src/persistence/usePersistentForm.ts',
         'src/repositories/base.ts',
-        'src/repositories/jobRepository.ts',
         'src/schemas/job.ts',
       ],
       thresholds: {

@@ -7,12 +7,12 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { getJobCreateSchema, JobCreateSchema as StaticJobCreateSchema } from '../../schemas/job';
+import { JobCreateSchema } from '../../schemas/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
 
-type FormValues = z.infer<typeof StaticJobCreateSchema>;
+type FormValues = z.infer<typeof JobCreateSchema>;
 
 const initialValues: FormValues = {
   client_id: '',
@@ -37,9 +37,6 @@ const CreateJobForm = () => {
 
   const hasAppliedDraft = useRef(false);
 
-  // Memoize the schema to react to language changes
-  const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
-
   const {
     register,
     handleSubmit,
@@ -58,28 +55,15 @@ const CreateJobForm = () => {
     hasAppliedDraft.current = true;
   }, [draft.values, draft.hydrated, reset]);
 
-  const debounceRef = useRef<number | null>(null);
-  const { setValues, hydrated } = draft;
-
   useEffect(() => {
-    if (!hydrated) return undefined;
+    if (!draft.hydrated) return undefined;
 
     const subscription = watch((value) => {
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-      debounceRef.current = window.setTimeout(() => {
-        setValues(value as FormValues);
-      }, 300);
+      draft.setValues(value as FormValues);
     });
 
-    return () => {
-      subscription.unsubscribe();
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-    };
-  }, [hydrated, setValues, watch]);
+    return () => subscription.unsubscribe();
+  }, [draft, draft.hydrated, watch]);
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
