@@ -2,17 +2,18 @@ import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import { AuthProvider, ProtectedRoute } from './lib/auth';
+import { ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
 import { routePatterns } from './lib/router';
-import { useAuth } from './lib/auth';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthProvider } from '@/context/AuthContext';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
 
 // Lazy loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
-const SignUpPage = lazy(() => import('./pages/auth/SignUpPage'));
-const SignInPage = lazy(() => import('./pages/auth/SignInPage'));
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { LoginPage } from './pages/auth/LoginPage';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const CreateJobPage = lazy(() => import('./pages/jobs/CreateJobPage'));
 const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
@@ -102,8 +103,8 @@ const App = () => {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<SignInPage />} />
-              <Route path="/register" element={<SignUpPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               <Route
                 path="/dashboard"
                 element={
