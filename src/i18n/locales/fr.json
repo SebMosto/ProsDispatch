@@ -152,6 +152,14 @@
       "invoice": "Marquer comme facturé",
       "paid": "Marquer comme payé"
     },
+    "archiveModal": {
+      "title": "Archiver le travail en cours?",
+      "message": "Vous êtes sur le point d'archiver « {{title}} » alors qu'il est toujours en cours.",
+      "warning": "Cette action ne peut pas être annulée. Le travail sera déplacé vers votre historique.",
+      "cancel": "Annuler",
+      "confirm": "Archiver le travail",
+      "archiving": "Archivage..."
+    },
     "status": {
       "draft": "Brouillon",
       "sent": "Envoyé",

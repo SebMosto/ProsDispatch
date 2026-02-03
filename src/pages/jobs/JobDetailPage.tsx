@@ -8,6 +8,7 @@ import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import JobStatusBadge from '../../components/jobs/JobStatusBadge';
+import ArchiveJobModal from '../../components/jobs/ArchiveJobModal';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
@@ -19,6 +20,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -93,6 +95,10 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleArchiveConfirm = async () => {
+    await performStatusChange('archived');
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -154,7 +160,7 @@ const JobDetailPage = () => {
           </button>
           <button
             type="button"
-            onClick={() => performStatusChange('archived')}
+            onClick={() => setShowArchiveModal(true)}
             className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
           >
             {t('jobs.actions.archive')}
@@ -361,6 +367,13 @@ const JobDetailPage = () => {
       >
         {t('jobs.detail.backToJobs')}
       </button>
+
+      <ArchiveJobModal
+        isOpen={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        onConfirm={handleArchiveConfirm}
+        jobTitle={job.title}
+      />
     </main>
   );
 };
