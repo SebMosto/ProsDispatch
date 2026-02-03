@@ -8,6 +8,7 @@ import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import JobStatusBadge from '../../components/jobs/JobStatusBadge';
+import ArchiveJobModal from '../../components/jobs/ArchiveJobModal';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
@@ -19,6 +20,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -91,6 +93,10 @@ const JobDetailPage = () => {
     } finally {
       void queryClient.invalidateQueries({ queryKey: ['jobs'] });
     }
+  };
+
+  const handleArchiveConfirm = async () => {
+    await performStatusChange('archived');
   };
 
   const renderActions = () => {
@@ -365,6 +371,13 @@ const JobDetailPage = () => {
       >
         {t('jobs.detail.backToJobs')}
       </button>
+
+      <ArchiveJobModal
+        isOpen={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        onConfirm={handleArchiveConfirm}
+        jobTitle={job.title}
+      />
     </main>
   );
 };
