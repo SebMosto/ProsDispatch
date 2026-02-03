@@ -1,16 +1,14 @@
 import { Controller } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import SyncBadge from '../system/SyncBadge';
 import AddressAutocomplete from '../ui/AddressAutocomplete';
 import { CANADIAN_PROVINCES } from '../../schemas/property';
-import { useCreatePropertyForm } from './useCreatePropertyForm';
+import { useCreatePropertyForm, TEXT } from './useCreatePropertyForm';
 
 interface CreatePropertyFormProps {
   clientId?: string;
 }
 
 const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
-  const { t } = useTranslation();
   const {
     formMethods,
     syncState,
@@ -31,8 +29,8 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <header className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{t('properties.create.title')}</h2>
-          <p className="text-sm text-slate-600">{t('properties.create.subtitle')}</p>
+          <h2 className="text-lg font-semibold text-slate-900">{TEXT.title}</h2>
+          <p className="text-sm text-slate-600">{TEXT.subtitle}</p>
         </div>
         <SyncBadge state={syncState} />
       </header>
@@ -51,7 +49,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="client_id">
-            {t('properties.create.labels.clientId')}
+            {TEXT.clientId}
           </label>
           <input
             id="client_id"
@@ -64,7 +62,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="address_line1">
-            {t('properties.create.labels.addressLine1')}
+            {TEXT.addressLine1}
           </label>
           <Controller
             control={control}
@@ -75,7 +73,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
                 value={field.value}
                 onChange={field.onChange}
                 onSelect={applyAddressSelection}
-              placeholder={t('properties.create.placeholders.addressLine1')}
+                placeholder="123 Main St"
               />
             )}
           />
@@ -84,7 +82,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="address_line2">
-            {t('properties.create.labels.addressLine2')}
+            {TEXT.addressLine2}
           </label>
           <input
             id="address_line2"
@@ -98,7 +96,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800" htmlFor="city">
-              {t('properties.create.labels.city')}
+              {TEXT.city}
             </label>
             <input
               id="city"
@@ -111,7 +109,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800" htmlFor="province">
-              {t('properties.create.labels.province')}
+              {TEXT.province}
             </label>
             <select
               id="province"
@@ -130,7 +128,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="postal_code">
-            {t('properties.create.labels.postalCode')}
+            {TEXT.postalCode}
           </label>
           <input
             id="postal_code"
@@ -143,7 +141,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-800" htmlFor="nickname">
-            {t('properties.create.labels.nickname')}
+            {TEXT.nickname}
           </label>
           <input
             id="nickname"
@@ -159,7 +157,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           className="flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSubmitting}
         >
-          {isSubmitting ? t('auth.shared.loading') : t('properties.create.actions.submit')}
+          {isSubmitting ? TEXT.loading : TEXT.action}
         </button>
       </form>
     </section>

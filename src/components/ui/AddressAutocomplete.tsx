@@ -10,7 +10,7 @@ interface AddressSelection {
   description?: string;
 }
 
-interface AddressAutocompleteProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onSelect'> {
+interface AddressAutocompleteProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
   onChange: (value: string) => void;
   onSelect?: (selection: AddressSelection) => void;

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
 
 // Full list for DB validity, UI can filter to ['QC', 'ON']
 export const CANADIAN_PROVINCES = [
@@ -18,36 +17,23 @@ export const CANADIAN_PROVINCES = [
   'YT',
 ] as const;
 
-const requiredOptions = (t?: TFunction, key?: string) => ({
-  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-  invalid_type_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-});
-
-export const getPropertySchema = (t?: TFunction) => z.object({
-  client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
-    .uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
-  address_line1: z.string(requiredOptions(t, 'validation.required'))
-    .min(5, t ? t('validation.addressTooShort') : 'validation.addressTooShort'),
+export const PropertySchema = z.object({
+  client_id: z.string().uuid('Invalid client ID'),
+  address_line1: z.string().min(5, 'Address too short'),
   address_line2: z.string().optional(),
-  city: z.string(requiredOptions(t, 'validation.cityRequired'))
-    .min(2, t ? t('validation.cityRequired') : 'validation.cityRequired'),
-  province: z.enum(CANADIAN_PROVINCES, requiredOptions(t, 'validation.required')),
+  city: z.string().min(2, 'City required'),
+  province: z.enum(CANADIAN_PROVINCES),
   postal_code: z
-    .string(requiredOptions(t, 'validation.required'))
-    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, t ? t('validation.invalidPostalCode') : 'validation.invalidPostalCode'),
+    .string()
+    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 'Invalid Format (A1A 1A1)'),
   country: z.string().default('CA'),
   nickname: z.string().optional(),
 });
 
-export const getPropertyUpdateSchema = (t?: TFunction) => getPropertySchema(t).partial().refine(
+export const PropertyUpdateSchema = PropertySchema.partial().refine(
   (data) => Object.values(data).some((value) => value !== undefined),
-  { message: t ? t('validation.propertyUpdateRequired') : 'validation.propertyUpdateRequired' },
+  { message: 'At least one field is required to update a property' },
 );
-
-// Fallback for static analysis
-export const PropertySchema = getPropertySchema();
-
-export const PropertyUpdateSchema = getPropertyUpdateSchema();
 
 export type PropertyCreateInput = z.infer<typeof PropertySchema>;
 export type PropertyUpdateInput = z.infer<typeof PropertyUpdateSchema>;

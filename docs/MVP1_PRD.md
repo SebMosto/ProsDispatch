@@ -100,7 +100,7 @@ ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service provide
 | Email Notifications | ✔ |
 | i18n & A11y | ✔ |
 | Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Contractor SaaS Subscription (Monetization) | ✔ — SaaS Subscription ($20/mo, Dynamic Pricing via Stripe Lookup Keys). |
+| Contractor SaaS Subscription (Stripe Billing) | ✔ |
 
 ---
 
@@ -196,39 +196,35 @@ MVP1 permits:
 
 # **5\. MVP1 User Stories (Gherkin)**
 
-### **5.1 Roadmap (Spec Status)**
-
-* **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **READY FOR DEV**
-
-### **5.2 Contractor Registration**
+### **Contractor Registration**
 
 Given I am a new contractor    
 When I provide my email, password, and business name    
 Then my account is created    
 And I am prompted to complete my profile  
 
-### **5.3 Create Job**
+### **Create Job**
 
 Given I am logged in    
 When I create a new job    
 And specify client, property, service date, and description    
 Then the job is saved in Draft state
 
-### **5.4 Send Job to Homeowner**
+### **Send Job to Homeowner**
 
 Given a job is in Draft    
 When I click "Send to Homeowner"    
 Then an email link is sent via Resend    
 And the job moves to Sent state
 
-### **5.5 Homeowner Approval**
+### **Homeowner Approval**
 
 Given I receive an invite link    
 When I open the link    
 Then I can Approve or Decline    
 And no login is required
 
-### **5.6 Invoice Payment**
+### **Invoice Payment**
 
 Given a job is Invoiced    
 When the homeowner clicks "Pay Invoice"    
@@ -482,31 +478,29 @@ Draft → Sent → Approved → In Progress → Completed → Invoiced → Paid 
 
 1. Auth \+ Profile
 
-2. Contractor SaaS Subscription (Monetization)
+2. Client \+ Property (Shadow Registry)
 
-3. Client \+ Property (Shadow Registry)
+3. Job Engine \+ State Machine
 
-4. Job Engine \+ State Machine
+4. Invite Flow
 
-5. Invite Flow
+5. Invoice Generator
 
-6. Invoice Generator
+6. Stripe Checkout
 
-7. Stripe Checkout
+7. Email Notifications
 
-8. Email Notifications
+8. Dashboard (Active/History)
 
-9. Dashboard (Active/History)
+9. Settings
 
-10. Settings
+10. Admin Portal (read-only)
 
-11. Admin Portal (read-only)
+11. i18n
 
-12. i18n
+12. A11y
 
-13. A11y
-
-14. Final Audit
+13. Final Audit
 
 ---
 
