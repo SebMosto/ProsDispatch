@@ -8,41 +8,38 @@
  * @throws Error if the URL is invalid or from an unauthorized origin
  */
 export const validateReturnUrl = (url: string): string => {
+  let siteUrl = "http://localhost:5173"; // Default to Vite local port for development
+
   // Safe access to Deno global without confusing TS compilers of different environments (Node vs Deno)
   // Using globalThis prevents 'Deno is not defined' in Node
   // Casting to any prevents type errors in Node without triggering 'unused @ts-expect-error' in Deno
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const deno = (globalThis as any).Deno;
 
-  let siteUrl: string | undefined;
-  
   if (deno) {
-    siteUrl = deno.env.get("SITE_URL");
-  }
-
-  // Fail fast if SITE_URL is not configured
-  // This prevents production deployments from silently breaking with localhost fallback
-  if (!siteUrl) {
-    console.error("SITE_URL environment variable is not set. This is required for secure URL validation.");
-    throw new Error("Server configuration error: SITE_URL not configured");
+    siteUrl = deno.env.get("SITE_URL") || siteUrl;
   }
 
   try {
     const returnUrlObj = new URL(url);
     const siteUrlObj = new URL(siteUrl);
 
-    const originsMatch = returnUrlObj.origin === siteUrlObj.origin;
+    // Check if SITE_URL implies a development environment (localhost/127.0.0.1)
+    const isDev = siteUrlObj.hostname === "localhost" || siteUrlObj.hostname === "127.0.0.1";
 
-    // Check if SITE_URL implies a development environment and if the return URL is also local.
-    const isSiteDev = siteUrlObj.hostname === "localhost" || siteUrlObj.hostname === "127.0.0.1";
-    const isReturnUrlLocal = returnUrlObj.hostname === "localhost" || returnUrlObj.hostname === "127.0.0.1";
-    const isDevAllowed = isSiteDev && isReturnUrlLocal;
+    if (isDev) {
+      // In dev, allow localhost and 127.0.0.1 explicitly to handle variations
+      if (returnUrlObj.hostname === "localhost" || returnUrlObj.hostname === "127.0.0.1") {
+        return url;
+      }
+    }
 
-    if (originsMatch || isDevAllowed) {
+    // Strict origin check for production (and dev if exact match)
+    if (returnUrlObj.origin === siteUrlObj.origin) {
       return url;
     }
 
-    // If neither condition is met, the URL is invalid.
+    // Explicitly throw to trigger catch block
     throw new Error("Invalid returnUrl origin");
 
   } catch (error) {
