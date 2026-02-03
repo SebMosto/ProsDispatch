@@ -28,17 +28,20 @@ describe('LanguageSwitcher', () => {
     vi.spyOn(Storage.prototype, 'setItem');
   });
 
-  it('updates localStorage when language is changed to French', async () => {
+  it.each([
+    { lang: 'fr', text: 'Français' },
+    { lang: 'en', text: 'English' },
+  ])('updates localStorage when language is changed to $text', async ({ lang, text }) => {
     render(<LanguageSwitcher />);
 
-    const frButton = screen.getByText('Français');
-    fireEvent.click(frButton);
+    const button = screen.getByText(text);
+    fireEvent.click(button);
 
-    expect(changeLanguageMock).toHaveBeenCalledWith('fr');
+    expect(changeLanguageMock).toHaveBeenCalledWith(lang);
 
     // Wait for the promise chain to resolve and verify localStorage
     await waitFor(() => {
-        expect(localStorage.setItem).toHaveBeenCalledWith('i18nextLng', 'fr');
+      expect(localStorage.setItem).toHaveBeenCalledWith('i18nextLng', lang);
     });
   });
 });
