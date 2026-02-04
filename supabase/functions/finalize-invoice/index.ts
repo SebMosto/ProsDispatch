@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
     drawText(`Subtotal: $${(totals.subtotal / 100).toFixed(2)}`, 350, y);
     y -= 20;
 
-    for (const tax of totals.tax_data) {
+    for (const tax of totals.taxData) {
        drawText(`${tax.label} (${(tax.rate * 100).toFixed(3)}%): $${(tax.amount / 100).toFixed(2)}`, 350, y);
        y -= 20;
     }
