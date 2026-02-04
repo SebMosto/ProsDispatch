@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { JobCreateInput } from '../schemas/job';
 import { useCreateJobMutation } from './useJobMutations';
 
@@ -13,7 +13,8 @@ export const useCreateJob = (options?: UseCreateJobOptions) => {
     const job = await mutation.mutateAsync(input);
     options?.onSuccess?.();
     return job;
-  }, [mutation, options]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only depend on onSuccess, not the entire options object
+  }, [mutation, options?.onSuccess]);
 
   return useMemo(
     () => ({

@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
-import LanguageSwitcher from './components/LanguageSwitcher';
 import { AuthProvider, ProtectedRoute, useAuth } from './lib/auth';
 import { Link, Navigate, Route, Routes, routePatterns } from './lib/router';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
 
@@ -19,6 +19,8 @@ const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
 const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
 const JobsListPage = lazy(() => import('./pages/jobs/JobsListPage'));
+
+// Client Pages
 const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
 const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage'));
@@ -32,6 +34,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
+
   const isPublicInvoice = pathname.startsWith('/pay/');
 
   if (isPublicInvoice) {
@@ -89,9 +92,6 @@ const AppShell = ({ children }: { children: ReactNode }) => {
 };
 
 const App = () => {
-  // Use a key based on the language to force a full re-render of the app shell
-  // when the language changes. This ensures that all components, including
-  // those using Zod resolvers or memoized translations, are refreshed.
   const { i18n } = useTranslation();
 
   return (

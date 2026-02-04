@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,8 @@ import { useAuthActions } from '@/hooks/useAuth';
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, loading, error: authError } = useAuthActions();
+  const { signIn } = useAuthActions();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(getLoginSchema(t)),
@@ -20,12 +22,13 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginSchema) => {
+    setAuthError(null);
     try {
       await signIn(data);
       navigate('/');
-    } catch (err) {
-      // The hook already sets the error state.
-      console.error('Login failed', err);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setAuthError(message || t('auth.error.generic'));
     }
   };
 
@@ -109,10 +112,10 @@ export function LoginPage() {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={form.formState.isSubmitting}
               className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
             >
-              {loading ? (
+              {form.formState.isSubmitting ? (
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </span>
@@ -124,7 +127,7 @@ export function LoginPage() {
                   />
                 </span>
               )}
-              {loading ? t('common.loading') : t('auth.login.button')}
+              {form.formState.isSubmitting ? t('common.loading') : t('auth.login.button')}
             </button>
           </div>
         </form>
