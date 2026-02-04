@@ -1,6 +1,6 @@
 // Using Deno 2 compatible imports
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+import { createStripeClient, createCheckoutSession, Stripe } from "../_shared/stripe.ts";
 import { getErrorStatus } from "../_shared/errors.ts";
 import { validateReturnUrl } from "../_shared/security.ts";
 
@@ -63,10 +63,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2023-10-16",
-      httpClient: Stripe.createFetchHttpClient(),
-    });
+    const stripe = createStripeClient(stripeSecretKey);
 
     const { priceId, returnUrl } = await req.json();
 
@@ -124,7 +121,7 @@ Deno.serve(async (req) => {
     }
 
     // Create Checkout Session
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    const session = await createCheckoutSession(stripe, sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
-import { advanceJobStatus } from '../../lib/jobStatus';
+import { validateJobTransition } from '../../lib/stateMachines';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
@@ -56,7 +56,8 @@ const JobDetailPage = () => {
 
     let nextStatus: JobRecord['status'];
     try {
-      nextStatus = advanceJobStatus(job.status, target);
+      validateJobTransition(job.status, target);
+      nextStatus = target;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to update status';
       setActionError(message);

@@ -5,7 +5,7 @@ import type { z } from 'zod';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { PropertySchema } from '../../schemas/property';
+import { PropertySchema } from '../../schemas/mvp1/property';
 import { propertyRepository } from '../../repositories/propertyRepository';
 import { type AddressSelection } from '../ui/AddressAutocomplete';
 import { type SyncBadgeState } from '../system/SyncBadge';

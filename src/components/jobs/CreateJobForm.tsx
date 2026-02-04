@@ -7,7 +7,7 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { JobCreateSchema } from '../../schemas/job';
+import { JobCreateSchema } from '../../schemas/mvp1/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';

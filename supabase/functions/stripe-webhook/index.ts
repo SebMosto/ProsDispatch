@@ -1,5 +1,5 @@
-import Stripe from 'https://esm.sh/stripe@14.14.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createStripeClient, constructEvent } from '../_shared/stripe.ts'
 
 console.log("Stripe Webhook Function Initialized")
 
@@ -16,10 +16,7 @@ Deno.serve(async (req) => {
       return new Response("Server Configuration Error", { status: 500 })
     }
 
-    const stripe = new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-      httpClient: Stripe.createFetchHttpClient(),
-    })
+    const stripe = createStripeClient(STRIPE_SECRET_KEY)
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
@@ -32,7 +29,7 @@ Deno.serve(async (req) => {
     const body = await req.text()
     let event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET)
+      event = constructEvent(stripe, body, signature, STRIPE_WEBHOOK_SECRET)
     } catch (err) {
       console.error(`Webhook signature verification failed: ${err.message}`)
       return new Response(`Webhook Error: ${err.message}`, { status: 400 })

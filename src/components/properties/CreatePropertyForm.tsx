@@ -1,7 +1,7 @@
 import { Controller } from 'react-hook-form';
 import SyncBadge from '../system/SyncBadge';
 import AddressAutocomplete from '../ui/AddressAutocomplete';
-import { CANADIAN_PROVINCES } from '../../schemas/property';
+import { CANADIAN_PROVINCES } from '../../schemas/mvp1/property';
 import { useCreatePropertyForm, TEXT } from './useCreatePropertyForm';
 
 interface CreatePropertyFormProps {

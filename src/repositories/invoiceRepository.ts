@@ -1,6 +1,6 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
-import type { InvoiceDraftInput, InvoiceItemInput } from '../schemas/invoice';
+import type { InvoiceDraftInput, InvoiceItemInput } from '../schemas/mvp1/invoice';
 import type { Database } from '../types/database.types';
 import type { RepositoryError, RepositoryResult } from './base';
 import { BaseRepository } from './base';

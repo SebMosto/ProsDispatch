@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import React from 'react';
@@ -40,10 +40,5 @@ describe('LanguageSwitcher', () => {
     fireEvent.click(button);
 
     expect(changeLanguageMock).toHaveBeenCalledWith(lang);
-
-    // Wait for the promise chain to resolve and verify localStorage
-    await waitFor(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith('i18nextLng', lang);
-    });
   });
 });

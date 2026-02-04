@@ -8,6 +8,8 @@ export const INVOICE_STATUSES = [
   'overdue',
 ] as const;
 
+export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+
 export const INVOICE_PAYMENT_METHODS = [
   'stripe',
   'cash',

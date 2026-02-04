@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-quer
 import { useAuth } from '../lib/auth';
 import { clientRepository, type ClientRecord } from '../repositories/clientRepository';
 import type { RepositoryError } from '../repositories/base';
-import type { ClientCreateInput, ClientUpdateInput } from '../schemas/client';
+import type { ClientCreateInput, ClientUpdateInput } from '../schemas/mvp1/client';
 
 export type CachedClient = ClientRecord & { primary_property?: unknown };
 

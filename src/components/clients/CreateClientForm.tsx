@@ -6,7 +6,7 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { getClientSchema, ClientSchema as StaticClientSchema } from '../../schemas/client';
+import { getClientSchema, ClientSchema as StaticClientSchema } from '../../schemas/mvp1/client';
 import { useCreateClientMutation } from '../../hooks/useClientMutations';
 import { useTranslation } from 'react-i18next';
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { JobCreateInput } from '../schemas/job';
+import type { JobCreateInput } from '../schemas/mvp1/job';
 import { useCreateJobMutation } from './useJobMutations';
 
 interface UseCreateJobOptions {
