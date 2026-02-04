@@ -2,6 +2,16 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, RegisterSchema } from '@/schemas/auth';
 
+const getErrorMessage = (err: unknown): string => {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
+    return err.message;
+  }
+  return 'Unknown error';
+};
+
 export function useAuthActions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,11 +26,7 @@ export function useAuthActions() {
       });
       if (error) throw error;
     } catch (err) {
-      const errorMessage = err instanceof Error
-        ? err.message
-        : (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string')
-          ? err.message
-          : 'Unknown error';
+      const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       throw err;
     } finally {
@@ -49,11 +55,7 @@ export function useAuthActions() {
       // For now, assuming trigger or subsequent profile completion step.
       return authData;
     } catch (err) {
-      const errorMessage = err instanceof Error
-        ? err.message
-        : (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string')
-          ? err.message
-          : 'Unknown error';
+      const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       throw err;
     } finally {
