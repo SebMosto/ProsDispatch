@@ -26,6 +26,11 @@ export function getErrorStatus(error: unknown): number {
     return 500;
   }
 
+  // 400 Bad Request - client errors (missing fields, invalid input)
+  if (message.includes("missing") || message.includes("invalid") || message.includes("required")) {
+    return 400;
+  }
+
   // 401 Unauthorized - authentication issues
   if (message.includes("unauthorized") || message.includes("not authenticated")) {
     return 401;
@@ -34,11 +39,6 @@ export function getErrorStatus(error: unknown): number {
   // 404 Not Found - resource not found
   if (message.includes("not found") || message.includes("stripe customer")) {
     return 404;
-  }
-
-  // 400 Bad Request - client errors (missing fields, invalid input)
-  if (message.includes("missing") || message.includes("invalid") || message.includes("required")) {
-    return 400;
   }
 
   // 500 Internal Server Error - unexpected errors, Stripe API errors, database errors
