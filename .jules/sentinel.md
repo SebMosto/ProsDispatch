@@ -15,7 +15,7 @@
 **Learning:** Over-reliance on Service Role keys in server-side functions bypasses Row Level Security (RLS), increasing the blast radius if the function is compromised or contains logic errors.
 **Prevention:** Always default to using the client provided `Authorization` header to create a Supabase client. Only upgrade to Service Role if strictly necessary (e.g., accessing data the user explicitly cannot see but the system needs).
 
-## 2025-10-23 - Open Redirect in Payment Flows
-**Vulnerability:** Supabase Edge Functions (`create-checkout-session`, `create-portal-session`) accepted a user-provided `returnUrl` without validation, passing it directly to Stripe.
-**Learning:** External services like Stripe often rely on the application to validate redirect URLs. Omitting this check creates an Open Redirect vulnerability, allowing attackers to craft malicious payment links that redirect users to phishing sites after legitimate transactions.
-**Prevention:** Strictly validate all `returnUrl` parameters against the application's configured `SITE_URL` (or localhost in development). Use a shared security module to enforce this validation consistently across all functions.
+## 2025-10-23 - Hardcoded Credentials in Source Code
+**Vulnerability:** Hardcoded Supabase URL and Anonymous Key were found in `src/lib/supabase.ts`, bypassing environment variables.
+**Learning:** Hardcoding credentials, even "public" ones, prevents environment switching (e.g., local vs. prod) and creates a false sense of security. It also breaks the 12-Factor App methodology.
+**Prevention:** Always use `import.meta.env` (or equivalent) for configuration. Implement runtime checks to fail fast if valid configuration is missing.
