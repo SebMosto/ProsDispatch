@@ -320,6 +320,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       
+      - name: Run Canonical Constraints Check
+        run: npm run check:canonical
+
       - name: Check for forbidden patterns
         run: |
           echo "Scanning for governance violations..."
