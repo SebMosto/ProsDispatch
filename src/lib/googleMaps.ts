@@ -1,3 +1,10 @@
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 type GoogleMaps = typeof window.google extends { maps: infer M } ? M : undefined;
 
 let loadPromise: Promise<GoogleMaps | undefined> | null = null;

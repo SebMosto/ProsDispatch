@@ -22,7 +22,7 @@ describe('JobCreateSchema', () => {
   it('rejects short titles', () => {
     expect(() =>
       JobCreateSchema.parse({ ...validCreatePayload, title: 'a' })
-    ).toThrow(/validation.titleRequired/);
+    ).toThrow(/Title must be at least 2 characters/);
   });
 
   it('rejects descriptions over 2000 characters', () => {
@@ -31,13 +31,13 @@ describe('JobCreateSchema', () => {
         ...validCreatePayload,
         description: 'a'.repeat(2001),
       })
-    ).toThrow(/validation.descriptionTooLong/);
+    ).toThrow(/Description must not exceed 2000 characters/);
   });
 
   it('rejects invalid service dates', () => {
     expect(() =>
       JobCreateSchema.parse({ ...validCreatePayload, service_date: '2024/12/15' })
-    ).toThrow(/validation.invalidDate/);
+    ).toThrow(/Service date must be in YYYY-MM-DD format/);
   });
 
   it('rejects non-enum statuses', () => {
@@ -68,13 +68,13 @@ describe('JobUpdateSchema', () => {
 
   it('requires at least one field', () => {
     expect(() => JobUpdateSchema.parse({})).toThrow(
-      /validation.jobUpdateRequired/
+      /At least one field is required to update a job/
     );
   });
 
   it('validates UUID fields', () => {
     expect(() =>
       JobUpdateSchema.parse({ client_id: 'not-a-uuid' })
-    ).toThrow(/validation.clientIdInvalid/);
+    ).toThrow(/Client ID must be a valid UUID/);
   });
 });

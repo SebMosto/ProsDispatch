@@ -13,12 +13,12 @@ export const calculateInvoiceTotals = (items: InvoiceItemInput[]) => {
 
   const taxData = [
     {
-      label: 'taxes.GST',
+      label: 'GST',
       rate: GST_RATE,
       amount: gst,
     },
     {
-      label: 'taxes.QST',
+      label: 'QST',
       rate: QST_RATE,
       amount: qst,
     },

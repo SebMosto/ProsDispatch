@@ -2,6 +2,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,32 +14,12 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  // Validate required environment variables
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-
-  if (!supabaseUrl || !supabaseAnonKey || !stripeKey) {
-    return new Response(JSON.stringify({ error: "Missing Environment Variables" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-
-  // Validate Authorization header
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader) {
-    return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 401,
-    });
-  }
-
   try {
     // Validate required environment variables
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const siteUrl = Deno.env.get("SITE_URL");
 
     if (!supabaseUrl || !supabaseAnonKey || !stripeSecretKey) {
       return new Response(
@@ -97,6 +78,10 @@ Deno.serve(async (req) => {
       throw new Error("Missing returnUrl");
     }
 
+    // Validate returnUrl to prevent Open Redirect
+    // This will throw an error if validation fails
+    validateReturnUrl(returnUrl, siteUrl);
+
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
     const { data: profile, error: profileError } = await supabaseClient
@@ -147,7 +132,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("Error in create-checkout-session:", error);
-    
+
     const statusCode = getErrorStatus(error);
 
     // Security: Do not expose raw error messages to the client.
@@ -157,9 +142,11 @@ Deno.serve(async (req) => {
       // For 400s, it's often helpful to know *what* was wrong, but we must be careful.
       // We will allow specific known safe errors.
       publicMessage = "Bad Request";
-      
+
+      // SECURITY: We expose certain client-facing errors but hide server configuration errors.
       if (error instanceof Error) {
-        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
+        if (error.message.startsWith("Missing ") ||
+            (error.message.startsWith("Invalid ") && !error.message.includes("Internal Server Error"))) {
            publicMessage = error.message;
         }
       }

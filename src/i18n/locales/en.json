@@ -1,11 +1,11 @@
 {
   "layout": {
     "brand": "ProsDispatch",
-    "initials": "PD",
     "languageLabel": "Language selection",
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "mainNavigation": "Main navigation",
       "dashboard": "Dashboard",
       "jobs": "Jobs",
       "newJob": "New Job",
@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Direct charges only",
-        "description": "Collect payment via Stripe Connect Standard without holding funds or stored balances."
+        "description": "Collect payment via Stripe Connect Standard without escrow or stored balances."
       },
       "compliance": {
         "title": "Canada ready",
@@ -38,10 +38,6 @@
   },
   "footer": {
     "note": "Mobile-first layout adapts to screens as small as 320px."
-  },
-  "offline": {
-    "title": "You’re offline",
-    "body": "Changes are saved on your device. You can submit when you’re back online."
   },
   "auth": {
     "shared": {
@@ -55,7 +51,6 @@
       "emailPlaceholder": "you@example.com",
       "passwordPlaceholder": "Enter your password",
       "button": "Sign in",
-      "error": "Invalid email or password",
       "noAccount": "Don't have an account yet?"
     },
     "signUp": {
@@ -68,17 +63,12 @@
       "emailPlaceholder": "you@example.com",
       "passwordPlaceholder": "Create a secure password",
       "button": "Create account",
-      "error": "Unable to create account. Please check your details and try again.",
       "haveAccount": "Already registered?"
     },
     "dashboard": {
       "greeting": "Welcome back",
       "title": "Dashboard",
       "subtitle": "Your contractor profile is ready.",
-      "subscriptionTest": "Subscription Test",
-      "testConnection": "Test the payment connection below.",
-      "testUpgrade": "Test Upgrade (Stripe)",
-      "processing": "Processing...",
       "notProvided": "Not provided",
       "role": "Role",
       "sessionNote": "Your session is secured with Supabase Auth.",
@@ -95,11 +85,6 @@
     }
   },
   "jobs": {
-    "createPage": {
-       "breadCrumb": "Jobs",
-       "header": "Create & Manage Jobs",
-       "subHeader": "Drafts are saved locally even if you reload."
-    },
     "create": {
       "title": "Create job",
       "subtitle": "Track work for a client and property.",
@@ -125,69 +110,8 @@
         "auth": "You must be signed in to create a job."
       }
     },
-    "detail": {
-      "noSelection": "No job selected.",
-      "backToJobs": "Back to Jobs",
-      "errorLoading": "Unable to load job details.",
-      "noDescription": "No description provided",
-      "sectionTitle": "Details",
-      "notScheduled": "Not scheduled",
-      "quickActions": "Quick Actions",
-      "optimisticNote": "Uses optimistic updates",
-      "labels": {
-        "status": "Status",
-        "clientId": "Client ID",
-        "propertyId": "Property ID",
-        "serviceDate": "Service Date",
-        "created": "Created",
-        "updated": "Updated"
-      }
-    },
-    "actions": {
-      "send": "Send to Client",
-      "approve": "Mark as Approved",
-      "start": "Start Job",
-      "complete": "Complete Job",
-      "archive": "Archive Job",
-      "invoice": "Mark as Invoiced",
-      "paid": "Mark as Paid"
-    },
-    "status": {
-      "draft": "Draft",
-      "sent": "Sent",
-      "approved": "Approved",
-      "in_progress": "In Progress",
-      "completed": "Completed",
-      "invoiced": "Invoiced",
-      "paid": "Paid",
-      "archived": "Archived"
-    },
-    "card": {
-      "jobNum": "Job #{{id}}",
-      "noDescription": "No description provided",
-      "clientId": "Client ID",
-      "propertyId": "Property ID",
-      "serviceDate": "Service Date",
-      "notScheduled": "Not scheduled",
-      "lastUpdated": "Last Updated",
-      "created": "Created {{date}}",
-      "viewDetails": "View Details"
-    },
-    "list": {
-      "pageTitle": "Jobs",
-      "header": "Job Activity",
-      "subHeader": "Track job status and view recent updates.",
-      "error": "Unable to load jobs",
-      "retry": "Retry",
-      "title": "Jobs",
-      "empty": "No jobs found. Create your first job to get started.",
-      "total": "{{count}} total"
-    },
     "invoices": {
       "title": "Invoices",
-      "publicPage": {
-        "contractorDefault": "Pros Dispatch Contractor"
-      },
       "draftInvoice": "Draft Invoice",
       "errorLoading": "Unable to load invoices for this job.",
       "emptyState": "No invoices yet. Create a draft to get started.",
@@ -204,8 +128,7 @@
         "noteLabel": "Note (optional)",
         "cancel": "Cancel",
         "confirm": "Confirm Payment",
-        "saving": "Saving...",
-        "error": "Unable to mark invoice as paid."
+        "saving": "Saving..."
       },
       "form": {
         "header": "Invoice",
@@ -223,10 +146,6 @@
         "invoiceNumberPlaceholder": "Auto-generated on save",
         "statusLabel": "Status",
         "statusDraft": "Draft",
-        "statusSent": "Sent",
-        "statusPaid": "Paid",
-        "statusVoid": "Void",
-        "statusOverdue": "Overdue",
         "lineItemsTitle": "Line Items",
         "addItem": "+ Add Item",
         "noItems": "No items yet. Add your first line item.",
@@ -274,52 +193,11 @@
         "noLineItems": "No line items were recorded.",
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
-        "totalDueLabel": "Total Due",
-        "downloadPdf": "Download PDF"
-      }
-    }
-  },
-  "properties": {
-     "createPage": {
-       "breadCrumb": "Properties",
-       "header": "Create Property",
-       "subHeader": "Assign a property to an existing client.",
-       "backToClient": "Back to Client"
-     },
-    "create": {
-      "title": "Create property",
-      "subtitle": "Add a property for an existing client.",
-      "labels": {
-        "clientId": "Client ID",
-        "addressLine1": "Address line 1",
-        "addressLine2": "Address line 2 (optional)",
-        "city": "City",
-        "province": "Province",
-        "postalCode": "Postal code",
-        "nickname": "Property nickname (optional)"
-      },
-      "placeholders": {
-        "addressLine1": "123 Main St"
-      },
-      "actions": {
-        "submit": "Save property"
-      },
-      "statuses": {
-        "success": "Property saved."
-      },
-      "errors": {
-        "generic": "Unable to save property.",
-        "auth": "You must be logged in to create a property."
+        "totalDueLabel": "Total Due"
       }
     }
   },
   "clients": {
-    "createPage": {
-       "breadCrumb": "Clients",
-       "header": "Create Client",
-       "subHeader": "Add a new client to the registry.",
-       "backToClients": "Back to Clients"
-    },
     "create": {
       "title": "Create client",
       "subtitle": "Capture client details.",
@@ -348,102 +226,12 @@
         "generic": "Unable to save client.",
         "auth": "You must be logged in to create a client."
       }
-    },
-    "list": {
-      "pageTitle": "Clients",
-      "header": "Client Registry",
-      "subHeader": "View customers and their primary properties.",
-      "newClient": "New Client",
-      "title": "Clients",
-      "empty": "No clients yet. New clients will appear here.",
-      "error": "Unable to load clients.",
-      "cityFallback": "City unavailable",
-      "loading": "Loading...",
-      "unnamed": "Unnamed client",
-      "types": {
-        "business": "Business",
-        "individual": "Individual"
-      }
-    },
-    "detail": {
-      "error": "Unable to load client.",
-      "properties": "Properties",
-      "delete": "Delete client",
-      "deleting": "Deleting...",
-      "deleted": "Client deleted.",
-      "noSelection": "No client selected.",
-      "backToClients": "Back to Clients",
-      "idLabel": "Client #{{id}}",
-      "noEmail": "No email",
-      "loading": "Loading...",
-      "addProperty": "Add property",
-      "noProperties": "No properties yet.",
-      "primaryProperty": "Primary property",
-      "types": {
-         "business": "Business",
-         "individual": "Individual"
-      }
-    }
-  },
-  "taxes": {
-    "GST": "GST",
-    "QST": "QST"
-  },
-  "public": {
-    "invoice": {
-      "notAvailable": "Invoice not available",
-      "expired": "The invoice link may have expired or is invalid.",
-      "header": "Invoice {{number}}",
-      "from": "Invoice from {{name}}",
-      "totalDue": "Total Due",
-      "lineItems": "Line Items",
-      "noItems": "No line items were provided.",
-      "subtotal": "Subtotal",
-      "payNow": "Pay Now",
-      "downloadPdf": "Download PDF"
     }
   },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
     "updateRequired": "At least one field is required to update a client",
-    "nameRequired": "Name is required",
-    "descriptionRequired": "Description is required",
-    "qtyPositive": "Qty must be greater than zero",
-    "unitPriceNonNegative": "Unit price must be 0 or greater",
-    "titleRequired": "Title must be at least 2 characters",
-    "titleTooLong": "Title must not exceed 80 characters",
-    "descriptionTooLong": "Description must not exceed 2000 characters",
-    "invalidDate": "Service date must be in YYYY-MM-DD format",
-    "clientIdInvalid": "Invalid client ID",
-    "propertyIdInvalid": "Invalid property ID",
-    "jobUpdateRequired": "At least one field is required to update a job",
-    "addressTooShort": "Address too short",
-    "cityRequired": "City required",
-    "invalidPostalCode": "Invalid Format (A1A 1A1)",
-    "propertyUpdateRequired": "At least one field is required to update a property",
-    "amountInteger": "Amount must be an integer representing cents",
-    "amountNonNegative": "Amount must be zero or greater",
-    "taxLabelRequired": "Tax label is required",
-    "taxRateNonNegative": "Tax rate must be zero or greater",
-    "lineItemDescriptionRequired": "Line item description is required",
-    "quantityPositive": "Quantity must be greater than zero",
-    "jobIdUUID": "Job ID must be a valid UUID",
-    "contractorIdUUID": "Contractor ID must be a valid UUID",
-    "invoiceIdRequired": "Invoice ID is required",
-    "invoiceTokenRequired": "Invoice token is required",
-    "invoiceNumberRequired": "Invoice number is required",
-    "pdfUrlValid": "PDF URL must be valid",
-    "paymentNoteTooLong": "Payment note must be 1000 characters or less",
-    "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
-    "oneLineItemRequired": "At least one line item is required"
-  },
-  "taxes": {
-    "GST": "GST",
-    "QST": "QST"
-  },
-  "errors": {
-    "checkoutNoUrl": "Failed to start checkout: No URL returned.",
-    "unexpected": "An unexpected error occurred."
+    "nameRequired": "Name is required"
   }
 }
