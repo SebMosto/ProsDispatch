@@ -1,12 +1,10 @@
 import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import { ProtectedRoute } from './lib/auth';
+import { AuthProvider, ProtectedRoute, useAuth } from './lib/auth';
+import { Link, Navigate, Route, Routes, routePatterns } from './lib/router';
 import { useTranslation } from 'react-i18next';
-import { routePatterns } from './lib/router';
-import { useAuthContext } from '@/context/AuthContext';
-import { AuthProvider } from '@/context/AuthContext';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
 
@@ -28,7 +26,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const { pathname } = useLocation();
 
   useEffect(() => {

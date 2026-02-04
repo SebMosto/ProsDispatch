@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoginSchema, RegisterSchema } from '@/schemas/auth';
 
-export function useAuth() {
+export function useAuthActions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +15,13 @@ export function useAuth() {
         password: data.password,
       });
       if (error) throw error;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string')
+          ? err.message
+          : 'Unknown error';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -43,8 +48,13 @@ export function useAuth() {
       // But if we need manual creation, we'd do it here.
       // For now, assuming trigger or subsequent profile completion step.
       return authData;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string')
+          ? err.message
+          : 'Unknown error';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);

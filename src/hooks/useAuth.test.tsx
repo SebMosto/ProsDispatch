@@ -1,6 +1,6 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useAuth } from './useAuth';
+import { useAuthActions } from './useAuth';
 import { supabase } from '@/lib/supabase';
 
 // Mock Supabase
@@ -13,15 +13,15 @@ vi.mock('@/lib/supabase', () => ({
   },
 }));
 
-describe('useAuth Hook', () => {
+describe('useAuthActions Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should handle signIn success', async () => {
-    (supabase.auth.signInWithPassword as any).mockResolvedValue({ data: {}, error: null });
+    (supabase.auth.signInWithPassword as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ data: {}, error: null });
 
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuthActions());
 
     await act(async () => {
       await result.current.signIn({ email: 'test@example.com', password: 'password123' });
@@ -36,17 +36,17 @@ describe('useAuth Hook', () => {
   });
 
   it('should handle signIn failure', async () => {
-    (supabase.auth.signInWithPassword as any).mockResolvedValue({
+    (supabase.auth.signInWithPassword as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: null,
       error: { message: 'Invalid login credentials' },
     });
 
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuthActions());
 
     await act(async () => {
         try {
             await result.current.signIn({ email: 'test@example.com', password: 'wrong' });
-        } catch (e) {
+        } catch {
             // Expected
         }
     });

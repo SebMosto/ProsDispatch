@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Mail, User, Briefcase, Loader2, AlertCircle } from 'lucide-react';
 import { getRegisterSchema, RegisterSchema } from '@/schemas/auth';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthActions } from '@/hooks/useAuth';
 
 export function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp } = useAuth();
+  const { signUp } = useAuthActions();
   const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<RegisterSchema>({
@@ -28,8 +28,9 @@ export function RegisterPage() {
     try {
       await signUp(data);
       navigate('/'); // Or to a "Check your email" page
-    } catch (error: any) {
-      setAuthError(error.message || t('auth.error.generic'));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setAuthError(message || t('auth.error.generic'));
     }
   };
 

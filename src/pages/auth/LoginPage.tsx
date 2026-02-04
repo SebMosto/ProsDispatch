@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
 import { getLoginSchema, LoginSchema } from '@/schemas/auth';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthActions } from '@/hooks/useAuth';
 
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn } = useAuthActions();
   const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
@@ -26,8 +26,9 @@ export function LoginPage() {
     try {
       await signIn(data);
       navigate('/');
-    } catch (error: any) {
-      setAuthError(error.message || t('auth.error.generic'));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setAuthError(message || t('auth.error.generic'));
     }
   };
 
