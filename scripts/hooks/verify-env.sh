@@ -14,7 +14,8 @@ fi
 
 # 2. Check Types
 echo "🔍 Running Type Check..."
-if ! npm run typecheck; then
+npm run typecheck
+if [ $? -ne 0 ]; then
   echo "❌ Error: Type check failed."
   exit 1
 fi

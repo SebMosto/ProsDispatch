@@ -7,3 +7,5 @@
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
+2:14:50 PM [vite] hmr update /src/pages/jobs/JobDetailPage.tsx, /src/pages/invoices/InvoiceDetailPage.tsx, /src/pages/public/PublicInvoicePage.tsx, /src/components/invoices/InvoiceForm.tsx, /src/components/invoices/MarkPaidModal.tsx
+2:15:33 PM [vite] hmr update /src/pages/jobs/JobDetailPage.tsx, /src/pages/invoices/InvoiceDetailPage.tsx, /src/pages/public/PublicInvoicePage.tsx, /src/components/invoices/InvoiceForm.tsx, /src/components/invoices/MarkPaidModal.tsx
