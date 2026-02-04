@@ -45,6 +45,11 @@ Deno.serve(async (req) => {
       .eq('id', event.id)
       .maybeSingle()
 
+    if (lookupError) {
+      console.error('Error looking up existing event:', lookupError)
+      return new Response('Database error during idempotency check', { status: 500 })
+    }
+
     if (existingEvent) {
       console.log(`Event ${event.id} already processed. Skipping.`)
       return new Response(JSON.stringify({ received: true }), {
