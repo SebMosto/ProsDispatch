@@ -7,8 +7,6 @@
 
 import type { JobStatus } from '../schemas/job';
 
-export type { JobStatus };
-
 /**
  * Custom error class for illegal job status transitions
  */
@@ -20,8 +18,9 @@ export class IllegalJobStatusTransitionError extends Error {
     super(`Illegal transition from "${current}" to "${target}"`);
     this.name = 'IllegalJobStatusTransitionError';
     // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, IllegalJobStatusTransitionError);
+    if ('captureStackTrace' in Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (Error as any).captureStackTrace(this, IllegalJobStatusTransitionError);
     }
   }
 }
@@ -65,11 +64,6 @@ const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
 export function advanceJobStatus(current: JobStatus, target: JobStatus): JobStatus {
   // Check if transition is allowed
   const allowedTargets = ALLOWED_TRANSITIONS[current];
-
-  if (!allowedTargets) {
-     // If the current status is not in the map (should not happen if types are correct), throw
-     throw new Error(`Unknown status: ${current}`);
-  }
 
   if (!allowedTargets.includes(target)) {
     throw new IllegalJobStatusTransitionError(current, target);

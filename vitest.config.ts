@@ -21,13 +21,6 @@ export default defineConfig({
         '**/mockData/',
         'dist/',
       ],
-      // Only enforce coverage on critical business logic and schemas for now
-      include: [
-        'src/lib/jobStatus.ts',
-        'src/persistence/usePersistentForm.ts',
-        'src/repositories/base.ts',
-        'src/schemas/job.ts',
-      ],
       thresholds: {
         lines: 80,
         functions: 80,

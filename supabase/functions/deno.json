@@ -1,10 +1,9 @@
 {
-  "compilerOptions": {
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strict": true,
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler"
+  "imports": {
+    "stripe": "https://esm.sh/stripe@14.21.0?target=deno",
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@2"
+  },
+  "tasks": {
+    "test": "deno test --allow-all"
   }
 }

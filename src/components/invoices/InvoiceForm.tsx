@@ -6,27 +6,27 @@ import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
 import { useNavigate } from '../../lib/router';
 import { calculateInvoiceTotals } from '../../lib/taxCalculator';
-import { formatCurrency, fromCents, toCents } from '../../lib/currency';
+import { formatCurrency } from '../../lib/currency';
 import { useInvoiceMutations } from '../../hooks/useInvoices';
 import type { InvoiceDraftInput } from '../../schemas/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
-
-const InvoiceItemFormSchema = z.object({
-  description: z.string().min(1, 'Description is required'),
-  quantity: z.number().positive('Qty must be greater than zero'),
-  unitPrice: z.number().min(0, 'Unit price must be 0 or greater'),
-});
-
-const InvoiceFormSchema = z.object({
-  items: z.array(InvoiceItemFormSchema),
-});
-
-type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 
 type InvoiceFormProps = {
   jobId?: string;
   invoice?: InvoiceWithItems | null;
 };
+
+// Internal types for form state
+interface InvoiceFormValues {
+  items: {
+    description: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
+}
+
+const toCents = (value: number) => Math.round(value * 100);
+const fromCents = (value: number) => value / 100;
 
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
@@ -38,7 +38,8 @@ const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues
 };
 
 const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
   const { user } = useAuth();
   const navigate = useNavigate();
   const { createDraft, updateDraft, finalize } = useInvoiceMutations();
@@ -46,6 +47,19 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [showFinalizeDialog, setShowFinalizeDialog] = useState(false);
   const [localInvoice, setLocalInvoice] = useState<InvoiceWithItems | null>(invoice ?? null);
+
+  // Memoize the schema to react to language changes
+  const InvoiceFormSchema = useMemo(() => {
+    const InvoiceItemFormSchema = z.object({
+      description: z.string().min(1, t('validation.descriptionRequired')),
+      quantity: z.number().positive(t('validation.qtyPositive')),
+      unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),
+    });
+
+    return z.object({
+      items: z.array(InvoiceItemFormSchema),
+    });
+  }, [t]);
 
   useEffect(() => {
     setLocalInvoice(invoice ?? null);
@@ -346,7 +360,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
                     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
-                      {formatCurrency(lineAmount)}
+                      {formatCurrency(lineAmount / 100, 'CAD', locale)}
                     </div>
                   </div>
                 </div>
@@ -358,7 +372,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="flex items-center justify-between text-sm text-slate-700">
             <span>{t('jobs.invoices.form.subtotalLabel')}</span>
-            <span className="font-semibold">{formatCurrency(totals.subtotal)}</span>
+            <span className="font-semibold">{formatCurrency(totals.subtotal / 100, 'CAD', locale)}</span>
           </div>
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {totals.taxData.map((tax) => (
@@ -370,7 +384,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
             <span>{t('jobs.invoices.form.totalDueLabel')}</span>
-            <span>{formatCurrency(totals.total)}</span>
+            <span>{formatCurrency(totals.total / 100, 'CAD', locale)}</span>
           </div>
         </div>
 
