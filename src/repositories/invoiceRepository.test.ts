@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { invoiceRepository } from './invoiceRepository';
 import { supabase } from '../lib/supabase';
 
@@ -31,30 +31,23 @@ describe('InvoiceRepository', () => {
       const mockInvoice = { id: mockId, status: 'sent', invoice_items: [] };
 
       // Mock invoke response
-      (supabase.functions.invoke as any).mockResolvedValue({
+      (supabase.functions.invoke as Mock).mockResolvedValue({
         data: { success: true, token: mockToken, pdfUrl: mockPdfUrl },
         error: null,
       });
 
       // Mock fetchInvoiceWithItems response (implied internal call)
-      // We need to spy on the repository's private/internal method or mock the supabase chain it uses.
-      // Since fetchInvoiceWithItems uses `this.client.from...`, we need to mock that chain.
-      // But `invoiceRepository` extends `BaseRepository` which uses `supabase`.
-      // The `client` property in `BaseRepository` is protected.
-      // We can mock `supabase.from` which is what `client` likely refers to if `BaseRepository` uses the global supabase instance or initializes one.
-      // `BaseRepository` likely imports `supabase` from `../lib/supabase`.
-
       const mockSelect = vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({ data: mockInvoice, error: null })
-        })
+          single: vi.fn().mockResolvedValue({ data: mockInvoice, error: null }),
+        }),
       });
 
       // We need to handle the chain for fetchInvoiceWithItems: .from('invoices').select(...).eq('id', id).single()
-      (supabase.from as any).mockImplementation((table: string) => {
+      (supabase.from as Mock).mockImplementation((table: string) => {
         if (table === 'invoices') {
           return {
-            select: mockSelect
+            select: mockSelect,
           };
         }
         return { select: vi.fn() };
@@ -78,7 +71,7 @@ describe('InvoiceRepository', () => {
       const mockId = 'test-invoice-id';
       const mockError = 'Function execution failed';
 
-      (supabase.functions.invoke as any).mockResolvedValue({
+      (supabase.functions.invoke as Mock).mockResolvedValue({
         data: null,
         error: { message: mockError },
       });
@@ -90,18 +83,18 @@ describe('InvoiceRepository', () => {
     });
 
     it('should handle logic errors returned by edge function', async () => {
-        const mockId = 'test-invoice-id';
-        const mockLogicError = 'Invoice not found';
+      const mockId = 'test-invoice-id';
+      const mockLogicError = 'Invoice not found';
 
-        (supabase.functions.invoke as any).mockResolvedValue({
-          data: { error: mockLogicError },
-          error: null,
-        });
-
-        const result = await invoiceRepository.finalizeAndSend(mockId);
-
-        expect(result.error).toEqual({ message: mockLogicError, reason: 'validation' });
-        expect(result.data).toBeNull();
+      (supabase.functions.invoke as Mock).mockResolvedValue({
+        data: { error: mockLogicError },
+        error: null,
       });
+
+      const result = await invoiceRepository.finalizeAndSend(mockId);
+
+      expect(result.error).toEqual({ message: mockLogicError, reason: 'validation' });
+      expect(result.data).toBeNull();
+    });
   });
 });

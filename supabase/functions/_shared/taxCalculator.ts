@@ -17,7 +17,7 @@ export const calculateInvoiceTotals = (items: InvoiceItemInput[]) => {
   const qst = roundHalfUp(subtotal * QST_RATE);
   const total = subtotal + gst + qst;
 
-  const taxData = [
+  const tax_data = [
     {
       label: 'GST',
       rate: GST_RATE,
@@ -35,6 +35,6 @@ export const calculateInvoiceTotals = (items: InvoiceItemInput[]) => {
     gst,
     qst,
     total,
-    taxData,
+    tax_data,
   };
 };

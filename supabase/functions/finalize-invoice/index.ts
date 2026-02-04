@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
     // 4. Generate PDF
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
-    const { width, height } = page.getSize();
+    const { height } = page.getSize();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
     const drawText = (text: string, x: number, y: number, size: number = 12) => {
