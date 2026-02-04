@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { useAuth } from '../lib/auth';
 import { clientRepository, type ClientRecord } from '../repositories/clientRepository';
 import type { RepositoryError } from '../repositories/base';
@@ -7,7 +7,7 @@ import type { ClientCreateInput, ClientUpdateInput } from '../schemas/client';
 
 export type CachedClient = ClientRecord & { primary_property?: unknown };
 
-type CachedClientEntries = Array<[unknown, CachedClient[] | undefined]>;
+type CachedClientEntries = Array<[QueryKey, CachedClient[] | undefined]>;
 
 const buildOptimisticClient = (input: ClientCreateInput, contractorId: string): ClientRecord => {
   const now = new Date().toISOString();

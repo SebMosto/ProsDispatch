@@ -47,7 +47,7 @@ export class InvoiceRepository extends BaseRepository {
       quantity: item.quantity,
       unit_price: item.unit_price,
       amount: item.amount,
-    })) satisfies Database['public']['Tables']['invoice_items']['Insert'][];
+    }));
 
     const { error: insertError } = await this.client.from('invoice_items').insert(insertPayload);
     return this.toRepositoryError(insertError);
@@ -67,7 +67,7 @@ export class InvoiceRepository extends BaseRepository {
     }
 
     reportApiOnline();
-    return { data: data as InvoiceWithItems };
+    return { data: data as unknown as InvoiceWithItems };
   }
 
   async listByJob(jobId: string): Promise<RepositoryResult<InvoiceWithItems[]>> {
@@ -229,14 +229,14 @@ export class InvoiceRepository extends BaseRepository {
       .rpc('get_invoice_by_token', { access_token: token })
       .single();
 
-    const repositoryError = this.toRepositoryError(error);
+    const repositoryError = this.toRepositoryError(error as any);
 
     if (repositoryError) {
       return { data: null, error: repositoryError };
     }
 
     reportApiOnline();
-    return { data: data as InvoiceWithItems };
+    return { data: data as unknown as InvoiceWithItems };
   }
 
   async markAsPaid(

@@ -315,7 +315,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_invoice_by_token: {
+        Args: {
+          access_token: string
+        }
+        Returns: Database["public"]["Tables"]["invoices"]["Row"]
+      }
     }
     Enums: {
       client_type: "individual" | "business"
