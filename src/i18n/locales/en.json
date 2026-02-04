@@ -385,10 +385,6 @@
       }
     }
   },
-  "taxes": {
-    "GST": "GST",
-    "QST": "QST"
-  },
   "public": {
     "invoice": {
       "notAvailable": "Invoice not available",
