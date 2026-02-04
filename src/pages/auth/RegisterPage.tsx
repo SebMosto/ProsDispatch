@@ -25,9 +25,9 @@ export function RegisterPage() {
     try {
       await signUp(data);
       navigate('/'); // Or to a "Check your email" page
-    } catch (error) {
+    } catch (err) {
       // The hook already sets the error state.
-      console.error('Registration failed', error);
+      console.error('Registration failed', err);
     }
   };
 
