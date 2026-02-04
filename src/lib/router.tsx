@@ -104,7 +104,17 @@ export const Navigate = ({ to, replace, state }: { to: string; replace?: boolean
   return null;
 };
 
-export const Link = ({ to, children, className }: { to: string; children: ReactNode; className?: string }) => {
+export const Link = ({
+  to,
+  children,
+  className,
+  state,
+}: {
+  to: string;
+  children: ReactNode;
+  className?: string;
+  state?: unknown;
+}) => {
   const { navigate } = useRouter();
   return (
     <a
@@ -112,7 +122,7 @@ export const Link = ({ to, children, className }: { to: string; children: ReactN
       className={className}
       onClick={(event) => {
         event.preventDefault();
-        navigate(to);
+        navigate(to, { state });
       }}
     >
       {children}

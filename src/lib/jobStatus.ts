@@ -7,6 +7,8 @@
 
 import type { JobStatus } from '../schemas/job';
 
+export type { JobStatus };
+
 /**
  * Custom error class for illegal job status transitions
  */

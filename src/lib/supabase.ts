@@ -20,12 +20,17 @@ const createSafeFallbackClient = (): SupabaseClient<Database> => {
     {
       get: (_target, prop) => {
         if (prop === 'auth') {
+          // Casting to any because constructing exact AuthError types is verbose
+          // and this is just a fallback for missing env vars
           return {
-            getSession: async () => ({ data: { session: null }, error }),
-            onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } }, error }),
-            getUser: async () => ({ data: { user: null }, error }),
-            signOut: async () => ({ error }),
-          } satisfies SupabaseClient<Database>['auth'];
+            getSession: async () => ({ data: { session: null }, error: null }),
+            onAuthStateChange: () => ({
+              data: { subscription: { id: '', callback: () => {}, unsubscribe: () => {} } },
+              error: null,
+            }),
+            getUser: async () => ({ data: { user: null }, error: null }),
+            signOut: async () => ({ error: null }),
+          } as any;
         }
 
         if (prop === 'from') {
