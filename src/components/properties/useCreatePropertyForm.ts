@@ -1,18 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { PropertySchema } from '../../schemas/property';
+import { getPropertySchema } from '../../schemas/property';
 import { propertyRepository } from '../../repositories/propertyRepository';
 import { type AddressSelection } from '../ui/AddressAutocomplete';
 import { type SyncBadgeState } from '../system/SyncBadge';
 
 const DRAFT_STORAGE_KEY = 'property:create:draft';
 
-export type FormValues = z.infer<typeof PropertySchema>;
+// We need a way to get the type without the function call.
+// Since we don't have a static schema that matches the localized one exactly in terms of message keys but does in structure:
+// We can use ReturnType of the function.
+// But z.infer expects a ZodSchema instance.
+// So we use a dummy t function to get the type or use the static fallback schema for type inference if it matches structure.
+// Let's use the static fallback for type inference as it is safer and cleaner for now, assuming structure is identical.
+import { PropertySchema as StaticPropertySchema } from '../../schemas/property';
+
+export type FormValues = z.infer<typeof StaticPropertySchema>;
 
 const initialValues: FormValues = {
   client_id: '',
@@ -25,29 +34,12 @@ const initialValues: FormValues = {
   nickname: '',
 };
 
-export const TEXT = {
-  title: 'Create property',
-  subtitle: 'Add a property for an existing client.',
-  action: 'Save property',
-  loading: 'Saving...',
-  errors: {
-    generic: 'Unable to save property.',
-    auth: 'You must be logged in to create a property.',
-  },
-  addressLine1: 'Address line 1',
-  addressLine2: 'Address line 2 (optional)',
-  city: 'City',
-  province: 'Province',
-  postalCode: 'Postal code',
-  nickname: 'Property nickname (optional)',
-  clientId: 'Client ID',
-};
-
 interface UseCreatePropertyFormProps {
   clientId?: string;
 }
 
 export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -65,6 +57,8 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
 
   const hasAppliedDraft = useRef(false);
 
+  const PropertySchema = useMemo(() => getPropertySchema(t), [t]);
+
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(PropertySchema),
     defaultValues: draft.values,
@@ -74,7 +68,22 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     reset,
     watch,
     setValue,
+    clearErrors,
+    trigger,
+    formState: { errors },
   } = formMethods;
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;
@@ -116,7 +125,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     setSubmitSuccess(null);
 
     if (!user) {
-      setSubmitError(TEXT.errors.auth);
+      setSubmitError(t('properties.create.errors.auth'));
       return;
     }
 
@@ -127,7 +136,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     });
 
     if (!parsed.success) {
-      setSubmitError(parsed.error.issues[0]?.message ?? TEXT.errors.generic);
+      setSubmitError(parsed.error.issues[0]?.message ?? t('properties.create.errors.generic'));
       return;
     }
 
@@ -136,11 +145,11 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
       if (result.error) {
         throw result.error;
       }
-      setSubmitSuccess('Property saved.');
+      setSubmitSuccess(t('properties.create.statuses.success'));
       await draft.clearDraft();
       reset(baseValues);
     } catch (error) {
-      const message = error instanceof Error ? error.message : TEXT.errors.generic;
+      const message = error instanceof Error ? error.message : t('properties.create.errors.generic');
       setSubmitError(message);
     }
   };

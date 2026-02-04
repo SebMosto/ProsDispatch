@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import type { JobCreateInput } from '../schemas/job';
 import { useCreateJobMutation } from './useJobMutations';
 
@@ -9,11 +9,11 @@ interface UseCreateJobOptions {
 export const useCreateJob = (options?: UseCreateJobOptions) => {
   const mutation = useCreateJobMutation();
 
-  const wrappedCreate = useCallback(async (input: JobCreateInput) => {
+  const wrappedCreate = async (input: JobCreateInput) => {
     const job = await mutation.mutateAsync(input);
     options?.onSuccess?.();
     return job;
-  }, [mutation, options]);
+  };
 
   return useMemo(
     () => ({

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../lib/auth';
 import { clientRepository, type ClientRecord } from '../repositories/clientRepository';
 import type { RepositoryError } from '../repositories/base';
@@ -7,7 +7,7 @@ import type { ClientCreateInput, ClientUpdateInput } from '../schemas/client';
 
 export type CachedClient = ClientRecord & { primary_property?: unknown };
 
-type CachedClientEntries = Array<[QueryKey, CachedClient[] | undefined]>;
+type CachedClientEntries = Array<[unknown, CachedClient[] | undefined]>;
 
 const buildOptimisticClient = (input: ClientCreateInput, contractorId: string): ClientRecord => {
   const now = new Date().toISOString();
@@ -57,7 +57,7 @@ export const useCreateClientMutation = () => {
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
         });
       },
       onSettled: async () => {
@@ -100,7 +100,7 @@ export const useUpdateClientMutation = (clientId: string) => {
       },
       onError: (_err, _input, context) => {
         context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key, clients);
+          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
         });
       },
       onSettled: async () => {

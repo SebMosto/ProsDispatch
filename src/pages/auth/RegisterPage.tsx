@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,8 @@ import { useAuthActions } from '@/hooks/useAuth';
 export function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp, loading, error: authError } = useAuthActions();
+  const { signUp } = useAuthActions();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(getRegisterSchema(t)),
@@ -22,12 +24,13 @@ export function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterSchema) => {
+    setAuthError(null);
     try {
       await signUp(data);
       navigate('/'); // Or to a "Check your email" page
-    } catch (err) {
-      // The hook already sets the error state.
-      console.error('Registration failed', err);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setAuthError(message || t('auth.error.generic'));
     }
   };
 
@@ -152,10 +155,10 @@ export function RegisterPage() {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={form.formState.isSubmitting}
               className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
             >
-              {loading ? (
+              {form.formState.isSubmitting ? (
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </span>
@@ -167,7 +170,7 @@ export function RegisterPage() {
                   />
                 </span>
               )}
-              {loading ? t('common.loading') : t('auth.register.button')}
+              {form.formState.isSubmitting ? t('common.loading') : t('auth.register.button')}
             </button>
           </div>
         </form>
