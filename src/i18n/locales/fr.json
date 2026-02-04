@@ -385,10 +385,6 @@
       }
     }
   },
-  "taxes": {
-    "GST": "TPS",
-    "QST": "TVQ"
-  },
   "public": {
     "invoice": {
       "notAvailable": "Facture non disponible",
