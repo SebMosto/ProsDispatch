@@ -45,6 +45,12 @@ Deno.serve(async (req) => {
       .eq('id', event.id)
       .maybeSingle()
 
+    // Explicitly handle lookup errors (e.g. database connectivity issues)
+    if (lookupError) {
+      console.error(`Idempotency check failed: ${lookupError.message}`)
+      return new Response("Database Error", { status: 500 })
+    }
+
     if (existingEvent) {
       console.log(`Event ${event.id} already processed. Skipping.`)
       return new Response(JSON.stringify({ received: true }), {
