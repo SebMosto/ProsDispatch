@@ -5,7 +5,7 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import { ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
 import { routePatterns } from './lib/router';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/context/AuthContext';
 import { AuthProvider } from '@/context/AuthContext';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
@@ -28,7 +28,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -59,9 +59,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
         <div className="brand" aria-label={t('layout.brand')}>
           {t('layout.brand')}
         </div>
-        <nav aria-label="Main navigation" className="flex items-center gap-3">
+        <nav aria-label={t('layout.nav.mainNavigation')} className="flex items-center gap-3">
           {user ? (
-            <div className="flex items-center gap-3 md:hidden">
+            <>
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/dashboard">
                 {t('layout.nav.dashboard')}
               </Link>
@@ -74,7 +74,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
                 {t('layout.nav.clients')}
               </Link>
-            </div>
+            </>
           ) : null}
           <LanguageSwitcher />
         </nav>
