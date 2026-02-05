@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     // 2. Fetch Job & Verify Ownership & Status
     const { data: job, error: jobError } = await supabase
       .from("jobs")
-      .select("*, clients(*)")
+      .select("title, description, status, clients(email)")
       .eq("id", job_id)
       .eq("contractor_id", user.id)
       .single();
