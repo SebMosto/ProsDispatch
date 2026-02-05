@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
       const resend = new Resend(resendApiKey);
       const approveUrl = `${siteUrl || 'http://localhost:5173'}/approve/${token}`;
 
-      const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+      const { data: profile } = await supabase.from("profiles").select("business_name, full_name").eq("id", user.id).single();
 
       try {
         await resend.emails.send({
