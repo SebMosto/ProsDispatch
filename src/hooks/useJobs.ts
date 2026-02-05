@@ -32,3 +32,29 @@ export const useJobs = (params?: JobListParams) => {
 };
 
 export type UseJobsReturn = ReturnType<typeof useJobs>;
+
+export const useJobByToken = (token?: string) => {
+  const queryKey = useMemo(() => ['job', 'token', token], [token]);
+
+  const queryFn = useCallback(async () => {
+    if (!token) return null;
+    const result = await jobRepository.getByToken(token);
+    if (result.error) {
+      throw result.error;
+    }
+    return result.data;
+  }, [token]);
+
+  const query = useQuery<JobRecord | null, RepositoryError>({
+    queryKey,
+    queryFn,
+    enabled: !!token,
+    retry: false,
+  });
+
+  return {
+    job: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+  };
+};

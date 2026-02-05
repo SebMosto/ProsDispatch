@@ -18,6 +18,7 @@ const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
 const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
 const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
+const JobApprovalPage = lazy(() => import('./pages/public/JobApprovalPage'));
 const JobsListPage = lazy(() => import('./pages/jobs/JobsListPage'));
 
 // Client Pages
@@ -36,8 +37,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   }, [i18n.language]);
 
   const isPublicInvoice = pathname.startsWith('/pay/');
+  const isPublicApproval = pathname.startsWith('/approve/');
 
-  if (isPublicInvoice) {
+  if (isPublicInvoice || isPublicApproval) {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="border-b border-slate-200 bg-white">
@@ -192,6 +194,7 @@ const App = () => {
                 }
               />
               <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+              <Route path="/approve/:token" element={<JobApprovalPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
