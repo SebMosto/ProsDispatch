@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
-import { useLocation } from '../../lib/router';
+import { useParams } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
+import { billingService } from '../../services/billing';
 
 const PublicInvoicePage = () => {
-  const { pathname } = useLocation();
-  const segments = pathname.split('/').filter(Boolean);
-  const token = segments[1];
+  const { token } = useParams<{ token: string }>();
 
   const { invoice, loading, error } = useInvoiceByToken(token);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const taxData = useMemo(() => {
     if (!invoice?.tax_data || !Array.isArray(invoice.tax_data)) {
@@ -21,6 +21,22 @@ const PublicInvoicePage = () => {
     (invoice as { contractor_name?: string } | null)?.contractor_name ??
     invoice?.contractor_id ??
     'Contractor';
+
+  const handlePayNow = async () => {
+    if (!token) return;
+    setIsProcessingPayment(true);
+    try {
+        const { url } = await billingService.createInvoiceCheckoutSession({
+            invoiceToken: token,
+            returnUrl: window.location.href,
+        });
+        window.location.href = url;
+    } catch (err) {
+        console.error("Payment initiation failed", err);
+        alert("Failed to start payment. Please try again.");
+        setIsProcessingPayment(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -40,6 +56,8 @@ const PublicInvoicePage = () => {
     );
   }
 
+  const isPaid = invoice.status === 'paid';
+
   return (
     <main className="flex min-h-[60vh] flex-col gap-6">
       <header className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -55,6 +73,11 @@ const PublicInvoicePage = () => {
         <div className="mt-3 text-lg font-semibold text-slate-900">
           Total Due: {formatCurrency(invoice.total_amount)}
         </div>
+        {isPaid && (
+          <div className="mt-2 inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+            PAID
+          </div>
+        )}
       </header>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -98,13 +121,16 @@ const PublicInvoicePage = () => {
       </section>
 
       <section className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => console.log('Stripe Checkout')}
-          className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
-        >
-          Pay Now
-        </button>
+        {!isPaid && (
+          <button
+            type="button"
+            onClick={handlePayNow}
+            disabled={isProcessingPayment}
+            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:bg-emerald-400 disabled:cursor-not-allowed"
+          >
+            {isProcessingPayment ? 'Processing...' : 'Pay Now'}
+          </button>
+        )}
         {invoice.pdf_url ? (
           <a
             href={invoice.pdf_url}

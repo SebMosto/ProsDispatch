@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useJobByToken } from '../../hooks/useJobs';
-import { useLocation } from '../../lib/router';
+import { useParams } from '../../lib/router';
 import { supabase } from '../../lib/supabase';
 
 const JobApprovalPage = () => {
