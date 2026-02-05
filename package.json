@@ -15,6 +15,7 @@
     "typegen:remote": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/types/database.types.ts",
     "check:i18n": "node scripts/check-i18n.cjs",
     "check:stack": "node scripts/check-stack.cjs",
+    "check:canonical": "node scripts/check-canonical.cjs",
     "check:forbidden": "grep -rE 'bidding|escrow|marketplace|proposal' src/ && exit 1 || exit 0"
   },
   "dependencies": {

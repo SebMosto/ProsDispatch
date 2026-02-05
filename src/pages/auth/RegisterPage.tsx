@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Mail, User, Briefcase, Loader2, AlertCircle } from 'lucide-react';
-import { getRegisterSchema, RegisterSchema } from '@/schemas/auth';
+import { getRegisterSchema, RegisterSchema } from '@/schemas/mvp1/auth';
 import { useAuthActions } from '@/hooks/useAuth';
 
 export function RegisterPage() {

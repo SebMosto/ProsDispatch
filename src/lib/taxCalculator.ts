@@ -1,4 +1,4 @@
-import type { InvoiceItemInput } from '../schemas/invoice';
+import type { InvoiceItemInput } from '../schemas/mvp1/invoice';
 
 const GST_RATE = 0.05;
 const QST_RATE = 0.09975;

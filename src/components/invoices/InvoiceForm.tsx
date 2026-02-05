@@ -8,7 +8,7 @@ import { useNavigate } from '../../lib/router';
 import { calculateInvoiceTotals } from '../../lib/taxCalculator';
 import { formatCurrency, fromCents, toCents } from '../../lib/currency';
 import { useInvoiceMutations } from '../../hooks/useInvoices';
-import type { InvoiceDraftInput } from '../../schemas/invoice';
+import type { InvoiceDraftInput } from '../../schemas/mvp1/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
 
 const InvoiceItemFormSchema = z.object({

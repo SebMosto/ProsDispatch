@@ -5,7 +5,7 @@
  * as defined in SPEC-003 section 3.
  */
 
-import type { JobStatus } from '../schemas/job';
+import type { JobStatus } from '../schemas/mvp1/job';
 
 export type { JobStatus };
 

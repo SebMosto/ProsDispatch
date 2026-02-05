@@ -1,25 +1,24 @@
-import Stripe from 'https://esm.sh/stripe@14.14.0?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { constructWebhookEvent } from "../_shared/stripe.ts"
 
 console.log("Stripe Webhook Function Initialized")
 
 Deno.serve(async (req) => {
   try {
     // 1. Setup & Secrets
-    const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY')
+    // STRIPE_SECRET_KEY is handled in _shared/stripe.ts, but we might need checking it here?
+    // constructWebhookEvent will throw if it's missing when it tries to init Stripe.
+
     const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET')
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-    if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    if (!STRIPE_WEBHOOK_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       console.error("Missing environment variables")
       return new Response("Server Configuration Error", { status: 500 })
     }
 
-    const stripe = new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-      httpClient: Stripe.createFetchHttpClient(),
-    })
+    // No direct Stripe init
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
@@ -32,7 +31,8 @@ Deno.serve(async (req) => {
     const body = await req.text()
     let event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET)
+      // Use shared helper
+      event = constructWebhookEvent(body, signature, STRIPE_WEBHOOK_SECRET)
     } catch (err) {
       console.error(`Webhook signature verification failed: ${err.message}`)
       return new Response(`Webhook Error: ${err.message}`, { status: 400 })
