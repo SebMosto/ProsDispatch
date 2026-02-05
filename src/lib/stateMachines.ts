@@ -5,14 +5,14 @@ import { INVOICE_STATUSES } from '../schemas/mvp1/invoice';
 type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
 export const JOB_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
-  draft: ['sent', 'approved', 'archived'],
-  sent: ['approved', 'archived', 'draft'],
-  approved: ['in_progress', 'archived', 'draft'],
-  in_progress: ['completed', 'archived', 'approved'],
-  completed: ['invoiced', 'archived', 'in_progress'],
-  invoiced: ['paid', 'archived', 'completed'],
-  paid: ['archived', 'invoiced'],
-  archived: ['draft'],
+  draft: ['sent'],
+  sent: ['approved'],
+  approved: ['in_progress'],
+  in_progress: ['completed', 'archived'],
+  completed: ['invoiced', 'archived'],
+  invoiced: ['paid'],
+  paid: ['archived'],
+  archived: [],
 };
 
 export const INVOICE_TRANSITIONS: Record<InvoiceStatus, InvoiceStatus[]> = {
