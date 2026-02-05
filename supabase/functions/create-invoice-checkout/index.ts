@@ -2,17 +2,11 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { initStripe, createCheckoutSession } from "../_shared/stripe.ts";
 import { getErrorStatus } from "../_shared/errors.ts";
 import { validateReturnUrl } from "../_shared/security.ts";
-import { z } from "https://deno.land/x/zod/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const bodySchema = z.object({
-  invoiceToken: z.string().min(1, "invoiceToken is required"),
-  returnUrl: z.string().url("returnUrl must be a valid URL"),
-});
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -20,10 +14,11 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const body = await req.json();
-    
-    // Validate request body
-    const { invoiceToken, returnUrl } = bodySchema.parse(body);
+    const { invoiceToken, returnUrl } = await req.json();
+
+    if (!invoiceToken || !returnUrl) {
+      throw new Error("Missing invoiceToken or returnUrl");
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
@@ -112,21 +107,6 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error("Error creating invoice checkout:", error);
-    
-    // Handle Zod validation errors specifically
-    if (error instanceof z.ZodError) {
-      return new Response(
-        JSON.stringify({ 
-          error: "Invalid request body",
-          details: error.errors
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-    
     const status = getErrorStatus(error);
     const message = error instanceof Error ? error.message : "Internal Server Error";
 

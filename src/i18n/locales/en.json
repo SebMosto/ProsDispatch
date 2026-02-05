@@ -194,9 +194,6 @@
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
         "totalDueLabel": "Total Due"
-      },
-      "publicPage": {
-        "paymentError": "Failed to start payment. Please try again."
       }
     }
   },
