@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(5);
+SELECT plan(3);
 
 -- Helper to mock auth
 CREATE OR REPLACE FUNCTION tests.authenticate_as(user_id uuid) RETURNS void AS $$
