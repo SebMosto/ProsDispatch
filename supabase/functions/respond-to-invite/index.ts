@@ -59,7 +59,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 2. Update Job Status
+    // 2. Fetch job and verify status
+    const { data: job, error: jobError } = await supabaseAdmin
+      .from("jobs")
+      .select("status")
+      .eq("id", tokenData.job_id)
+      .single();
+
+    if (jobError || !job) {
+      return new Response(JSON.stringify({ error: "Job not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (job.status !== "sent") {
+      return new Response(JSON.stringify({ error: "This invite has already been responded to" }), {
+        status: 409, // Conflict
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // 3. Update Job Status
     const newStatus = action === "approve" ? "approved" : "archived";
 
     const { error: updateError } = await supabaseAdmin
@@ -71,7 +92,7 @@ Deno.serve(async (req) => {
       throw new Error(`Job update failed: ${updateError.message}`);
     }
 
-    // 3. Mark Token as Opened/Used
+    // 4. Mark Token as Opened/Used
     await supabaseAdmin
       .from("job_tokens")
       .update({ opened_at: new Date().toISOString() })
