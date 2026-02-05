@@ -6,7 +6,6 @@
  */
 
 import type { JobStatus } from '../schemas/mvp1/job';
-import { JOB_TRANSITIONS } from './stateMachines';
 
 export type { JobStatus };
 
@@ -27,7 +26,19 @@ export class IllegalJobStatusTransitionError extends Error {
   }
 }
 
-
+/**
+ * Defines all allowed job status transitions according to SPEC-003 section 3
+ */
+const ALLOWED_TRANSITIONS: Record<JobStatus, JobStatus[]> = {
+  draft: ['sent'],
+  sent: ['approved'],
+  approved: ['in_progress'],
+  in_progress: ['completed', 'archived'],
+  completed: ['invoiced', 'archived'],
+  invoiced: ['paid'],
+  paid: ['archived'],
+  archived: [],
+};
 
 /**
  * Advances a job status from current to target status.
@@ -53,7 +64,7 @@ export class IllegalJobStatusTransitionError extends Error {
  */
 export function advanceJobStatus(current: JobStatus, target: JobStatus): JobStatus {
   // Check if transition is allowed
-  const allowedTargets = JOB_TRANSITIONS[current];
+  const allowedTargets = ALLOWED_TRANSITIONS[current];
 
   if (!allowedTargets) {
      // If the current status is not in the map (should not happen if types are correct), throw
