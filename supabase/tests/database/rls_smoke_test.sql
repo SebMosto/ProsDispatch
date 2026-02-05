@@ -1,7 +1,7 @@
 BEGIN;
 
 -- Plan the tests
-SELECT plan(5);
+SELECT plan(2);
 
 -- Helper to switch user
 CREATE OR REPLACE FUNCTION tests.authenticate_as(user_id uuid) RETURNS void AS $$
