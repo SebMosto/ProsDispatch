@@ -28,7 +28,7 @@ const PublicInvoicePage = () => {
     try {
         const { url } = await billingService.createInvoiceCheckoutSession({
             invoiceToken: token,
-            returnUrl: window.location.href,
+            returnUrl: `${window.location.origin}${window.location.pathname}`,
         });
         window.location.href = url;
     } catch (err) {
