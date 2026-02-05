@@ -32,4 +32,9 @@ export const constructEvent = async (
   return stripe.webhooks.constructEvent(body, signature, webhookSecret);
 };
 
+// Backward compatibility with PR #288's API
+export const constructWebhookEvent = (body: string, signature: string, secret: string) => {
+  return initStripe().webhooks.constructEvent(body, signature, secret);
+};
+
 export { Stripe };
