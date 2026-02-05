@@ -23,22 +23,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     
     // Validate request body
-    let invoiceToken: string;
-    let returnUrl: string;
-    try {
-      ({ invoiceToken, returnUrl } = bodySchema.parse(body));
-    } catch (validationError) {
-      return new Response(
-        JSON.stringify({ 
-          error: "Invalid request body",
-          details: validationError instanceof z.ZodError ? validationError.errors : undefined
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
+    const { invoiceToken, returnUrl } = bodySchema.parse(body);
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
@@ -127,6 +112,21 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error("Error creating invoice checkout:", error);
+    
+    // Handle Zod validation errors specifically
+    if (error instanceof z.ZodError) {
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid request body",
+          details: error.errors
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
+    }
+    
     const status = getErrorStatus(error);
     const message = error instanceof Error ? error.message : "Internal Server Error";
 
