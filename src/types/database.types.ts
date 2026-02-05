@@ -190,38 +190,6 @@ export type Database = {
           },
         ]
       }
-      job_tokens: {
-        Row: {
-          token: string
-          job_id: string
-          expires_at: string
-          opened_at: string | null
-          created_at: string
-        }
-        Insert: {
-          token: string
-          job_id: string
-          expires_at?: string
-          opened_at?: string | null
-          created_at?: string
-        }
-        Update: {
-          token?: string
-          job_id?: string
-          expires_at?: string
-          opened_at?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "job_tokens_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "jobs"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       invoice_items: {
         Row: {
           amount: number
@@ -352,12 +320,6 @@ export type Database = {
           access_token: string
         }
         Returns: Database["public"]["Tables"]["invoices"]["Row"]
-      }
-      get_job_by_token: {
-        Args: {
-          access_token: string
-        }
-        Returns: Database["public"]["Tables"]["jobs"]["Row"]
       }
     }
     Enums: {

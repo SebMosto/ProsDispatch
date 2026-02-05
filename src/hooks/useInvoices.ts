@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { InvoiceDraftInput } from '../schemas/invoice';
+import type { InvoiceDraftInput } from '../schemas/mvp1/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
   invoiceRepository,

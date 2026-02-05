@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-quer
 import { useAuth } from '../lib/auth';
 import { jobRepository, type JobRecord } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
-import type { JobCreateInput, JobUpdateInput } from '../schemas/job';
+import type { JobCreateInput, JobUpdateInput } from '../schemas/mvp1/job';
 
 const normalizeServiceDate = (value: JobCreateInput['service_date']) => {
   if (!value) return null;

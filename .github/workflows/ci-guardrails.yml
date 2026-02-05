@@ -350,6 +350,21 @@ jobs:
           
           echo "✓ Governance audit completed"
 
+  canonical-constraints:
+    name: Canonical Constraints Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Run Canonical Checks
+        run: npm run check:canonical
+
   all-checks-complete:
     name: All CI Guardrails Passed
     runs-on: ubuntu-latest
@@ -363,6 +378,7 @@ jobs:
       - test-suite
       - code-coverage
       - governance-audit
+      - canonical-constraints
     steps:
       - name: All checks passed
         run: |

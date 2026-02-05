@@ -1,7 +1,7 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
-import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
+import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/mvp1/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
 
@@ -153,21 +153,6 @@ export class JobRepository
 
     reportApiOnline();
     return { data: null };
-  }
-
-  async getByToken(token: string): Promise<RepositoryResult<JobRecord>> {
-    const { data, error } = await this.client
-      .rpc('get_job_by_token', { access_token: token })
-      .maybeSingle();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError) {
-      return { data: null, error: repositoryError };
-    }
-
-    reportApiOnline();
-    return { data };
   }
 }
 

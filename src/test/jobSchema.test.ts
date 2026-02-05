@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { JobCreateSchema, JobUpdateSchema } from '../schemas/job';
+import { JobCreateSchema, JobUpdateSchema } from '../schemas/mvp1/job';
 
 describe('JobCreateSchema', () => {
   describe('Valid inputs', () => {

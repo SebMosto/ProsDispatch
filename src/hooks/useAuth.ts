@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { LoginSchema, RegisterSchema } from '@/schemas/auth';
+import { LoginSchema, RegisterSchema } from '@/schemas/mvp1/auth';
 
 export function useAuthActions() {
   const [loading, setLoading] = useState(false);

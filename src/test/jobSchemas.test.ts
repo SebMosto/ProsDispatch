@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JOB_STATUSES, JobCreateSchema, JobUpdateSchema } from '../schemas/job';
+import { JOB_STATUSES, JobCreateSchema, JobUpdateSchema } from '../schemas/mvp1/job';
 
 const validCreatePayload = {
   title: 'Kitchen faucet',

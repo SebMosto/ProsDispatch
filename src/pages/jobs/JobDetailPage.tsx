@@ -9,7 +9,6 @@ import { jobRepository, type JobRecord } from '../../repositories/jobRepository'
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
-import { supabase } from '../../lib/supabase';
 
 const JobDetailPage = () => {
   const { t } = useTranslation();
@@ -17,8 +16,6 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
-  const [sendingInvite, setSendingInvite] = useState(false);
-
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -93,27 +90,6 @@ const JobDetailPage = () => {
     }
   };
 
-  const handleSendInvite = async () => {
-    if (!job) return;
-    setSendingInvite(true);
-    setActionError(null);
-    try {
-      const { data, error } = await supabase.functions.invoke('send-job-invite', {
-        body: { job_id: job.id }
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
-      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to send invite';
-      setActionError(message);
-    } finally {
-      setSendingInvite(false);
-    }
-  };
-
   const renderActions = () => {
     if (!job) return null;
 
@@ -121,11 +97,10 @@ const JobDetailPage = () => {
       return (
         <button
           type="button"
-          onClick={handleSendInvite}
-          disabled={sendingInvite}
-          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-70"
+          onClick={() => performStatusChange('sent')}
+          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         >
-          {sendingInvite ? 'Sending...' : 'Send to Homeowner'}
+          Send
         </button>
       );
     }
@@ -134,10 +109,10 @@ const JobDetailPage = () => {
       return (
         <button
           type="button"
-          disabled={true}
-          className="inline-flex items-center justify-center rounded-lg bg-gray-400 px-3 py-2 text-sm font-semibold text-white shadow-sm cursor-not-allowed"
+          onClick={() => performStatusChange('approved')}
+          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         >
-          Waiting for Approval
+          Approve
         </button>
       );
     }
