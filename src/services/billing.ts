@@ -7,6 +7,6 @@ export const billingService = {
     });
 
     if (error) throw error;
-    return data as { url: string };
+    return CheckoutSessionResponseSchema.parse(data);
   },
 };
