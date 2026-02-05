@@ -4,9 +4,7 @@ import { useLocation } from '../../lib/router';
 import { supabase } from '../../lib/supabase';
 
 const JobApprovalPage = () => {
-  const { pathname } = useLocation();
-  const segments = pathname.split('/').filter(Boolean);
-  const token = segments[1]; // /approve/:token -> segments[0]='approve', segments[1]=token
+  const { token } = useParams<{ token: string }>();
 
   const { job, loading, error } = useJobByToken(token);
   const [processing, setProcessing] = useState(false);
