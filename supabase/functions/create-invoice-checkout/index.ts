@@ -10,8 +10,8 @@ const corsHeaders = {
 };
 
 const bodySchema = z.object({
-  invoiceToken: z.string(),
-  returnUrl: z.string(),
+  invoiceToken: z.string().min(1, "invoiceToken is required"),
+  returnUrl: z.string().url("returnUrl must be a valid URL"),
 });
 
 Deno.serve(async (req) => {
