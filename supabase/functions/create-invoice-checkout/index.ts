@@ -26,9 +26,7 @@ Deno.serve(async (req) => {
     let invoiceToken: string;
     let returnUrl: string;
     try {
-      const validated = bodySchema.parse(body);
-      invoiceToken = validated.invoiceToken;
-      returnUrl = validated.returnUrl;
+      ({ invoiceToken, returnUrl } = bodySchema.parse(body));
     } catch (validationError) {
       return new Response(
         JSON.stringify({ 
