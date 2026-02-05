@@ -154,21 +154,6 @@ export class JobRepository
     reportApiOnline();
     return { data: null };
   }
-
-  async getByToken(token: string): Promise<RepositoryResult<JobRecord>> {
-    const { data, error } = await this.client
-      .rpc('get_job_by_token', { access_token: token })
-      .maybeSingle();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError) {
-      return { data: null, error: repositoryError };
-    }
-
-    reportApiOnline();
-    return { data };
-  }
 }
 
 export const jobRepository = new JobRepository();
