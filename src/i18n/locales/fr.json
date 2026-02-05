@@ -194,6 +194,9 @@
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
         "totalDueLabel": "Total dû"
+      },
+      "publicPage": {
+        "paymentError": "Échec du démarrage du paiement. Veuillez réessayer."
       }
     }
   },

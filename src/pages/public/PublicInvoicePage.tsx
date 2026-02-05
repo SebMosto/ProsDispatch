@@ -1,14 +1,17 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
 import { useParams } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
 import { billingService } from '../../services/billing';
 
 const PublicInvoicePage = () => {
+  const { t } = useTranslation();
   const { token } = useParams<{ token: string }>();
 
   const { invoice, loading, error } = useInvoiceByToken(token);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const taxData = useMemo(() => {
     if (!invoice?.tax_data || !Array.isArray(invoice.tax_data)) {
@@ -25,6 +28,7 @@ const PublicInvoicePage = () => {
   const handlePayNow = async () => {
     if (!token) return;
     setIsProcessingPayment(true);
+    setPaymentError(null);
     try {
         const { url } = await billingService.createInvoiceCheckoutSession({
             invoiceToken: token,
@@ -33,7 +37,7 @@ const PublicInvoicePage = () => {
         window.location.href = url;
     } catch (err) {
         console.error("Payment initiation failed", err);
-        alert("Failed to start payment. Please try again.");
+        setPaymentError(t('jobs.invoices.publicPage.paymentError'));
         setIsProcessingPayment(false);
     }
   };
@@ -119,6 +123,12 @@ const PublicInvoicePage = () => {
           <span>{formatCurrency(invoice.total_amount)}</span>
         </div>
       </section>
+
+      {paymentError && (
+        <div className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          {paymentError}
+        </div>
+      )}
 
       <section className="flex flex-wrap items-center gap-3">
         {!isPaid && (
