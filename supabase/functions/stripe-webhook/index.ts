@@ -88,10 +88,12 @@ Deno.serve(async (req) => {
       switch (event.type) {
         case 'checkout.session.completed': {
           const session = event.data.object
+
+          // Handle Subscription Checkout
           const userId = session.client_reference_id
           const customerId = session.customer
 
-          if (userId && customerId) {
+          if (userId && customerId && session.mode === 'subscription') {
             const { error } = await supabase
               .from('profiles')
               .update({
@@ -101,6 +103,21 @@ Deno.serve(async (req) => {
               .eq('id', userId)
 
             if (error) throw error
+          }
+
+          // Handle Invoice Payment
+          if (session.metadata?.invoice_id && session.payment_status === 'paid') {
+             const { error } = await supabase
+               .from('invoices')
+               .update({
+                 status: 'paid',
+                 paid_at: new Date().toISOString(),
+                 stripe_payment_intent_id: session.payment_intent as string,
+                 payment_method: 'stripe'
+               })
+               .eq('id', session.metadata.invoice_id)
+
+             if (error) throw error
           }
           break
         }

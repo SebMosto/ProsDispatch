@@ -26,5 +26,25 @@ export const billingService = {
     }
 
     return data;
+  },
+
+  /**
+   * Creates a Stripe Checkout Session for an invoice
+   */
+  async createInvoiceCheckoutSession(invoiceToken: string, returnUrl: string): Promise<{ url: string }> {
+    const { data, error } = await supabase.functions.invoke('create-invoice-checkout', {
+      body: { invoiceToken, returnUrl },
+    });
+
+    if (error) {
+      console.error('Error creating invoice checkout session:', error);
+      throw error;
+    }
+
+    if (!data?.url) {
+        throw new Error('No Checkout URL returned');
+    }
+
+    return data;
   }
 };

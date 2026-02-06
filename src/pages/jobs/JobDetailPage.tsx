@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
+import { Link, routePaths, useLocation, useNavigate, useParams } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
@@ -12,13 +12,13 @@ import { formatCurrency } from '../../lib/currency';
 
 const JobDetailPage = () => {
   const { t } = useTranslation();
-  const { pathname, state } = useLocation();
+  const { state } = useLocation();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
-  const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
-  const jobId = jobIdFromState || jobIdFromPath;
+  const jobId = id || jobIdFromState;
   const { invoices, loading: invoicesLoading, error: invoicesError } = useJobInvoices(jobId);
 
   const queryClient = useQueryClient();
