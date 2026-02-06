@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
               name: `Invoice #${invoice.invoice_number}`,
               description: `Payment for Invoice #${invoice.invoice_number}`,
             },
-            unit_amount: invoice.total_amount,
+            unit_amount: invoice.total_amount * 100,
           },
           quantity: 1,
         },
