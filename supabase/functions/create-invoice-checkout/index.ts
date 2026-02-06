@@ -23,37 +23,34 @@ Deno.serve(async (req) => {
       throw new Error("Missing required environment variables");
     }
 
-    const { invoiceId, returnUrl } = await req.json();
+    const { invoiceToken, returnUrl } = await req.json();
 
-    if (!invoiceId) throw new Error("Missing invoiceId");
+    if (!invoiceToken) throw new Error("Missing invoiceToken");
     if (!returnUrl) throw new Error("Missing returnUrl");
 
     // Validate returnUrl
     validateReturnUrl(returnUrl, siteUrl);
 
-    // Use Service Role Key to bypass RLS and read invoice/profile
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
+    // Use Anon Key for token validation (respects RLS)
+    const supabaseAnon = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
 
-    // 1. Fetch Invoice
-    const { data: invoice, error: invoiceError } = await supabaseAdmin
-      .from("invoices")
-      .select(`
-        *,
-        invoice_items (*)
-      `)
-      .eq("id", invoiceId)
-      .single();
+    // 1. Fetch Invoice using token-based lookup
+    const { data: invoices, error: invoiceError } = await supabaseAnon
+      .rpc('get_invoice_by_token', { access_token: invoiceToken });
 
-    if (invoiceError || !invoice) {
+    if (invoiceError || !invoices || invoices.length === 0) {
       console.error("Invoice fetch error:", invoiceError);
-      throw new Error("Invoice not found");
+      throw new Error("Invalid or expired invoice token");
     }
+
+    const invoice = invoices[0];
 
     if (invoice.status === 'paid') {
        throw new Error("Invoice is already paid");
     }
 
-    // 2. Fetch Contractor Profile for Stripe Account ID
+    // 2. Fetch Contractor Profile for Stripe Account ID using admin client
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
     const { data: contractor, error: contractorError } = await supabaseAdmin
       .from("profiles")
       .select("stripe_account_id")
@@ -94,7 +91,7 @@ Deno.serve(async (req) => {
         },
       },
       metadata: {
-        invoice_id: invoiceId,
+        invoice_id: invoice.id,
       },
     };
 

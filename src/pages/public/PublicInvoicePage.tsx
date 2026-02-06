@@ -23,10 +23,10 @@ const PublicInvoicePage = () => {
     'Contractor';
 
   const handlePayment = async () => {
-    if (!invoice?.id) return;
+    if (!token) return;
     setIsProcessing(true);
     try {
-      const { url } = await billingService.createInvoiceCheckoutSession(invoice.id, window.location.href);
+      const { url } = await billingService.createInvoiceCheckoutSession(token, window.location.href);
       window.location.href = url;
     } catch (err) {
       console.error('Payment initiation failed:', err);

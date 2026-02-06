@@ -23,7 +23,7 @@ describe('billingService', () => {
       const result = await billingService.createInvoiceCheckoutSession('inv_123', 'http://localhost/pay');
 
       expect(supabase.functions.invoke).toHaveBeenCalledWith('create-invoice-checkout', {
-        body: { invoiceId: 'inv_123', returnUrl: 'http://localhost/pay' },
+        body: { invoiceToken: 'inv_123', returnUrl: 'http://localhost/pay' },
       });
       expect(result).toEqual(mockResponse.data);
     });
