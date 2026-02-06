@@ -9,8 +9,12 @@ const getStripe = () => {
   });
 };
 
-export const createCheckoutSession = async (params: Stripe.Checkout.SessionCreateParams) => {
-  return await getStripe().checkout.sessions.create(params);
+export const createCheckoutSession = async (
+  params: Stripe.Checkout.SessionCreateParams,
+  stripeAccount?: string
+) => {
+  const options = stripeAccount ? { stripeAccount } : undefined;
+  return await getStripe().checkout.sessions.create(params, options);
 };
 
 export const constructWebhookEvent = (body: string, signature: string, secret: string) => {

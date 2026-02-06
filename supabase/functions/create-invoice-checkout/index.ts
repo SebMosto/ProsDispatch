@@ -73,29 +73,25 @@ Deno.serve(async (req) => {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'cad',
             product_data: {
               name: `Invoice #${invoice.invoice_number}`,
               description: `Payment for Invoice #${invoice.invoice_number}`,
             },
-            unit_amount: invoice.total_amount * 100,
+            unit_amount: Math.round(invoice.total_amount * 100),
           },
           quantity: 1,
         },
       ],
       success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${returnUrl}?canceled=true`,
-      payment_intent_data: {
-        transfer_data: {
-          destination: contractor.stripe_account_id,
-        },
-      },
       metadata: {
         invoice_id: invoice.id,
       },
     };
 
-    const session = await createCheckoutSession(sessionParams);
+    // Use Direct Charges by passing the connected account ID
+    const session = await createCheckoutSession(sessionParams, contractor.stripe_account_id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
