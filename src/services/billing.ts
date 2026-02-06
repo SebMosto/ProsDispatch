@@ -31,9 +31,9 @@ export const billingService = {
   /**
    * Creates a Stripe Checkout Session for an invoice
    */
-  async createInvoiceCheckoutSession(invoiceId: string, returnUrl: string): Promise<{ url: string }> {
+  async createInvoiceCheckoutSession(invoiceToken: string, returnUrl: string): Promise<{ url: string }> {
     const { data, error } = await supabase.functions.invoke('create-invoice-checkout', {
-      body: { invoiceId, returnUrl },
+      body: { invoiceToken, returnUrl },
     });
 
     if (error) {
