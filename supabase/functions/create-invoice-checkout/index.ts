@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     const { data: invoices, error: invoiceError } = await supabaseAnon
       .rpc('get_invoice_by_token', { access_token: invoiceToken });
 
-    if (invoiceError || !invoices || invoices.length === 0) {
+    if (invoiceError || !invoices || invoices.length !== 1) {
       console.error("Invoice fetch error:", invoiceError);
       throw new Error("Invalid or expired invoice token");
     }
