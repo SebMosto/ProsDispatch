@@ -67,7 +67,15 @@ Deno.serve(async (req) => {
     }
 
     // 3. Create Session
-    // We use a single line item for the total amount to avoid rounding issues
+    // Handle returnUrl query params
+    const successUrl = returnUrl.includes('?')
+      ? `${returnUrl}&session_id={CHECKOUT_SESSION_ID}`
+      : `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`;
+
+    const cancelUrl = returnUrl.includes('?')
+      ? `${returnUrl}&canceled=true`
+      : `${returnUrl}?canceled=true`;
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "payment",
       line_items: [
@@ -78,13 +86,13 @@ Deno.serve(async (req) => {
               name: `Invoice #${invoice.invoice_number}`,
               description: `Payment for Invoice #${invoice.invoice_number}`,
             },
-            unit_amount: Math.round(invoice.total_amount), // Amount already stored in cents
+            unit_amount: Math.round(invoice.total_amount), // Amount in cents
           },
           quantity: 1,
         },
       ],
-      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${returnUrl}?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         invoice_id: invoice.id,
       },
