@@ -233,5 +233,30 @@
     "invalidEmail": "Invalid email",
     "updateRequired": "At least one field is required to update a client",
     "nameRequired": "Name is required"
+  },
+  "jobApproval": {
+    "title": "Job Approval Request",
+    "fromContractor": "from {{contractorName}}",
+    "scheduled": "Scheduled: {{date}}",
+    "scheduledTbd": "Scheduled: TBD",
+    "description": "Description",
+    "noDescription": "No description provided.",
+    "location": "Location",
+    "client": "Client",
+    "processing": "Processing...",
+    "decline": "Decline",
+    "approveJob": "Approve Job",
+    "jobStatus": "This job is currently <strong>{{status}}</strong>.",
+    "error": {
+      "title": "Error",
+      "invalidToken": "Invalid invite link. Missing token.",
+      "loadFailed": "Failed to load job details. The link may be expired or invalid.",
+      "submitFailed": "Failed to submit response. Please try again."
+    },
+    "success": {
+      "title": "Success",
+      "approved": "Job approved successfully! The contractor has been notified.",
+      "declined": "Job declined. The contractor has been notified."
+    }
   }
 }
