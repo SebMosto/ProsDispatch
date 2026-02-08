@@ -147,7 +147,7 @@ Deno.serve(async (req) => {
       // Email failed after DB update succeeded - job is now in 'sent' status but no email was delivered.
       // This is a less critical state than the reverse, as contractor can see the status change
       // and potentially retry sending. Log this heavily for manual intervention if needed.
-      return new Response(JSON.stringify({ error: "Failed to send email. Job status updated to sent." }), {
+      return new Response(JSON.stringify({ error: "Failed to send email: Job status updated to sent" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
