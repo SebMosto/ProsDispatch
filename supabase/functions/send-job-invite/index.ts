@@ -4,21 +4,6 @@ import { Resend } from "npm:resend@2.0.0";
 import { generateInviteToken } from "../_shared/invite.ts";
 import { getErrorStatus } from "../_shared/errors.ts";
 
-// Type definitions for the expected query results
-type JobWithRelations = {
-  id: string;
-  title: string;
-  status: string;
-  clients: {
-    email: string | null;
-    name: string;
-  } | null;
-  properties: {
-    address_line1: string;
-    city: string;
-  } | null;
-};
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -100,8 +85,9 @@ Deno.serve(async (req) => {
       .from("jobs")
       .select("*, clients(email, name), properties(address_line1, city)")
       .eq("id", jobId)
+      .is("deleted_at", null)
       .eq("contractor_id", user.id)
-      .single() as { data: JobWithRelations | null; error: any };
+      .single() as { data: JobWithRelations | null; error: unknown };
 
     if (jobError || !job) {
       return new Response(JSON.stringify({ error: "Job not found or access denied" }), {
@@ -140,7 +126,9 @@ Deno.serve(async (req) => {
     const { error: updateError } = await supabase
       .from("jobs")
       .update({ status: "sent", updated_at: new Date().toISOString() })
-      .eq("id", jobId);
+      .eq("id", jobId)
+      .eq("contractor_id", user.id)
+      .is("deleted_at", null);
 
     if (updateError) {
       console.error("Update Status Error:", updateError);
