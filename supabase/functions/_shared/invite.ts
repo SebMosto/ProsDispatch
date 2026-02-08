@@ -33,8 +33,8 @@ export async function verifyInviteToken(token: string, secret: string): Promise<
     // Validate payload structure before using it
     if (
       payload &&
-      typeof payload === 'object' &&
       payload !== null &&
+      typeof payload === 'object' &&
       !Array.isArray(payload) &&
       'job_id' in payload &&
       typeof payload.job_id === 'string'
