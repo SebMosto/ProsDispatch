@@ -72,11 +72,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (job.status !== "draft") {
-      return new Response(JSON.stringify({ error: "Job must be in draft status to send invite" }), {
+    if (!['draft', 'sent'].includes(job.status)) {
+      return new Response(JSON.stringify({ error: "Job must be in draft or sent status to send invite" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
     }
 
     // @ts-ignore: Supabase join types can be tricky
