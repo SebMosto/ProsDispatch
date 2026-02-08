@@ -31,7 +31,14 @@ export async function verifyInviteToken(token: string, secret: string): Promise<
     const payload = await verify(token, key);
     
     // Validate payload structure before using it
-    if (payload && typeof payload === 'object' && 'job_id' in payload && typeof payload.job_id === 'string') {
+    if (
+      payload &&
+      typeof payload === 'object' &&
+      payload !== null &&
+      !Array.isArray(payload) &&
+      'job_id' in payload &&
+      typeof payload.job_id === 'string'
+    ) {
       return { job_id: payload.job_id };
     }
     
