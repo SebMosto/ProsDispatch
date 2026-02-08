@@ -1,13 +1,22 @@
 import { create, verify, getNumericDate } from "https://deno.land/x/djwt@v3.0.1/mod.ts";
 
-export async function generateInviteToken(jobId: string, secret: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
+/**
+ * Imports a cryptographic key for HMAC operations.
+ * @param secret - The secret string to convert into a key
+ * @returns A CryptoKey suitable for signing and verifying HMAC signatures
+ */
+async function importHmacKey(secret: string): Promise<CryptoKey> {
+  return await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign", "verify"]
   );
+}
+
+export async function generateInviteToken(jobId: string, secret: string): Promise<string> {
+  const key = await importHmacKey(secret);
 
   const jwt = await create(
     { alg: "HS256", typ: "JWT" },
@@ -20,13 +29,7 @@ export async function generateInviteToken(jobId: string, secret: string): Promis
 
 export async function verifyInviteToken(token: string, secret: string): Promise<{ job_id: string } | null> {
   try {
-    const key = await crypto.subtle.importKey(
-        "raw",
-        new TextEncoder().encode(secret),
-        { name: "HMAC", hash: "SHA-256" },
-        false,
-        ["sign", "verify"]
-    );
+    const key = await importHmacKey(secret);
 
     const payload = await verify(token, key);
     
