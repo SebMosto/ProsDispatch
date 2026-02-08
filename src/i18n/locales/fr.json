@@ -255,8 +255,8 @@
     },
     "success": {
       "title": "Succès",
-      "approved": "Travail approuvé avec succès ! L'entrepreneur a été notifié.",
-      "declined": "Travail refusé. L'entrepreneur a été notifié."
+      "approved": "Travail approuvé avec succès ! Le contracteur a été notifié.",
+      "declined": "Travail refusé. Le contracteur a été notifié."
     }
   }
 }
