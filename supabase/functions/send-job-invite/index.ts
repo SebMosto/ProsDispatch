@@ -144,10 +144,24 @@ Deno.serve(async (req) => {
 
     if (emailError) {
       console.error("Resend Error:", emailError);
-      // Email failed after DB update succeeded - job is now in 'sent' status but no email was delivered.
-      // This is a less critical state than the reverse, as contractor can see the status change
-      // and potentially retry sending. Log this heavily for manual intervention if needed.
-      return new Response(JSON.stringify({ error: "Failed to send email: Job status updated to sent" }), {
+      const { error: rollbackError } = await supabase
+        .from("jobs")
+        .update({ status: "draft", updated_at: new Date().toISOString() })
+        .eq("id", jobId);
+
+      if (rollbackError) {
+        console.error("Rollback Status Error:", rollbackError);
+        return new Response(
+          JSON.stringify({ error: "Failed to send email: Job status could not be reverted to draft" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      // Email failed after DB update succeeded; revert to allow resend attempts.
+      return new Response(JSON.stringify({ error: "Failed to send email: Job status reverted to draft" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
