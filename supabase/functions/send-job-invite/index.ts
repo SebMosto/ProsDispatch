@@ -96,6 +96,8 @@ Deno.serve(async (req) => {
     }
 
     // Type-cast the result to our defined type for proper type safety
+    // Note: Supabase's TypeScript client doesn't automatically infer types for joined queries,
+    // so we explicitly cast here. The select() call above ensures the data structure matches.
     const typedJob = job as unknown as JobWithRelations;
 
     if (!['draft', 'sent'].includes(typedJob.status)) {
