@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
         )
       `)
       .eq("id", payload.job_id)
+      .is("deleted_at", null)
       .single();
 
     if (error || !job) {
