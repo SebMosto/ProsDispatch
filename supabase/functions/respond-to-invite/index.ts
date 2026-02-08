@@ -47,11 +47,12 @@ Deno.serve(async (req) => {
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    // Fetch job to check status
+    // Fetch job to check status (exclude soft-deleted jobs)
     const { data: job, error: jobError } = await supabaseAdmin
         .from("jobs")
         .select("status, contractor_id, title")
         .eq("id", payload.job_id)
+        .is("deleted_at", null)
         .single();
 
     if (jobError || !job) {
@@ -81,7 +82,8 @@ Deno.serve(async (req) => {
     const { error: updateError } = await supabaseAdmin
         .from("jobs")
         .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq("id", payload.job_id);
+        .eq("id", payload.job_id)
+        .is("deleted_at", null);
 
     if (updateError) {
         console.error("Update error:", updateError);

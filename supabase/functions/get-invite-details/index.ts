@@ -83,7 +83,8 @@ Deno.serve(async (req) => {
         )
       `)
       .eq("id", payload.job_id)
-      .single() as { data: JobWithRelations | null; error: any };
+      .is("deleted_at", null)
+      .single();
 
     if (error || !job) {
       return new Response(JSON.stringify({ error: "Job not found" }), {

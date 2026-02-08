@@ -106,6 +106,22 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Update Job Status FIRST (before sending email)
+    // This prevents sending invites for jobs that fail to update status
+    // Use service role client to ensure update works even if RLS is strict (though user owns it)
+    const { error: updateError } = await supabase
+      .from("jobs")
+      .update({ status: "sent", updated_at: new Date().toISOString() })
+      .eq("id", jobId);
+
+    if (updateError) {
+      console.error("Update Status Error:", updateError);
+      return new Response(JSON.stringify({ error: "Failed to update job status" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Generate Token using Service Role Key
     const token = await generateInviteToken(job.id, serviceRoleKey);
 
@@ -114,7 +130,7 @@ Deno.serve(async (req) => {
     const resend = new Resend(resendApiKey);
 
     const { error: emailError } = await resend.emails.send({
-      from: "ProsDispatch <onboarding@resend.dev>",
+      from: Deno.env.get("RESEND_FROM_EMAIL") ?? "ProsDispatch <onboarding@resend.dev>",
       to: [clientEmail],
       subject: `Action Required: Job Approval for ${jobTitle}`,
       html: `
@@ -139,25 +155,10 @@ Deno.serve(async (req) => {
 
     if (emailError) {
       console.error("Resend Error:", emailError);
-      return new Response(JSON.stringify({ error: "Failed to send email" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Update Job Status
-    // Use service role client to ensure update works even if RLS is strict (though user owns it)
-    const { error: updateError } = await supabase
-      .from("jobs")
-      .update({ status: "sent", updated_at: new Date().toISOString() })
-      .eq("id", jobId);
-
-    if (updateError) {
-      console.error("Update Status Error:", updateError);
-      // Even if update fails, email was sent. But for consistency, we report error.
-      // Ideally we should transaction this, but across services (email + db) it's hard.
-      // We'll return 500 but log it heavily.
-      return new Response(JSON.stringify({ error: "Email sent but failed to update job status" }), {
+      // Email failed after DB update succeeded - job is now in 'sent' status but no email was delivered.
+      // This is a less critical state than the reverse, as contractor can see the status change
+      // and potentially retry sending. Log this heavily for manual intervention if needed.
+      return new Response(JSON.stringify({ error: "Failed to send email: Job status updated to sent" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
