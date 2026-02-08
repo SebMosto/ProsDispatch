@@ -37,12 +37,12 @@ export function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-            {t('auth.login.title')}
+            {t('auth.signIn.title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {t('auth.login.subtitle')}{' '}
+            {t('auth.signIn.subtitle')}{' '}
             <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              {t('auth.register.link')}
+              {t('auth.signIn.noAccount')}
             </Link>
           </p>
         </div>
@@ -51,7 +51,7 @@ export function LoginPage() {
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <label htmlFor="email" className="sr-only">
-                {t('auth.field.email')}
+                {t('auth.shared.email')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -63,7 +63,7 @@ export function LoginPage() {
                   type="email"
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.email')}
+                  placeholder={t('auth.shared.email')}
                 />
               </div>
               {form.formState.errors.email && (
@@ -73,7 +73,7 @@ export function LoginPage() {
 
             <div>
               <label htmlFor="password" className="sr-only">
-                {t('auth.field.password')}
+                {t('auth.shared.password')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -85,7 +85,7 @@ export function LoginPage() {
                   type="password"
                   autoComplete="current-password"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.password')}
+                  placeholder={t('auth.shared.password')}
                 />
               </div>
               {form.formState.errors.password && (
@@ -127,7 +127,7 @@ export function LoginPage() {
                   />
                 </span>
               )}
-              {form.formState.isSubmitting ? t('common.loading') : t('auth.login.button')}
+              {form.formState.isSubmitting ? t('auth.shared.loading') : t('auth.signIn.button')}
             </button>
           </div>
         </form>

@@ -39,12 +39,12 @@ export function RegisterPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-            {t('auth.register.title')}
+            {t('auth.signUp.title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {t('auth.register.subtitle')}{' '}
+            {t('auth.signUp.subtitle')}{' '}
             <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              {t('auth.login.link')}
+              {t('auth.signUp.haveAccount')}
             </Link>
           </p>
         </div>
@@ -53,7 +53,7 @@ export function RegisterPage() {
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <label htmlFor="full_name" className="sr-only">
-                {t('auth.field.full_name')}
+                {t('auth.signUp.fullName')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -65,7 +65,7 @@ export function RegisterPage() {
                   type="text"
                   autoComplete="name"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.full_name')}
+                  placeholder={t('auth.signUp.fullName')}
                 />
               </div>
               {form.formState.errors.full_name && (
@@ -75,7 +75,7 @@ export function RegisterPage() {
 
             <div>
               <label htmlFor="business_name" className="sr-only">
-                {t('auth.field.business_name')}
+                {t('auth.signUp.businessName')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -87,14 +87,14 @@ export function RegisterPage() {
                   type="text"
                   autoComplete="organization"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.business_name')}
+                  placeholder={t('auth.signUp.businessName')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="email" className="sr-only">
-                {t('auth.field.email')}
+                {t('auth.shared.email')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -106,7 +106,7 @@ export function RegisterPage() {
                   type="email"
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.email')}
+                  placeholder={t('auth.shared.email')}
                 />
               </div>
               {form.formState.errors.email && (
@@ -116,7 +116,7 @@ export function RegisterPage() {
 
             <div>
               <label htmlFor="password" className="sr-only">
-                {t('auth.field.password')}
+                {t('auth.shared.password')}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -128,7 +128,7 @@ export function RegisterPage() {
                   type="password"
                   autoComplete="new-password"
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder={t('auth.field.password')}
+                  placeholder={t('auth.shared.password')}
                 />
               </div>
               {form.formState.errors.password && (
@@ -170,7 +170,7 @@ export function RegisterPage() {
                   />
                 </span>
               )}
-              {form.formState.isSubmitting ? t('common.loading') : t('auth.register.button')}
+              {form.formState.isSubmitting ? t('auth.shared.loading') : t('auth.signUp.button')}
             </button>
           </div>
         </form>

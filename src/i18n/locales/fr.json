@@ -45,6 +45,9 @@
       "password": "Mot de passe",
       "loading": "Traitement en cours..."
     },
+    "error": {
+      "generic": "Échec de l'authentification. Veuillez réessayer."
+    },
     "signIn": {
       "title": "Se connecter",
       "subtitle": "Accédez à votre tableau de bord d'entrepreneur",
@@ -86,6 +89,11 @@
   },
   "jobs": {
     "create": {
+      "page": {
+        "section": "Travaux",
+        "title": "Créer et gérer des travaux",
+        "subtitle": "Les brouillons sont enregistrés localement même si vous rechargez la page."
+      },
       "title": "Créer un travail",
       "subtitle": "Suivez le travail pour un client et une propriété.",
       "descriptionWarning": "N'incluez pas de codes d'accès ou d'informations personnelles.",
@@ -109,6 +117,60 @@
         "generic": "Impossible de créer le travail.",
         "auth": "Vous devez être connecté pour créer un travail."
       }
+    },
+    "status": {
+      "draft": "Brouillon",
+      "sent": "Envoyé",
+      "approved": "Approuvé",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "invoiced": "Facturé",
+      "paid": "Payé",
+      "archived": "Archivé"
+    },
+    "card": {
+      "jobId": "Travail #{{id}}",
+      "noDescription": "Aucune description fournie",
+      "clientId": "ID client",
+      "propertyId": "ID propriété",
+      "serviceDate": "Date de service",
+      "notScheduled": "Non planifié",
+      "lastUpdated": "Dernière mise à jour",
+      "created": "Créé le {{date}}",
+      "viewDetails": "Voir détails"
+    },
+    "list": {
+      "unableToLoad": "Impossible de charger les travaux",
+      "retry": "Réessayer",
+      "title": "Travaux",
+      "emptyState": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
+      "total": "{{count}} total"
+    },
+    "detail": {
+      "jobId": "Travail #{{id}}",
+      "noDescription": "Aucune description fournie",
+      "detailsTitle": "Détails",
+      "statusLabel": "Statut",
+      "clientId": "ID client",
+      "propertyId": "ID propriété",
+      "serviceDate": "Date de service",
+      "notScheduled": "Non planifié",
+      "created": "Créé le",
+      "updated": "Mis à jour le",
+      "quickActions": "Actions rapides",
+      "optimisticNote": "Utilise des mises à jour optimistes",
+      "actions": {
+        "send": "Envoyer",
+        "approve": "Approuver",
+        "startJob": "Commencer le travail",
+        "completeJob": "Terminer le travail",
+        "archive": "Archiver"
+      },
+      "backToJobs": "Retour aux travaux",
+      "errorNoJob": "Aucun travail sélectionné.",
+      "errorLoading": "Impossible de charger les détails du travail.",
+      "errorStatusUpdate": "Impossible de mettre à jour le statut",
+      "notFound": "Travail non trouvé"
     },
     "invoices": {
       "title": "Factures",
@@ -232,6 +294,12 @@
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
     "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
-    "nameRequired": "Le nom est requis"
+    "nameRequired": "Le nom est requis",
+    "clientId": "ID client invalide",
+    "propertyId": "ID propriété invalide",
+    "titleMin": "Le titre doit contenir au moins 2 caractères",
+    "titleMax": "Le titre ne doit pas dépasser 80 caractères",
+    "descriptionMax": "La description ne doit pas dépasser 2000 caractères",
+    "serviceDate": "La date de service doit être au format AAAA-MM-JJ"
   }
 }

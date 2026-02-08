@@ -7,12 +7,12 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { JobCreateSchema } from '../../schemas/mvp1/job';
+import { getJobCreateSchema } from '../../schemas/mvp1/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
 
-type FormValues = z.infer<typeof JobCreateSchema>;
+type FormValues = z.infer<ReturnType<typeof getJobCreateSchema>>;
 
 const initialValues: FormValues = {
   client_id: '',
@@ -36,6 +36,8 @@ const CreateJobForm = () => {
   });
 
   const hasAppliedDraft = useRef(false);
+
+  const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
 
   const {
     register,
