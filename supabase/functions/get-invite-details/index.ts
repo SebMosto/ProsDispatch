@@ -3,6 +3,27 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { verifyInviteToken } from "../_shared/invite.ts";
 import { getErrorStatus } from "../_shared/errors.ts";
 
+// Type definitions for the expected query results
+type JobWithRelations = {
+  id: string;
+  title: string;
+  description: string | null;
+  service_date: string | null;
+  status: string;
+  created_at: string;
+  contractor_id: string;
+  clients: {
+    name: string;
+    email: string | null;
+  } | null;
+  properties: {
+    address_line1: string;
+    city: string;
+    province: string;
+    postal_code: string;
+  } | null;
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -51,8 +72,8 @@ Deno.serve(async (req) => {
         created_at,
         contractor_id,
         clients (
-          first_name,
-          last_name
+          name,
+          email
         ),
         properties (
           address_line1,
@@ -62,7 +83,7 @@ Deno.serve(async (req) => {
         )
       `)
       .eq("id", payload.job_id)
-      .single();
+      .single() as { data: JobWithRelations | null; error: any };
 
     if (error || !job) {
       return new Response(JSON.stringify({ error: "Job not found" }), {
@@ -87,20 +108,14 @@ Deno.serve(async (req) => {
       status: job.status,
       created_at: job.created_at,
       client: {
-        // @ts-ignore
-        first_name: job.clients?.first_name,
-        // @ts-ignore
-        last_name: job.clients?.last_name,
+        name: job.clients?.name || "",
+        email: job.clients?.email || "",
       },
       property: {
-        // @ts-ignore
-        address: job.properties?.address_line1,
-        // @ts-ignore
-        city: job.properties?.city,
-        // @ts-ignore
-        province: job.properties?.province,
-        // @ts-ignore
-        postal_code: job.properties?.postal_code,
+        address: job.properties?.address_line1 || "",
+        city: job.properties?.city || "",
+        province: job.properties?.province || "",
+        postal_code: job.properties?.postal_code || "",
       },
       contractor: {
         business_name: contractor?.business_name || "Service Provider",
