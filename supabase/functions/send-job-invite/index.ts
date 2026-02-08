@@ -24,6 +24,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Define types for the joined query result
+type JobWithRelations = {
+  id: string;
+  title: string;
+  status: string;
+  contractor_id: string;
+  client_id: string;
+  property_id: string;
+  description: string | null;
+  service_date: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  clients: {
+    email: string | null;
+    name: string;
+  } | null;
+  properties: {
+    address_line1: string;
+    city: string;
+  } | null;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -87,7 +110,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!['draft', 'sent'].includes(job.status)) {
+    // Type-cast the result to our defined type for proper type safety
+    // Note: Supabase's TypeScript client doesn't automatically infer types for joined queries,
+    // so we explicitly cast here. The select() call above ensures the data structure matches.
+    const typedJob = job as unknown as JobWithRelations;
+
+    if (!['draft', 'sent'].includes(typedJob.status)) {
       return new Response(JSON.stringify({ error: "Job must be in draft or sent status to send invite" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -123,7 +151,7 @@ Deno.serve(async (req) => {
     }
 
     // Generate Token using Service Role Key
-    const token = await generateInviteToken(job.id, serviceRoleKey);
+    const token = await generateInviteToken(typedJob.id, serviceRoleKey);
 
     const inviteUrl = `${siteUrl}/jobs/approve?token=${token}`;
 
