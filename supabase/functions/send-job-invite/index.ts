@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
     const resend = new Resend(resendApiKey);
 
     const { error: emailError } = await resend.emails.send({
-      from: "ProsDispatch <onboarding@resend.dev>",
+      from: Deno.env.get("RESEND_FROM_EMAIL") ?? "ProsDispatch <onboarding@resend.dev>",
       to: [clientEmail],
       subject: `Action Required: Job Approval for ${jobTitle}`,
       html: `
