@@ -9,6 +9,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Define types for the joined query result
+type JobWithRelations = {
+  id: string;
+  title: string;
+  status: string;
+  contractor_id: string;
+  client_id: string;
+  property_id: string;
+  description: string | null;
+  service_date: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  clients: {
+    email: string | null;
+    name: string;
+  } | null;
+  properties: {
+    address_line1: string;
+    city: string;
+  } | null;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -60,7 +83,7 @@ Deno.serve(async (req) => {
     // Check job ownership and status
     const { data: job, error: jobError } = await supabase
       .from("jobs")
-      .select("*, clients(email, first_name, last_name), properties(address_line1, city)")
+      .select("*, clients(email, name), properties(address_line1, city)")
       .eq("id", jobId)
       .eq("contractor_id", user.id)
       .single();
@@ -72,22 +95,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!['draft', 'sent'].includes(job.status)) {
+    // Type-cast the result to our defined type for proper type safety
+    const typedJob = job as unknown as JobWithRelations;
+
+    if (!['draft', 'sent'].includes(typedJob.status)) {
       return new Response(JSON.stringify({ error: "Job must be in draft or sent status to send invite" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    }
 
-    // @ts-ignore: Supabase join types can be tricky
-    const clientEmail = job.clients?.email;
-    // @ts-ignore
-    const clientName = job.clients?.first_name || "Valued Client";
-    // @ts-ignore
-    const jobTitle = job.title;
-    // @ts-ignore
-    const jobAddress = `${job.properties?.address_line1 || ""}, ${job.properties?.city || ""}`;
+    const clientEmail = typedJob.clients?.email;
+    const clientName = typedJob.clients?.name || "Valued Client";
+    const jobTitle = typedJob.title;
+    const jobAddress = `${typedJob.properties?.address_line1 || ""}, ${typedJob.properties?.city || ""}`;
 
     if (!clientEmail) {
       return new Response(JSON.stringify({ error: "Client email missing" }), {
@@ -97,7 +118,7 @@ Deno.serve(async (req) => {
     }
 
     // Generate Token using Service Role Key
-    const token = await generateInviteToken(job.id, serviceRoleKey);
+    const token = await generateInviteToken(typedJob.id, serviceRoleKey);
 
     const inviteUrl = `${siteUrl}/jobs/approve?token=${token}`;
 
