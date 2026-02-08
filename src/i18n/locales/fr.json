@@ -233,5 +233,30 @@
     "invalidEmail": "Adresse courriel invalide",
     "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
     "nameRequired": "Le nom est requis"
+  },
+  "jobApproval": {
+    "title": "Demande d'approbation de travail",
+    "fromContractor": "de {{contractorName}}",
+    "scheduled": "Prévu : {{date}}",
+    "scheduledTbd": "Prévu : À déterminer",
+    "description": "Description",
+    "noDescription": "Aucune description fournie.",
+    "location": "Emplacement",
+    "client": "Client",
+    "processing": "Traitement en cours...",
+    "decline": "Refuser",
+    "approveJob": "Approuver le travail",
+    "jobStatus": "Ce travail est actuellement <strong>{{status}}</strong>.",
+    "error": {
+      "title": "Erreur",
+      "invalidToken": "Lien d'invitation invalide. Jeton manquant.",
+      "loadFailed": "Échec du chargement des détails du travail. Le lien peut être expiré ou invalide.",
+      "submitFailed": "Échec de la soumission de la réponse. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Succès",
+      "approved": "Travail approuvé avec succès ! L'entrepreneur a été notifié.",
+      "declined": "Travail refusé. L'entrepreneur a été notifié."
+    }
   }
 }

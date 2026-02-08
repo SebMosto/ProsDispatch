@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useSearchParams } from '../../lib/router';
 import { supabase } from '../../lib/supabase';
 import { PageLoader } from '../../components/ui/PageLoader';
@@ -27,6 +28,7 @@ type JobDetails = {
 };
 
 export default function JobApprovalPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
 
@@ -38,7 +40,7 @@ export default function JobApprovalPage() {
 
   useEffect(() => {
     if (!token) {
-      setError('Invalid invite link. Missing token.');
+      setError(t('jobApproval.error.invalidToken'));
       setLoading(false);
       return;
     }
@@ -53,14 +55,14 @@ export default function JobApprovalPage() {
         setJob(data);
       } catch (err) {
         console.error(err);
-        setError('Failed to load job details. The link may be expired or invalid.');
+        setError(t('jobApproval.error.loadFailed'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchJob();
-  }, [token]);
+  }, [token, t]);
 
   const handleResponse = async (action: 'approve' | 'decline') => {
     if (!token) return;
@@ -73,14 +75,14 @@ export default function JobApprovalPage() {
       if (error) throw error;
 
       if (action === 'approve') {
-        setSuccessMessage('Job approved successfully! The contractor has been notified.');
+        setSuccessMessage(t('jobApproval.success.approved'));
       } else {
-        setSuccessMessage('Job declined. The contractor has been notified.');
+        setSuccessMessage(t('jobApproval.success.declined'));
       }
       setJob(prev => prev ? { ...prev, status: action === 'approve' ? 'approved' : 'draft' } : null);
     } catch (err) {
       console.error(err);
-      setError('Failed to submit response. Please try again.');
+      setError(t('jobApproval.error.submitFailed'));
     } finally {
       setActionLoading(false);
     }
@@ -92,7 +94,7 @@ export default function JobApprovalPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg text-center">
-          <h1 className="text-xl font-bold text-red-600 mb-2">Error</h1>
+          <h1 className="text-xl font-bold text-red-600 mb-2">{t('jobApproval.error.title')}</h1>
           <p className="text-slate-600">{error}</p>
         </div>
       </div>
@@ -108,7 +110,7 @@ export default function JobApprovalPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">Success</h1>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">{t('jobApproval.success.title')}</h1>
           <p className="text-slate-600">{successMessage}</p>
         </div>
       </div>
@@ -121,32 +123,36 @@ export default function JobApprovalPage() {
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Job Approval Request</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t('jobApproval.title')}</h1>
           <p className="mt-2 text-lg text-slate-600">
-            from {job.contractor.business_name}
+            {t('jobApproval.fromContractor', { contractorName: job.contractor.business_name })}
           </p>
         </div>
 
         <div className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
           <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
             <h2 className="text-lg font-medium text-slate-900">{job.title}</h2>
-            <p className="text-sm text-slate-500">Scheduled: {job.service_date || 'TBD'}</p>
+            <p className="text-sm text-slate-500">
+              {job.service_date ? t('jobApproval.scheduled', { date: job.service_date }) : t('jobApproval.scheduledTbd')}
+            </p>
           </div>
           <div className="px-6 py-6">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-slate-500">Description</dt>
-                <dd className="mt-1 text-sm text-slate-900 whitespace-pre-wrap">{job.description || 'No description provided.'}</dd>
+                <dt className="text-sm font-medium text-slate-500">{t('jobApproval.description')}</dt>
+                <dd className="mt-1 text-sm text-slate-900 whitespace-pre-wrap">
+                  {job.description || t('jobApproval.noDescription')}
+                </dd>
               </div>
               <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-slate-500">Location</dt>
+                <dt className="text-sm font-medium text-slate-500">{t('jobApproval.location')}</dt>
                 <dd className="mt-1 text-sm text-slate-900">
                   {job.property.address}<br />
                   {job.property.city}, {job.property.province} {job.property.postal_code}
                 </dd>
               </div>
               <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-slate-500">Client</dt>
+                <dt className="text-sm font-medium text-slate-500">{t('jobApproval.client')}</dt>
                 <dd className="mt-1 text-sm text-slate-900">
                   {job.client.first_name} {job.client.last_name}
                 </dd>
@@ -160,7 +166,7 @@ export default function JobApprovalPage() {
                 disabled={actionLoading || job.status !== 'sent'}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 disabled:opacity-50"
               >
-                {actionLoading ? 'Processing...' : 'Decline'}
+                {actionLoading ? t('jobApproval.processing') : t('jobApproval.decline')}
               </button>
               <button
                 type="button"
@@ -168,12 +174,16 @@ export default function JobApprovalPage() {
                 disabled={actionLoading || job.status !== 'sent'}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {actionLoading ? 'Processing...' : 'Approve Job'}
+                {actionLoading ? t('jobApproval.processing') : t('jobApproval.approveJob')}
               </button>
             </div>
             {job.status !== 'sent' && !successMessage && (
                <p className="mt-4 text-center text-sm text-slate-500">
-                 This job is currently <strong>{job.status.replace('_', ' ')}</strong>.
+                 <Trans
+                   i18nKey="jobApproval.jobStatus"
+                   values={{ status: job.status.replace('_', ' ') }}
+                   components={{ strong: <strong /> }}
+                 />
                </p>
             )}
           </div>
