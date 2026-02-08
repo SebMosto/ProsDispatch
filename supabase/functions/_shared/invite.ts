@@ -29,7 +29,21 @@ export async function verifyInviteToken(token: string, secret: string): Promise<
     );
 
     const payload = await verify(token, key);
-    return payload as { job_id: string };
+    
+    // Validate payload structure before using it
+    if (
+      payload &&
+      payload !== null &&
+      typeof payload === 'object' &&
+      !Array.isArray(payload) &&
+      'job_id' in payload &&
+      typeof payload.job_id === 'string'
+    ) {
+      return { job_id: payload.job_id };
+    }
+    
+    console.error("Token payload validation failed: invalid structure");
+    return null;
   } catch (error) {
     console.error("Token verification failed:", error);
     return null;
