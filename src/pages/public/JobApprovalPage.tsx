@@ -80,7 +80,7 @@ export default function JobApprovalPage() {
       setJob(prev => prev ? { ...prev, status: action === 'approve' ? 'approved' : 'draft' } : null);
     } catch (err) {
       console.error(err);
-      alert('Failed to submit response. Please try again.');
+      setError('Failed to submit response. Please try again.');
     } finally {
       setActionLoading(false);
     }
