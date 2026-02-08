@@ -12,6 +12,7 @@ import type { InvoiceDraftInput } from '../../schemas/mvp1/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
 
 const InvoiceItemFormSchema = z.object({
+  id: z.string().optional(),
   description: z.string().min(1, 'Description is required'),
   quantity: z.number().positive('Qty must be greater than zero'),
   unitPrice: z.number().min(0, 'Unit price must be 0 or greater'),
@@ -31,6 +32,7 @@ type InvoiceFormProps = {
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
+    id: item.id,
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
@@ -243,6 +245,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 setItems((prev) => [
                   ...prev,
                   {
+                    id: crypto.randomUUID(),
                     description: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -265,7 +268,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id ?? index} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
