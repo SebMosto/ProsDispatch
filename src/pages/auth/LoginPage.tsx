@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { getLoginSchema, LoginSchema } from '@/schemas/mvp1/auth';
 import { useAuthActions } from '@/hooks/useAuth';
 
 export function LoginPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { signIn } = useAuthActions();
   const [authError, setAuthError] = useState<string | null>(null);
@@ -20,6 +20,20 @@ export function LoginPage() {
       password: '',
     },
   });
+
+  const { formState: { errors }, clearErrors, trigger } = form;
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+  }, [i18n.language, clearErrors, trigger]);
 
   const onSubmit = async (data: LoginSchema) => {
     setAuthError(null);
