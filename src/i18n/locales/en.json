@@ -81,7 +81,7 @@
       "noJobsFound": "No jobs found",
       "noActiveJobs": "You don't have any active jobs right now.",
       "noHistoryJobs": "You haven't completed any jobs yet.",
-      "createFirstJob": "Create your first job →"
+      "createFirstJob": "Create your first job"
     }
   },
   "sync": {

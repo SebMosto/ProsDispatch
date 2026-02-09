@@ -124,7 +124,7 @@ const DashboardPage = () => {
                 to="/jobs/new"
                 className="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-500"
               >
-                {t('auth.dashboard.createFirstJob')}
+                {t('auth.dashboard.createFirstJob')} &rarr;
               </Link>
             )}
           </div>

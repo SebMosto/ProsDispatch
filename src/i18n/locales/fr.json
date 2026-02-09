@@ -81,7 +81,7 @@
       "noJobsFound": "Aucun travail trouvé",
       "noActiveJobs": "Vous n'avez aucun travail actif pour le moment.",
       "noHistoryJobs": "Vous n'avez encore terminé aucun travail.",
-      "createFirstJob": "Créer votre premier travail →"
+      "createFirstJob": "Créer votre premier travail"
     }
   },
   "sync": {
