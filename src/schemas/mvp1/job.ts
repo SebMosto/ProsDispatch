@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Database } from '../../types/database.types';
+import { TFunction } from 'i18next';
 
 export const JOB_STATUSES = [
   'draft',
