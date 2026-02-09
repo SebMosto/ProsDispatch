@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { InvoiceDraftInput } from '../schemas/mvp1/invoice';
+import { useTranslation } from 'react-i18next';
+import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
   invoiceRepository,
@@ -12,16 +13,18 @@ import {
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
+  const { t } = useTranslation();
+
   const queryFn = useCallback(async () => {
     if (!id) {
-      throw { message: 'Invoice ID is required', reason: 'validation' } satisfies RepositoryError;
+      throw { message: t('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
     }
     const result = await invoiceRepository.get(id);
     if (result.error || !result.data) {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [id, t]);
+  }, [id]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
 
@@ -32,28 +35,27 @@ export const useInvoice = (id?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoice: query.data ?? null,
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error, query.refetch],
-  );
+  return {
+    invoice: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export const useInvoiceByToken = (token?: string) => {
+  const { t } = useTranslation();
+
   const queryFn = useCallback(async () => {
     if (!token) {
-      throw { message: 'Invoice token is required', reason: 'validation' } satisfies RepositoryError;
+      throw { message: t('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
     const result = await invoiceRepository.getInvoiceByToken(token);
     if (result.error || !result.data) {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [token, t]);
+  }, [token]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 
@@ -64,15 +66,12 @@ export const useInvoiceByToken = (token?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoice: query.data ?? null,
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error],
-  );
+  return {
+    invoice: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export const useJobInvoices = (jobId?: string) => {
@@ -96,15 +95,12 @@ export const useJobInvoices = (jobId?: string) => {
     staleTime: FIVE_MINUTES,
   });
 
-  return useMemo(
-    () => ({
-      invoices: query.data ?? [],
-      loading: query.isLoading,
-      error: query.error ?? null,
-      refetch: query.refetch,
-    }),
-    [query.data, query.isLoading, query.error],
-  );
+  return {
+    invoices: query.data ?? [],
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
 };
 
 export type CreateInvoiceDraftArgs = {

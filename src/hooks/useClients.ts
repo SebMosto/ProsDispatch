@@ -65,7 +65,7 @@ export const useClients = () => {
       error: query.error ?? null,
       refetch: query.refetch,
     }),
-    [query.data, query.isLoading, query.error]
+    [query.data, query.isLoading, query.error, query.refetch]
   );
 };
 

@@ -1,14 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInvoiceByToken } from '../../hooks/useInvoices';
-import { useParams } from '../../lib/router';
+import { useLocation } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
-import { billingService } from '../../services/billing';
+import { isSafeUrl } from '../../lib/security';
 
 const PublicInvoicePage = () => {
-  const { token } = useParams<{ token: string }>();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
+  const { pathname } = useLocation();
+  const segments = pathname.split('/').filter(Boolean);
+  const token = segments[1];
 
   const { invoice, loading, error } = useInvoiceByToken(token);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const taxData = useMemo(() => {
     if (!invoice?.tax_data || !Array.isArray(invoice.tax_data)) {
@@ -20,20 +24,7 @@ const PublicInvoicePage = () => {
   const contractorLabel =
     (invoice as { contractor_name?: string } | null)?.contractor_name ??
     invoice?.contractor_id ??
-    'Contractor';
-
-  const handlePayment = async () => {
-    if (!token) return;
-    setIsProcessing(true);
-    try {
-      const { url } = await billingService.createInvoiceCheckoutSession(token, window.location.href);
-      window.location.href = url;
-    } catch (err) {
-      console.error('Payment initiation failed:', err);
-      alert('Failed to initiate payment. Please try again.');
-      setIsProcessing(false);
-    }
-  };
+    t('jobs.invoices.publicPage.contractorDefault');
 
   if (loading) {
     return (
@@ -47,95 +38,85 @@ const PublicInvoicePage = () => {
   if (error || !invoice) {
     return (
       <main className="flex min-h-[60vh] flex-col gap-2">
-        <h1 className="text-xl font-semibold text-slate-900">Invoice not available</h1>
-        <p className="text-sm text-slate-600">The invoice link may have expired or is invalid.</p>
+        <h1 className="text-xl font-semibold text-slate-900">{t('public.invoice.notAvailable')}</h1>
+        <p className="text-sm text-slate-600">{t('public.invoice.expired')}</p>
       </main>
     );
   }
-
-  const isPaid = invoice.status === 'paid';
 
   return (
     <main className="flex min-h-[60vh] flex-col gap-6">
       <header className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-            PD
+            {t('layout.initials')}
           </div>
           <div>
-            <p className="text-sm text-slate-600">Invoice {invoice.invoice_number}</p>
-            <h1 className="text-2xl font-semibold text-slate-900">Invoice from {contractorLabel}</h1>
+            <p className="text-sm text-slate-600">{t('public.invoice.header', { number: invoice.invoice_number })}</p>
+            <h1 className="text-2xl font-semibold text-slate-900">{t('public.invoice.from', { name: contractorLabel })}</h1>
           </div>
         </div>
         <div className="mt-3 text-lg font-semibold text-slate-900">
-          Total Due: {formatCurrency(invoice.total_amount)}
+          {t('public.invoice.totalDue')}: {formatCurrency(invoice.total_amount / 100, 'CAD', locale)}
         </div>
-        {isPaid && (
-           <div className="mt-2 text-sm font-semibold text-emerald-600">
-             Paid on {new Date(invoice.paid_at || '').toLocaleDateString()}
-           </div>
-        )}
       </header>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">Line Items</h2>
+        <h2 className="text-sm font-semibold text-slate-900">{t('public.invoice.lineItems')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
               <div key={item.id} className="flex flex-col gap-2 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-800">{item.description}</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount)}</p>
+                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount / 100, 'CAD', locale)}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Qty {item.quantity} × {formatCurrency(item.unit_price)}
+                  {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price / 100, 'CAD', locale) })}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">No line items were provided.</p>
+            <p className="text-sm text-slate-500">{t('public.invoice.noItems')}</p>
           )}
         </div>
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
-          <span>Subtotal</span>
-          <span className="font-semibold">{formatCurrency(invoice.subtotal)}</span>
+          <span>{t('public.invoice.subtotal')}</span>
+          <span className="font-semibold">{formatCurrency(invoice.subtotal / 100, 'CAD', locale)}</span>
         </div>
         <div className="mt-2 space-y-1 text-sm text-slate-700">
           {taxData.map((tax) => (
             <div key={tax.label} className="flex items-center justify-between">
-              <span>{`${tax.label} (${(tax.rate * 100).toFixed(2)}%)`}</span>
-              <span className="font-semibold">{formatCurrency(tax.amount)}</span>
+              <span>{`${t(`taxes.${tax.label}`, tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+              <span className="font-semibold">{formatCurrency(tax.amount / 100, 'CAD', locale)}</span>
             </div>
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
-          <span>Total Due</span>
-          <span>{formatCurrency(invoice.total_amount)}</span>
+          <span>{t('public.invoice.totalDue')}</span>
+          <span>{formatCurrency(invoice.total_amount / 100, 'CAD', locale)}</span>
         </div>
       </section>
 
       <section className="flex flex-wrap items-center gap-3">
-        {!isPaid && (
-            <button
-            type="button"
-            onClick={handlePayment}
-            disabled={isProcessing}
-            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:opacity-50"
-            >
-            {isProcessing ? 'Processing...' : 'Pay Now'}
-            </button>
-        )}
-        {invoice.pdf_url ? (
+        <button
+          type="button"
+          onClick={() => console.log('Stripe Checkout')}
+          className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+        >
+          {t('public.invoice.payNow')}
+        </button>
+        {invoice.pdf_url && isSafeUrl(invoice.pdf_url) ? (
           <a
             href={invoice.pdf_url}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
-            Download PDF
+            {t('public.invoice.downloadPdf')}
           </a>
         ) : null}
       </section>

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  JobStatus,
   advanceJobStatus,
   IllegalJobStatusTransitionError,
 } from '../lib/jobStatus';
+import type { JobStatus } from '../schemas/job';
 
 describe('JobStatus Type', () => {
   it('should be derived from Supabase database types', () => {

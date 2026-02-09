@@ -1,6 +1,6 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
-import type { ClientCreateInput, ClientUpdateInput } from '../schemas/mvp1/client';
+import type { ClientCreateInput, ClientUpdateInput } from '../schemas/client';
 import type { Database } from '../types/database.types';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';

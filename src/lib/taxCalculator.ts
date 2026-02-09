@@ -1,4 +1,4 @@
-import type { InvoiceItemInput } from '../schemas/mvp1/invoice';
+import type { InvoiceItemInput } from '../schemas/invoice';
 
 const GST_RATE = 0.05;
 const QST_RATE = 0.09975;
@@ -13,12 +13,12 @@ export const calculateInvoiceTotals = (items: InvoiceItemInput[]) => {
 
   const taxData = [
     {
-      label: 'GST',
+      label: 'taxes.GST',
       rate: GST_RATE,
       amount: gst,
     },
     {
-      label: 'QST',
+      label: 'taxes.QST',
       rate: QST_RATE,
       amount: qst,
     },

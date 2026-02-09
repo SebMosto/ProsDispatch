@@ -7,16 +7,9 @@ const LanguageSwitcher = () => {
   const activeLanguage = i18n.language.startsWith('fr') ? 'fr' : 'en';
 
   const handleChange = (language: Language) => {
-    // Explicitly save preference before reload to prevent race conditions with i18next listener
-    try {
-      localStorage.setItem('i18nextLng', language);
-    } catch (error) {
-      console.warn('Unable to save language preference', error);
-    }
-
     i18n.changeLanguage(language).then(() => {
-      // Force reload to ensure external dependencies (e.g. Google Maps) re-initialize with correct locale
-      window.location.reload();
+      // Explicitly persist preference to ensure offline boot works
+      localStorage.setItem('i18nextLng', language);
     }).catch((error) => {
       console.error('Language change failed', error);
     });

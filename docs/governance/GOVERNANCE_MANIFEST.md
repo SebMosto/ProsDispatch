@@ -28,6 +28,10 @@ This **Governance Manifest** defines the unified rules and standards for the Dis
 
 * **Continuous Verification:** All code and designs are continuously checked against this governance bundle. An AI Auditor agent and CI checks will enforce that no commit or merge violates the rules (e.g. adding a forbidden component will trigger an immediate block – see CI\_Guardrails). "Governance debt" (deviations from mandated practices) is treated with the same severity as technical debt.
 
+## Active Laws / Spec Registry
+
+* **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **Critical (Enforced)**
+
 ## Functional Scope & Constraints (MVP1)
 
 This restart imposes strict functional boundaries to keep the product focused:

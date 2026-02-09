@@ -1,6 +1,6 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
-import type { PropertyCreateInput, PropertyUpdateInput } from '../schemas/mvp1/property';
+import type { PropertyCreateInput, PropertyUpdateInput } from '../schemas/property';
 import type { Database } from '../types/database.types';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
