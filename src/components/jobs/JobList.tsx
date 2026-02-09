@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
 import JobCard from './JobCard';
 import { useJobs } from '../../hooks/useJobs';
+import { useTranslation } from 'react-i18next';
 
 const JobList = () => {
-  const { t } = useTranslation();
   const { jobs, loading, error, refetch } = useJobs();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -21,7 +21,7 @@ const JobList = () => {
   if (error) {
     return (
       <section className="space-y-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        <p className="font-semibold">{t('jobs.list.unableToLoad')}</p>
+        <p className="font-semibold">{t('jobs.list.error')}</p>
         <p className="text-red-600">{error.message}</p>
         <button
           type="button"
@@ -38,7 +38,7 @@ const JobList = () => {
     return (
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
         <h3 className="text-base font-semibold text-slate-900">{t('jobs.list.title')}</h3>
-        <p className="text-slate-600">{t('jobs.list.emptyState')}</p>
+        <p className="text-slate-600">{t('jobs.list.empty')}</p>
       </section>
     );
   }

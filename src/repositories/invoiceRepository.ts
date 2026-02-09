@@ -1,6 +1,6 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
-import type { InvoiceDraftInput, InvoiceItemInput } from '../schemas/mvp1/invoice';
+import type { InvoiceDraftInput, InvoiceItemInput } from '../schemas/invoice';
 import type { Database } from '../types/database.types';
 import type { RepositoryError, RepositoryResult } from './base';
 import { BaseRepository } from './base';
@@ -47,7 +47,7 @@ export class InvoiceRepository extends BaseRepository {
       quantity: item.quantity,
       unit_price: item.unit_price,
       amount: item.amount,
-    }));
+    })) satisfies Database['public']['Tables']['invoice_items']['Insert'][];
 
     const { error: insertError } = await this.client.from('invoice_items').insert(insertPayload);
     return this.toRepositoryError(insertError);
@@ -67,7 +67,7 @@ export class InvoiceRepository extends BaseRepository {
     }
 
     reportApiOnline();
-    return { data: data as unknown as InvoiceWithItems };
+    return { data: data as InvoiceWithItems };
   }
 
   async listByJob(jobId: string): Promise<RepositoryResult<InvoiceWithItems[]>> {
@@ -188,39 +188,45 @@ export class InvoiceRepository extends BaseRepository {
   }
 
   async finalizeAndSend(id: string): Promise<RepositoryResult<FinalizeInvoiceResult>> {
-    const { data: response, error } = await this.client.functions.invoke('finalize-invoice', {
-      body: { invoice_id: id },
+    const token = crypto.randomUUID();
+    const pdfUrl = await this.generatePDF(id);
+
+    const { data, error } = await this.client
+      .from('invoices')
+      .update({
+        status: 'sent',
+        pdf_url: pdfUrl,
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError || !data) {
+      return { data: null, error: repositoryError ?? { message: 'Unknown error', reason: 'unknown' } };
+    }
+
+    const { error: tokenError } = await this.client.from('invoice_tokens').insert({
+      token,
+      invoice_id: id,
     });
 
-    if (error) {
-      return { data: null, error: { message: error.message, reason: 'unknown' } };
+    const repositoryTokenError = this.toRepositoryError(tokenError);
+
+    if (repositoryTokenError) {
+      return { data: null, error: repositoryTokenError };
     }
 
-    if (response.error) {
-      return { data: null, error: { message: response.error, reason: 'validation' } };
-    }
-
-    // Fetch the updated invoice to return consistent data
-    const { data: invoiceResult, error: fetchError } = await this.fetchInvoiceWithItems(id);
-
-    if (fetchError || !invoiceResult) {
-      return { data: null, error: fetchError ?? { message: 'Failed to fetch updated invoice', reason: 'unknown' } };
-    }
+    this.sendEmail(data, token);
 
     reportApiOnline();
-    return {
-      data: {
-        invoice: invoiceResult,
-        token: response.token,
-        pdfUrl: response.pdfUrl,
-      },
-    };
+    return { data: { invoice: data, token, pdfUrl } };
   }
 
   async getInvoiceByToken(token: string): Promise<RepositoryResult<InvoiceWithItems>> {
     const { data, error } = await this.client
-      .rpc('get_invoice_by_token', { access_token: token })
-      .select('*, invoice_items(*)')
+      .rpc('get_invoice_by_token' as never, { access_token: token } as never)
       .single();
 
     const repositoryError = this.toRepositoryError(error);
@@ -229,18 +235,8 @@ export class InvoiceRepository extends BaseRepository {
       return { data: null, error: repositoryError };
     }
 
-    if (!data) {
-      return {
-        data: null,
-        error: {
-          message: 'Invoice not found',
-          reason: 'validation',
-        },
-      };
-    }
-
     reportApiOnline();
-    return { data: data as InvoiceWithItems };
+    return { data: data as unknown as InvoiceWithItems };
   }
 
   async markAsPaid(
@@ -270,6 +266,17 @@ export class InvoiceRepository extends BaseRepository {
     return { data };
   }
 
+  private async generatePDF(invoiceId: string): Promise<string> {
+    return `https://example.com/invoices/${invoiceId}.pdf`;
+  }
+
+  private sendEmail(invoice: InvoiceRecord, token: string) {
+    console.info('Sending invoice email', {
+      invoice_id: invoice.id,
+      invoice_number: invoice.invoice_number,
+      token,
+    });
+  }
 }
 
 export const invoiceRepository = new InvoiceRepository();

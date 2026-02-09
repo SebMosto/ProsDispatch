@@ -12,7 +12,6 @@ const Sidebar = () => {
     { label: t('layout.nav.dashboard'), href: '/dashboard' },
     { label: t('layout.nav.jobs'), href: '/jobs' },
     { label: t('layout.nav.clients'), href: '/clients' },
-    { label: t('layout.nav.settings'), href: '/settings' },
   ], [t]);
 
   return (
@@ -50,7 +49,6 @@ export const BottomNav = () => {
     { label: t('layout.nav.dashboard'), href: '/dashboard' },
     { label: t('layout.nav.jobs'), href: '/jobs' },
     { label: t('layout.nav.clients'), href: '/clients' },
-    { label: t('layout.nav.settings'), href: '/settings' },
   ], [t]);
 
   return (
