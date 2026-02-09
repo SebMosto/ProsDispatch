@@ -147,7 +147,7 @@ describe('SettingsPage', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Stripe Connect')).toBeInTheDocument();
+    expect(screen.getByText('settings.stripe.title')).toBeInTheDocument();
     expect(screen.getByText('acct_12345')).toBeInTheDocument();
     expect(screen.getByText('cus_12345')).toBeInTheDocument();
   });
