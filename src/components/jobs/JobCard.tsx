@@ -77,7 +77,7 @@ const JobCard = ({ job }: JobCardProps) => {
       </dl>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs text-slate-500">{t('jobs.card.created', { date: new Date(job.created_at).toLocaleString() })}</div>
+        <div className="text-xs text-slate-500">{t('jobs.card.created', { date: new Date(job.created_at) })}</div>
         <Link
           to={`/jobs/${job.id}`}
           className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
