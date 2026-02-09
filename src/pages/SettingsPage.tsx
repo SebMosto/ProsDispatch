@@ -173,11 +173,11 @@ const SettingsPage = () => {
            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
              <h2 className="flex items-center text-lg font-medium text-gray-900 mb-4">
                <CreditCard className="mr-2 h-5 w-5 text-gray-400" />
-               Stripe Connect
+               {t('settings.stripe.title')}
              </h2>
              <div className="text-sm text-gray-500">
-               <p>Connected Account ID: <span className="font-mono">{profile.stripe_account_id}</span></p>
-               {profile.stripe_customer_id && <p>Customer ID: <span className="font-mono">{profile.stripe_customer_id}</span></p>}
+               <p>{t('settings.stripe.accountId')} <span className="font-mono">{profile.stripe_account_id}</span></p>
+               {profile.stripe_customer_id && <p>{t('settings.stripe.customerId')} <span className="font-mono">{profile.stripe_customer_id}</span></p>}
              </div>
            </div>
         )}
