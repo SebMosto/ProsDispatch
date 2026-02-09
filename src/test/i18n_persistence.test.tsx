@@ -47,27 +47,17 @@ describe('LanguageSwitcher Persistence', () => {
   });
 
   it('should explicitly save language to localStorage when French is clicked', async () => {
-    // We need to access the mocked changeLanguage to verify it's called
-    // But since we mocked useTranslation entirely, we need to spy on the implementation or the mock.
-
-    // Let's re-mock with a specific spy
+    // Let's re-mock with a specific spy to verify calls
     const changeLanguageMock = vi.fn().mockResolvedValue(undefined);
     vi.mocked(await import('react-i18next')).useTranslation = () => ({
-      t: (key: string) => key === 'layout.languageFrench' ? 'Français' : key,
+      t: (key: string) => (key === 'layout.languageFrench' ? 'Français' : key),
       i18n: {
         language: 'en',
         changeLanguage: changeLanguageMock,
       },
-    }) as any;
+    } as unknown as import('react-i18next').UseTranslationResponse<'translation'>);
 
     render(<LanguageSwitcher />);
-
-    // Find French button.
-    // The component renders: {language === 'en' ? t('layout.languageEnglish') : t('layout.languageFrench')}
-    // If current is 'en', the buttons are 'en' and 'fr'.
-    // Wait, the component maps over ['en', 'fr'].
-    // Button 1: key='en', text=t('layout.languageEnglish')
-    // Button 2: key='fr', text=t('layout.languageFrench')
 
     const frenchButton = screen.getByText('Français');
     fireEvent.click(frenchButton);
