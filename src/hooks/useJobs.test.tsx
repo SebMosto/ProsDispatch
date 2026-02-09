@@ -35,6 +35,8 @@ describe('useJobs', () => {
     const wrapper = createWrapper();
     const { result, rerender } = renderHook(() => useJobs(), { wrapper });
 
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
     const firstResult = result.current;
 
     // Rerender with same props (or no props)
