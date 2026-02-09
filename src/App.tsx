@@ -22,7 +22,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
 
   if (isPublicInvoice) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50" key={i18n.language}>
         <header className="border-b border-slate-200 bg-white">
           <div className="mx-auto flex w-full max-w-4xl items-center px-4 py-4 sm:px-6 lg:px-8">
             <div className="text-lg font-semibold text-slate-900" aria-label={t('layout.brand')}>
@@ -38,7 +38,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" key={i18n.language}>
       <header className="app-header">
         <div className="brand" aria-label={t('layout.brand')}>
           {t('layout.brand')}
