@@ -7,8 +7,8 @@ import JobCard from '../components/jobs/JobCard';
 import { Plus, LogOut } from 'lucide-react';
 import type { JobStatus } from '../schemas/mvp1/job';
 
-const ACTIVE_STATUSES: JobStatus[] = ['draft', 'sent', 'approved', 'in_progress'];
-const HISTORY_STATUSES: JobStatus[] = ['completed', 'invoiced', 'paid', 'archived'];
+const ACTIVE_STATUSES: JobStatus[] = ['draft', 'sent', 'approved', 'in_progress', 'completed'];
+const HISTORY_STATUSES: JobStatus[] = ['invoiced', 'paid', 'archived'];
 
 const DashboardPage = () => {
   const { t } = useTranslation();
