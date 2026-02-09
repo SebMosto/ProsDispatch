@@ -254,6 +254,11 @@
       "title": "Language",
       "description": "Select your preferred language for the interface."
     },
+    "stripe": {
+      "title": "Stripe Connect",
+      "accountId": "Connected Account ID:",
+      "customerId": "Customer ID:"
+    },
     "session": {
       "title": "Session",
       "description": "Securely sign out of your account."
