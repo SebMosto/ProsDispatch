@@ -6,6 +6,12 @@ import type { Repository, RepositoryListParams, RepositoryResult } from './base'
 import { BaseRepository } from './base';
 
 export type JobRecord = Database['public']['Tables']['jobs']['Row'];
+
+export type JobWithDetails = JobRecord & {
+  clients: { name: string } | null;
+  properties: { address_line1: string; city: string } | null;
+};
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -48,6 +54,37 @@ export class JobRepository
 
     reportApiOnline();
     return { data: data ?? [] };
+  }
+
+  async listWithDetails(params?: JobListParams): Promise<RepositoryResult<JobWithDetails[]>> {
+    const { status, includeDeleted } = params ?? {};
+
+    const query = this.client
+      .from('jobs')
+      .select('*, clients(name), properties(address_line1, city)')
+      .order('created_at', { ascending: false });
+
+    if (status?.length) {
+      query.in('status', status);
+    }
+
+    if (!includeDeleted) {
+      query.is('deleted_at', null);
+    }
+
+    const { data, error } = await query;
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    // Cast the result to JobWithDetails[] because supabase-js types might be tricky with joins
+    // We know the shape matches based on the select statement
+    const jobs = (data as unknown) as JobWithDetails[];
+
+    reportApiOnline();
+    return { data: jobs ?? [] };
   }
 
   async get(id: string): Promise<RepositoryResult<JobRecord>> {
