@@ -11,7 +11,7 @@ import { PageLoader } from '@/components/ui/PageLoader';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
-  const { user, profile, signOut, loading: authLoading } = useAuth();
+  const { user, profile, signOut, refreshProfile, loading: authLoading } = useAuth();
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
 
@@ -49,6 +49,9 @@ const SettingsPage = () => {
         .eq('id', user.id);
 
       if (error) throw error;
+      
+      // Refresh the profile in the auth context
+      await refreshProfile();
       setUpdateSuccess(true);
     } catch (error) {
       console.error('Error updating profile:', error);

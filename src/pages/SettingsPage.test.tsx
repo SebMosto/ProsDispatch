@@ -43,6 +43,7 @@ describe('SettingsPage', () => {
         stripe_account_id: null
       },
       signOut: vi.fn(),
+      refreshProfile: vi.fn(),
       loading: false,
     });
   });
@@ -58,13 +59,29 @@ describe('SettingsPage', () => {
     expect(screen.getByDisplayValue('Test Business')).toBeInTheDocument();
   });
 
-  it('submits profile update', async () => {
+  it('submits profile update and refreshes profile', async () => {
     const updateMock = vi.fn(() => ({
       eq: vi.fn(() => ({ error: null }))
     }));
+    const refreshProfileMock = vi.fn();
 
     mockSupabase.from.mockReturnValue({
       update: updateMock
+    });
+
+    mockUseAuth.mockReturnValue({
+      user: { id: 'user-123', email: 'test@example.com' },
+      profile: {
+        id: 'user-123',
+        full_name: 'Test User',
+        business_name: 'Test Business',
+        email: 'test@example.com',
+        role: 'contractor',
+        stripe_account_id: null
+      },
+      signOut: vi.fn(),
+      refreshProfile: refreshProfileMock,
+      loading: false,
     });
 
     render(
@@ -85,6 +102,7 @@ describe('SettingsPage', () => {
         }));
     });
 
+    expect(refreshProfileMock).toHaveBeenCalled();
     expect(screen.getByText('common.success')).toBeInTheDocument();
   });
 
@@ -94,6 +112,7 @@ describe('SettingsPage', () => {
       user: { id: 'user-123' },
       profile: {},
       signOut: signOutMock,
+      refreshProfile: vi.fn(),
       loading: false,
     });
 
@@ -118,6 +137,7 @@ describe('SettingsPage', () => {
         stripe_customer_id: 'cus_12345'
       },
       signOut: vi.fn(),
+      refreshProfile: vi.fn(),
       loading: false,
     });
 
