@@ -10,6 +10,7 @@
       "jobs": "Jobs",
       "newJob": "New Job",
       "clients": "Clients",
+      "settings": "Settings",
       "active": "Active"
     }
   },
@@ -242,6 +243,38 @@
     "invalidEmail": "Invalid email",
     "updateRequired": "At least one field is required to update a client",
     "nameRequired": "Name is required"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and preferences.",
+    "profile": {
+      "title": "Profile"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Select your preferred language for the interface."
+    },
+    "session": {
+      "title": "Session",
+      "description": "Securely sign out of your account."
+    }
+  },
+  "profile": {
+    "field": {
+      "full_name": "Full Name",
+      "business_name": "Business Name"
+    },
+    "validation": {
+      "name_required": "Full name is required"
+    }
+  },
+  "common": {
+    "success": "Changes saved successfully.",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "jobApproval": {
     "title": "Job Approval Request",
