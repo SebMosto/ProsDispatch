@@ -12,7 +12,7 @@ import type { InvoiceDraftInput } from '../../schemas/mvp1/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
 
 const InvoiceItemFormSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   description: z.string().min(1, 'Description is required'),
   quantity: z.number().positive('Qty must be greater than zero'),
   unitPrice: z.number().min(0, 'Unit price must be 0 or greater'),
