@@ -6,7 +6,7 @@ import type { z } from 'zod';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { getPropertySchema } from '../../schemas/property';
+import { getPropertySchema } from '../../schemas/mvp1/property';
 import { propertyRepository } from '../../repositories/propertyRepository';
 import { type AddressSelection } from '../ui/AddressAutocomplete';
 import { type SyncBadgeState } from '../system/SyncBadge';
@@ -19,7 +19,7 @@ const DRAFT_STORAGE_KEY = 'property:create:draft';
 // But z.infer expects a ZodSchema instance.
 // So we use a dummy t function to get the type or use the static fallback schema for type inference if it matches structure.
 // Let's use the static fallback for type inference as it is safer and cleaner for now, assuming structure is identical.
-import { PropertySchema as StaticPropertySchema } from '../../schemas/property';
+import { PropertySchema as StaticPropertySchema } from '../../schemas/mvp1/property';
 
 export type FormValues = z.infer<typeof StaticPropertySchema>;
 
@@ -39,7 +39,7 @@ interface UseCreatePropertyFormProps {
 }
 
 export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -68,7 +68,22 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     reset,
     watch,
     setValue,
+    clearErrors,
+    trigger,
+    formState: { errors },
   } = formMethods;
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;

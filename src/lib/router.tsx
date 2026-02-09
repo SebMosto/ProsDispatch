@@ -1,13 +1,2 @@
-export { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-
-export const routePatterns = {
-  createInvoice: '/jobs/:jobId/invoices/new',
-  invoiceDetail: '/invoices/:id',
-  publicInvoice: '/pay/:token',
-};
-
-export const routePaths = {
-  createInvoice: (jobId: string) => `/jobs/${jobId}/invoices/new`,
-  invoiceDetail: (id: string) => `/invoices/${id}`,
-  publicInvoice: (token: string) => `/pay/${token}`,
-};
+export { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+export { routePatterns, routePaths } from './routes/patterns';

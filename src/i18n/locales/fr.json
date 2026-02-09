@@ -1,11 +1,11 @@
 {
   "layout": {
     "brand": "ProsDispatch",
-    "initials": "PD",
     "languageLabel": "Sélection de la langue",
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "mainNavigation": "Navigation principale",
       "dashboard": "Tableau de bord",
       "jobs": "Travaux",
       "newJob": "Nouveau travail",
@@ -28,7 +28,7 @@
       },
       "payments": {
         "title": "Paiements directs uniquement",
-        "description": "Encaissez les paiements via Stripe Connect Standard sans détention de fonds ni soldes conservés."
+        "description": "Encaissez les paiements via Stripe Connect Standard sans escrow ni soldes conservés."
       },
       "compliance": {
         "title": "Prêt pour le Canada",
@@ -39,15 +39,14 @@
   "footer": {
     "note": "La mise en page mobile d'abord s'adapte aux écrans aussi petits que 320px."
   },
-  "offline": {
-    "title": "Vous êtes hors ligne",
-    "body": "Les modifications sont enregistrées sur votre appareil. Vous pourrez soumettre une fois de retour en ligne."
-  },
   "auth": {
     "shared": {
       "email": "Courriel",
       "password": "Mot de passe",
       "loading": "Traitement en cours..."
+    },
+    "error": {
+      "generic": "Échec de l'authentification. Veuillez réessayer."
     },
     "signIn": {
       "title": "Se connecter",
@@ -55,7 +54,6 @@
       "emailPlaceholder": "vous@exemple.com",
       "passwordPlaceholder": "Entrez votre mot de passe",
       "button": "Connexion",
-      "error": "Courriel ou mot de passe invalide",
       "noAccount": "Pas encore de compte?"
     },
     "signUp": {
@@ -68,21 +66,25 @@
       "emailPlaceholder": "vous@exemple.com",
       "passwordPlaceholder": "Créez un mot de passe sécurisé",
       "button": "Créer le compte",
-      "error": "Impossible de créer le compte. Veuillez vérifier vos informations et réessayer.",
       "haveAccount": "Déjà inscrit?"
     },
     "dashboard": {
       "greeting": "Bon retour",
       "title": "Tableau de bord",
       "subtitle": "Votre profil d'entrepreneur est prêt.",
-      "subscriptionTest": "Test d'abonnement",
-      "testConnection": "Testez la connexion de paiement ci-dessous.",
-      "testUpgrade": "Test de mise à niveau (Stripe)",
-      "processing": "Traitement en cours...",
       "notProvided": "Non renseigné",
       "role": "Rôle",
       "sessionNote": "Votre session est sécurisée avec Supabase Auth.",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "createJob": "Créer un travail",
+      "activeJobs": "Travaux actifs",
+      "history": "Historique",
+      "errorLoadingJobs": "Impossible de charger les travaux",
+      "retry": "Réessayer",
+      "noJobsFound": "Aucun travail trouvé",
+      "noActiveJobs": "Vous n'avez aucun travail actif pour le moment.",
+      "noHistoryJobs": "Vous n'avez encore terminé aucun travail.",
+      "createFirstJob": "Créer votre premier travail"
     }
   },
   "sync": {
@@ -95,12 +97,12 @@
     }
   },
   "jobs": {
-    "createPage": {
-       "breadCrumb": "Travaux",
-       "header": "Créer et gérer les travaux",
-       "subHeader": "Les brouillons sont enregistrés localement même si vous rechargez."
-    },
     "create": {
+      "page": {
+        "section": "Travaux",
+        "title": "Créer et gérer des travaux",
+        "subtitle": "Les brouillons sont enregistrés localement même si vous rechargez la page."
+      },
       "title": "Créer un travail",
       "subtitle": "Suivez le travail pour un client et une propriété.",
       "descriptionWarning": "N'incluez pas de codes d'accès ou d'informations personnelles.",
@@ -125,33 +127,6 @@
         "auth": "Vous devez être connecté pour créer un travail."
       }
     },
-    "detail": {
-      "noSelection": "Aucun travail sélectionné.",
-      "backToJobs": "Retour aux travaux",
-      "errorLoading": "Impossible de charger les détails du travail.",
-      "noDescription": "Aucune description fournie",
-      "sectionTitle": "Détails",
-      "notScheduled": "Non planifié",
-      "quickActions": "Actions rapides",
-      "optimisticNote": "Utilise des mises à jour optimistes",
-      "labels": {
-        "status": "Statut",
-        "clientId": "ID Client",
-        "propertyId": "ID Propriété",
-        "serviceDate": "Date de service",
-        "created": "Créé",
-        "updated": "Mis à jour"
-      }
-    },
-    "actions": {
-      "send": "Envoyer au client",
-      "approve": "Marquer comme approuvé",
-      "start": "Commencer le travail",
-      "complete": "Terminer le travail",
-      "archive": "Archiver le travail",
-      "invoice": "Marquer comme facturé",
-      "paid": "Marquer comme payé"
-    },
     "status": {
       "draft": "Brouillon",
       "sent": "Envoyé",
@@ -163,31 +138,51 @@
       "archived": "Archivé"
     },
     "card": {
-      "jobNum": "Travail #{{id}}",
+      "jobId": "Travail #{{id}}",
       "noDescription": "Aucune description fournie",
-      "clientId": "ID Client",
-      "propertyId": "ID Propriété",
+      "clientId": "ID client",
+      "propertyId": "ID propriété",
       "serviceDate": "Date de service",
       "notScheduled": "Non planifié",
       "lastUpdated": "Dernière mise à jour",
       "created": "Créé le {{date}}",
-      "viewDetails": "Voir les détails"
+      "viewDetails": "Voir détails"
     },
     "list": {
-      "pageTitle": "Travaux",
-      "header": "Activité des travaux",
-      "subHeader": "Suivez l'état des travaux et les mises à jour récentes.",
-      "error": "Impossible de charger les travaux",
+      "unableToLoad": "Impossible de charger les travaux",
       "retry": "Réessayer",
       "title": "Travaux",
-      "empty": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
+      "emptyState": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
       "total": "{{count}} total"
+    },
+    "detail": {
+      "jobId": "Travail #{{id}}",
+      "noDescription": "Aucune description fournie",
+      "detailsTitle": "Détails",
+      "statusLabel": "Statut",
+      "clientId": "ID client",
+      "propertyId": "ID propriété",
+      "serviceDate": "Date de service",
+      "notScheduled": "Non planifié",
+      "created": "Créé le",
+      "updated": "Mis à jour le",
+      "quickActions": "Actions rapides",
+      "optimisticNote": "Utilise des mises à jour optimistes",
+      "actions": {
+        "send": "Envoyer",
+        "approve": "Approuver",
+        "startJob": "Commencer le travail",
+        "completeJob": "Terminer le travail",
+        "archive": "Archiver"
+      },
+      "backToJobs": "Retour aux travaux",
+      "errorNoJob": "Aucun travail sélectionné.",
+      "errorLoading": "Impossible de charger les détails du travail.",
+      "errorStatusUpdate": "Impossible de mettre à jour le statut",
+      "notFound": "Travail non trouvé"
     },
     "invoices": {
       "title": "Factures",
-      "publicPage": {
-        "contractorDefault": "Entrepreneur Pros Dispatch"
-      },
       "draftInvoice": "Créer une facture",
       "errorLoading": "Impossible de charger les factures pour ce travail.",
       "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer.",
@@ -204,8 +199,7 @@
         "noteLabel": "Note (optionnelle)",
         "cancel": "Annuler",
         "confirm": "Confirmer le paiement",
-        "saving": "Enregistrement...",
-        "error": "Impossible de marquer la facture comme payée."
+        "saving": "Enregistrement..."
       },
       "form": {
         "header": "Facture",
@@ -223,10 +217,6 @@
         "invoiceNumberPlaceholder": "Généré automatiquement lors de l'enregistrement",
         "statusLabel": "Statut",
         "statusDraft": "Brouillon",
-        "statusSent": "Envoyé",
-        "statusPaid": "Payé",
-        "statusVoid": "Annulé",
-        "statusOverdue": "En retard",
         "lineItemsTitle": "Éléments de ligne",
         "addItem": "+ Ajouter un élément",
         "noItems": "Aucun élément pour le moment. Ajoutez votre premier élément de ligne.",
@@ -274,52 +264,11 @@
         "noLineItems": "Aucun élément de ligne enregistré.",
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
-        "totalDueLabel": "Total dû",
-        "downloadPdf": "Télécharger le PDF"
-      }
-    }
-  },
-  "properties": {
-     "createPage": {
-       "breadCrumb": "Propriétés",
-       "header": "Créer une propriété",
-       "subHeader": "Attribuer une propriété à un client existant.",
-       "backToClient": "Retour au client"
-     },
-    "create": {
-      "title": "Créer une propriété",
-      "subtitle": "Ajouter une propriété pour un client existant.",
-      "labels": {
-        "clientId": "ID Client",
-        "addressLine1": "Ligne d'adresse 1",
-        "addressLine2": "Ligne d'adresse 2 (optionnelle)",
-        "city": "Ville",
-        "province": "Province",
-        "postalCode": "Code postal",
-        "nickname": "Surnom de la propriété (optionnel)"
-      },
-      "placeholders": {
-        "addressLine1": "123 rue Principale"
-      },
-      "actions": {
-        "submit": "Enregistrer la propriété"
-      },
-      "statuses": {
-        "success": "Propriété enregistrée."
-      },
-      "errors": {
-        "generic": "Impossible d'enregistrer la propriété.",
-        "auth": "Vous devez être connecté pour créer une propriété."
+        "totalDueLabel": "Total dû"
       }
     }
   },
   "clients": {
-    "createPage": {
-       "breadCrumb": "Clients",
-       "header": "Créer un client",
-       "subHeader": "Ajouter un nouveau client au registre.",
-       "backToClients": "Retour aux clients"
-    },
     "create": {
       "title": "Créer un client",
       "subtitle": "Saisir les détails du client.",
@@ -348,102 +297,74 @@
         "generic": "Impossible d'enregistrer le client.",
         "auth": "Vous devez être connecté pour créer un client."
       }
-    },
-    "list": {
-      "pageTitle": "Clients",
-      "header": "Registre des clients",
-      "subHeader": "Voir les clients et leurs propriétés principales.",
-      "newClient": "Nouveau client",
-      "title": "Clients",
-      "empty": "Pas encore de clients. Les nouveaux clients apparaîtront ici.",
-      "error": "Impossible de charger les clients.",
-      "cityFallback": "Ville non disponible",
-      "loading": "Chargement...",
-      "unnamed": "Client sans nom",
-      "types": {
-        "business": "Entreprise",
-        "individual": "Particulier"
-      }
-    },
-    "detail": {
-      "error": "Impossible de charger le client.",
-      "properties": "Propriétés",
-      "delete": "Supprimer le client",
-      "deleting": "Suppression...",
-      "deleted": "Client supprimé.",
-      "noSelection": "Aucun client sélectionné.",
-      "backToClients": "Retour aux clients",
-      "idLabel": "Client #{{id}}",
-      "noEmail": "Aucun courriel",
-      "loading": "Chargement...",
-      "addProperty": "Ajouter une propriété",
-      "noProperties": "Pas encore de propriétés.",
-      "primaryProperty": "Propriété principale",
-      "types": {
-         "business": "Entreprise",
-         "individual": "Particulier"
-      }
-    }
-  },
-  "taxes": {
-    "GST": "TPS",
-    "QST": "TVQ"
-  },
-  "public": {
-    "invoice": {
-      "notAvailable": "Facture non disponible",
-      "expired": "Le lien de la facture a expiré ou est invalide.",
-      "header": "Facture {{number}}",
-      "from": "Facture de {{name}}",
-      "totalDue": "Total dû",
-      "lineItems": "Éléments de ligne",
-      "noItems": "Aucun élément de ligne fourni.",
-      "subtotal": "Sous-total",
-      "payNow": "Payer maintenant",
-      "downloadPdf": "Télécharger le PDF"
     }
   },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
     "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
-    "nameRequired": "Le nom est requis",
-    "descriptionRequired": "La description est requise",
-    "qtyPositive": "La quantité doit être supérieure à zéro",
-    "unitPriceNonNegative": "Le prix unitaire doit être de 0 ou plus",
-    "titleRequired": "Le titre doit comporter au moins 2 caractères",
-    "titleTooLong": "Le titre ne doit pas dépasser 80 caractères",
-    "descriptionTooLong": "La description ne doit pas dépasser 2000 caractères",
-    "invalidDate": "La date de service doit être au format AAAA-MM-JJ",
-    "clientIdInvalid": "ID client invalide",
-    "propertyIdInvalid": "ID propriété invalide",
-    "jobUpdateRequired": "Au moins un champ est requis pour mettre à jour un travail",
-    "addressTooShort": "Adresse trop courte",
-    "cityRequired": "Ville requise",
-    "invalidPostalCode": "Format invalide (A1A 1A1)",
-    "propertyUpdateRequired": "Au moins un champ est requis pour mettre à jour une propriété",
-    "amountInteger": "Le montant doit être un entier représentant des cents",
-    "amountNonNegative": "Le montant doit être zéro ou plus",
-    "taxLabelRequired": "Le libellé de la taxe est requis",
-    "taxRateNonNegative": "Le taux de taxe doit être zéro ou plus",
-    "lineItemDescriptionRequired": "La description de l'élément de ligne est requise",
-    "quantityPositive": "La quantité doit être supérieure à zéro",
-    "jobIdUUID": "L'ID du travail doit être un UUID valide",
-    "contractorIdUUID": "L'ID de l'entrepreneur doit être un UUID valide",
-    "invoiceIdRequired": "L'ID de la facture est requis",
-    "invoiceTokenRequired": "Le jeton de facture est requis",
-    "invoiceNumberRequired": "Le numéro de facture est requis",
-    "pdfUrlValid": "L'URL du PDF doit être valide",
-    "paymentNoteTooLong": "La note de paiement doit comporter 1000 caractères ou moins",
-    "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
-    "oneLineItemRequired": "Au moins un élément de ligne est requis"
+    "nameRequired": "Le nom est requis"
   },
-  "taxes": {
-    "GST": "TPS",
-    "QST": "TVQ"
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre profil et vos préférences.",
+    "profile": {
+      "title": "Profil"
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Sélectionnez votre langue préférée pour l'interface."
+    },
+    "stripe": {
+      "title": "Stripe Connect",
+      "accountId": "ID de compte connecté :",
+      "customerId": "ID client :"
+    },
+    "session": {
+      "title": "Session",
+      "description": "Déconnectez-vous de votre compte en toute sécurité."
+    }
   },
-  "errors": {
-    "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
-    "unexpected": "Une erreur inattendue est survenue."
+  "profile": {
+    "field": {
+      "full_name": "Nom complet",
+      "business_name": "Nom de l'entreprise"
+    },
+    "validation": {
+      "name_required": "Le nom complet est requis"
+    }
+  },
+  "common": {
+    "success": "Modifications enregistrées avec succès.",
+    "save": "Enregistrer",
+    "loading": "Chargement...",
+    "error": {
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "jobApproval": {
+    "title": "Demande d'approbation de travail",
+    "fromContractor": "de {{contractorName}}",
+    "scheduled": "Prévu : {{date}}",
+    "scheduledTbd": "Prévu : À déterminer",
+    "description": "Description",
+    "noDescription": "Aucune description fournie.",
+    "location": "Emplacement",
+    "client": "Client",
+    "processing": "Traitement en cours...",
+    "decline": "Refuser",
+    "approveJob": "Approuver le travail",
+    "jobStatus": "Ce travail est actuellement <strong>{{status}}</strong>.",
+    "error": {
+      "title": "Erreur",
+      "invalidToken": "Lien d'invitation invalide. Jeton manquant.",
+      "loadFailed": "Échec du chargement des détails du travail. Le lien peut être expiré ou invalide.",
+      "submitFailed": "Échec de la soumission de la réponse. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Succès",
+      "approved": "Travail approuvé avec succès ! Le contracteur a été notifié.",
+      "declined": "Travail refusé. Le contracteur a été notifié."
+    }
   }
 }

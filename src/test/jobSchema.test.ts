@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { JobCreateSchema, JobUpdateSchema } from '../schemas/job';
+import { getJobCreateSchema, getJobUpdateSchema } from '../schemas/mvp1/job';
+import { TFunction } from 'i18next';
+
+// Mock t function
+const t = ((key: string) => key) as unknown as TFunction;
+const JobCreateSchema = getJobCreateSchema(t);
+const JobUpdateSchema = getJobUpdateSchema(t);
 
 describe('JobCreateSchema', () => {
   describe('Valid inputs', () => {
@@ -122,7 +128,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.clientIdInvalid');
+        expect(result.error.issues[0].message).toContain('validation.clientId');
       }
     });
 
@@ -137,7 +143,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.propertyIdInvalid');
+        expect(result.error.issues[0].message).toContain('validation.propertyId');
       }
     });
 
@@ -152,7 +158,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.titleRequired');
+        expect(result.error.issues[0].message).toContain('validation.titleMin');
       }
     });
 
@@ -167,7 +173,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.titleTooLong');
+        expect(result.error.issues[0].message).toContain('validation.titleMax');
       }
     });
 
@@ -183,7 +189,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.descriptionTooLong');
+        expect(result.error.issues[0].message).toContain('validation.descriptionMax');
       }
     });
 
@@ -199,7 +205,7 @@ describe('JobCreateSchema', () => {
       const result = JobCreateSchema.safeParse(invalidJob);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.invalidDate');
+        expect(result.error.issues[0].message).toContain('validation.serviceDate');
       }
     });
   });
@@ -269,7 +275,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.jobUpdateRequired');
+        expect(result.error.issues[0].message).toContain('validation.updateRequired');
       }
     });
   });
@@ -283,7 +289,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.titleRequired');
+        expect(result.error.issues[0].message).toContain('validation.titleMin');
       }
     });
 
@@ -295,7 +301,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.titleTooLong');
+        expect(result.error.issues[0].message).toContain('validation.titleMax');
       }
     });
 
@@ -307,7 +313,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.descriptionTooLong');
+        expect(result.error.issues[0].message).toContain('validation.descriptionMax');
       }
     });
 
@@ -319,7 +325,7 @@ describe('JobUpdateSchema', () => {
       const result = JobUpdateSchema.safeParse(invalidUpdate);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('validation.invalidDate');
+        expect(result.error.issues[0].message).toContain('validation.serviceDate');
       }
     });
   });

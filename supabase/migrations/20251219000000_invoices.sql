@@ -1,22 +1,22 @@
 -- 1. Enums
-create type invoice_status as enum (
-  'draft',
-  'sent',
-  'paid',
-  'void',
-  'overdue'
-);
+DO $$ begin
+    create type invoice_status as enum (
+      'draft', 'sent', 'paid', 'void', 'overdue'
+    );
+exception
+    when duplicate_object then null;
+end $$;
 
-create type invoice_payment_method as enum (
-  'stripe',
-  'cash',
-  'cheque',
-  'etransfer',
-  'other'
-);
+DO $$ begin
+    create type invoice_payment_method as enum (
+      'stripe', 'cash', 'cheque', 'etransfer', 'other'
+    );
+exception
+    when duplicate_object then null;
+end $$;
 
 -- 2. Invoices Table
-create table invoices (
+create table if not exists invoices (
   id uuid primary key default gen_random_uuid(),
   job_id uuid not null references jobs(id),
   contractor_id uuid not null references auth.users(id),
@@ -35,13 +35,13 @@ create table invoices (
   created_at timestamptz not null default timezone('utc', now())
 );
 
-create unique index invoices_contractor_invoice_number_key on invoices(contractor_id, invoice_number);
-create index invoices_job_id_idx on invoices(job_id);
-create index invoices_contractor_id_idx on invoices(contractor_id);
-create index invoices_status_idx on invoices(status);
+create unique index if not exists invoices_contractor_invoice_number_key on invoices(contractor_id, invoice_number);
+create index if not exists invoices_job_id_idx on invoices(job_id);
+create index if not exists invoices_contractor_id_idx on invoices(contractor_id);
+create index if not exists invoices_status_idx on invoices(status);
 
 -- 3. Invoice Items Table
-create table invoice_items (
+create table if not exists invoice_items (
   id uuid primary key default gen_random_uuid(),
   invoice_id uuid not null references invoices(id) on delete cascade,
   description text not null,
@@ -50,17 +50,17 @@ create table invoice_items (
   amount integer not null
 );
 
-create index invoice_items_invoice_id_idx on invoice_items(invoice_id);
+create index if not exists invoice_items_invoice_id_idx on invoice_items(invoice_id);
 
 -- 4. Invoice Tokens Table
-create table invoice_tokens (
+create table if not exists invoice_tokens (
   token text primary key,
   invoice_id uuid not null references invoices(id) on delete cascade,
   expires_at timestamptz not null default (timezone('utc', now()) + interval '30 days'),
   opened_at timestamptz
 );
 
-create index invoice_tokens_invoice_id_idx on invoice_tokens(invoice_id);
+create index if not exists invoice_tokens_invoice_id_idx on invoice_tokens(invoice_id);
 
 -- 5. Immutability Guard
 create or replace function public.enforce_invoice_immutability()
@@ -91,6 +91,7 @@ begin
 end;
 $func$;
 
+drop trigger if exists enforce_invoice_immutability on public.invoices;
 create trigger enforce_invoice_immutability
   before update on public.invoices
   for each row
@@ -119,23 +120,30 @@ alter table invoices enable row level security;
 alter table invoice_items enable row level security;
 alter table invoice_tokens enable row level security;
 
+-- Invoices Policies
+drop policy if exists "invoices_select_own" on invoices;
 create policy "invoices_select_own"
   on invoices for select
   using (auth.uid() = contractor_id);
 
+drop policy if exists "invoices_insert_own" on invoices;
 create policy "invoices_insert_own"
   on invoices for insert
   with check (auth.uid() = contractor_id);
 
+drop policy if exists "invoices_update_own" on invoices;
 create policy "invoices_update_own"
   on invoices for update
   using (auth.uid() = contractor_id)
   with check (auth.uid() = contractor_id);
 
+drop policy if exists "invoices_delete_own" on invoices;
 create policy "invoices_delete_own"
   on invoices for delete
   using (auth.uid() = contractor_id);
 
+-- Invoice Items Policies
+drop policy if exists "invoice_items_select_own" on invoice_items;
 create policy "invoice_items_select_own"
   on invoice_items for select
   using (
@@ -147,6 +155,7 @@ create policy "invoice_items_select_own"
     )
   );
 
+drop policy if exists "invoice_items_insert_own" on invoice_items;
 create policy "invoice_items_insert_own"
   on invoice_items for insert
   with check (
@@ -158,6 +167,7 @@ create policy "invoice_items_insert_own"
     )
   );
 
+drop policy if exists "invoice_items_update_own" on invoice_items;
 create policy "invoice_items_update_own"
   on invoice_items for update
   using (
@@ -177,6 +187,7 @@ create policy "invoice_items_update_own"
     )
   );
 
+drop policy if exists "invoice_items_delete_own" on invoice_items;
 create policy "invoice_items_delete_own"
   on invoice_items for delete
   using (
@@ -188,6 +199,8 @@ create policy "invoice_items_delete_own"
     )
   );
 
+-- Invoice Tokens Policies
+drop policy if exists "invoice_tokens_select_own" on invoice_tokens;
 create policy "invoice_tokens_select_own"
   on invoice_tokens for select
   using (
@@ -199,6 +212,7 @@ create policy "invoice_tokens_select_own"
     )
   );
 
+drop policy if exists "invoice_tokens_insert_own" on invoice_tokens;
 create policy "invoice_tokens_insert_own"
   on invoice_tokens for insert
   with check (
@@ -210,6 +224,7 @@ create policy "invoice_tokens_insert_own"
     )
   );
 
+drop policy if exists "invoice_tokens_delete_own" on invoice_tokens;
 create policy "invoice_tokens_delete_own"
   on invoice_tokens for delete
   using (
