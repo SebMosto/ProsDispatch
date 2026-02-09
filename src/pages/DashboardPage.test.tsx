@@ -48,6 +48,15 @@ describe('DashboardPage', () => {
         {
           id: '2',
           status: 'completed',
+          title: 'Completed Job 1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          client_id: 'c1',
+          property_id: 'p1'
+        },
+        {
+          id: '3',
+          status: 'invoiced',
           title: 'History Job 1',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -67,6 +76,7 @@ describe('DashboardPage', () => {
     );
 
     expect(screen.getByText('Active Job 1')).toBeInTheDocument();
+    expect(screen.getByText('Completed Job 1')).toBeInTheDocument();
     expect(screen.queryByText('History Job 1')).not.toBeInTheDocument();
   });
 
@@ -85,6 +95,15 @@ describe('DashboardPage', () => {
         {
           id: '2',
           status: 'completed',
+          title: 'Completed Job 1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          client_id: 'c1',
+          property_id: 'p1'
+        },
+        {
+          id: '3',
+          status: 'invoiced',
           title: 'History Job 1',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -108,5 +127,6 @@ describe('DashboardPage', () => {
 
     expect(screen.getByText('History Job 1')).toBeInTheDocument();
     expect(screen.queryByText('Active Job 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Completed Job 1')).not.toBeInTheDocument();
   });
 });
