@@ -28,7 +28,7 @@
     "clsx": "^2.1.1",
     "i18next": "^25.8.4",
     "idb-keyval": "^6.0.0",
-    "lucide-react": "^0.460.0",
+    "lucide-react": "^0.563.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
