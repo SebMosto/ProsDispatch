@@ -2,15 +2,13 @@ import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
 import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/mvp1/job';
+import { JobWithDetailsSchema } from '../schemas/mvp1/job';
+import type { JobWithDetails } from '../schemas/mvp1/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
 
 export type JobRecord = Database['public']['Tables']['jobs']['Row'];
-
-export type JobWithDetails = JobRecord & {
-  clients: { name: string } | null;
-  properties: { address_line1: string; city: string } | null;
-};
+export type { JobWithDetails } from '../schemas/mvp1/job';
 
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
@@ -79,12 +77,20 @@ export class JobRepository
       return { data: null, error: repositoryError };
     }
 
-    // Cast the result to JobWithDetails[] because supabase-js types might be tricky with joins
-    // We know the shape matches based on the select statement
-    const jobs = (data as unknown) as JobWithDetails[];
+    const parsed = JobWithDetailsSchema.array().safeParse(data ?? []);
+    if (!parsed.success) {
+      return {
+        data: null,
+        error: {
+          message: 'Unable to parse job details response',
+          reason: 'validation',
+          cause: parsed.error,
+        },
+      };
+    }
 
     reportApiOnline();
-    return { data: jobs ?? [] };
+    return { data: parsed.data as JobWithDetails[] };
   }
 
   async get(id: string): Promise<RepositoryResult<JobRecord>> {
