@@ -1,72 +1,136 @@
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from '../lib/router';
 import { useAuth } from '../lib/auth';
-import { useSubscription } from '../hooks/useSubscription'; // <--- IMPORT THIS
+import { useJobsWithDetails } from '../hooks/useJobsWithDetails';
+import JobCard from '../components/jobs/JobCard';
+import { Plus, LogOut } from 'lucide-react';
+import type { JobStatus } from '../schemas/mvp1/job';
+
+const ACTIVE_STATUSES: JobStatus[] = ['draft', 'sent', 'approved', 'in_progress', 'completed'];
+const HISTORY_STATUSES: JobStatus[] = ['invoiced', 'paid', 'archived'];
 
 const DashboardPage = () => {
   const { t } = useTranslation();
   const { user, profile, signOut } = useAuth();
-  const { checkout, isLoading, error } = useSubscription(); // <--- USE HOOK
-  const TEST_PRICE_ID = "price_1Sq0myL7ioFFaVuvoWjd7pgP";
+  const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
+
+  const { jobs, loading, error, refetch } = useJobsWithDetails();
+
+  const activeJobs = useMemo(() =>
+    jobs.filter((job) => ACTIVE_STATUSES.includes(job.status)),
+    [jobs]
+  );
+
+  const historyJobs = useMemo(() =>
+    jobs.filter((job) => HISTORY_STATUSES.includes(job.status)),
+    [jobs]
+  );
+
+  const displayedJobs = activeTab === 'active' ? activeJobs : historyJobs;
 
   return (
-    <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-      <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-600">{t('auth.dashboard.greeting')}</p>
-        <h1 className="text-2xl font-semibold text-slate-900">{t('auth.dashboard.title')}</h1>
-        <p className="text-sm text-slate-600">{t('auth.dashboard.subtitle')}</p>
+    <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">{t('auth.dashboard.title')}</h1>
+          <p className="text-sm text-slate-600">
+            {profile?.business_name || profile?.full_name || user?.email}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/jobs/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          >
+            <Plus className="h-4 w-4" />
+            <span>{t('auth.dashboard.createJob')}</span>
+          </Link>
+          <button
+            onClick={signOut}
+            className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-slate-700"
+            aria-label={t('auth.dashboard.signOut')}
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
-      {/* --- TEMPORARY SUBSCRIPTION TEST SECTION --- */}
-      <section className="rounded-lg border border-blue-200 bg-blue-50 p-4 shadow-sm">
-        <h2 className="font-semibold text-blue-900">{t('auth.dashboard.subscriptionTest')}</h2>
-        <p className="mb-3 text-sm text-blue-700">{t('auth.dashboard.testConnection')}</p>
+      {/* Tabs */}
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex gap-8" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+              activeTab === 'active'
+                ? 'border-slate-900 text-slate-900'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+          >
+            {t('auth.dashboard.activeJobs')}
+            <span className={`ml-2 rounded-full py-0.5 px-2.5 text-xs font-medium ${
+              activeTab === 'active' ? 'bg-slate-100 text-slate-900' : 'bg-slate-100 text-slate-600'
+            }`}>
+              {activeJobs.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+              activeTab === 'history'
+                ? 'border-slate-900 text-slate-900'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+          >
+            {t('auth.dashboard.history')}
+            <span className={`ml-2 rounded-full py-0.5 px-2.5 text-xs font-medium ${
+              activeTab === 'history' ? 'bg-slate-100 text-slate-900' : 'bg-slate-100 text-slate-600'
+            }`}>
+              {historyJobs.length}
+            </span>
+          </button>
+        </nav>
+      </div>
 
-        {error && (
-          <div className="mb-3 rounded bg-red-100 p-2 text-sm text-red-700">
-            {error}
+      {/* List */}
+      <div className="flex flex-col gap-4">
+        {loading ? (
+          <div className="space-y-4">
+             {[...Array(3)].map((_, i) => (
+               <div key={i} className="h-32 w-full animate-pulse rounded-xl bg-slate-100" />
+             ))}
           </div>
+        ) : error ? (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <p className="font-semibold">{t('auth.dashboard.errorLoadingJobs')}</p>
+            <p>{error.message}</p>
+            <button
+              onClick={() => refetch()}
+              className="mt-2 text-xs font-semibold underline hover:text-red-800"
+            >
+              {t('auth.dashboard.retry')}
+            </button>
+          </div>
+        ) : displayedJobs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-12 text-center">
+            <p className="font-semibold text-slate-900">{t('auth.dashboard.noJobsFound')}</p>
+            <p className="text-sm text-slate-500">
+              {activeTab === 'active'
+                ? t('auth.dashboard.noActiveJobs')
+                : t('auth.dashboard.noHistoryJobs')}
+            </p>
+            {activeTab === 'active' && (
+              <Link
+                to="/jobs/new"
+                className="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-500"
+              >
+                {t('auth.dashboard.createFirstJob')} &rarr;
+              </Link>
+            )}
+          </div>
+        ) : (
+          displayedJobs.map((job) => <JobCard key={job.id} job={job} />)
         )}
-
-        <button
-          onClick={() => checkout(TEST_PRICE_ID)}
-          disabled={isLoading}
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isLoading ? t('auth.dashboard.processing') : t('auth.dashboard.testUpgrade')}
-        </button>
-      </section>
-      {/* ------------------------------------------- */}
-
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="font-medium text-slate-800">{t('auth.shared.email')}</dt>
-            <dd className="text-slate-700">{profile?.email || user?.email}</dd>
-          </div>
-          <div>
-            <dt className="font-medium text-slate-800">{t('auth.signUp.fullName')}</dt>
-            <dd className="text-slate-700">{profile?.full_name || t('auth.dashboard.notProvided')}</dd>
-          </div>
-          <div>
-            <dt className="font-medium text-slate-800">{t('auth.signUp.businessName')}</dt>
-            <dd className="text-slate-700">{profile?.business_name || t('auth.dashboard.notProvided')}</dd>
-          </div>
-          <div>
-            <dt className="font-medium text-slate-800">{t('auth.dashboard.role')}</dt>
-            <dd className="text-slate-700">{profile?.role}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-600">{t('auth.dashboard.sessionNote')}</p>
-        <button
-          type="button"
-          onClick={signOut}
-          className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-        >
-          {t('auth.dashboard.signOut')}
-        </button>
       </div>
     </main>
   );

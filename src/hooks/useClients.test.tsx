@@ -1,20 +1,25 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useClients } from './useClients';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { clientRepository } from '../repositories/clientRepository';
-import { propertyRepository } from '../repositories/propertyRepository';
+import React from 'react';
+
+// Hoist mocks to ensure they are available for vi.mock
+const { mockListClients, mockListProperties } = vi.hoisted(() => ({
+  mockListClients: vi.fn(),
+  mockListProperties: vi.fn(),
+}));
 
 // Mock repositories
-vi.mock('../repositories/clientRepository', () => ({
+vi.mock('@/repositories/clientRepository', () => ({
   clientRepository: {
-    list: vi.fn(),
+    list: mockListClients,
   },
 }));
 
-vi.mock('../repositories/propertyRepository', () => ({
+vi.mock('@/repositories/propertyRepository', () => ({
   propertyRepository: {
-    list: vi.fn(),
+    list: mockListProperties,
   },
 }));
 
@@ -26,9 +31,10 @@ const createWrapper = () => {
       },
     },
   });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  return Wrapper;
 };
 
 describe('useClients', () => {
@@ -36,20 +42,26 @@ describe('useClients', () => {
     vi.clearAllMocks();
   });
 
-  it('should return referentially stable result object when data does not change', async () => {
-    (clientRepository.list as Mock).mockResolvedValue({ data: [], error: null });
-    (propertyRepository.list as Mock).mockResolvedValue({ data: [], error: null });
+  it('should be referentially stable across re-renders when data has not changed', async () => {
+    mockListClients.mockResolvedValue({ data: [], error: null });
+    mockListProperties.mockResolvedValue({ data: [], error: null });
 
-    const wrapper = createWrapper();
-    const { result, rerender } = renderHook(() => useClients(), { wrapper });
+    const { result, rerender } = renderHook(() => useClients(), {
+      wrapper: createWrapper(),
+    });
+
+    // Wait for loading to finish
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     const firstResult = result.current;
 
-    // Rerender
+    // Force re-render
     rerender();
 
     const secondResult = result.current;
 
+    // This assertion expects referential equality (memoization)
+    // It should FAIL before the fix
     expect(secondResult).toBe(firstResult);
   });
 });

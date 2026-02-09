@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import type { JobCreateInput } from '../schemas/job';
+import { useCallback, useMemo } from 'react';
+import type { JobCreateInput } from '../schemas/mvp1/job';
 import { useCreateJobMutation } from './useJobMutations';
 
 interface UseCreateJobOptions {
@@ -9,18 +9,20 @@ interface UseCreateJobOptions {
 export const useCreateJob = (options?: UseCreateJobOptions) => {
   const mutation = useCreateJobMutation();
 
+  const wrappedCreate = useCallback(async (input: JobCreateInput) => {
+    const job = await mutation.mutateAsync(input);
+    options?.onSuccess?.();
+    return job;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only depend on onSuccess, not the entire options object
+  }, [mutation, options?.onSuccess]);
+
   return useMemo(
     () => ({
-      createJob: async (input: JobCreateInput) => {
-        const job = await mutation.mutateAsync(input);
-        options?.onSuccess?.();
-        return job;
-      },
+      createJob: wrappedCreate,
       isLoading: mutation.isPending,
       error: mutation.error ?? null,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mutation.error, mutation.isPending, mutation.mutateAsync],
+    [mutation.error, mutation.isPending, wrappedCreate],
   );
 };
 

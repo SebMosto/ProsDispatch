@@ -74,7 +74,7 @@ jobs:
         run: npm audit --audit-level=critical
       
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@v3.92.5
+        uses: trufflesecurity/trufflehog@v3.93.1
         with:
           path: ./
           base: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}"
@@ -312,11 +312,7 @@ jobs:
         run: npm ci --legacy-peer-deps
       
       - name: Check coverage configuration
-        run: |
-          echo "⚠️ Code coverage threshold enforcement not yet implemented"
-          echo "Required: 80% coverage threshold"
-          echo "TODO: Add test framework with coverage (e.g., Vitest with c8)"
-          echo "This is currently a warning but must be implemented before release"
+        run: npm run coverage
 
   governance-audit:
     name: Governance Policy Audit
@@ -354,6 +350,21 @@ jobs:
           
           echo "✓ Governance audit completed"
 
+  canonical-constraints:
+    name: Canonical Constraints Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Run Canonical Checks
+        run: npm run check:canonical
+
   all-checks-complete:
     name: All CI Guardrails Passed
     runs-on: ubuntu-latest
@@ -367,6 +378,7 @@ jobs:
       - test-suite
       - code-coverage
       - governance-audit
+      - canonical-constraints
     steps:
       - name: All checks passed
         run: |
