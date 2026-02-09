@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useJobs } from './useJobs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { jobRepository } from '../repositories/jobRepository';
@@ -34,6 +34,8 @@ describe('useJobs', () => {
 
     const wrapper = createWrapper();
     const { result, rerender } = renderHook(() => useJobs(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     const firstResult = result.current;
 
