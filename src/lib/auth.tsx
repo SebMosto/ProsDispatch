@@ -71,12 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user);
-    }
-  };
-
   const value = useMemo(
     () => ({
       user,
@@ -86,7 +80,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.auth.signOut();
       },
       session,
-      refreshProfile,
+      refreshProfile: async () => {
+        if (user) {
+          await fetchProfile(user);
+        }
+      },
     }),
     [loading, profile, session, user],
   );
