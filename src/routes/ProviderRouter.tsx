@@ -13,10 +13,12 @@ const ClientsListPage = lazy(() => import('../pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('../pages/clients/CreateClientPage'));
 const CreatePropertyPage = lazy(() => import('../pages/clients/CreatePropertyPage'));
 const ClientDetailPage = lazy(() => import('../pages/clients/ClientDetailPage'));
+const SettingsPage = lazy(() => import('../pages/SettingsPage'));
 
 export const ProviderRoutes = () => (
   <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
     <Route path="/dashboard" element={<DashboardPage />} />
+    <Route path="/settings" element={<SettingsPage />} />
     <Route path="/jobs" element={<JobsListPage />} />
     <Route path="/jobs/new" element={<CreateJobPage />} />
     <Route path="/jobs/:id" element={<JobDetailPage />} />

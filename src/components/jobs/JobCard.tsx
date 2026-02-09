@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '../../lib/router';
 import { useNetworkStatus } from '../../lib/network';
-import type { JobRecord } from '../../repositories/jobRepository';
+import type { JobRecord, JobWithDetails } from '../../repositories/jobRepository';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 
 const STATUS_STYLES: Record<string, string> = {
@@ -17,7 +17,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 interface JobCardProps {
-  job: JobRecord;
+  job: JobRecord | JobWithDetails;
 }
 
 const JobCard = ({ job }: JobCardProps) => {
@@ -53,12 +53,18 @@ const JobCard = ({ job }: JobCardProps) => {
 
       <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">{t('jobs.card.clientId')}</dt>
-          <dd className="font-medium text-slate-900">{job.client_id}</dd>
+          <dt className="text-slate-600">Client</dt>
+          <dd className="font-medium text-slate-900">
+            {'clients' in job && job.clients?.name ? job.clients.name : job.client_id}
+          </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">{t('jobs.card.propertyId')}</dt>
-          <dd className="font-medium text-slate-900">{job.property_id}</dd>
+          <dt className="text-slate-600">Property</dt>
+          <dd className="font-medium text-slate-900">
+            {'properties' in job && job.properties
+              ? `${job.properties.address_line1}, ${job.properties.city}`
+              : job.property_id}
+          </dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">{t('jobs.card.serviceDate')}</dt>

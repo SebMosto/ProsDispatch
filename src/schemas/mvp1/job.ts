@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
+import type { Database } from '../../types/database.types';
 
 export const JOB_STATUSES = [
   'draft',
@@ -88,7 +88,16 @@ export type JobCreateInput = z.infer<ReturnType<typeof getJobCreateSchema>>;
 export type JobUpdateInput = z.infer<ReturnType<typeof getJobUpdateSchema>>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 
-// Deprecated: For backward compatibility during migration, we can export the old schema IF needed,
-// but it's better to force migration.
-// However, consumers expecting a static object will break.
-// We must update consumers.
+type JobRecord = Database['public']['Tables']['jobs']['Row'];
+
+export type JobWithDetails = JobRecord & {
+  clients: { name: string } | null;
+  properties: { address_line1: string; city: string } | null;
+};
+
+export const JobWithDetailsSchema = z
+  .object({
+    clients: z.object({ name: z.string() }).nullable(),
+    properties: z.object({ address_line1: z.string(), city: z.string() }).nullable(),
+  })
+  .passthrough();

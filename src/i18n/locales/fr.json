@@ -75,7 +75,16 @@
       "notProvided": "Non renseigné",
       "role": "Rôle",
       "sessionNote": "Votre session est sécurisée avec Supabase Auth.",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "createJob": "Créer un travail",
+      "activeJobs": "Travaux actifs",
+      "history": "Historique",
+      "errorLoadingJobs": "Impossible de charger les travaux",
+      "retry": "Réessayer",
+      "noJobsFound": "Aucun travail trouvé",
+      "noActiveJobs": "Vous n'avez aucun travail actif pour le moment.",
+      "noHistoryJobs": "Vous n'avez encore terminé aucun travail.",
+      "createFirstJob": "Créer votre premier travail"
     }
   },
   "sync": {
@@ -294,12 +303,68 @@
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
     "updateRequired": "Au moins un champ est requis pour mettre à jour un client",
-    "nameRequired": "Le nom est requis",
-    "clientId": "ID client invalide",
-    "propertyId": "ID propriété invalide",
-    "titleMin": "Le titre doit contenir au moins 2 caractères",
-    "titleMax": "Le titre ne doit pas dépasser 80 caractères",
-    "descriptionMax": "La description ne doit pas dépasser 2000 caractères",
-    "serviceDate": "La date de service doit être au format AAAA-MM-JJ"
+    "nameRequired": "Le nom est requis"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre profil et vos préférences.",
+    "profile": {
+      "title": "Profil"
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Sélectionnez votre langue préférée pour l'interface."
+    },
+    "stripe": {
+      "title": "Stripe Connect",
+      "accountId": "ID de compte connecté :",
+      "customerId": "ID client :"
+    },
+    "session": {
+      "title": "Session",
+      "description": "Déconnectez-vous de votre compte en toute sécurité."
+    }
+  },
+  "profile": {
+    "field": {
+      "full_name": "Nom complet",
+      "business_name": "Nom de l'entreprise"
+    },
+    "validation": {
+      "name_required": "Le nom complet est requis"
+    }
+  },
+  "common": {
+    "success": "Modifications enregistrées avec succès.",
+    "save": "Enregistrer",
+    "loading": "Chargement...",
+    "error": {
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "jobApproval": {
+    "title": "Demande d'approbation de travail",
+    "fromContractor": "de {{contractorName}}",
+    "scheduled": "Prévu : {{date}}",
+    "scheduledTbd": "Prévu : À déterminer",
+    "description": "Description",
+    "noDescription": "Aucune description fournie.",
+    "location": "Emplacement",
+    "client": "Client",
+    "processing": "Traitement en cours...",
+    "decline": "Refuser",
+    "approveJob": "Approuver le travail",
+    "jobStatus": "Ce travail est actuellement <strong>{{status}}</strong>.",
+    "error": {
+      "title": "Erreur",
+      "invalidToken": "Lien d'invitation invalide. Jeton manquant.",
+      "loadFailed": "Échec du chargement des détails du travail. Le lien peut être expiré ou invalide.",
+      "submitFailed": "Échec de la soumission de la réponse. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Succès",
+      "approved": "Travail approuvé avec succès ! Le contracteur a été notifié.",
+      "declined": "Travail refusé. Le contracteur a été notifié."
+    }
   }
 }

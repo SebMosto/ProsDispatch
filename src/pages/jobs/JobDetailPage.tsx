@@ -9,6 +9,7 @@ import { jobRepository, type JobRecord } from '../../repositories/jobRepository'
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
+import { supabase } from '../../lib/supabase';
 
 const JobDetailPage = () => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendingInvite, setSendingInvite] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobId = id || jobIdFromState;
   const { invoices, loading: invoicesLoading, error: invoicesError } = useJobInvoices(jobId);
@@ -90,6 +92,28 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!job) return;
+    setSendingInvite(true);
+    setActionError(null);
+    try {
+      const { error } = await supabase.functions.invoke('send-job-invite', {
+        body: { jobId: job.id },
+      });
+      if (error) throw error;
+
+      // Invalidate query to refresh status
+      await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    } catch (error) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : 'Failed to send invite.';
+      setActionError(message);
+    } finally {
+      setSendingInvite(false);
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -97,10 +121,11 @@ const JobDetailPage = () => {
       return (
         <button
           type="button"
-          onClick={() => performStatusChange('sent')}
-          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          onClick={handleSendInvite}
+          disabled={sendingInvite}
+          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
         >
-          {t('jobs.detail.actions.send')}
+          {sendingInvite ? 'Sending...' : 'Send to Homeowner'}
         </button>
       );
     }
