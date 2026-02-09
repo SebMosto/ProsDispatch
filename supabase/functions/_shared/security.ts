@@ -54,6 +54,14 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
   return returnUrl;
 }
 
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;',
+};
+
 /**
  * Escapes HTML special characters to prevent XSS attacks.
  * Use this when interpolating user-controlled strings into HTML templates (e.g. emails).
@@ -63,10 +71,5 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
  */
 export function escapeHtml(unsafe: string | null | undefined): string {
   if (!unsafe) return "";
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return unsafe.replace(/[&<>"']/g, (match) => HTML_ESCAPE_MAP[match]);
 }
