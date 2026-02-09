@@ -4,6 +4,7 @@ import { PDFDocument, StandardFonts, rgb } from "https://cdn.skypack.dev/pdf-lib
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { calculateInvoiceTotals } from "../_shared/taxCalculator.ts";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { escapeHtml } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -177,7 +178,7 @@ Deno.serve(async (req) => {
           subject: `Invoice ${invoice.invoice_number}`,
           html: `
             <h1>New Invoice Available</h1>
-            <p>You have received an invoice from ${profile?.business_name || profile?.full_name}.</p>
+            <p>You have received an invoice from ${escapeHtml(profile?.business_name || profile?.full_name)}.</p>
             <p>Total: $${(totals.total / 100).toFixed(2)}</p>
             <p><a href="${publicUrl}">View Invoice PDF</a></p>
           `,
