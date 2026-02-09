@@ -72,7 +72,16 @@
       "notProvided": "Non renseigné",
       "role": "Rôle",
       "sessionNote": "Votre session est sécurisée avec Supabase Auth.",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "createJob": "Créer un travail",
+      "activeJobs": "Travaux actifs",
+      "history": "Historique",
+      "errorLoadingJobs": "Impossible de charger les travaux",
+      "retry": "Réessayer",
+      "noJobsFound": "Aucun travail trouvé",
+      "noActiveJobs": "Vous n'avez aucun travail actif pour le moment.",
+      "noHistoryJobs": "Vous n'avez encore terminé aucun travail.",
+      "createFirstJob": "Créer votre premier travail →"
     }
   },
   "sync": {

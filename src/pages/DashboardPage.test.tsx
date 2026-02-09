@@ -103,7 +103,7 @@ describe('DashboardPage', () => {
       </BrowserRouter>
     );
 
-    const historyTab = screen.getByText(/History/);
+    const historyTab = screen.getByText(/auth\.dashboard\.history/);
     fireEvent.click(historyTab);
 
     expect(screen.getByText('History Job 1')).toBeInTheDocument();

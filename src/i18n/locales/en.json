@@ -72,7 +72,16 @@
       "notProvided": "Not provided",
       "role": "Role",
       "sessionNote": "Your session is secured with Supabase Auth.",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "createJob": "Create Job",
+      "activeJobs": "Active Jobs",
+      "history": "History",
+      "errorLoadingJobs": "Unable to load jobs",
+      "retry": "Retry",
+      "noJobsFound": "No jobs found",
+      "noActiveJobs": "You don't have any active jobs right now.",
+      "noHistoryJobs": "You haven't completed any jobs yet.",
+      "createFirstJob": "Create your first job →"
     }
   },
   "sync": {
