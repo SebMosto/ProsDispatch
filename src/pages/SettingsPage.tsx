@@ -10,7 +10,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { PageLoader } from '@/components/ui/PageLoader';
 
 const SettingsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, profile, signOut, refreshProfile, loading: authLoading } = useAuth();
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [updateSuccess, setUpdateSuccess] = useState<boolean>(false);
@@ -22,6 +22,20 @@ const SettingsPage = () => {
       business_name: '',
     },
   });
+
+  const { formState: { errors }, clearErrors, trigger } = form;
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+  }, [i18n.language, clearErrors, trigger]);
 
   // Reset form when profile loads
   useEffect(() => {

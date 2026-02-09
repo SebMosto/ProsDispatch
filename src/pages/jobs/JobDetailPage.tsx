@@ -31,10 +31,10 @@ const JobDetailPage = () => {
   const queryFn = useCallback(async () => {
     const result = await jobRepository.get(jobId ?? '');
     if (result.error || !result.data) {
-      throw result.error ?? new Error('Job not found');
+      throw result.error ?? new Error(t('jobs.detail.notFound'));
     }
     return result.data;
-  }, [jobId]);
+  }, [jobId, t]);
 
   const query = useQuery({
     queryKey,
@@ -60,7 +60,7 @@ const JobDetailPage = () => {
     try {
       nextStatus = advanceJobStatus(job.status, target);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to update status';
+      const message = error instanceof Error ? error.message : t('jobs.detail.errorStatusUpdate');
       setActionError(message);
       return;
     }
@@ -85,7 +85,7 @@ const JobDetailPage = () => {
       previousLists.forEach(([key, jobs]) => {
         queryClient.setQueryData<JobRecord[] | undefined>(key, jobs);
       });
-      const message = error instanceof Error ? error.message : 'Unable to update status';
+      const message = error instanceof Error ? error.message : t('jobs.detail.errorStatusUpdate');
       setActionError(message);
     } finally {
       void queryClient.invalidateQueries({ queryKey: ['jobs'] });
@@ -137,7 +137,7 @@ const JobDetailPage = () => {
           onClick={() => performStatusChange('approved')}
           className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         >
-          Approve
+          {t('jobs.detail.actions.approve')}
         </button>
       );
     }
@@ -149,7 +149,7 @@ const JobDetailPage = () => {
           onClick={() => performStatusChange('in_progress')}
           className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
         >
-          Start Job
+          {t('jobs.detail.actions.startJob')}
         </button>
       );
     }
@@ -162,14 +162,14 @@ const JobDetailPage = () => {
             onClick={() => performStatusChange('completed')}
             className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
           >
-            Complete Job
+            {t('jobs.detail.actions.completeJob')}
           </button>
           <button
             type="button"
             onClick={() => performStatusChange('archived')}
             className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
           >
-            Archive
+            {t('jobs.detail.actions.archive')}
           </button>
         </>
       );
@@ -182,7 +182,7 @@ const JobDetailPage = () => {
           onClick={() => performStatusChange('archived')}
           className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
         >
-          Archive
+          {t('jobs.detail.actions.archive')}
         </button>
       );
     }
@@ -193,13 +193,13 @@ const JobDetailPage = () => {
   if (!jobId) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">No job selected.</p>
+        <p className="text-sm text-red-700">{t('jobs.detail.errorNoJob')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.detail.backToJobs')}
         </button>
       </main>
     );
@@ -220,13 +220,13 @@ const JobDetailPage = () => {
   if (query.error || !job) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <p className="text-sm text-red-700">Unable to load job details.</p>
+        <p className="text-sm text-red-700">{t('jobs.detail.errorLoading')}</p>
         <button
           type="button"
           onClick={() => navigate('/jobs')}
           className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
-          Back to Jobs
+          {t('jobs.detail.backToJobs')}
         </button>
       </main>
     );
@@ -236,38 +236,38 @@ const JobDetailPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold text-slate-500">Job #{job.id}</p>
+          <p className="text-xs font-semibold text-slate-500">{t('jobs.detail.jobId', { id: job.id })}</p>
           <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
-          <p className="text-sm text-slate-600">{job.description || 'No description provided'}</p>
+          <p className="text-sm text-slate-600">{job.description || t('jobs.detail.noDescription')}</p>
         </div>
         <SyncBadge state={syncState} />
       </div>
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-base font-semibold text-slate-900">Details</h2>
+        <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.detailsTitle')}</h2>
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Status</dt>
-            <dd className="font-medium text-slate-900 capitalize">{job.status.replace('_', ' ')}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.statusLabel')}</dt>
+            <dd className="font-medium text-slate-900 capitalize">{t(`jobs.status.${job.status}`, { defaultValue: job.status.replace('_', ' ') })}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Client ID</dt>
+            <dt className="text-slate-600">{t('jobs.detail.clientId')}</dt>
             <dd className="font-medium text-slate-900">{job.client_id}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Property ID</dt>
+            <dt className="text-slate-600">{t('jobs.detail.propertyId')}</dt>
             <dd className="font-medium text-slate-900">{job.property_id}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Service Date</dt>
-            <dd className="font-medium text-slate-900">{job.service_date || 'Not scheduled'}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.serviceDate')}</dt>
+            <dd className="font-medium text-slate-900">{job.service_date || t('jobs.detail.notScheduled')}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Created</dt>
+            <dt className="text-slate-600">{t('jobs.detail.created')}</dt>
             <dd className="font-medium text-slate-900">{new Date(job.created_at).toLocaleString()}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">Updated</dt>
+            <dt className="text-slate-600">{t('jobs.detail.updated')}</dt>
             <dd className="font-medium text-slate-900">{new Date(job.updated_at).toLocaleString()}</dd>
           </div>
         </dl>
@@ -316,8 +316,8 @@ const JobDetailPage = () => {
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-slate-900">Quick Actions</h2>
-          <span className="text-xs text-slate-500">Uses optimistic updates</span>
+          <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.quickActions')}</h2>
+          <span className="text-xs text-slate-500">{t('jobs.detail.optimisticNote')}</span>
         </div>
         <div className="flex flex-wrap gap-2">{renderActions()}</div>
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
@@ -328,7 +328,7 @@ const JobDetailPage = () => {
         onClick={() => navigate('/jobs')}
         className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
       >
-        Back to Jobs
+        {t('jobs.detail.backToJobs')}
       </button>
     </main>
   );

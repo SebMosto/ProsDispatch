@@ -46,6 +46,9 @@
       "password": "Password",
       "loading": "Processing..."
     },
+    "error": {
+      "generic": "Authentication failed. Please try again."
+    },
     "signIn": {
       "title": "Sign in",
       "subtitle": "Access your contractor dashboard",
@@ -96,6 +99,11 @@
   },
   "jobs": {
     "create": {
+      "page": {
+        "section": "Jobs",
+        "title": "Create & Manage Jobs",
+        "subtitle": "Drafts are saved locally even if you reload."
+      },
       "title": "Create job",
       "subtitle": "Track work for a client and property.",
       "descriptionWarning": "Do not include access codes or personal information.",
@@ -119,6 +127,60 @@
         "generic": "Unable to create job.",
         "auth": "You must be signed in to create a job."
       }
+    },
+    "status": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "approved": "Approved",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "invoiced": "Invoiced",
+      "paid": "Paid",
+      "archived": "Archived"
+    },
+    "card": {
+      "jobId": "Job #{{id}}",
+      "noDescription": "No description provided",
+      "clientId": "Client ID",
+      "propertyId": "Property ID",
+      "serviceDate": "Service Date",
+      "notScheduled": "Not scheduled",
+      "lastUpdated": "Last Updated",
+      "created": "Created {{date}}",
+      "viewDetails": "View Details"
+    },
+    "list": {
+      "unableToLoad": "Unable to load jobs",
+      "retry": "Retry",
+      "title": "Jobs",
+      "emptyState": "No jobs found. Create your first job to get started.",
+      "total": "{{count}} total"
+    },
+    "detail": {
+      "jobId": "Job #{{id}}",
+      "noDescription": "No description provided",
+      "detailsTitle": "Details",
+      "statusLabel": "Status",
+      "clientId": "Client ID",
+      "propertyId": "Property ID",
+      "serviceDate": "Service Date",
+      "notScheduled": "Not scheduled",
+      "created": "Created",
+      "updated": "Updated",
+      "quickActions": "Quick Actions",
+      "optimisticNote": "Uses optimistic updates",
+      "actions": {
+        "send": "Send",
+        "approve": "Approve",
+        "startJob": "Start Job",
+        "completeJob": "Complete Job",
+        "archive": "Archive"
+      },
+      "backToJobs": "Back to Jobs",
+      "errorNoJob": "No job selected.",
+      "errorLoading": "Unable to load job details.",
+      "errorStatusUpdate": "Unable to update status",
+      "notFound": "Job not found"
     },
     "invoices": {
       "title": "Invoices",

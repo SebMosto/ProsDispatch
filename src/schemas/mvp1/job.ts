@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Database } from '../../types/database.types';
+import { TFunction } from 'i18next';
 
 export const JOB_STATUSES = [
   'draft',
@@ -13,7 +14,7 @@ export const JOB_STATUSES = [
 ] as const;
 
 /**
- * JobCreateSchema - Schema for creating a new job
+ * getJobCreateSchema - Schema for creating a new job
  *
  * Required fields:
  * - client_id: UUID of the client
@@ -25,20 +26,20 @@ export const JOB_STATUSES = [
  * - service_date: Scheduled date for the service
  * - status: Job status (defaults to 'draft')
  */
-export const JobCreateSchema = z.object({
-  client_id: z.string().uuid('Invalid client ID'),
-  property_id: z.string().uuid('Invalid property ID'),
+export const getJobCreateSchema = (t: TFunction) => z.object({
+  client_id: z.string().uuid(t('validation.clientId')),
+  property_id: z.string().uuid(t('validation.propertyId')),
   title: z
     .string()
-    .min(2, 'Title must be at least 2 characters')
-    .max(80, 'Title must not exceed 80 characters'),
+    .min(2, t('validation.titleMin'))
+    .max(80, t('validation.titleMax')),
   description: z
     .string()
-    .max(2000, 'Description must not exceed 2000 characters')
+    .max(2000, t('validation.descriptionMax'))
     .optional(),
   service_date: z
     .union([
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Service date must be in YYYY-MM-DD format'),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.serviceDate')),
       z.date(),
     ])
     .optional(),
@@ -46,28 +47,28 @@ export const JobCreateSchema = z.object({
 });
 
 /**
- * JobUpdateSchema - Schema for updating job details
+ * getJobUpdateSchema - Schema for updating job details
  *
  * Note: Status changes must be handled via advanceJobStatus() helper only.
  * This schema is for editing title, description, service_date, and related fields.
  * All fields are optional, but description and service_date can be set to null to clear them.
  * At least one field must be provided for a valid update.
  */
-export const JobUpdateSchema = z
+export const getJobUpdateSchema = (t: TFunction) => z
   .object({
-    client_id: z.string().uuid('Client ID must be a valid UUID').optional(),
-    property_id: z.string().uuid('Property ID must be a valid UUID').optional(),
+    client_id: z.string().uuid(t('validation.clientId')).optional(),
+    property_id: z.string().uuid(t('validation.propertyId')).optional(),
     title: z
       .string()
-      .min(2, 'Title must be at least 2 characters')
-      .max(80, 'Title must not exceed 80 characters')
+      .min(2, t('validation.titleMin'))
+      .max(80, t('validation.titleMax'))
       .optional(),
     description: z
-      .union([z.string().max(2000, 'Description must not exceed 2000 characters'), z.null()])
+      .union([z.string().max(2000, t('validation.descriptionMax')), z.null()])
       .optional(),
     service_date: z
       .union([
-        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Service date must be in YYYY-MM-DD format'),
+        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.serviceDate')),
         z.date(),
         z.null(),
       ])
@@ -79,13 +80,13 @@ export const JobUpdateSchema = z
       return Object.values(data).some((value) => value !== undefined);
     },
     {
-      message: 'At least one field is required to update a job',
+      message: t('validation.updateRequired'),
     },
   );
 
 // Type exports for TypeScript inference
-export type JobCreateInput = z.infer<typeof JobCreateSchema>;
-export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
+export type JobCreateInput = z.infer<ReturnType<typeof getJobCreateSchema>>;
+export type JobUpdateInput = z.infer<ReturnType<typeof getJobUpdateSchema>>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 
 type JobRecord = Database['public']['Tables']['jobs']['Row'];

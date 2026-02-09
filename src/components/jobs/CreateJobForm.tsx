@@ -7,12 +7,12 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { JobCreateSchema } from '../../schemas/mvp1/job';
+import { getJobCreateSchema } from '../../schemas/mvp1/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
 
-type FormValues = z.infer<typeof JobCreateSchema>;
+type FormValues = z.infer<ReturnType<typeof getJobCreateSchema>>;
 
 const initialValues: FormValues = {
   client_id: '',
@@ -24,7 +24,7 @@ const initialValues: FormValues = {
 };
 
 const CreateJobForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -37,16 +37,32 @@ const CreateJobForm = () => {
 
   const hasAppliedDraft = useRef(false);
 
+  const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
     reset,
     watch,
+    clearErrors,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema),
     defaultValues: draft.values,
   });
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;
