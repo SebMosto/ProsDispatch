@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Database } from '../../types/database.types';
 
 export const JOB_STATUSES = [
   'draft',
@@ -86,3 +87,17 @@ export const JobUpdateSchema = z
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;
 export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
+
+type JobRecord = Database['public']['Tables']['jobs']['Row'];
+
+export type JobWithDetails = JobRecord & {
+  clients: { name: string } | null;
+  properties: { address_line1: string; city: string } | null;
+};
+
+export const JobWithDetailsSchema = z
+  .object({
+    clients: z.object({ name: z.string() }).nullable(),
+    properties: z.object({ address_line1: z.string(), city: z.string() }).nullable(),
+  })
+  .passthrough();
