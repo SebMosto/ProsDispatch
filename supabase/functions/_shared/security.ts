@@ -63,10 +63,12 @@ export function validateReturnUrl(returnUrl: string, siteUrl: string | undefined
  */
 export function escapeHtml(unsafe: string | null | undefined): string {
   if (!unsafe) return "";
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  const escapeMap: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return unsafe.replace(/[&<>"']/g, (match) => escapeMap[match]);
 }
