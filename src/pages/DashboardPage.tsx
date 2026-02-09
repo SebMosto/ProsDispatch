@@ -44,7 +44,7 @@ const DashboardPage = () => {
             className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
           >
             <Plus className="h-4 w-4" />
-            <span>Create Job</span>
+            <span>{t('auth.dashboard.createJob')}</span>
           </Link>
           <button
             onClick={signOut}
@@ -67,7 +67,7 @@ const DashboardPage = () => {
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
             }`}
           >
-            Active Jobs
+            {t('auth.dashboard.activeJobs')}
             <span className={`ml-2 rounded-full py-0.5 px-2.5 text-xs font-medium ${
               activeTab === 'active' ? 'bg-slate-100 text-slate-900' : 'bg-slate-100 text-slate-600'
             }`}>
@@ -82,7 +82,7 @@ const DashboardPage = () => {
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
             }`}
           >
-            History
+            {t('auth.dashboard.history')}
             <span className={`ml-2 rounded-full py-0.5 px-2.5 text-xs font-medium ${
               activeTab === 'history' ? 'bg-slate-100 text-slate-900' : 'bg-slate-100 text-slate-600'
             }`}>
@@ -102,29 +102,29 @@ const DashboardPage = () => {
           </div>
         ) : error ? (
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            <p className="font-semibold">Unable to load jobs</p>
+            <p className="font-semibold">{t('auth.dashboard.errorLoadingJobs')}</p>
             <p>{error.message}</p>
             <button
               onClick={() => refetch()}
               className="mt-2 text-xs font-semibold underline hover:text-red-800"
             >
-              Retry
+              {t('auth.dashboard.retry')}
             </button>
           </div>
         ) : displayedJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-12 text-center">
-            <p className="font-semibold text-slate-900">No jobs found</p>
+            <p className="font-semibold text-slate-900">{t('auth.dashboard.noJobsFound')}</p>
             <p className="text-sm text-slate-500">
               {activeTab === 'active'
-                ? "You don't have any active jobs right now."
-                : "You haven't completed any jobs yet."}
+                ? t('auth.dashboard.noActiveJobs')
+                : t('auth.dashboard.noHistoryJobs')}
             </p>
             {activeTab === 'active' && (
               <Link
                 to="/jobs/new"
                 className="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-500"
               >
-                Create your first job &rarr;
+                {t('auth.dashboard.createFirstJob')} &rarr;
               </Link>
             )}
           </div>
