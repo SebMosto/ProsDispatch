@@ -17,7 +17,7 @@
     "check:forbidden": "grep -rE 'bidding|escrow|marketplace|proposal' src/ && exit 1 || exit 0"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^5.2.2",
     "@stripe/react-stripe-js": "^2.9.0",
     "@stripe/stripe-js": "^8.6.4",
     "@supabase/supabase-js": "^2.90.1",
