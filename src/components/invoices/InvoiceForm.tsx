@@ -6,31 +6,33 @@ import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
 import { useNavigate } from '../../lib/router';
 import { calculateInvoiceTotals } from '../../lib/taxCalculator';
-import { formatCurrency } from '../../lib/currency';
+import { formatCurrency, fromCents, toCents } from '../../lib/currency';
 import { useInvoiceMutations } from '../../hooks/useInvoices';
-import type { InvoiceDraftInput } from '../../schemas/invoice';
+import type { InvoiceDraftInput } from '../../schemas/mvp1/invoice';
 import type { InvoiceWithItems } from '../../repositories/invoiceRepository';
+
+const InvoiceItemFormSchema = z.object({
+  id: z.string(),
+  description: z.string().min(1, 'Description is required'),
+  quantity: z.number().positive('Qty must be greater than zero'),
+  unitPrice: z.number().min(0, 'Unit price must be 0 or greater'),
+});
+
+const InvoiceFormSchema = z.object({
+  items: z.array(InvoiceItemFormSchema),
+});
+
+type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 
 type InvoiceFormProps = {
   jobId?: string;
   invoice?: InvoiceWithItems | null;
 };
 
-// Internal types for form state
-interface InvoiceFormValues {
-  items: {
-    description: string;
-    quantity: number;
-    unitPrice: number;
-  }[];
-}
-
-const toCents = (value: number) => Math.round(value * 100);
-const fromCents = (value: number) => value / 100;
-
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
+    id: item.id,
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
@@ -38,8 +40,7 @@ const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues
 };
 
 const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
-  const { t, i18n } = useTranslation();
-  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { createDraft, updateDraft, finalize } = useInvoiceMutations();
@@ -47,19 +48,6 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [showFinalizeDialog, setShowFinalizeDialog] = useState(false);
   const [localInvoice, setLocalInvoice] = useState<InvoiceWithItems | null>(invoice ?? null);
-
-  // Memoize the schema to react to language changes
-  const InvoiceFormSchema = useMemo(() => {
-    const InvoiceItemFormSchema = z.object({
-      description: z.string().min(1, t('validation.descriptionRequired')),
-      quantity: z.number().positive(t('validation.qtyPositive')),
-      unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),
-    });
-
-    return z.object({
-      items: z.array(InvoiceItemFormSchema),
-    });
-  }, [t]);
 
   useEffect(() => {
     setLocalInvoice(invoice ?? null);
@@ -257,6 +245,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 setItems((prev) => [
                   ...prev,
                   {
+                    id: crypto.randomUUID(),
                     description: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -279,7 +268,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
@@ -360,7 +349,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
                     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
-                      {formatCurrency(lineAmount / 100, 'CAD', locale)}
+                      {formatCurrency(lineAmount)}
                     </div>
                   </div>
                 </div>
@@ -372,19 +361,19 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="flex items-center justify-between text-sm text-slate-700">
             <span>{t('jobs.invoices.form.subtotalLabel')}</span>
-            <span className="font-semibold">{formatCurrency(totals.subtotal / 100, 'CAD', locale)}</span>
+            <span className="font-semibold">{formatCurrency(totals.subtotal)}</span>
           </div>
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {totals.taxData.map((tax) => (
               <div key={tax.label} className="flex items-center justify-between">
-                <span>{`${t(`taxes.${tax.label}`, tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
-                <span className="font-semibold">{formatCurrency(tax.amount / 100, 'CAD', locale)}</span>
+                <span>{`${tax.label} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+                <span className="font-semibold">{formatCurrency(tax.amount)}</span>
               </div>
             ))}
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
             <span>{t('jobs.invoices.form.totalDueLabel')}</span>
-            <span>{formatCurrency(totals.total / 100, 'CAD', locale)}</span>
+            <span>{formatCurrency(totals.total)}</span>
           </div>
         </div>
 

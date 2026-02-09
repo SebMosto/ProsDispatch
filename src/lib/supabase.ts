@@ -1,27 +1,57 @@
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../types/database.types';
 
-// HARDWIRED CONFIGURATION (Temporary Bypass)
-const supabaseUrl = 'http://127.0.0.1:54321';
-const supabaseAnonKey = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log('🔌 Supabase Client Initializing...');
-console.log('📍 URL:', supabaseUrl);
+const createSafeFallbackClient = (): SupabaseClient<Database> => {
+  const error = new Error('Supabase environment variables are missing. Using safe fallback client.');
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-  global: {
-    headers: {
-      'x-application-name': 'prosdispatch',
+  const createQueryProxy = () =>
+    new Proxy(
+      {},
+      {
+        get: () => () => Promise.reject(error),
+      },
+    );
+
+  return new Proxy(
+    {},
+    {
+      get: (_target, prop) => {
+        if (prop === 'auth') {
+          // Casting to any because constructing exact AuthError types is verbose
+          // and this is just a fallback for missing env vars
+          return {
+            getSession: async () => ({ data: { session: null }, error: null }),
+            onAuthStateChange: () => ({
+              data: { subscription: { id: '', callback: () => {}, unsubscribe: () => {} } },
+              error: null,
+            }),
+            getUser: async () => ({ data: { user: null }, error: null }),
+            signOut: async () => ({ error: null }),
+          } as any;
+        }
+
+        if (prop === 'from') {
+          return () => createQueryProxy();
+        }
+
+        return () => {
+          throw error;
+        };
+      },
     },
-  },
-});
+  ) as SupabaseClient<Database>;
+};
 
-// Helper to check connection
-supabase.auth.onAuthStateChange((event, session) => {
-  console.log('🔐 Auth State Change:', event);
-});
+const createSupabaseClient = () => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('[supabase] Missing environment variables. Falling back to safe client.');
+    return createSafeFallbackClient();
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseAnonKey);
+};
+
+export const supabase = createSupabaseClient();

@@ -1,11 +1,15 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
-import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
+import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/mvp1/job';
+import { JobWithDetailsSchema } from '../schemas/mvp1/job';
+import type { JobWithDetails } from '../schemas/mvp1/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
 
 export type JobRecord = Database['public']['Tables']['jobs']['Row'];
+export type { JobWithDetails } from '../schemas/mvp1/job';
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -48,6 +52,45 @@ export class JobRepository
 
     reportApiOnline();
     return { data: data ?? [] };
+  }
+
+  async listWithDetails(params?: JobListParams): Promise<RepositoryResult<JobWithDetails[]>> {
+    const { status, includeDeleted } = params ?? {};
+
+    const query = this.client
+      .from('jobs')
+      .select('*, clients(name), properties(address_line1, city)')
+      .order('created_at', { ascending: false });
+
+    if (status?.length) {
+      query.in('status', status);
+    }
+
+    if (!includeDeleted) {
+      query.is('deleted_at', null);
+    }
+
+    const { data, error } = await query;
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    const parsed = JobWithDetailsSchema.array().safeParse(data ?? []);
+    if (!parsed.success) {
+      return {
+        data: null,
+        error: {
+          message: 'Unable to parse job details response',
+          reason: 'validation',
+          cause: parsed.error,
+        },
+      };
+    }
+
+    reportApiOnline();
+    return { data: parsed.data as JobWithDetails[] };
   }
 
   async get(id: string): Promise<RepositoryResult<JobRecord>> {

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { useAuth } from '../lib/auth';
 import { jobRepository, type JobRecord } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
-import type { JobCreateInput, JobUpdateInput } from '../schemas/job';
+import type { JobCreateInput, JobUpdateInput } from '../schemas/mvp1/job';
 
 const normalizeServiceDate = (value: JobCreateInput['service_date']) => {
   if (!value) return null;
@@ -32,7 +32,7 @@ export const useCreateJobMutation = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  return useMutation<JobRecord, RepositoryError, JobCreateInput, { previousJobs: Array<[unknown, JobRecord[] | undefined]> }>(
+  return useMutation<JobRecord, RepositoryError, JobCreateInput, { previousJobs: Array<[QueryKey, JobRecord[] | undefined]> }>(
     {
       mutationFn: async (input) => {
         const result = await jobRepository.create(input);
@@ -60,7 +60,7 @@ export const useCreateJobMutation = () => {
       },
       onError: (_err, _input, context) => {
         context?.previousJobs.forEach(([key, jobs]) => {
-          queryClient.setQueryData<JobRecord[] | undefined>(key as readonly unknown[], jobs);
+          queryClient.setQueryData<JobRecord[] | undefined>(key, jobs);
         });
       },
       onSettled: async () => {

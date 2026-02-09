@@ -7,12 +7,12 @@ import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
-import { getJobCreateSchema, JobCreateSchema as StaticJobCreateSchema } from '../../schemas/job';
+import { getJobCreateSchema } from '../../schemas/mvp1/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
 
-type FormValues = z.infer<typeof StaticJobCreateSchema>;
+type FormValues = z.infer<ReturnType<typeof getJobCreateSchema>>;
 
 const initialValues: FormValues = {
   client_id: '',
@@ -24,7 +24,7 @@ const initialValues: FormValues = {
 };
 
 const CreateJobForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -37,7 +37,6 @@ const CreateJobForm = () => {
 
   const hasAppliedDraft = useRef(false);
 
-  // Memoize the schema to react to language changes
   const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
 
   const {
@@ -45,11 +44,25 @@ const CreateJobForm = () => {
     handleSubmit,
     reset,
     watch,
+    clearErrors,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema),
     defaultValues: draft.values,
   });
+
+  // Re-validate when language changes to update error messages
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      clearErrors();
+      trigger().catch(() => {
+        // Validation errors are expected and will be shown in the UI
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- errors is intentionally omitted to prevent re-validation loops
+  }, [i18n.language, clearErrors, trigger]);
 
   useEffect(() => {
     if (!draft.hydrated || hasAppliedDraft.current) return;
@@ -58,28 +71,15 @@ const CreateJobForm = () => {
     hasAppliedDraft.current = true;
   }, [draft.values, draft.hydrated, reset]);
 
-  const debounceRef = useRef<number | null>(null);
-  const { setValues, hydrated } = draft;
-
   useEffect(() => {
-    if (!hydrated) return undefined;
+    if (!draft.hydrated) return undefined;
 
     const subscription = watch((value) => {
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-      debounceRef.current = window.setTimeout(() => {
-        setValues(value as FormValues);
-      }, 300);
+      draft.setValues(value as FormValues);
     });
 
-    return () => {
-      subscription.unsubscribe();
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-    };
-  }, [hydrated, setValues, watch]);
+    return () => subscription.unsubscribe();
+  }, [draft, draft.hydrated, watch]);
 
   const { createJob, isLoading } = useCreateJob({
     onSuccess: () => {
