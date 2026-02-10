@@ -24,7 +24,7 @@ export const useInvoice = (id?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [id, t]);
+  }, [id]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
 
