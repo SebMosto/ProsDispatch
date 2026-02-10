@@ -31,32 +31,24 @@ run_check "typecheck" "Type Check"
 run_check "lint" "Lint Check"
 run_check "test" "Tests"
 
-# 5. Run Stack Check
-if npm run | grep -q "check:stack"; then
-    echo "Running Stack Check..."
-    if ! npm run check:stack; then
-        echo "ERROR: Stack Check Failed."
-        exit 1
+# 5. Run Optional Checks
+available_scripts=$(npm run)
+run_optional_check() {
+    local script_name="$1"
+    local description="$2"
+    local error_message="$3"
+    if echo "$available_scripts" | grep -q "$script_name"; then
+        echo "Running $description..."
+        if ! npm run "$script_name"; then
+            echo "ERROR: $error_message"
+            exit 1
+        fi
     fi
-fi
+}
 
-# 6. Run i18n Check
-if npm run | grep -q "check:i18n"; then
-    echo "Running i18n Check..."
-    if ! npm run check:i18n; then
-        echo "ERROR: i18n Check Failed."
-        exit 1
-    fi
-fi
-
-# 7. Run Forbidden Features Check
-if npm run | grep -q "check:forbidden"; then
-    echo "Running Forbidden Features Check..."
-    if ! npm run check:forbidden; then
-        echo "ERROR: Forbidden Features Detected."
-        exit 1
-    fi
-fi
+run_optional_check "check:stack" "Stack Check" "Stack Check Failed."
+run_optional_check "check:i18n" "i18n Check" "i18n Check Failed."
+run_optional_check "check:forbidden" "Forbidden Features Check" "Forbidden Features Detected."
 
 echo "Environment Verified Successfully."
 exit 0
