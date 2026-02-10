@@ -55,7 +55,7 @@ export const useInvoiceByToken = (token?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [token, t]);
+  }, [token]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 
