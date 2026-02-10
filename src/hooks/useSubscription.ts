@@ -39,9 +39,15 @@ export const useSubscription = () => {
         setError(t('errors.checkoutNoUrl'));
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('🔴 Checkout Exception:', err);
-      setError(err.message || t('errors.unexpected'));
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        setError((err as { message: string }).message);
+      } else {
+        setError(t('errors.unexpected'));
+      }
     } finally {
       setIsLoading(false);
     }

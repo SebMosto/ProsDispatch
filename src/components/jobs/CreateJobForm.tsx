@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
@@ -47,7 +47,7 @@ const CreateJobForm = () => {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(JobCreateSchema),
+    resolver: zodResolver(JobCreateSchema) as Resolver<FormValues>,
     defaultValues: draft.values,
   });
 

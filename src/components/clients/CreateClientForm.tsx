@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import type { z } from 'zod';
 import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
@@ -46,7 +46,7 @@ const CreateClientForm: React.FC = () => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(ClientSchema),
+    resolver: zodResolver(ClientSchema) as Resolver<FormValues>,
     defaultValues: draft.values,
   });
 

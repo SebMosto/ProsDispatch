@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSubscription } from './useSubscription';
 import { supabase } from '@/lib/supabase';
@@ -25,7 +25,7 @@ describe('useSubscription', () => {
   });
 
   it('should call create-checkout-session with priceId and returnUrl', async () => {
-    const mockInvoke = supabase.functions.invoke as any;
+    const mockInvoke = supabase.functions.invoke as unknown as Mock;
     mockInvoke.mockResolvedValue({ data: { url: 'https://checkout.stripe.com/test' }, error: null });
 
     // Mock window.location
@@ -68,7 +68,7 @@ describe('useSubscription', () => {
   });
 
   it('should handle errors from supabase', async () => {
-     const mockInvoke = supabase.functions.invoke as any;
+     const mockInvoke = supabase.functions.invoke as unknown as Mock;
      mockInvoke.mockResolvedValue({ data: null, error: { message: 'Supabase error' } });
 
      const { result } = renderHook(() => useSubscription());

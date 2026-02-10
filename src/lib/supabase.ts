@@ -22,6 +22,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 });
 
 // Helper to check connection
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange((event) => {
   console.log('🔐 Auth State Change:', event);
 });
