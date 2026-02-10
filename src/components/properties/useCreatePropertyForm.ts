@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
@@ -60,7 +60,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
   const PropertySchema = useMemo(() => getPropertySchema(t), [t]);
 
   const formMethods = useForm<FormValues>({
-    resolver: zodResolver(PropertySchema),
+    resolver: zodResolver(PropertySchema) as Resolver<FormValues>,
     defaultValues: draft.values,
   });
 

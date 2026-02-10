@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { TFunction } from 'i18next';
 import { getJobCreateSchema } from '../schemas/job';
 import { getClientSchema } from '../schemas/client';
 
@@ -20,8 +21,8 @@ describe('Schema Localization', () => {
   });
 
   it('should return translated strings when t is provided (Job)', () => {
-    const t = (key: string) => `translated_${key}`;
-    const schema = getJobCreateSchema(t as any);
+    const t = ((key: string) => `translated_${key}`) as TFunction;
+    const schema = getJobCreateSchema(t);
     const result = schema.safeParse({
       client_id: '123e4567-e89b-12d3-a456-426614174000',
       property_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -48,8 +49,8 @@ describe('Schema Localization', () => {
   });
 
   it('should return translated strings when t is provided (Client)', () => {
-    const t = (key: string) => `translated_${key}`;
-    const schema = getClientSchema(t as any);
+    const t = ((key: string) => `translated_${key}`) as TFunction;
+    const schema = getClientSchema(t);
     const result = schema.safeParse({ name: '' });
     if (!result.success) {
       const nameError = result.error.issues.find(i => i.path.includes('name'));

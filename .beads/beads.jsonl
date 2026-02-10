@@ -1,0 +1,1 @@
+{"id": "bead_000_init", "title": "Scan environment and verify state", "status": "closed", "created_at": "2026-02-10T12:30:35Z", "history": ["Created verify-env.sh script", "Fixed dependency conflicts", "Fixed type errors", "Fixed lint errors", "Fixed test failures", "Verified environment successfully"]}
