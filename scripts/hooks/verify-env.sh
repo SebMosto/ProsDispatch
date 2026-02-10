@@ -16,26 +16,20 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# 2. Run Type Check
-echo "Running Type Check..."
-if ! npm run typecheck; then
-    echo "ERROR: Type Check Failed."
-    exit 1
-fi
+# 2. Run checks
+run_check() {
+    local script_name="$1"
+    local description="$2"
+    echo "Running $description..."
+    if ! npm run "$script_name"; then
+        echo "ERROR: $description Failed."
+        exit 1
+    fi
+}
 
-# 3. Run Lint
-echo "Running Lint..."
-if ! npm run lint; then
-    echo "ERROR: Lint Check Failed."
-    exit 1
-fi
-
-# 4. Run Tests
-echo "Running Tests..."
-if ! npm run test; then
-    echo "ERROR: Tests Failed."
-    exit 1
-fi
+run_check "typecheck" "Type Check"
+run_check "lint" "Lint Check"
+run_check "test" "Tests"
 
 # 5. Run Stack Check
 if npm run | grep -q "check:stack"; then
