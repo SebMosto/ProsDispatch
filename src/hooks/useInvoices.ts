@@ -24,7 +24,7 @@ export const useInvoice = (id?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [id]);
+  }, [id, t]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
 
@@ -55,7 +55,7 @@ export const useInvoiceByToken = (token?: string) => {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [token]);
+  }, [token, t]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 
