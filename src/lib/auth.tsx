@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (currentUser: User) => {
+  const fetchProfile = useCallback(async (currentUser: User) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setProfile(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchProfile]);
 
   const refreshProfile = useCallback(async () => {
     if (user) {
@@ -86,9 +86,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.auth.signOut();
       },
       session,
-      refreshProfile,
+      refreshProfile: async () => {
+        if (user) {
+          await fetchProfile(user);
+        }
+      },
     }),
-    [loading, profile, session, user, refreshProfile],
+    [loading, profile, session, user, fetchProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
