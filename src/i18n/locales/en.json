@@ -14,6 +14,20 @@
       "active": "Active"
     }
   },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and account settings.",
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full Name",
+      "businessName": "Business Name",
+      "email": "Email",
+      "save": "Save Changes",
+      "saving": "Saving..."
+    },
+    "success": "Profile updated successfully.",
+    "error": "Failed to update profile."
+  },
   "hero": {
     "title": "Contractor dispatching built for mobile teams",
     "subtitle": "Manage jobs, approvals, and Stripe Connect payments with bilingual workflows.",
@@ -423,6 +437,9 @@
     "invalidEmail": "Invalid email",
     "updateRequired": "At least one field is required to update a client",
     "nameRequired": "Name is required",
+    "businessNameRequired": "Business name is required",
+    "nameTooLong": "Name is too long",
+    "businessNameTooLong": "Business name is too long",
     "descriptionRequired": "Description is required",
     "qtyPositive": "Qty must be greater than zero",
     "unitPriceNonNegative": "Unit price must be 0 or greater",

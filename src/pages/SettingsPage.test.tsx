@@ -28,10 +28,14 @@ vi.mock('../components/ui/PageLoader', () => ({
 
 describe('SettingsPage', () => {
   const mockUser = { id: 'user-123', email: 'test@example.com' };
+  const mockRefreshProfile = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as unknown as Mock).mockReturnValue({ user: mockUser });
+    (useAuth as unknown as Mock).mockReturnValue({ 
+      user: mockUser,
+      refreshProfile: mockRefreshProfile,
+    });
   });
 
   it('fetches and displays profile data', async () => {
@@ -92,6 +96,7 @@ describe('SettingsPage', () => {
       }));
     });
 
+    expect(mockRefreshProfile).toHaveBeenCalledTimes(1);
     expect(screen.getByText('settings.profile.success')).toBeInTheDocument();
   });
 });
