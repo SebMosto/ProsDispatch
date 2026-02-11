@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Navigate, useLocation } from './router';
 import { useTranslation } from 'react-i18next';
 import type { Session, User } from '@supabase/supabase-js';
@@ -12,6 +12,7 @@ interface AuthContextValue {
   loading: boolean;
   signOut: () => Promise<void>;
   session: Session | null;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -70,6 +71,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  const refreshProfile = useCallback(async () => {
+    if (user) {
+      await fetchProfile(user);
+    }
+  }, [user]);
+
   const value = useMemo(
     () => ({
       user,
@@ -79,8 +86,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.auth.signOut();
       },
       session,
+      refreshProfile,
     }),
-    [loading, profile, session, user],
+    [loading, profile, session, user, refreshProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
