@@ -20,9 +20,4 @@ export const getProfileSchema = (t?: TFunction) => z.object({
   .transform(val => val || ''),
 });
 
-export const ProfileSchema = z.object({
-  full_name: z.string().min(1).max(100).nullable(),
-  business_name: z.string().max(100).nullable(),
-});
-
-export type ProfileFormValues = z.infer<typeof ProfileSchema>;
+export type ProfileFormValues = z.input<ReturnType<typeof getProfileSchema>>;
