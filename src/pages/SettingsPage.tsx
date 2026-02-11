@@ -9,7 +9,7 @@ import { PageLoader } from '../components/ui/PageLoader';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -74,6 +74,9 @@ const SettingsPage = () => {
         .eq('id', user.id);
 
       if (error) throw error;
+
+      // Refresh the profile in AuthContext so other pages get updated data
+      await refreshProfile();
 
       setMessage({ type: 'success', text: t('settings.success') });
     } catch (error) {
