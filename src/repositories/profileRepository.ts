@@ -33,7 +33,6 @@ export class ProfileRepository extends BaseRepository {
     const payload = {
       full_name: input.full_name,
       business_name: input.business_name,
-      updated_at: new Date().toISOString(),
     } satisfies Database['public']['Tables']['profiles']['Update'];
 
     const { data, error } = await this.client
