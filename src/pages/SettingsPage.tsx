@@ -68,7 +68,6 @@ const SettingsPage = () => {
         .update({
           full_name: data.full_name || null,
           business_name: data.business_name || null,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
 
