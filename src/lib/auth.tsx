@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Navigate, useLocation } from './router';
 import { useTranslation } from 'react-i18next';
 import type { Session, User } from '@supabase/supabase-js';
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (currentUser: User) => {
+  const fetchProfile = useCallback(async (currentUser: User) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setProfile(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchProfile]);
 
   const value = useMemo(
     () => ({
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       },
     }),
-    [loading, profile, session, user],
+    [loading, profile, session, user, fetchProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
