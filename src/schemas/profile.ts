@@ -12,14 +12,14 @@ const requiredOptions = (t?: TFunction, key?: string) => ({
 export const getProfileUpdateSchema = (t?: TFunction) => z.object({
   full_name: z
     .string(requiredOptions(t, 'validation.nameRequired'))
-    .min(1, t ? t('validation.nameRequired') : 'validation.nameRequired')
     .max(100, t ? t('validation.nameTooLong') : 'validation.nameTooLong')
+    .transform((val) => (val === '' ? null : val))
     .nullable()
     .optional(),
   business_name: z
     .string(requiredOptions(t, 'validation.businessNameRequired'))
-    .min(1, t ? t('validation.businessNameRequired') : 'validation.businessNameRequired')
     .max(100, t ? t('validation.businessNameTooLong') : 'validation.businessNameTooLong')
+    .transform((val) => (val === '' ? null : val))
     .nullable()
     .optional(),
 });
