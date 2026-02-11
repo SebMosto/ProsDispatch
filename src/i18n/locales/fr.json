@@ -418,6 +418,20 @@
       "downloadPdf": "Télécharger le PDF"
     }
   },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre profil et les détails de votre entreprise.",
+    "profile": {
+      "title": "Profil",
+      "fullName": "Nom complet",
+      "businessName": "Nom de l'entreprise",
+      "email": "Adresse courriel",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "success": "Profil mis à jour avec succès.",
+      "error": "Impossible de mettre à jour le profil."
+    }
+  },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",

@@ -418,6 +418,20 @@
       "downloadPdf": "Download PDF"
     }
   },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and business details.",
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full Name",
+      "businessName": "Business Name",
+      "email": "Email Address",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "success": "Profile updated successfully.",
+      "error": "Unable to update profile."
+    }
+  },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
