@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { getProfileUpdateSchema, ProfileUpdateInput } from '../schemas/profile';
 import { PageLoader } from '../components/ui/PageLoader';
+import { profileRepository } from '../repositories/profileRepository';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
@@ -30,29 +30,19 @@ const SettingsPage = () => {
         return;
       }
 
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('full_name, business_name')
-          .eq('id', user.id)
-          .single();
+      const { data, error } = await profileRepository.get(user.id);
 
-        if (error) {
-          throw error;
-        }
-
-        if (data) {
-          reset({
-            full_name: data.full_name,
-            business_name: data.business_name,
-          });
-        }
-      } catch (error) {
+      if (error) {
         console.error('Error fetching profile:', error);
         setMessage({ type: 'error', text: t('settings.error') });
-      } finally {
-        setLoading(false);
+      } else if (data) {
+        reset({
+          full_name: data.full_name,
+          business_name: data.business_name,
+        });
       }
+
+      setLoading(false);
     };
 
     fetchProfile();
@@ -63,17 +53,7 @@ const SettingsPage = () => {
     setSaving(true);
     setMessage(null);
 
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: data.full_name,
-          business_name: data.business_name,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
+    const { error } = await profileRepository.update(user.id, data);
 
       // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
@@ -82,9 +62,11 @@ const SettingsPage = () => {
     } catch (error) {
       console.error('Error updating profile:', error);
       setMessage({ type: 'error', text: t('settings.error') });
-    } finally {
-      setSaving(false);
+    } else {
+      setMessage({ type: 'success', text: t('settings.success') });
     }
+
+    setSaving(false);
   };
 
   if (loading) {
