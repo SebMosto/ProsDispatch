@@ -16,6 +16,7 @@ const SignInPage = lazy(() => import('./pages/auth/SignInPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const CreateJobPage = lazy(() => import('./pages/jobs/CreateJobPage'));
 const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
 const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
@@ -99,6 +100,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />
