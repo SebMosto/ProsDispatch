@@ -2,14 +2,10 @@ import { z } from 'zod';
 import { TFunction } from 'i18next';
 
 export const getProfileSchema = (t?: TFunction) => z.object({
-  full_name: z.string({
-    required_error: t ? t('validation.nameRequired') : 'validation.nameRequired',
-    invalid_type_error: t ? t('validation.nameRequired') : 'validation.nameRequired',
-  })
-  .min(1, t ? t('validation.nameRequired') : 'validation.nameRequired')
+  full_name: z.string()
   .max(100, t ? t('validation.nameTooLong') : 'validation.nameTooLong')
   .nullable()
-  .transform(val => val || ''),
+  .transform(val => val || null),
 
   business_name: z.string({
     required_error: t ? t('validation.businessNameRequired') : 'validation.businessNameRequired',
@@ -21,7 +17,7 @@ export const getProfileSchema = (t?: TFunction) => z.object({
 });
 
 export const ProfileSchema = z.object({
-  full_name: z.string().min(1).max(100).nullable(),
+  full_name: z.string().max(100).nullable(),
   business_name: z.string().max(100).nullable(),
 });
 
