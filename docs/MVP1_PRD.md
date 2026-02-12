@@ -8,7 +8,7 @@ Canadian independent service contractors (e.g., HVAC, plumbing, electrical) stru
 2.  **Streamline Job-to-Payment:** Enable contractors to go from "Job Draft" to "Money in Bank" using Stripe Connect Direct Charges, reducing administrative time by 50%.
 3.  **Enforce strict Scope Discipline:** Deploy MVP1 with zero "feature creep" (no marketplace, no bidding, no homeowner accounts), ensuring a stable, focused product.
 4.  **Achieve Technical Stability:** Maintain >99.9% uptime and <2s page load times on mobile networks to support field usage.
-5.  **Monetize Effectively:** successfully enroll contractors in a 0/month SaaS subscription plan using Stripe Billing.
+5.  **Monetize Effectively:** successfully enroll contractors in a $20/month SaaS subscription plan using Stripe Billing.
 
 ## 3. SUCCESS METRICS
 1.  **Time-to-Payment:** Average time from "Job Completed" to "Payment Received" < 48 hours.
