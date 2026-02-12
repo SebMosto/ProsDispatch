@@ -52,18 +52,16 @@ const SettingsPage = () => {
     if (!user) return;
     setSaving(true);
     setMessage(null);
-
-    const { error } = await profileRepository.update(user.id, data);
+    try {
+      await profileRepository.update(user.id, data);
 
       // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
 
-      setMessage({ type: 'success', text: t('settings.success') });
+      setMessage({ type: "success", text: t("settings.success") });
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: t('settings.error') });
-    } else {
-      setMessage({ type: 'success', text: t('settings.success') });
+      console.error("Error updating profile:", error);
+      setMessage({ type: "error", text: t("settings.error") });
     }
 
     setSaving(false);

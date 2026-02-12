@@ -1,8 +1,8 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 import SettingsPage from './SettingsPage';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
+import { profileRepository } from '../repositories/profileRepository';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
@@ -11,14 +11,15 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('../lib/supabase', () => ({
-  supabase: {
-    from: vi.fn(),
-  },
-}));
-
 vi.mock('../lib/auth', () => ({
   useAuth: vi.fn(),
+}));
+
+vi.mock('../repositories/profileRepository', () => ({
+  profileRepository: {
+    get: vi.fn(),
+    update: vi.fn(),
+  },
 }));
 
 // Mock PageLoader
@@ -40,11 +41,7 @@ describe('SettingsPage', () => {
 
   it('fetches and displays profile data', async () => {
     const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
-
-    const singleMock = vi.fn().mockResolvedValue({ data: mockProfile, error: null });
-    const eqMock = vi.fn().mockReturnValue({ single: singleMock });
-    const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
-    (supabase.from as unknown as Mock).mockReturnValue({ select: selectMock });
+    (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
 
     render(<SettingsPage />);
 
@@ -54,28 +51,13 @@ describe('SettingsPage', () => {
       expect(screen.getByLabelText('settings.profile.email')).toHaveValue('test@example.com');
     });
 
-    expect(supabase.from).toHaveBeenCalledWith('profiles');
+    expect(profileRepository.get).toHaveBeenCalledWith('user-123');
   });
 
   it('updates profile on submit', async () => {
     const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
-
-    const singleMock = vi.fn().mockResolvedValue({ data: mockProfile, error: null });
-    const selectEqMock = vi.fn().mockReturnValue({ single: singleMock });
-    const selectMock = vi.fn().mockReturnValue({ eq: selectEqMock });
-
-    const updateEqMock = vi.fn().mockResolvedValue({ error: null });
-    const updateMock = vi.fn().mockReturnValue({ eq: updateEqMock });
-
-    (supabase.from as unknown as Mock).mockImplementation((table: string) => {
-      if (table === 'profiles') {
-        return {
-          select: selectMock,
-          update: updateMock,
-        };
-      }
-      return {};
-    });
+    (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
+    (profileRepository.update as unknown as Mock).mockResolvedValue({ data: { ...mockProfile, full_name: 'Jane Doe' }, error: null });
 
     render(<SettingsPage />);
 
@@ -90,13 +72,13 @@ describe('SettingsPage', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(updateMock).toHaveBeenCalledWith(expect.objectContaining({
+      expect(profileRepository.update).toHaveBeenCalledWith('user-123', expect.objectContaining({
         full_name: 'Jane Doe',
         business_name: 'Acme Corp',
       }));
     });
 
     expect(mockRefreshProfile).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('settings.profile.success')).toBeInTheDocument();
+    expect(screen.getByText('settings.success')).toBeInTheDocument();
   });
 });

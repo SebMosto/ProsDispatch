@@ -25,7 +25,6 @@ const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
 const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage'));
 const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
