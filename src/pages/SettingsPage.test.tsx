@@ -5,10 +5,18 @@ import { useAuth } from '../lib/auth';
 import { profileRepository } from '../repositories/profileRepository';
 
 // Mock dependencies
+const mockT = (key: string) => key;
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key,
+    t: mockT,
   }),
+}));
+
+vi.mock('../repositories/profileRepository', () => ({
+  profileRepository: {
+    get: vi.fn(),
+    update: vi.fn(),
+  },
 }));
 
 vi.mock('../lib/auth', () => ({
@@ -45,13 +53,11 @@ describe('SettingsPage', () => {
 
     render(<SettingsPage />);
 
-    await waitFor(() => {
-      expect(screen.getByLabelText('settings.profile.fullName')).toHaveValue('John Doe');
-      expect(screen.getByLabelText('settings.profile.businessName')).toHaveValue('Acme Corp');
-      expect(screen.getByLabelText('settings.profile.email')).toHaveValue('test@example.com');
-    });
+    expect(await screen.findByDisplayValue('John Doe')).toBeInTheDocument();
+    expect(await screen.findByDisplayValue('Acme Corp')).toBeInTheDocument();
+    expect(screen.getByLabelText('settings.profile.email')).toHaveValue('test@example.com');
 
-    expect(profileRepository.get).toHaveBeenCalledWith('user-123');
+    expect(profileRepository.get).toHaveBeenCalledWith(mockUser.id);
   });
 
   it('updates profile on submit', async () => {
@@ -72,7 +78,7 @@ describe('SettingsPage', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(profileRepository.update).toHaveBeenCalledWith('user-123', expect.objectContaining({
+      expect(profileRepository.update).toHaveBeenCalledWith(mockUser.id, expect.objectContaining({
         full_name: 'Jane Doe',
         business_name: 'Acme Corp',
       }));
@@ -80,5 +86,38 @@ describe('SettingsPage', () => {
 
     expect(mockRefreshProfile).toHaveBeenCalledTimes(1);
     expect(screen.getByText('settings.success')).toBeInTheDocument();
+  });
+
+  it('displays an error message if profile fetch fails', async () => {
+    (profileRepository.get as unknown as Mock).mockResolvedValue({ 
+      data: null, 
+      error: { message: 'Failed to fetch profile' } 
+    });
+
+    render(<SettingsPage />);
+
+    // Check for error message
+    expect(await screen.findByText('settings.error')).toBeInTheDocument();
+  });
+
+  it('displays an error message if profile update fails', async () => {
+    const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
+    (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
+    (profileRepository.update as unknown as Mock).mockResolvedValue({ 
+      data: null, 
+      error: { message: 'Update failed' } 
+    });
+
+    render(<SettingsPage />);
+
+    // Wait for form to be populated
+    await screen.findByDisplayValue('John Doe');
+
+    const saveButton = screen.getByRole('button', { name: 'settings.profile.save' });
+    fireEvent.click(saveButton);
+
+    // Check for error message
+    expect(await screen.findByText('settings.error')).toBeInTheDocument();
+    expect(mockRefreshProfile).not.toHaveBeenCalled();
   });
 });

@@ -55,13 +55,13 @@ const SettingsPage = () => {
     try {
       await profileRepository.update(user.id, data);
 
+    if (error) {
+      console.error('Error updating profile:', error);
+      setMessage({ type: 'error', text: t('settings.error') });
+    } else {
       // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
-
-      setMessage({ type: "success", text: t("settings.success") });
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      setMessage({ type: "error", text: t("settings.error") });
+      setMessage({ type: 'success', text: t('settings.success') });
     }
 
     setSaving(false);
@@ -86,10 +86,11 @@ const SettingsPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 py-4 sm:px-6">
           <div className="space-y-4">
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-800">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-800">
                 {t('settings.profile.email')}
               </label>
               <input
+                id="email"
                 type="email"
                 readOnly
                 disabled

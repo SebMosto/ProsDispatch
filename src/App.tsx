@@ -191,14 +191,6 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <SettingsPage />
-                </ProtectedRoute>
-              }
-            />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
