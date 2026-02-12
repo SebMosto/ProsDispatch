@@ -71,12 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [fetchProfile]);
 
-  const refreshProfile = useCallback(async () => {
-    if (user) {
-      await fetchProfile(user);
-    }
-  }, [user]);
-
   const value = useMemo(
     () => ({
       user,

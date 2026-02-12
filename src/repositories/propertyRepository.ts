@@ -1,5 +1,4 @@
 import { reportApiOnline } from '../lib/network';
-import { supabase } from '../lib/supabase';
 import type { PropertyCreateInput, PropertyUpdateInput } from '../schemas/property';
 import type { Database } from '../types/database.types';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
@@ -66,7 +65,7 @@ export class PropertyRepository
   }
 
   async create(input: PropertyCreateInput): Promise<RepositoryResult<PropertyRecord>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData, error: authError } = await this.client.auth.getUser();
 
     if (authError) {
       return {
@@ -97,6 +96,7 @@ export class PropertyRepository
       city: input.city,
       province: input.province,
       postal_code: input.postal_code,
+      country: input.country ?? 'CA',
       nickname: input.nickname ?? null,
     } satisfies Database['public']['Tables']['properties']['Insert'];
 
@@ -117,12 +117,11 @@ export class PropertyRepository
   }
 
   async update(id: string, input: PropertyUpdateInput): Promise<RepositoryResult<PropertyRecord>> {
-    const { country: _country, ...rest } = input;
-    void _country;
     const payload = {
-      ...rest,
-      address_line2: rest.address_line2 ?? undefined,
-      nickname: rest.nickname ?? undefined,
+      ...input,
+      country: input.country ?? undefined,
+      address_line2: input.address_line2 ?? undefined,
+      nickname: input.nickname ?? undefined,
     } satisfies Database['public']['Tables']['properties']['Update'];
 
     const { data, error } = await this.client

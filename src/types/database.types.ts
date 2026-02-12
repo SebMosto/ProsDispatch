@@ -130,6 +130,7 @@ export type Database = {
           city: string
           client_id: string
           contractor_id: string
+          country: string
           created_at: string
           deleted_at: string | null
           id: string
@@ -144,6 +145,7 @@ export type Database = {
           city: string
           client_id: string
           contractor_id: string
+          country?: string
           created_at?: string
           deleted_at?: string | null
           id?: string
@@ -158,6 +160,7 @@ export type Database = {
           city?: string
           client_id?: string
           contractor_id?: string
+          country?: string
           created_at?: string
           deleted_at?: string | null
           id?: string
