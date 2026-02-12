@@ -1,529 +1,141 @@
-# **📘 MVP1 MASTER PRD — ProsDispatch**
-
-**Version:** 1.1 (Patch v1.1)
- **Status:** Canonical & Binding  
- **Prepared by:** PRD Architect v1.5  
- **Audited by:** Gemini (Chief Architect & Risk Auditor)  
- **Aligned With:**
-
-* RESTART\_BRIEF\_ENTERPRISE.md
-
-* SpecDoctrine (NCWAS)
-
-* ACTION\_PLAN.md
-
-* AUDIT\_README.md
-
-* MultiAgentProtocol
-
-* UX-Responsive-01
-
-* Canada-Only \+ PIPEDA \+ Law 25
-
----
-
-# **1\. Feature Summary**
-
-ProsDispatch MVP1 is a **mobile-first SaaS platform for Canadian service providers**, focused on:
-
-* Contractor account creation
-
-* Client & property tracking (backend only via Shadow Registry)
-
-* Job lifecycle management
-
-* Homeowner invite \+ approval flow
-
-* Direct Charges via Stripe Connect Standard
-
-* Invoice generation (PDF)
-
-* Email notifications (EN/FR-CA)
-
-* Bilingual UI (EN/FR-CA)
-
-**No homeowner accounts. No marketplace. No bidding. No escrow. No scheduling.**
-
----
-
-# **2\. Non-Negotiable Constraints**
-
-### **2.1 Canonical Architectural Constraints**
-
-| Area | Requirement |
-| ----- | ----- |
-| Payments | Stripe Connect Standard — Direct Charges only |
-| Amount of PII | Minimal; contractor \= controller, platform \= processor |
-| Data Residency | Supabase (Canadian region not required for MVP1) |
-| Frontend | React \+ Vite \+ Tailwind |
-| Backend | Supabase (DB \+ Auth \+ RLS \+ Functions) |
-| Notification Layer | Email only (Resend) |
-| UX | Mobile-first → Tablet → Desktop (per UX-Responsive-01) |
-| i18n | EN \+ FR-CA mandatory |
-| Accessibility | WCAG 2.1 AA |
-| Forbidden Features | Marketplace, Bidding, Proposals, Escrow, Wallets, Stored Payment Methods, Scheduling, SMS, Chat |
-
-### **2.2 Legal & Privacy Boundaries**
-
-* Only store data essential for:
-
-  * Job execution
-
-  * Record keeping
-
-  * Tax compliance
-
-* No silent analytics
-
-* No intrusive tracking
-
-* Consent screens must appear on onboarding
-
----
-
-# **3\. In-Scope / Out-of-Scope Grid**
-
-### **3.1 In Scope (MVP1)**
-
-| Feature | Included |
-| ----- | ----- |
-| Contractor Signup/Login | ✔ |
-| Contractor Profile | ✔ |
-| Client \+ Property Schema (backend) | ✔ |
-| Job Lifecycle (Draft → Archived) | ✔ |
-| Homeowner Invite Link | ✔ |
-| Homeowner Accept/Decline (guest token) | ✔ |
-| Stripe Direct Charges (Pay Invoice) | ✔ |
-| PDF Invoice Generation | ✔ |
-| Contractor Dashboard (Active \+ History) | ✔ |
-| Settings Page | ✔ (minimal) |
-| Email Notifications | ✔ |
-| i18n & A11y | ✔ |
-| Admin Portal (placeholder only) | ✔ (minimal stub) |
-| Contractor SaaS Subscription (Monetization) | ✔ — SaaS Subscription ($20/mo, Dynamic Pricing via Stripe Lookup Keys). |
-
----
-
-### **3.2 Out of Scope (MVP1)**
-
-These features are **explicitly forbidden**, per Auditor mandate:
-
-| Feature | Status |
-| ----- | ----- |
-| Marketplace | ❌ |
-| Contractor Discovery | ❌ |
-| Proposals / Bidding | ❌ |
-| Escrow / Wallets / Stored Payment Methods | ❌ |
-| Invoicing builder UI | ❌ |
-| Homeowner Accounts | ❌ |
-| Homeowner Dashboard | ❌ |
-| Scheduling / Calendar | ❌ |
-| Chat / Messaging | ❌ |
-| File uploads (photos, PDFs, docs) | ❌ |
-| SMS notifications | ❌ |
-| Advanced analytics | ❌ |
-| Multi-provider workflows | ❌ |
-| Contractor teams / roles | ❌ |
-| Inventory management | ❌ |
-| Referral & Commission Engine | ❌ (Explicitly Forbidden) |
-
----
-
-## **🔧 MVP1 Master PRD — Patch v1.1**
-
-### **In Scope (Updated)**
-
-#### **SaaS Billing**
-
-* Contractor subscription enrollment (Stripe Billing)
-* Contractor vaulting (Stripe Customer + PaymentMethod)
-* Billing Portal integration
-
----
-
-## **Data Model Additions**
-
-MVP1 relies on the core entities defined below and Stripe-hosted billing objects. No additional referral or commission tables
-are introduced.
-
----
-
-# **4\. User Roles**
-
-### **4.1 Contractor (Primary MVP1 user)**
-
-Capabilities:
-
-* Create and manage profile
-
-* Add clients & properties
-
-* Create/edit jobs
-
-* Send homeowner approval requests
-
-* Generate invoices
-
-* Take payments
-
-* View job history
-
-* Manage settings
-
-### **4.2 Homeowner (Lightweight, token-based)**
-
-Capabilities:
-
-* View job summary (public token)
-
-* Approve/Decline
-
-* Complete payment (Stripe checkout)
-
-No login, no dashboard, no profile.
-
-### **4.3 Admin (Internal Only)**
-
-MVP1 permits:
-
-* Login via magic link
-
-* View minimal metrics (active users, jobs)
-
-* No actions beyond read-only
-
----
-
-# **5\. MVP1 User Stories (Gherkin)**
-
-### **5.1 Roadmap (Spec Status)**
-
-* **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **READY FOR DEV**
-
-### **5.2 Contractor Registration**
-
-Given I am a new contractor    
-When I provide my email, password, and business name    
-Then my account is created    
-And I am prompted to complete my profile  
-
-### **5.3 Create Job**
-
-Given I am logged in    
-When I create a new job    
-And specify client, property, service date, and description    
-Then the job is saved in Draft state
-
-### **5.4 Send Job to Homeowner**
-
-Given a job is in Draft    
-When I click "Send to Homeowner"    
-Then an email link is sent via Resend    
-And the job moves to Sent state
-
-### **5.5 Homeowner Approval**
-
-Given I receive an invite link    
-When I open the link    
-Then I can Approve or Decline    
-And no login is required
-
-### **5.6 Invoice Payment**
-
-Given a job is Invoiced    
-When the homeowner clicks "Pay Invoice"    
-Then Stripe Checkout opens    
-And funds go directly to the contractor
-
----
-
-# **6\. UX Architecture (Per UX-Responsive-01)**
-
-### **General Rules**
-
-* Mobile-first
-
-* Single-column core pages
-
-* Tablet adds 2-column layouts for dashboard & job details
-
-* Desktop uses centered container (max-width 1280px)
-
-* Admin Portal \= Desktop-Optimized
-
-### **Screens**
-
-* Login/Register
-
-* Dashboard (Active / History tabs)
-
-* Job Create
-
-* Job Detail
-
-* Client/Property Select
-
-* Invoice Preview
-
-* Settings
-
----
-
-# **7\. Data Architecture (Includes SHADOW REGISTRY)**
-
-### **7.1 Core Entities**
-
-* **contractors**
-
-* **clients**
-
-* **properties** ← SHADOW REGISTRY
-
-* **jobs**
-
-* **job\_events** (state transitions)
-
-* **invoices**
-
-### **7.2 Shadow Registry Definition**
-
-A backend-only structure storing:
-
-* Property ID
-
-* Owner Name (string only, no profile)
-
-* Address
-
-* Metadata:
-
-  * last\_service\_date
-
-  * material notes
-
-  * job count
-
-  * contractor\_id
-
-Used in MVP2 for "Claim Home Profile".
-
-### **7.3 Job States (Canonical)**
-
-Draft → Sent → Approved → In Progress → Completed → Invoiced → Paid → Archived
-
-### **7.4 Minimal PII**
-
-* homeowner\_name (string)
-
-* homeowner\_email (string)
-
-* address
-
-* no phone numbers
-
-* no photos/files
-
----
-
-# **8\. API / RPC Requirements**
-
-### **Required Supabase Functions:**
-
-* `create_job()`
-
-* `transition_job_state(job_id, new_state)`
-
-* `create_invoice(job_id)`
-
-* `record_payment(intent_id)`
-
-### **Required Stripe Calls:**
-
-* `stripe.paymentIntents.create` (connected account)
-
-* `stripe.paymentIntents.confirm`
-
-* **No customer creation**
-
-* **No setup intents**
-
-* **No saved cards**
-
----
-
-# **9\. Validation Logic**
-
-### **Jobs**
-
-* description: required
-
-* service\_date: required
-
-* client\_id & property\_id: required
-
-### **Properties**
-
-* address\_line\_1: required
-
-* city, province, postal\_code: required
-
-* homeowner\_email optional but recommended
-
-### **Billing**
-
-* amount \>= 1
-
-* currency \= CAD only
-
----
-
-# **10\. Error Handling**
-
-* User-facing errors must be localized (EN/FR-CA)
-
-* Stripe errors: Show friendly fallback message
-
-* Expired homeowner token: Show "Link expired" screen
-
----
-
-# **11\. i18n Rules**
-
-* All strings in `/i18n/en.json` and `/i18n/fr-CA.json`
-
-* Notifications use `recipient_language` field
-
-* FR-CA uses Quebecois phrasing per memory
-
----
-
-# **12\. Security Model**
-
-* RLS enabled on **every** table
-
-* Contractors can only access rows they own
-
-* Homeowner token access \= SELECT only via signed URL policies
-
-* No admin bypass tables
-
----
-
-# **13\. Compliance Boundary**
-
-### **Store Only:**
-
-* Name
-
-* Email
-
-* Address
-
-* Job details
-
-* Invoice details
-
-### **Prohibited:**
-
-* Photos
-
-* IDs
-
-* Payment card details
-
-* Phone numbers (unless specifically allowed later)
-
-* Behavioral analytics
-
----
-
-# **14\. Future Roadmap (Not MVP1)**
-
-* Homeowner Accounts
-
-* Full Home Profile Dashboard
-
-* In-app messaging
-
-* Calendar/scheduling
-
-* AI job estimator
-
-* Contractor mobile app wrapper
-
-* Reviews & ratings
-
-* Team roles
-
-* Contractor marketplace
-
-* Material catalog
-
-* Smart home integrations
-
-* Referral Program
-
----
-
-# **15\. Risks**
-
-| Risk | Mitigation |
-| ----- | ----- |
-| Overbuilding | Strict NCWAS enforcement |
-| Scope creep | Explicit Out-of-Scope list |
-| i18n drift | CI parity scripts |
-| Stripe misuse | API surface constraints |
-| Data bloat | Minimal PII rules |
-| Homeowner confusion | Simplified UI \+ email first |
-
----
-
-# **16\. Implementation Order (MVP1 Execution)**
-
-1. Auth \+ Profile
-
-2. Contractor SaaS Subscription (Monetization)
-
-3. Client \+ Property (Shadow Registry)
-
-4. Job Engine \+ State Machine
-
-5. Invite Flow
-
-6. Invoice Generator
-
-7. Stripe Checkout
-
-8. Email Notifications
-
-9. Dashboard (Active/History)
-
-10. Settings
-
-11. Admin Portal (read-only)
-
-12. i18n
-
-13. A11y
-
-14. Final Audit
-
----
-
-# **🚀 MVP1 Master PRD Completed**
-
-This is now the **canonical root document** for the entire build.
-
-Next steps:
-
-1. Auditor (Gemini) validates this PRD
-
-2. We proceed with the first SPEC: **Auth & Profiles**
-
-3. Codex begins implementation
-
-4. Lovable handles UI scaffolding where PRDs permit
-
-Whenever you're ready:
-
-**"Begin SPEC: Auth & Profiles."**
+# Product Requirements Document (PRD): ProsDispatch MVP1
+
+## 1. PROBLEM STATEMENT
+Canadian independent service contractors (e.g., HVAC, plumbing, electrical) struggle with fragmented business operations. They rely on disjointed tools for client management, job tracking, and invoicing, often leading to lost revenue, administrative overhead, and poor customer experiences. Existing solutions are either too complex (enterprise software), US-centric (ignoring Canadian tax/data laws), or focused on lead generation rather than operational efficiency. There is no simple, mobile-first, compliant platform that handles the core "job-to-payment" lifecycle without the bloat of a full CRM or marketplace.
+
+## 2. GOALS & OBJECTIVES
+1.  **Launch a Compliant Canadian Platform:** Deliver a fully functional SaaS platform that strictly adheres to Canadian data privacy (PIPEDA, Law 25) and tax regulations (GST/HST/QST) by Q4 2024.
+2.  **Streamline Job-to-Payment:** Enable contractors to go from "Job Draft" to "Money in Bank" using Stripe Connect Direct Charges, reducing administrative time by 50%.
+3.  **Enforce strict Scope Discipline:** Deploy MVP1 with zero "feature creep" (no marketplace, no bidding, no homeowner accounts), ensuring a stable, focused product.
+4.  **Achieve Technical Stability:** Maintain >99.9% uptime and <2s page load times on mobile networks to support field usage.
+5.  **Monetize Effectively:** successfully enroll contractors in a $20/month SaaS subscription plan using Stripe Billing.
+
+## 3. SUCCESS METRICS
+1.  **Time-to-Payment:** Average time from "Job Completed" to "Payment Received" < 48 hours.
+2.  **Adoption Rate:** >75% of registered contractors complete at least one paid job within 14 days of onboarding.
+3.  **Support Volume:** < 1 support ticket per 50 completed jobs (indicating intuitive UX).
+4.  **System Reliability:** 0 critical bugs related to payment processing or data loss in the first 30 days.
+5.  **Subscription Conversion:** >40% of trial users convert to paid monthly subscriptions.
+
+## 4. TARGET PERSONAS
+
+### Persona A: The Independent Contractor (Primary)
+*   **Demographics:** Male/Female, 25-55, Canadian resident, English or French speaker.
+*   **Role:** Owner-operator or small team lead (1-5 employees).
+*   **Technical Proficiency:** Moderate. Comfortable with smartphones/apps but dislikes complex desktop software.
+*   **Pain Points:**
+    *   Chasing clients for payments.
+    *   losing track of job details in text messages.
+    *   Complicated tax calculations.
+    *   Fear of "marketplace" apps taking a cut of their hard-earned money.
+*   **Goals:** Get paid faster, look professional, spend less time on paperwork.
+
+### Persona B: The Homeowner (Secondary/Guest)
+*   **Demographics:** Canadian homeowner, 30-70.
+*   **Role:** Service recipient.
+*   **Technical Proficiency:** Varied (Low to High).
+*   **Pain Points:**
+    *   Unclear invoices.
+    *   Sketchy payment methods (cash/e-transfer requests without receipts).
+    *   Lack of communication about job status.
+*   **Goals:** Easy approval of work, secure payment, clear digital record of service.
+
+## 5. FEATURES & REQUIREMENTS
+
+### P0 (Must-Have - MVP1)
+1.  **Contractor Authentication & Profile:**
+    *   *Description:* Secure email/password login and profile management (Business Name, Tax ID).
+    *   *User Story:* As a contractor, I want to create an account and set up my business profile so I can start managing jobs.
+    *   *Acceptance Criteria:* Email verification required; Profile data persists; "Business Name" appears on invoices.
+    *   *Metric:* 100% successful sign-ups.
+
+2.  **Client & Property "Shadow Registry":**
+    *   *Description:* Backend-only storage of client/property data linked to contractors.
+    *   *User Story:* As a contractor, I want to save client addresses so I don't have to re-type them for every job.
+    *   *Acceptance Criteria:* Address validation (Google Maps); Multiple properties per client; No "Homeowner Account" creation.
+    *   *Metric:* < 5% address entry errors.
+
+3.  **Job Lifecycle Management:**
+    *   *Description:* State machine handling Draft -> Sent -> Approved -> In Progress -> Completed -> Invoiced -> Paid -> Archived.
+    *   *User Story:* As a contractor, I want to track the status of my jobs so I know what needs attention.
+    *   *Acceptance Criteria:* Strict state transitions; Visual badges for states; Filtering by "Active" vs "History".
+    *   *Metric:* 100% of jobs follow valid state transitions.
+
+4.  **Stripe Connect & Direct Charges:**
+    *   *Description:* Integration with Stripe for contractor onboarding (KYC) and direct payment processing.
+    *   *User Story:* As a contractor, I want to link my bank account so payments go directly to me.
+    *   *Acceptance Criteria:* Successful Stripe Connect onboarding; Payments routed correctly; Application fee deduction supported.
+    *   *Metric:* 100% payment success rate.
+
+5.  **PDF Invoicing & Email Notifications:**
+    *   *Description:* Auto-generated PDF invoices sent via email (Resend) with "Pay Now" links.
+    *   *User Story:* As a contractor, I want to send professional invoices to clients so I look trustworthy.
+    *   *Acceptance Criteria:* PDF includes tax breakdown; Emails are bilingual (EN/FR); "Pay Now" link works.
+    *   *Metric:* < 2% bounce rate on emails.
+
+### P1 (Should-Have - Post-MVP)
+1.  **Dashboard Analytics (Basic):** Simple charts for revenue and job volume.
+2.  **Expense Tracking:** Basic logging of material costs per job.
+3.  **Customer Import:** CSV upload for bulk client addition.
+
+### P2 (Nice-to-Have - Future)
+1.  **Homeowner Portal:** Dedicated account for homeowners to view service history.
+2.  **Scheduling/Calendar:** Drag-and-drop job scheduling.
+3.  **Team Management:** Multi-user accounts for larger crews.
+
+## 6. EXPLICITLY OUT OF SCOPE
+1.  **Marketplace/Lead Gen:** No browsing for contractors or posting "help wanted" ads.
+2.  **Bidding/Proposals:** No competitive bidding process.
+3.  **Escrow:** No holding funds; payments are direct.
+4.  **In-App Messaging/Chat:** Communication is via email notifications only.
+5.  **Scheduling:** No calendar view or booking engine.
+6.  **Mobile App (Native):** Web-only (PWA capable) for MVP1.
+7.  **Inventory Management:** No tracking of parts/stock.
+8.  **Offline Mode (Full):** MVP1 requires internet connection.
+
+## 7. USER SCENARIOS
+
+### Scenario 1: The "Quick Fix" Job
+*   **Context:** Contractor is at a client's house for an emergency repair.
+*   **Action:** Contractor opens app -> Creates "Draft" job with client details -> Adds line items -> Clicks "Send".
+*   **System:** Sends email to Homeowner with "Approve" link.
+*   **Action:** Homeowner clicks link -> Reviews details -> Taps "Approve".
+*   **System:** Updates job to "Approved" -> Notifies Contractor.
+*   **Action:** Contractor completes work -> Marks job "Completed" -> Generates Invoice -> Sends.
+*   **Outcome:** Homeowner pays via Stripe; Contractor receives funds; Job archived.
+
+### Scenario 2: Onboarding a New Contractor
+*   **Context:** A plumber hears about ProsDispatch and wants to try it.
+*   **Action:** Visits sign-up page -> Enters email/password -> Verifies email.
+*   **System:** Creates account -> Prompts for "Business Profile".
+*   **Action:** Enters business name, address, tax ID -> Clicks "Connect Stripe".
+*   **System:** Redirects to Stripe Connect -> Returns on success -> Enrolls in SaaS Subscription.
+*   **Outcome:** Contractor is fully active and ready to create first job.
+
+### Scenario 3: French-Speaking User
+*   **Context:** A contractor in Quebec uses the app.
+*   **Action:** Selects "Français" in settings.
+*   **System:** UI updates to French -> Tax settings default to GST/QST.
+*   **Action:** Sends job to Anglophone client.
+*   **System:** Detects client preference (if set) or allows manual toggle -> Sends email in English.
+*   **Outcome:** Seamless bilingual experience compliant with language laws.
+
+## 8. NON-FUNCTIONAL REQUIREMENTS
+1.  **Performance:** API response time < 200ms; Dashboard load < 1s.
+2.  **Security:** RLS (Row Level Security) on all database tables; No PII in logs; SOC2 compliant infrastructure (Supabase/Stripe).
+3.  **Accessibility:** WCAG 2.1 AA compliance (contrast, touch targets, screen reader support).
+4.  **Scalability:** Architecture supports 10,000 concurrent users without degradation.
+5.  **Localization:** Hard constraint on EN/FR-CA support for all UI and notifications.
+
+## 9. DEPENDENCIES & CONSTRAINTS
+*   **Tech Stack:** React, Vite, Tailwind (Frontend); Supabase (Backend/Auth/DB); Deno (Edge Functions).
+*   **External APIs:** Stripe (Payments/Connect/Billing); Resend (Email); Google Maps (Address Autocomplete).
+*   **Legal:** PIPEDA (Data Privacy); Law 25 (Quebec Privacy); CRA (Tax compliance).
+*   **Device:** Must function on iOS Safari and Android Chrome (Mobile Web).
+
+## 10. TIMELINE
+*   **Phase 1 (Weeks 1-2):** Auth, Profiles, Shadow Registry (Client/Property).
+*   **Phase 2 (Weeks 3-4):** Job Lifecycle Engine, State Machine, Invoicing Logic.
+*   **Phase 3 (Weeks 5-6):** Stripe Integration (Connect + Billing), Payments.
+*   **Phase 4 (Week 7):** Notifications, i18n, Polish.
+*   **MVP Launch:** Week 8.

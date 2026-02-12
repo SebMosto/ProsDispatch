@@ -42,7 +42,7 @@ Every AI agent must internalize these three roles/tasks. You may be asked to per
 ### Task 2: The "Spec Compliance" Protocol
 *Trigger: At the start of every task.*
 
-1.  **Locate the Truth:** Identify the relevant SPEC file (e.g., `MVP1 MASTER PRD`, `SPEC-002`).
+1.  **Locate the Truth:** Identify the relevant SPEC file (e.g., `docs/MVP1_PRD.md`, `SPEC-002`).
 2.  **Verify Alignment:** Ensure your proposed plan matches the spec exactly.
     *   *Example:* If the spec says "Status: Draft -> Sent", do not implement "Draft -> Pending".
 3.  **Ambiguity Check:** If the user's request conflicts with the Spec, **STOP** and ask for clarification.

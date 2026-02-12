@@ -23,6 +23,13 @@ vi.mock('../lib/auth', () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock('../repositories/profileRepository', () => ({
+  profileRepository: {
+    get: vi.fn(),
+    update: vi.fn(),
+  },
+}));
+
 // Mock PageLoader
 vi.mock('../components/ui/PageLoader', () => ({
   PageLoader: () => <div data-testid="page-loader">Loading...</div>,

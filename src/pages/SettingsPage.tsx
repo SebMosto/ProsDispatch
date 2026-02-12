@@ -52,8 +52,12 @@ const SettingsPage = () => {
     if (!user) return;
     setSaving(true);
     setMessage(null);
+    try {
+      const { error } = await profileRepository.update(user.id, data);
 
-    const { error } = await profileRepository.update(user.id, data);
+      if (error) {
+        throw error;
+      }
 
     if (error) {
       console.error('Error updating profile:', error);
