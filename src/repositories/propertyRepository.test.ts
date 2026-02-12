@@ -92,8 +92,7 @@ describe('PropertyRepository', () => {
         country: 'US',
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = await repository.create(input as any);
+      const result = await repository.create(input);
 
       expect(result.data).toEqual(mockData);
       expect(mockInsert).toHaveBeenCalledWith({
