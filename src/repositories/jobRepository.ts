@@ -1,5 +1,4 @@
 import { reportApiOnline } from '../lib/network';
-import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
 import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
@@ -23,6 +22,19 @@ export class JobRepository
   extends BaseRepository
   implements Repository<JobRecord, JobCreateInput, JobUpdateInput, JobListParams>
 {
+  /**
+   * Normalizes job fields for create/update operations.
+   * Ensures description is null if undefined and service_date is properly formatted.
+   */
+  private normalizeJobFields(fields: {
+    description?: string | null;
+    service_date?: string | Date | null;
+  }) {
+    return {
+      description: fields.description ?? null,
+      service_date: normalizeDate(fields.service_date),
+    };
+  }
   async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
     const { status, includeDeleted } = params ?? {};
 
@@ -69,12 +81,16 @@ export class JobRepository
   }
 
   async create(input: JobCreateInput): Promise<RepositoryResult<JobRecord>> {
+    const normalized = this.normalizeJobFields({
+      description: input.description,
+      service_date: input.service_date,
+    });
+
     const { data, error } = await this.client.rpc('create_job', {
       client_id: input.client_id,
       property_id: input.property_id,
       title: input.title,
-      description: input.description ?? null,
-      service_date: normalizeDate(input.service_date),
+      ...normalized,
     });
 
     const repositoryError = this.toRepositoryError(error);
@@ -102,14 +118,19 @@ export class JobRepository
     }
 
     // Handle other fields update if present
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { status: _status, ...otherFields } = input;
     const hasOtherFields = Object.keys(otherFields).length > 0;
 
     if (hasOtherFields) {
+      const normalized = this.normalizeJobFields({
+        description: otherFields.description,
+        service_date: otherFields.service_date,
+      });
+
       const payload = {
         ...otherFields,
-        description: otherFields.description ?? null,
-        service_date: normalizeDate(otherFields.service_date ?? undefined),
+        ...normalized,
       } satisfies Database['public']['Tables']['jobs']['Update'];
 
       const { error: updateError } = await this.client
