@@ -123,13 +123,14 @@ export class JobRepository
     const hasOtherFields = Object.keys(otherFields).length > 0;
 
     if (hasOtherFields) {
+      const { description, service_date, ...remainingFields } = otherFields;
       const normalized = this.normalizeJobFields({
-        description: otherFields.description,
-        service_date: otherFields.service_date,
+        description,
+        service_date,
       });
 
       const payload = {
-        ...otherFields,
+        ...remainingFields,
         ...normalized,
       } satisfies Database['public']['Tables']['jobs']['Update'];
 
