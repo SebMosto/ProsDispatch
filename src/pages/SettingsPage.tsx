@@ -53,7 +53,11 @@ const SettingsPage = () => {
     setSaving(true);
     setMessage(null);
     try {
-      await profileRepository.update(user.id, data);
+      const { error } = await profileRepository.update(user.id, data);
+
+      if (error) {
+        throw error;
+      }
 
       // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
