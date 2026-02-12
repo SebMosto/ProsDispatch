@@ -1,5 +1,4 @@
 import { reportApiOnline } from '../lib/network';
-import { supabase } from '../lib/supabase';
 import type { ClientCreateInput, ClientUpdateInput } from '../schemas/client';
 import type { Database } from '../types/database.types';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
@@ -56,7 +55,7 @@ export class ClientRepository
   }
 
   async create(input: ClientCreateInput): Promise<RepositoryResult<ClientRecord>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData, error: authError } = await this.client.auth.getUser();
 
     if (authError) {
       return {
