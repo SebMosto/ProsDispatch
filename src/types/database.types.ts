@@ -236,6 +236,41 @@ export type Database = {
           },
         ]
       }
+      job_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          job_id: string
+          new_status: Database["public"]["Enums"]["job_status"]
+          previous_status: Database["public"]["Enums"]["job_status"] | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          job_id: string
+          new_status: Database["public"]["Enums"]["job_status"]
+          previous_status?: Database["public"]["Enums"]["job_status"] | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          job_id?: string
+          new_status?: Database["public"]["Enums"]["job_status"]
+          previous_status?: Database["public"]["Enums"]["job_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_events_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           amount: number
@@ -361,7 +396,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_job: {
+        Args: {
+          client_id: string
+          property_id: string
+          title: string
+          description?: string | null
+          service_date?: string | null
+        }
+        Returns: Json
+      }
+      transition_job_state: {
+        Args: {
+          job_id: string
+          new_status: Database["public"]["Enums"]["job_status"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       client_type: "individual" | "business"

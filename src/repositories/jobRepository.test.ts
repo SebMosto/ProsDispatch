@@ -1,0 +1,157 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { JobRepository } from './jobRepository';
+
+// Mock network reporting
+vi.mock('../lib/network', () => ({
+  reportApiOnline: vi.fn(),
+  reportApiOffline: vi.fn(),
+}));
+
+describe('JobRepository', () => {
+  let repository: JobRepository;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockClient: any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    mockClient = {
+      rpc: vi.fn(),
+      from: vi.fn(),
+    };
+
+    // Instantiate repository
+    repository = new JobRepository();
+    // @ts-expect-error - injecting mock client into protected property
+    repository.client = mockClient;
+  });
+
+  describe('create', () => {
+    it('should call create_job RPC', async () => {
+      const input = {
+        client_id: 'client-123',
+        property_id: 'prop-123',
+        title: 'New Job',
+        description: 'Test Description',
+        service_date: '2023-10-27',
+      };
+
+      const mockData = { id: 'job-123', ...input, status: 'draft' };
+      mockClient.rpc.mockResolvedValue({ data: mockData, error: null });
+
+      const result = await repository.create(input);
+
+      expect(mockClient.rpc).toHaveBeenCalledWith('create_job', {
+        client_id: input.client_id,
+        property_id: input.property_id,
+        title: input.title,
+        description: input.description,
+        service_date: input.service_date,
+      });
+
+      expect(result.data).toEqual(mockData);
+      expect(result.error).toBeUndefined();
+    });
+
+    it('should handle RPC errors', async () => {
+      mockClient.rpc.mockResolvedValue({ data: null, error: { message: 'RPC Error' } });
+
+      const result = await repository.create({
+        client_id: 'client-123',
+        property_id: 'prop-123',
+        title: 'New Job',
+      });
+
+      expect(result.data).toBeNull();
+      expect(result.error?.message).toBe('RPC Error');
+    });
+  });
+
+  describe('update', () => {
+    it('should call transition_job_state RPC if status is present', async () => {
+      const jobId = 'job-123';
+      const input = { status: 'sent' as const };
+
+      mockClient.rpc.mockResolvedValue({ data: true, error: null });
+
+      const mockJob = { id: jobId, status: 'sent' };
+
+      // Mock chain for get()
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
+      };
+
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.update(jobId, input);
+
+      expect(mockClient.rpc).toHaveBeenCalledWith('transition_job_state', {
+        job_id: jobId,
+        new_status: 'sent',
+      });
+
+      expect(result.data).toEqual(mockJob);
+    });
+
+    it('should call regular update if other fields are present', async () => {
+      const jobId = 'job-123';
+      const input = { title: 'Updated Title' };
+      const mockJob = { id: jobId, title: 'Updated Title' };
+
+      // Mock chain that handles both update() and get() calls
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
+        // Make the builder thenable to support await query
+        then: function(resolve: any) {
+             resolve({ data: null, error: null });
+        }
+      };
+
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.update(jobId, input);
+
+      expect(mockBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated Title' }));
+      expect(mockBuilder.eq).toHaveBeenCalledWith('id', jobId);
+      expect(result.data).toEqual(mockJob);
+    });
+
+    it('should handle both status and fields update', async () => {
+      const jobId = 'job-123';
+      const input = { status: 'sent' as const, title: 'Updated Title' };
+      const mockJob = { id: jobId, status: 'sent', title: 'Updated Title' };
+
+      mockClient.rpc.mockResolvedValue({ data: true, error: null });
+
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
+        then: function(resolve: any) {
+             resolve({ data: null, error: null });
+        }
+      };
+
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.update(jobId, input);
+
+      expect(mockClient.rpc).toHaveBeenCalledWith('transition_job_state', {
+        job_id: jobId,
+        new_status: 'sent',
+      });
+
+      expect(mockBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated Title' }));
+      expect(result.data).toEqual(mockJob);
+    });
+  });
+});

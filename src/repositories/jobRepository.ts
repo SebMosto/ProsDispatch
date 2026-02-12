@@ -69,41 +69,13 @@ export class JobRepository
   }
 
   async create(input: JobCreateInput): Promise<RepositoryResult<JobRecord>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-
-    if (authError) {
-      return {
-        data: null,
-        error: {
-          message: authError.message,
-          reason: 'validation',
-          cause: authError,
-        },
-      };
-    }
-
-    if (!authData?.user) {
-      return {
-        data: null,
-        error: {
-          message: 'User must be authenticated to create a job',
-          reason: 'validation',
-        },
-      };
-    }
-
-    const payload = {
-      ...input,
-      contractor_id: authData.user.id,
+    const { data, error } = await this.client.rpc('create_job', {
+      client_id: input.client_id,
+      property_id: input.property_id,
+      title: input.title,
       description: input.description ?? null,
       service_date: normalizeDate(input.service_date),
-    } satisfies Database['public']['Tables']['jobs']['Insert'];
-
-    const { data, error } = await this.client
-      .from('jobs')
-      .insert(payload)
-      .select('*')
-      .single();
+    });
 
     const repositoryError = this.toRepositoryError(error);
 
@@ -112,31 +84,46 @@ export class JobRepository
     }
 
     reportApiOnline();
-    return { data };
+    // The RPC returns Json, but we know it returns the job record structure
+    return { data: data as unknown as JobRecord };
   }
 
   async update(id: string, input: JobUpdateInput): Promise<RepositoryResult<JobRecord>> {
-    const payload = {
-      ...input,
-      description: input.description ?? null,
-      service_date: normalizeDate(input.service_date ?? undefined),
-    } satisfies Database['public']['Tables']['jobs']['Update'];
+    // Handle status transition separately if present
+    if (input.status) {
+      const { error: transitionError } = await this.client.rpc('transition_job_state', {
+        job_id: id,
+        new_status: input.status,
+      });
 
-    const { data, error } = await this.client
-      .from('jobs')
-      .update(payload)
-      .eq('id', id)
-      .select('*')
-      .single();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError) {
-      return { data: null, error: repositoryError };
+      if (transitionError) {
+        return { data: null, error: this.toRepositoryError(transitionError) };
+      }
     }
 
-    reportApiOnline();
-    return { data };
+    // Handle other fields update if present
+    const { status: _status, ...otherFields } = input;
+    const hasOtherFields = Object.keys(otherFields).length > 0;
+
+    if (hasOtherFields) {
+      const payload = {
+        ...otherFields,
+        description: otherFields.description ?? null,
+        service_date: normalizeDate(otherFields.service_date ?? undefined),
+      } satisfies Database['public']['Tables']['jobs']['Update'];
+
+      const { error: updateError } = await this.client
+        .from('jobs')
+        .update(payload)
+        .eq('id', id);
+
+      if (updateError) {
+        return { data: null, error: this.toRepositoryError(updateError) };
+      }
+    }
+
+    // Always fetch the latest record to return consistent data
+    return this.get(id);
   }
 
   async softDelete(id: string): Promise<RepositoryResult<null>> {
