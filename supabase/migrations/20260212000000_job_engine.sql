@@ -85,7 +85,38 @@ begin
 end;
 $$;
 
--- 3. RPC: Transition Job State
+-- 3. Helper Function: Validate Job State Transition
+-- This enforces the state machine rules defined in src/lib/stateMachines.ts
+create or replace function is_valid_job_transition(
+  from_status job_status,
+  to_status job_status
+)
+returns boolean
+language plpgsql
+immutable
+as $$
+begin
+  -- Allow no-op transitions
+  if from_status = to_status then
+    return true;
+  end if;
+
+  -- Define valid transitions based on the state machine
+  return case from_status
+    when 'draft' then to_status in ('sent', 'archived')
+    when 'sent' then to_status in ('approved', 'draft', 'archived')
+    when 'approved' then to_status in ('in_progress', 'sent', 'archived')
+    when 'in_progress' then to_status in ('completed', 'approved', 'archived')
+    when 'completed' then to_status in ('invoiced', 'in_progress', 'archived')
+    when 'invoiced' then to_status in ('paid', 'completed', 'archived')
+    when 'paid' then to_status in ('archived')
+    when 'archived' then to_status in ('draft')
+    else false
+  end;
+end;
+$$;
+
+-- 4. RPC: Transition Job State
 create or replace function transition_job_state(
   job_id uuid,
   new_status job_status
@@ -115,6 +146,11 @@ begin
   -- Prevent no-op
   if current_status = new_status then
     return true;
+  end if;
+
+  -- Validate state transition
+  if not is_valid_job_transition(current_status, new_status) then
+    raise exception 'Invalid state transition from % to %', current_status, new_status;
   end if;
 
   -- Update Job
