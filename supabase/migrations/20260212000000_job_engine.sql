@@ -93,7 +93,7 @@ create or replace function is_valid_job_transition(
 )
 returns boolean
 language plpgsql
-immutable
+stable
 as $$
 begin
   -- Allow no-op transitions
