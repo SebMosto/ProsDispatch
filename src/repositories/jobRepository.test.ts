@@ -29,14 +29,26 @@ describe('JobRepository', () => {
   describe('create', () => {
     it('should call create_job RPC', async () => {
       const input = {
-        client_id: 'client-123',
-        property_id: 'prop-123',
+        client_id: '550e8400-e29b-41d4-a716-446655440001',
+        property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
         description: 'Test Description',
         service_date: '2023-10-27',
       };
 
-      const mockData = { id: 'job-123', ...input, status: 'draft' };
+      const mockData = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        contractor_id: '550e8400-e29b-41d4-a716-446655440003',
+        client_id: input.client_id,
+        property_id: input.property_id,
+        title: input.title,
+        description: input.description,
+        service_date: input.service_date,
+        status: 'draft' as const,
+        created_at: '2023-10-27T00:00:00Z',
+        updated_at: '2023-10-27T00:00:00Z',
+        deleted_at: null,
+      };
       mockClient.rpc.mockResolvedValue({ data: mockData, error: null });
 
       const result = await repository.create(input);
@@ -57,13 +69,29 @@ describe('JobRepository', () => {
       mockClient.rpc.mockResolvedValue({ data: null, error: { message: 'RPC Error' } });
 
       const result = await repository.create({
-        client_id: 'client-123',
-        property_id: 'prop-123',
+        client_id: '550e8400-e29b-41d4-a716-446655440001',
+        property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
       });
 
       expect(result.data).toBeNull();
       expect(result.error?.message).toBe('RPC Error');
+    });
+
+    it('should handle invalid RPC response data', async () => {
+      // Mock RPC returning data that doesn't match JobRecord schema
+      const invalidData = { id: 'job-123', invalid_field: 'value' };
+      mockClient.rpc.mockResolvedValue({ data: invalidData, error: null });
+
+      const result = await repository.create({
+        client_id: '550e8400-e29b-41d4-a716-446655440001',
+        property_id: '550e8400-e29b-41d4-a716-446655440002',
+        title: 'New Job',
+      });
+
+      expect(result.data).toBeNull();
+      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
 

@@ -1,11 +1,9 @@
 import { reportApiOnline } from '../lib/network';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
-import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
+import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
-
-export type JobRecord = Database['public']['Tables']['jobs']['Row'];
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -83,9 +81,22 @@ export class JobRepository
       return { data: null, error: repositoryError };
     }
 
+    // Validate the RPC response using Zod schema to ensure type safety
+    const parseResult = JobRecordSchema.safeParse(data);
+    
+    if (!parseResult.success) {
+      return {
+        data: null,
+        error: {
+          type: 'unknown',
+          message: 'Invalid data returned from create_job RPC',
+          details: parseResult.error.issues,
+        },
+      };
+    }
+
     reportApiOnline();
-    // The RPC returns Json, but we know it returns the job record structure
-    return { data: data as unknown as JobRecord };
+    return { data: parseResult.data };
   }
 
   async update(id: string, input: JobUpdateInput): Promise<RepositoryResult<JobRecord>> {
