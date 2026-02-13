@@ -100,7 +100,26 @@ export const JobCreateSchema = z.object({
 
 export const JobUpdateSchema = getJobUpdateSchema();
 
+/**
+ * JobRecordSchema - Schema for validating job records from database
+ * Used to validate data returned by RPCs that return Json type
+ */
+export const JobRecordSchema = z.object({
+  id: z.string().uuid(),
+  contractor_id: z.string().uuid(),
+  client_id: z.string().uuid(),
+  property_id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  service_date: z.string().nullable(),
+  status: z.enum(JOB_STATUSES),
+  created_at: z.string(),
+  updated_at: z.string(),
+  deleted_at: z.string().nullable(),
+});
+
 // Type exports for TypeScript inference
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;
 export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
+export type JobRecord = z.infer<typeof JobRecordSchema>;

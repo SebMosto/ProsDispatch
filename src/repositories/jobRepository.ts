@@ -1,11 +1,8 @@
 import { reportApiOnline } from '../lib/network';
-import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
-import type { JobCreateInput, JobStatus, JobUpdateInput } from '../schemas/job';
+import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
-
-export type JobRecord = Database['public']['Tables']['jobs']['Row'];
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -23,6 +20,19 @@ export class JobRepository
   extends BaseRepository
   implements Repository<JobRecord, JobCreateInput, JobUpdateInput, JobListParams>
 {
+  /**
+   * Normalizes job fields for create/update operations.
+   * Ensures description is null if undefined and service_date is properly formatted.
+   */
+  private normalizeJobFields(fields: {
+    description?: string | null;
+    service_date?: string | Date | null;
+  }) {
+    return {
+      description: fields.description ?? null,
+      service_date: normalizeDate(fields.service_date),
+    };
+  }
   async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
     const { status, includeDeleted } = params ?? {};
 
@@ -69,41 +79,17 @@ export class JobRepository
   }
 
   async create(input: JobCreateInput): Promise<RepositoryResult<JobRecord>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const normalized = this.normalizeJobFields({
+      description: input.description,
+      service_date: input.service_date,
+    });
 
-    if (authError) {
-      return {
-        data: null,
-        error: {
-          message: authError.message,
-          reason: 'validation',
-          cause: authError,
-        },
-      };
-    }
-
-    if (!authData?.user) {
-      return {
-        data: null,
-        error: {
-          message: 'User must be authenticated to create a job',
-          reason: 'validation',
-        },
-      };
-    }
-
-    const payload = {
-      ...input,
-      contractor_id: authData.user.id,
-      description: input.description ?? null,
-      service_date: normalizeDate(input.service_date),
-    } satisfies Database['public']['Tables']['jobs']['Insert'];
-
-    const { data, error } = await this.client
-      .from('jobs')
-      .insert(payload)
-      .select('*')
-      .single();
+    const { data, error } = await this.client.rpc('create_job', {
+      client_id: input.client_id,
+      property_id: input.property_id,
+      title: input.title,
+      ...normalized,
+    });
 
     const repositoryError = this.toRepositoryError(error);
 
@@ -111,32 +97,66 @@ export class JobRepository
       return { data: null, error: repositoryError };
     }
 
+    // Validate the RPC response using Zod schema to ensure type safety
+    const parseResult = JobRecordSchema.safeParse(data);
+    
+    if (!parseResult.success) {
+      return {
+        data: null,
+        error: {
+          type: 'unknown',
+          message: 'Invalid data returned from create_job RPC',
+          details: parseResult.error.issues,
+        },
+      };
+    }
+
     reportApiOnline();
-    return { data };
+    return { data: parseResult.data };
   }
 
   async update(id: string, input: JobUpdateInput): Promise<RepositoryResult<JobRecord>> {
-    const payload = {
-      ...input,
-      description: input.description ?? null,
-      service_date: normalizeDate(input.service_date ?? undefined),
-    } satisfies Database['public']['Tables']['jobs']['Update'];
+    // Handle status transition separately if present
+    if (input.status) {
+      const { error: transitionError } = await this.client.rpc('transition_job_state', {
+        job_id: id,
+        new_status: input.status,
+      });
 
-    const { data, error } = await this.client
-      .from('jobs')
-      .update(payload)
-      .eq('id', id)
-      .select('*')
-      .single();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError) {
-      return { data: null, error: repositoryError };
+      if (transitionError) {
+        return { data: null, error: this.toRepositoryError(transitionError) };
+      }
     }
 
-    reportApiOnline();
-    return { data };
+    // Handle other fields update if present
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { status: _status, ...otherFields } = input;
+    const hasOtherFields = Object.keys(otherFields).length > 0;
+
+    if (hasOtherFields) {
+      const { description, service_date, ...remainingFields } = otherFields;
+      const normalized = this.normalizeJobFields({
+        description,
+        service_date,
+      });
+
+      const payload = {
+        ...remainingFields,
+        ...normalized,
+      } satisfies Database['public']['Tables']['jobs']['Update'];
+
+      const { error: updateError } = await this.client
+        .from('jobs')
+        .update(payload)
+        .eq('id', id);
+
+      if (updateError) {
+        return { data: null, error: this.toRepositoryError(updateError) };
+      }
+    }
+
+    // Always fetch the latest record to return consistent data
+    return this.get(id);
   }
 
   async softDelete(id: string): Promise<RepositoryResult<null>> {
