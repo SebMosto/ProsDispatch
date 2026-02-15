@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../lib/auth';
-import { getProfileUpdateSchema, ProfileUpdateInput } from '../schemas/profile';
+import { getProfileUpdateSchema, ProfileUpdateSchema } from '../schemas/profile';
+import type { z } from 'zod';
 import { PageLoader } from '../components/ui/PageLoader';
 import { profileRepository } from '../repositories/profileRepository';
+
+type ProfileUpdateInput = z.infer<typeof ProfileUpdateSchema>;
 
 const SettingsPage = () => {
   const { t } = useTranslation();
@@ -14,13 +17,16 @@ const SettingsPage = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Memoize schema to prevent re-creation on every render
+  const schema = useMemo(() => getProfileUpdateSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<ProfileUpdateInput>({
-    resolver: zodResolver(getProfileUpdateSchema(t)),
+    resolver: zodResolver(schema),
   });
 
   useEffect(() => {
@@ -59,16 +65,15 @@ const SettingsPage = () => {
         throw error;
       }
 
-    if (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: t('settings.error') });
-    } else {
       // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
       setMessage({ type: 'success', text: t('settings.success') });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setMessage({ type: 'error', text: t('settings.error') });
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   };
 
   if (loading) {
