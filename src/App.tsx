@@ -25,6 +25,7 @@ const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
 const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage'));
 const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
+const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
@@ -34,16 +35,17 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
-  const isPublicInvoice = pathname.startsWith('/pay/');
+  const isPublicPage = pathname.startsWith('/pay/') || pathname.startsWith('/jobs/approve/');
 
-  if (isPublicInvoice) {
+  if (isPublicPage) {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex w-full max-w-4xl items-center px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="text-lg font-semibold text-slate-900" aria-label={t('layout.brand')}>
               {t('layout.brand')}
             </div>
+            <LanguageSwitcher />
           </div>
         </header>
         <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
@@ -191,6 +193,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/jobs/approve/:token" element={<JobApprovalPage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

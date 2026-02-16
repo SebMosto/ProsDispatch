@@ -90,19 +90,33 @@ describe('JobRepository', () => {
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe('validation');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
 
   describe('update', () => {
+    const mockJobComplete = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      contractor_id: '550e8400-e29b-41d4-a716-446655440001',
+      client_id: '550e8400-e29b-41d4-a716-446655440002',
+      property_id: '550e8400-e29b-41d4-a716-446655440003',
+      title: 'Updated Job',
+      description: 'Description',
+      service_date: '2023-01-01',
+      status: 'draft',
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z',
+      deleted_at: null,
+    };
+
     it('should call transition_job_state RPC if status is present', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { status: 'sent' as const };
 
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
-      const mockJob = { id: jobId, status: 'sent' };
+      const mockJob = { ...mockJobComplete, status: 'sent' };
 
       // Mock chain for get()
       const mockBuilder = {
@@ -125,9 +139,9 @@ describe('JobRepository', () => {
     });
 
     it('should call regular update if other fields are present', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { title: 'Updated Title' };
-      const mockJob = { id: jobId, title: 'Updated Title' };
+      const mockJob = { ...mockJobComplete, title: 'Updated Title' };
 
       // Mock chain that handles both update() and get() calls
       const mockBuilder = {
@@ -137,7 +151,7 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };
@@ -152,9 +166,9 @@ describe('JobRepository', () => {
     });
 
     it('should handle both status and fields update', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { status: 'sent' as const, title: 'Updated Title' };
-      const mockJob = { id: jobId, status: 'sent', title: 'Updated Title' };
+      const mockJob = { ...mockJobComplete, status: 'sent', title: 'Updated Title' };
 
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
@@ -164,7 +178,7 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };

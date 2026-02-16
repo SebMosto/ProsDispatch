@@ -3,6 +3,9 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+export type { JobRecord, JobCreateInput, JobUpdateInput, JobStatus };
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -33,20 +36,21 @@ export class JobRepository
       service_date: normalizeDate(fields.service_date),
     };
   }
+
   async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
     const { status, includeDeleted } = params ?? {};
 
-    const query = this.client
+    let query = this.client
       .from('jobs')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (status?.length) {
-      query.in('status', status);
+      query = query.in('status', status);
     }
 
     if (!includeDeleted) {
-      query.is('deleted_at', null);
+      query = query.is('deleted_at', null);
     }
 
     const { data, error } = await query;
@@ -57,7 +61,9 @@ export class JobRepository
     }
 
     reportApiOnline();
-    return { data: data ?? [] };
+    // Parse each record with Zod schema to ensure type safety
+    const parsedData = (data ?? []).map((record) => JobRecordSchema.parse(record));
+    return { data: parsedData };
   }
 
   async get(id: string): Promise<RepositoryResult<JobRecord>> {
@@ -75,7 +81,7 @@ export class JobRepository
     }
 
     reportApiOnline();
-    return { data };
+    return { data: JobRecordSchema.parse(data) };
   }
 
   async create(input: JobCreateInput): Promise<RepositoryResult<JobRecord>> {
@@ -88,7 +94,8 @@ export class JobRepository
       client_id: input.client_id,
       property_id: input.property_id,
       title: input.title,
-      ...normalized,
+      description: normalized.description,
+      service_date: normalized.service_date,
     });
 
     const repositoryError = this.toRepositoryError(error);
@@ -104,9 +111,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'validation',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +131,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) ?? undefined };
       }
     }
 
@@ -151,7 +158,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) ?? undefined };
       }
     }
 

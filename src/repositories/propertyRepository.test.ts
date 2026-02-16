@@ -48,7 +48,7 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
-        province: 'QC',
+        province: 'QC' as const,
         postal_code: 'H1A 1A1',
       };
 
@@ -87,8 +87,8 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
+        province: 'QC' as const, // Mocking valid schema even if unrealistic for US
+        postal_code: 'H1A 1A1',
         country: 'US',
       };
 
@@ -101,8 +101,8 @@ describe('PropertyRepository', () => {
         address_line1: '123 Main St',
         address_line2: null,
         city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
+        province: 'QC',
+        postal_code: 'H1A 1A1',
         country: 'US',
         nickname: null,
       });

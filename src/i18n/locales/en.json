@@ -477,5 +477,22 @@
   "errors": {
     "checkoutNoUrl": "Failed to start checkout: No URL returned.",
     "unexpected": "An unexpected error occurred."
+  },
+  "common": {
+    "notScheduled": "Not scheduled",
+    "processing": "Processing..."
+  },
+  "jobApproval": {
+    "invalidToken": "Invalid or missing token.",
+    "fetchError": "Failed to load job details. Please try again later.",
+    "actionError": "Failed to approve job. Please try again.",
+    "errorTitle": "Unable to load job",
+    "subtitle": "Review and approve the job details below.",
+    "approvedTitle": "Job Approved",
+    "approvedMessage": "Thank you! The contractor has been notified.",
+    "serviceDate": "Service Date",
+    "property": "Property",
+    "approveButton": "Approve Job",
+    "declineInstructions": "If you need to make changes or decline, please contact the contractor directly."
   }
 }
