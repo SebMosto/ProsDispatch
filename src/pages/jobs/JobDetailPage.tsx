@@ -11,6 +11,7 @@ import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
+import { supabase } from '../../lib/supabase';
 
 const JobDetailPage = () => {
   const { t, i18n } = useTranslation();
@@ -93,6 +94,23 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!job) return;
+    setActionError(null);
+    try {
+      const { error } = await supabase.functions.invoke('send-job-invite', {
+        body: { jobId: job.id },
+      });
+
+      if (error) throw error;
+
+      await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Failed to send invite');
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,7 +120,7 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
+            onClick={handleSendInvite}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
           >
             {t('jobs.actions.send')}

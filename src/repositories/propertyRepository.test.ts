@@ -48,7 +48,7 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
-        province: 'QC',
+        province: 'QC' as const,
         postal_code: 'H1A 1A1',
       };
 
@@ -87,7 +87,8 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'NY',
-        province: 'NY',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        province: 'NY' as any, // 'NY' is not in CANADIAN_PROVINCES enum, so cast as any to bypass TS check for this test case
         postal_code: '10001',
         country: 'US',
       };

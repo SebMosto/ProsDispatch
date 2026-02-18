@@ -59,16 +59,14 @@ const SettingsPage = () => {
         throw error;
       }
 
-    if (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: t('settings.error') });
-    } else {
-      // Refresh the profile in AuthContext so other pages get updated data
       await refreshProfile();
       setMessage({ type: 'success', text: t('settings.success') });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setMessage({ type: 'error', text: t('settings.error') });
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   };
 
   if (loading) {
