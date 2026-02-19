@@ -363,6 +363,41 @@
         "generic": "Unable to save client.",
         "auth": "You must be logged in to create a client."
       }
+    },
+    "list": {
+      "pageTitle": "Clients",
+      "header": "Client Registry",
+      "subHeader": "View clients and their primary properties.",
+      "newClient": "New Client",
+      "title": "Clients",
+      "empty": "No clients yet. New clients will appear here.",
+      "error": "Unable to load clients.",
+      "cityFallback": "City not available",
+      "loading": "Loading...",
+      "unnamed": "Unnamed client",
+      "types": {
+        "business": "Business",
+        "individual": "Individual"
+      }
+    },
+    "detail": {
+      "error": "Unable to load client.",
+      "properties": "Properties",
+      "delete": "Delete client",
+      "deleting": "Deleting...",
+      "deleted": "Client deleted.",
+      "noSelection": "No client selected.",
+      "backToClients": "Back to Clients",
+      "idLabel": "Client #{{id}}",
+      "noEmail": "No email",
+      "loading": "Loading...",
+      "addProperty": "Add property",
+      "noProperties": "No properties yet.",
+      "primaryProperty": "Primary property",
+      "types": {
+        "business": "Business",
+        "individual": "Individual"
+      }
     }
   },
   "taxes": {
