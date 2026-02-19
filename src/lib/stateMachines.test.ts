@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { canTransition, JOB_TRANSITIONS, JobStatus } from './stateMachines';
+import { canTransition } from './stateMachines';
 
 describe('State Machine Logic', () => {
   it('should allow valid transitions', () => {

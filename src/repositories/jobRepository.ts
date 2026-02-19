@@ -3,6 +3,9 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+export type { JobRecord, JobStatus, JobCreateInput, JobUpdateInput };
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -33,20 +36,19 @@ export class JobRepository
       service_date: normalizeDate(fields.service_date),
     };
   }
-  async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
-    const { status, includeDeleted } = params ?? {};
 
-    const query = this.client
+  async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
+    let query = this.client
       .from('jobs')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (status?.length) {
-      query.in('status', status);
+    if (params?.status?.length) {
+      query = query.in('status', params.status);
     }
 
-    if (!includeDeleted) {
-      query.is('deleted_at', null);
+    if (!params?.includeDeleted) {
+      query = query.is('deleted_at', null);
     }
 
     const { data, error } = await query;
@@ -98,15 +100,16 @@ export class JobRepository
     }
 
     // Validate the RPC response using Zod schema to ensure type safety
+    // The RPC returns Json, so we need to verify it matches JobRecord structure
     const parseResult = JobRecordSchema.safeParse(data);
     
     if (!parseResult.success) {
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'validation',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error,
         },
       };
     }
@@ -124,7 +127,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) || undefined };
       }
     }
 
@@ -151,7 +154,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) || undefined };
       }
     }
 
@@ -173,6 +176,36 @@ export class JobRepository
 
     reportApiOnline();
     return { data: null };
+  }
+
+  async inviteHomeowner(jobId: string): Promise<RepositoryResult<{ token: string }>> {
+    const { data, error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { jobId },
+    });
+
+    if (error) {
+      return {
+        data: null,
+        error: {
+          message: error.message,
+          reason: 'server',
+          cause: error,
+        },
+      };
+    }
+
+    if (data.error) {
+      return {
+        data: null,
+        error: {
+          message: data.error,
+          reason: 'server',
+        },
+      };
+    }
+
+    reportApiOnline();
+    return { data: { token: data.token } };
   }
 }
 

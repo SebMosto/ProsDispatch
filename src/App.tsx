@@ -8,6 +8,7 @@ import { routePatterns } from './lib/router';
 import { useAuth } from './lib/auth';
 import Sidebar, { BottomNav } from './components/Layout/Sidebar';
 import { PageLoader } from './components/ui/PageLoader';
+import { JobInvitePage } from './pages/JobInvitePage';
 
 // Lazy loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -34,9 +35,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
-  const isPublicInvoice = pathname.startsWith('/pay/');
+  const isPublicPage = pathname.startsWith('/pay/') || pathname.startsWith('/job-invite/');
 
-  if (isPublicInvoice) {
+  if (isPublicPage) {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="border-b border-slate-200 bg-white">
@@ -191,6 +192,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/job-invite/:token" element={<JobInvitePage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
