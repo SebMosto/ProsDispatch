@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { JobRepository } from './jobRepository';
+import { JobCreateInput } from '../schemas/job';
 
 // Mock network reporting
 vi.mock('../lib/network', () => ({
@@ -28,7 +29,7 @@ describe('JobRepository', () => {
 
   describe('create', () => {
     it('should call create_job RPC', async () => {
-      const input = {
+      const input: JobCreateInput = {
         client_id: '550e8400-e29b-41d4-a716-446655440001',
         property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
@@ -90,7 +91,7 @@ describe('JobRepository', () => {
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe('validation');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
@@ -137,7 +138,7 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        then: function(resolve: any) {
+        then: function(resolve: (value: { data: null; error: null }) => void) {
              resolve({ data: null, error: null });
         }
       };
@@ -164,7 +165,7 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
+        then: function(resolve: (value: { data: null; error: null }) => void) {
              resolve({ data: null, error: null });
         }
       };

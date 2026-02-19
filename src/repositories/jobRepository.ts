@@ -8,6 +8,9 @@ export type JobListParams = RepositoryListParams & {
   includeDeleted?: boolean;
 };
 
+// Re-export types for consumers
+export type { JobRecord, JobStatus, JobCreateInput, JobUpdateInput };
+
 const normalizeDate = (value: string | Date | null | undefined) => {
   if (!value) return null;
   if (value instanceof Date) {
@@ -104,9 +107,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'validation',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +127,9 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        // Safe check for null
+        const repoError = this.toRepositoryError(transitionError);
+        if (repoError) return { data: null, error: repoError };
       }
     }
 
@@ -151,7 +156,9 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        // Safe check for null
+        const repoError = this.toRepositoryError(updateError);
+        if (repoError) return { data: null, error: repoError };
       }
     }
 

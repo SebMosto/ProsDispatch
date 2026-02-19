@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PropertyRepository } from './propertyRepository';
+import { PropertyCreateInput } from '../schemas/property';
 
 // Mock network reporting
 vi.mock('../lib/network', () => ({
@@ -44,7 +45,7 @@ describe('PropertyRepository', () => {
         single: mockSingle,
       });
 
-      const input = {
+      const input: PropertyCreateInput = {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
@@ -68,7 +69,7 @@ describe('PropertyRepository', () => {
       });
     });
 
-    it('should create property successfully with custom country', async () => {
+    it('should create property successfully with explicit country', async () => {
       const mockUser = { id: 'user-123' };
       mockClient.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
@@ -83,13 +84,13 @@ describe('PropertyRepository', () => {
         single: mockSingle,
       });
 
-      const input = {
+      const input: PropertyCreateInput = {
         client_id: 'client-123',
         address_line1: '123 Main St',
-        city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
-        country: 'US',
+        city: 'Montreal',
+        province: 'QC',
+        postal_code: 'H1A 1A1',
+        country: 'CA',
       };
 
       const result = await repository.create(input);
@@ -100,10 +101,10 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         address_line2: null,
-        city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
-        country: 'US',
+        city: 'Montreal',
+        province: 'QC',
+        postal_code: 'H1A 1A1',
+        country: 'CA',
         nickname: null,
       });
     });

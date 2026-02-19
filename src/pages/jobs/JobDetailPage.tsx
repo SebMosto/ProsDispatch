@@ -11,6 +11,7 @@ import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
+import { supabase } from '../../lib/supabase';
 
 const JobDetailPage = () => {
   const { t, i18n } = useTranslation();
@@ -19,6 +20,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendingInvite, setSendingInvite] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -93,6 +95,43 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!job) return;
+    setActionError(null);
+    setSendingInvite(true);
+
+    try {
+       const { data, error } = await supabase.functions.invoke('invite-homeowner', {
+           body: { jobId: job.id }
+       });
+
+       if (error) throw error;
+       if (data?.error) throw new Error(data.error);
+
+       const nextStatus = 'sent';
+       const optimisticJob = { ...job, status: nextStatus, updated_at: new Date().toISOString() } satisfies JobRecord;
+       queryClient.setQueryData(['job', jobId], optimisticJob);
+
+       const previousLists = queryClient.getQueriesData<JobRecord[]>({ queryKey: ['jobs'] });
+       previousLists.forEach(([key, jobs]) => {
+          if (!jobs) return;
+          queryClient.setQueryData<JobRecord[]>(
+            key,
+            jobs.map((item) => (item.id === job.id ? { ...item, status: nextStatus, updated_at: optimisticJob.updated_at } : item)),
+          );
+        });
+
+        await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+        await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+
+    } catch (err: unknown) {
+       const message = err instanceof Error ? err.message : 'Failed to send invite';
+       setActionError(message);
+    } finally {
+       setSendingInvite(false);
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,10 +141,11 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+            onClick={handleSendInvite}
+            disabled={sendingInvite}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
           >
-            {t('jobs.actions.send')}
+            {sendingInvite ? 'Sending...' : t('jobs.actions.send')}
           </button>
         </>
       );
