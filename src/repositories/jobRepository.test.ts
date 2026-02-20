@@ -90,7 +90,7 @@ describe('JobRepository', () => {
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe('unknown');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });

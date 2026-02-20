@@ -93,6 +93,30 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleInviteHomeowner = async () => {
+    if (!job) return;
+    setActionError(null);
+
+    // Optimistic update
+    const previousJob = queryClient.getQueryData<JobRecord>(['job', jobId]);
+    const optimisticJob = { ...job, status: 'sent', updated_at: new Date().toISOString() } satisfies JobRecord;
+    queryClient.setQueryData(['job', jobId], optimisticJob);
+
+    try {
+      const result = await jobRepository.inviteHomeowner(job.id);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (error) {
+      // Revert
+      queryClient.setQueryData(['job', jobId], previousJob);
+      setActionError(error instanceof Error ? error.message : 'Failed to send invite');
+    } finally {
+      void queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,7 +126,7 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
+            onClick={handleInviteHomeowner}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
           >
             {t('jobs.actions.send')}

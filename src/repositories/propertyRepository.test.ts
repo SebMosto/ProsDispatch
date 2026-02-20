@@ -48,7 +48,7 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
-        province: 'QC',
+        province: 'QC' as const,
         postal_code: 'H1A 1A1',
       };
 
@@ -87,7 +87,7 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'NY',
-        province: 'NY',
+        province: 'NY' as any, // Province validation only applies to CA in frontend schema, but repo passes through
         postal_code: '10001',
         country: 'US',
       };

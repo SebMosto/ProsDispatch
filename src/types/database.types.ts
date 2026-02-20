@@ -335,6 +335,35 @@ export type Database = {
           },
         ]
       }
+      job_tokens: {
+        Row: {
+          token: string
+          job_id: string
+          created_at: string
+          expires_at: string
+        }
+        Insert: {
+          token?: string
+          job_id: string
+          created_at?: string
+          expires_at?: string
+        }
+        Update: {
+          token?: string
+          job_id?: string
+          created_at?: string
+          expires_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_tokens_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           contractor_id: string

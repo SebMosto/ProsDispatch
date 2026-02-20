@@ -3,6 +3,9 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+export { type JobRecord, type JobStatus, type JobCreateInput, type JobUpdateInput } from '../schemas/job';
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -104,9 +107,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'unknown',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +127,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) ?? undefined };
       }
     }
 
@@ -151,7 +154,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) ?? undefined };
       }
     }
 
@@ -173,6 +176,19 @@ export class JobRepository
 
     reportApiOnline();
     return { data: null };
+  }
+
+  async inviteHomeowner(jobId: string): Promise<RepositoryResult<void>> {
+    const { error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { job_id: jobId },
+    });
+
+    if (error) {
+      return { data: null, error: this.toRepositoryError(error) ?? undefined };
+    }
+
+    reportApiOnline();
+    return { data: undefined };
   }
 }
 
