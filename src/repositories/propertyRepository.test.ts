@@ -48,8 +48,9 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
-        province: 'QC',
+        province: 'QC' as const,
         postal_code: 'H1A 1A1',
+        country: 'CA',
       };
 
       const result = await repository.create(input);
@@ -86,10 +87,10 @@ describe('PropertyRepository', () => {
       const input = {
         client_id: 'client-123',
         address_line1: '123 Main St',
-        city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
-        country: 'US',
+        city: 'Toronto',
+        province: 'ON' as const,
+        postal_code: 'M5V 2T6',
+        country: 'CA',
       };
 
       const result = await repository.create(input);
@@ -100,10 +101,10 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         address_line2: null,
-        city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
-        country: 'US',
+        city: 'Toronto',
+        province: 'ON',
+        postal_code: 'M5V 2T6',
+        country: 'CA',
         nickname: null,
       });
     });

@@ -416,6 +416,20 @@
       "subtotal": "Sous-total",
       "payNow": "Payer maintenant",
       "downloadPdf": "Télécharger le PDF"
+    },
+    "invite": {
+      "title": "Demande d'approbation",
+      "subtitle": "{{contractor}} vous a envoyé un travail pour révision.",
+      "approve": "Approuver",
+      "decline": "Refuser",
+      "approved": "Travail approuvé",
+      "declined": "Travail refusé",
+      "thankYou": "Merci de votre réponse.",
+      "details": "Détails du travail",
+      "client": "Client",
+      "property": "Propriété",
+      "serviceDate": "Date de service",
+      "description": "Description"
     }
   },
   "settings": {

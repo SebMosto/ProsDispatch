@@ -19,6 +19,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendingInvite, setSendingInvite] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -93,6 +94,20 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!jobId) return;
+    setSendingInvite(true);
+    setActionError(null);
+    const { error } = await jobRepository.sendInvite(jobId);
+    if (error) {
+      setActionError(error.message);
+    } else {
+      await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    }
+    setSendingInvite(false);
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,10 +117,11 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+            onClick={handleSendInvite}
+            disabled={sendingInvite}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
           >
-            {t('jobs.actions.send')}
+            {sendingInvite ? t('auth.shared.loading') : t('jobs.actions.send')}
           </button>
         </>
       );

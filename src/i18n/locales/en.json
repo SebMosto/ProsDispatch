@@ -416,6 +416,20 @@
       "subtotal": "Subtotal",
       "payNow": "Pay Now",
       "downloadPdf": "Download PDF"
+    },
+    "invite": {
+      "title": "Job Approval Request",
+      "subtitle": "{{contractor}} has sent you a job for review.",
+      "approve": "Approve Job",
+      "decline": "Decline",
+      "approved": "Job Approved",
+      "declined": "Job Declined",
+      "thankYou": "Thank you for your response.",
+      "details": "Job Details",
+      "client": "Client",
+      "property": "Property",
+      "serviceDate": "Service Date",
+      "description": "Description"
     }
   },
   "settings": {
