@@ -99,12 +99,11 @@ describe('JobRepository', () => {
     it('should call transition_job_state RPC if status is present', async () => {
       const jobId = 'job-123';
       const input = { status: 'sent' as const };
+      const mockJob = { id: jobId, status: 'sent' };
 
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
-      const mockJob = { id: jobId, status: 'sent' };
-
-      // Mock chain for get()
+      // Mock chain for get() which is still called for status-only updates
       const mockBuilder = {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
@@ -121,6 +120,9 @@ describe('JobRepository', () => {
         new_status: 'sent',
       });
 
+      expect(mockBuilder.select).toHaveBeenCalledWith('*');
+      expect(mockBuilder.eq).toHaveBeenCalledWith('id', jobId);
+      expect(mockBuilder.is).toHaveBeenCalledWith('deleted_at', null);
       expect(result.data).toEqual(mockJob);
     });
 
@@ -129,17 +131,13 @@ describe('JobRepository', () => {
       const input = { title: 'Updated Title' };
       const mockJob = { id: jobId, title: 'Updated Title' };
 
-      // Mock chain that handles both update() and get() calls
+      // Mock chain for optimized update - no get() call
       const mockBuilder = {
-        select: vi.fn().mockReturnThis(),
         update: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        is: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        // Make the builder thenable to support await query
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        is: vi.fn().mockReturnThis(), // Should not be called
       };
 
       mockClient.from.mockReturnValue(mockBuilder);
@@ -148,6 +146,9 @@ describe('JobRepository', () => {
 
       expect(mockBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated Title' }));
       expect(mockBuilder.eq).toHaveBeenCalledWith('id', jobId);
+      expect(mockBuilder.select).toHaveBeenCalled();
+      expect(mockBuilder.single).toHaveBeenCalled();
+      expect(mockBuilder.is).not.toHaveBeenCalled();
       expect(result.data).toEqual(mockJob);
     });
 
@@ -159,14 +160,11 @@ describe('JobRepository', () => {
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
       const mockBuilder = {
-        select: vi.fn().mockReturnThis(),
         update: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        is: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        is: vi.fn().mockReturnThis(), // Should not be called
       };
 
       mockClient.from.mockReturnValue(mockBuilder);
@@ -179,6 +177,9 @@ describe('JobRepository', () => {
       });
 
       expect(mockBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated Title' }));
+      expect(mockBuilder.select).toHaveBeenCalled();
+      expect(mockBuilder.single).toHaveBeenCalled();
+      expect(mockBuilder.is).not.toHaveBeenCalled();
       expect(result.data).toEqual(mockJob);
     });
   });
