@@ -145,14 +145,19 @@ export class JobRepository
         ...normalized,
       } satisfies Database['public']['Tables']['jobs']['Update'];
 
-      const { error: updateError } = await this.client
+      const { data, error: updateError } = await this.client
         .from('jobs')
         .update(payload)
-        .eq('id', id);
+        .eq('id', id)
+        .select()
+        .single();
 
       if (updateError) {
         return { data: null, error: this.toRepositoryError(updateError) };
       }
+
+      reportApiOnline();
+      return { data };
     }
 
     // Always fetch the latest record to return consistent data
