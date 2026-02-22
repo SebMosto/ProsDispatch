@@ -137,6 +137,7 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         then: function(resolve: any) {
              resolve({ data: null, error: null });
         }
@@ -164,6 +165,7 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         then: function(resolve: any) {
              resolve({ data: null, error: null });
         }

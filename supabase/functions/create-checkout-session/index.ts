@@ -2,6 +2,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { getErrorStatus } from "../_shared/errors.ts";
+import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,6 +98,9 @@ Deno.serve(async (req) => {
       throw new Error("Missing returnUrl");
     }
 
+    // Validate returnUrl to prevent open redirects
+    validateReturnUrl(returnUrl);
+
     // Fetch user's profile to check for existing Stripe customer ID
     // Using maybeSingle() to gracefully handle cases where profile doesn't exist yet
     const { data: profile, error: profileError } = await supabaseClient
@@ -121,8 +125,12 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${returnUrl}?canceled=true`,
+      success_url: returnUrl.includes("?")
+        ? `${returnUrl}&session_id={CHECKOUT_SESSION_ID}`
+        : `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: returnUrl.includes("?")
+        ? `${returnUrl}&canceled=true`
+        : `${returnUrl}?canceled=true`,
       subscription_data: {
         trial_period_days: 14,
       },
