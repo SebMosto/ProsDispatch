@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
+import { requiredOptions } from './helpers';
 
 export const INVOICE_STATUSES = [
   'draft',
@@ -16,11 +17,6 @@ export const INVOICE_PAYMENT_METHODS = [
   'etransfer',
   'other',
 ] as const;
-
-const requiredOptions = (t?: TFunction, key?: string) => ({
-  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-  invalid_type_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-});
 
 const getCurrencySchema = (t?: TFunction) => z
   .number(requiredOptions(t))

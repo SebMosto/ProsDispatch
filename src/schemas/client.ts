@@ -1,12 +1,11 @@
 import { z } from 'zod';
 import { CANADIAN_PROVINCES, getPropertySchema } from './property';
 import { TFunction } from 'i18next';
+import { requiredOptions } from './helpers';
 
 export const getClientSchema = (t?: TFunction) => z.object({
-  name: z.string({
-    required_error: t ? t('validation.nameRequired') : 'validation.nameRequired',
-    invalid_type_error: t ? t('validation.nameRequired') : 'validation.nameRequired',
-  }).min(1, t ? t('validation.nameRequired') : 'validation.nameRequired'),
+  name: z.string(requiredOptions(t, 'validation.nameRequired'))
+    .min(1, t ? t('validation.nameRequired') : 'validation.nameRequired'),
   email: z
     .string({
       invalid_type_error: t ? t('validation.invalidEmail') : 'validation.invalidEmail',
@@ -15,14 +14,10 @@ export const getClientSchema = (t?: TFunction) => z.object({
     .email(t ? t('validation.invalidEmail') : 'validation.invalidEmail')
     .optional()
     .or(z.literal('')),
-  type: z.enum(['individual', 'business'], {
-    required_error: t ? t('validation.required') : 'validation.required',
-    invalid_type_error: t ? t('validation.required') : 'validation.required',
-  }).default('individual'),
-  preferred_language: z.enum(['en', 'fr'], {
-    required_error: t ? t('validation.required') : 'validation.required',
-    invalid_type_error: t ? t('validation.required') : 'validation.required',
-  }).default('en'),
+  type: z.enum(['individual', 'business'], requiredOptions(t, 'validation.required'))
+    .default('individual'),
+  preferred_language: z.enum(['en', 'fr'], requiredOptions(t, 'validation.required'))
+    .default('en'),
 });
 
 export const getClientUpdateSchema = (t?: TFunction) => getClientSchema(t).partial().refine(

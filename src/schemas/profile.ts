@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
-
-const requiredOptions = (t?: TFunction, key?: string) => ({
-  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-  invalid_type_error: t ? t('validation.invalidType') : 'validation.invalidType',
-});
+import { requiredOptions } from './helpers';
 
 /**
  * ProfileUpdateSchema - Schema for updating user profile
