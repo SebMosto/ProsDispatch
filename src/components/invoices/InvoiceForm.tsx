@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
@@ -74,7 +74,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<InvoiceFormValues>({
-    resolver: zodResolver(InvoiceFormSchema),
+    resolver: zodResolver(InvoiceFormSchema) as unknown as Resolver<InvoiceFormValues>,
     defaultValues: {
       items: buildDefaultItems(invoice),
     },

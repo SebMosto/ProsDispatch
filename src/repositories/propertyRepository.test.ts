@@ -48,8 +48,9 @@ describe('PropertyRepository', () => {
         client_id: 'client-123',
         address_line1: '123 Main St',
         city: 'Montreal',
-        province: 'QC',
+        province: 'QC' as const,
         postal_code: 'H1A 1A1',
+        country: 'CA',
       };
 
       const result = await repository.create(input);
@@ -92,6 +93,7 @@ describe('PropertyRepository', () => {
         country: 'US',
       };
 
+      // @ts-expect-error - Testing flexible country input
       const result = await repository.create(input);
 
       expect(result.data).toEqual(mockData);

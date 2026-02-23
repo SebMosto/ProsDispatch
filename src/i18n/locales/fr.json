@@ -477,5 +477,24 @@
   "errors": {
     "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
     "unexpected": "Une erreur inattendue est survenue."
+  },
+  "invite": {
+    "page": {
+      "title": "Approbation du travail",
+      "loading": "Chargement des détails...",
+      "error": "Impossible de charger les détails. Le lien est peut-être expiré.",
+      "approve": "Approuver",
+      "decline": "Refuser",
+      "approved": "Travail approuvé",
+      "declined": "Travail refusé",
+      "successMessage": "Merci pour votre réponse."
+    },
+    "jobDetails": {
+      "title": "Détails du travail",
+      "client": "Client",
+      "property": "Propriété",
+      "serviceDate": "Date de service",
+      "description": "Description"
+    }
   }
 }

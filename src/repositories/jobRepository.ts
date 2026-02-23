@@ -3,10 +3,13 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
 };
+
+export type { JobRecord, JobCreateInput, JobUpdateInput, JobStatus };
 
 const normalizeDate = (value: string | Date | null | undefined) => {
   if (!value) return null;
@@ -20,6 +23,31 @@ export class JobRepository
   extends BaseRepository
   implements Repository<JobRecord, JobCreateInput, JobUpdateInput, JobListParams>
 {
+  async inviteHomeowner(jobId: string): Promise<RepositoryResult<{ token: string }>> {
+    const { data, error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { jobId },
+    });
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    if (data && data.error) {
+      return {
+        data: null,
+        error: {
+          message: data.error,
+          reason: 'server',
+        },
+      };
+    }
+
+    reportApiOnline();
+    return { data };
+  }
+
   /**
    * Normalizes job fields for create/update operations.
    * Ensures description is null if undefined and service_date is properly formatted.
@@ -104,9 +132,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'validation',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +152,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) || undefined };
       }
     }
 
@@ -151,7 +179,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) || undefined };
       }
     }
 

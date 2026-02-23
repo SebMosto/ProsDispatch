@@ -271,6 +271,38 @@ export type Database = {
           },
         ]
       }
+      job_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          job_id: string
+          status: Database["public"]["Enums"]["token_status"]
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          job_id: string
+          status?: Database["public"]["Enums"]["token_status"]
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          job_id?: string
+          status?: Database["public"]["Enums"]["token_status"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_tokens_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           amount: number
@@ -419,6 +451,7 @@ export type Database = {
       invoice_payment_method: "stripe" | "cash" | "cheque" | "etransfer" | "other"
       invoice_status: "draft" | "sent" | "paid" | "void" | "overdue"
       job_status: "draft" | "sent" | "approved" | "in_progress" | "completed" | "invoiced" | "paid" | "archived"
+      token_status: "active" | "used" | "expired"
       supported_locale: "en" | "fr"
     }
     CompositeTypes: {
@@ -551,6 +584,7 @@ export const Constants = {
       invoice_payment_method: ["stripe", "cash", "cheque", "etransfer", "other"],
       invoice_status: ["draft", "sent", "paid", "void", "overdue"],
       job_status: ["draft", "sent", "approved", "in_progress", "completed", "invoiced", "paid", "archived"],
+      token_status: ["active", "used", "expired"],
       supported_locale: ["en", "fr"],
     },
   },

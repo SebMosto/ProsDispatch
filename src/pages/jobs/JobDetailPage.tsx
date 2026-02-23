@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
@@ -26,6 +26,21 @@ const JobDetailPage = () => {
 
   const queryClient = useQueryClient();
   const updateMutation = useUpdateJobMutation(jobId ?? '');
+
+  const inviteMutation = useMutation({
+    mutationFn: async () => {
+      const result = await jobRepository.inviteHomeowner(jobId ?? '');
+      if (result.error) throw new Error(result.error.message);
+      return result.data;
+    },
+    onSuccess: () => {
+      // Optimistically update status to 'sent'
+      performStatusChange('sent');
+    },
+    onError: (error) => {
+      setActionError(error instanceof Error ? error.message : 'Failed to send invite');
+    },
+  });
 
   const queryKey = useMemo(() => ['job', jobId], [jobId]);
 
@@ -102,10 +117,11 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+            onClick={() => inviteMutation.mutate()}
+            disabled={inviteMutation.isPending}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
           >
-            {t('jobs.actions.send')}
+            {inviteMutation.isPending ? t('auth.shared.loading') : t('jobs.actions.send')}
           </button>
         </>
       );

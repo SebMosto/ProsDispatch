@@ -477,5 +477,24 @@
   "errors": {
     "checkoutNoUrl": "Failed to start checkout: No URL returned.",
     "unexpected": "An unexpected error occurred."
+  },
+  "invite": {
+    "page": {
+      "title": "Job Approval",
+      "loading": "Loading job details...",
+      "error": "Unable to load job details. The link may be expired.",
+      "approve": "Approve",
+      "decline": "Decline",
+      "approved": "Job Approved",
+      "declined": "Job Declined",
+      "successMessage": "Thank you for your response."
+    },
+    "jobDetails": {
+      "title": "Job Details",
+      "client": "Client",
+      "property": "Property",
+      "serviceDate": "Service Date",
+      "description": "Description"
+    }
   }
 }
