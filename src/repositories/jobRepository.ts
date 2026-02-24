@@ -3,6 +3,8 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+export type { JobRecord, JobStatus, JobCreateInput, JobUpdateInput };
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -104,9 +106,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'unknown',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +126,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) ?? undefined };
       }
     }
 
@@ -151,7 +153,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) ?? undefined };
       }
     }
 
@@ -174,6 +176,77 @@ export class JobRepository
     reportApiOnline();
     return { data: null };
   }
+
+  async inviteHomeowner(jobId: string): Promise<RepositoryResult<{ token: string }>> {
+    const { data, error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { jobId },
+    });
+
+    if (error) {
+      return { data: null, error: this.toRepositoryError(error) ?? undefined };
+    }
+
+    if (data?.error) {
+      return { data: null, error: { message: data.error, reason: 'server' } };
+    }
+
+    reportApiOnline();
+    return { data };
+  }
+
+  async getJobByToken(token: string): Promise<RepositoryResult<JobWithInviteDetails>> {
+    const { data, error } = await this.client.rpc('get_job_by_token', {
+      token_input: token,
+    });
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    if (!data) {
+      return { data: null, error: { message: 'Invalid or expired token', reason: 'validation' } };
+    }
+
+    const job = data as unknown as JobWithInviteDetails;
+
+    reportApiOnline();
+    return { data: job };
+  }
+
+  async respondToInvite(token: string, action: 'approve' | 'decline'): Promise<RepositoryResult<void>> {
+    const { data, error } = await this.client.functions.invoke('respond-to-job-invite', {
+      body: { token, action },
+    });
+
+    if (error) {
+      return { data: null, error: this.toRepositoryError(error) ?? undefined };
+    }
+
+    if (data?.error) {
+      return { data: null, error: { message: data.error, reason: 'server' } };
+    }
+
+    reportApiOnline();
+    return { data: null };
+  }
 }
+
+export type JobWithInviteDetails = {
+  id: string;
+  title: string;
+  description: string | null;
+  service_date: string | null;
+  status: JobStatus;
+  contractor_id: string;
+  client_name: string;
+  property_address: string;
+  contractor: {
+    name: string | null;
+    business_name: string | null;
+    email: string;
+  };
+};
 
 export const jobRepository = new JobRepository();

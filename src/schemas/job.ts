@@ -119,7 +119,7 @@ export const JobRecordSchema = z.object({
 });
 
 // Type exports for TypeScript inference
-export type JobCreateInput = z.infer<typeof JobCreateSchema>;
-export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
+export type JobCreateInput = z.input<typeof JobCreateSchema>;
+export type JobUpdateInput = z.input<typeof JobUpdateSchema>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
-export type JobRecord = z.infer<typeof JobRecordSchema>;
+export type JobRecord = z.output<typeof JobRecordSchema>;

@@ -389,3 +389,8 @@ verify_jwt = true
 
 [functions.create-portal-session]
 verify_jwt = true
+[functions.invite-homeowner]
+verify_jwt = true
+
+[functions.respond-to-job-invite]
+verify_jwt = false

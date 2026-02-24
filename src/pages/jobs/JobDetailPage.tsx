@@ -19,6 +19,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendingInvite, setSendingInvite] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -102,10 +103,27 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+            onClick={async () => {
+              if (!job) return;
+              setSendingInvite(true);
+              setActionError(null);
+              try {
+                const result = await jobRepository.inviteHomeowner(job.id);
+                if (result.error) {
+                  setActionError(result.error.message);
+                } else {
+                  await performStatusChange('sent');
+                }
+              } catch (error) {
+                setActionError(error instanceof Error ? error.message : 'Failed to send invite');
+              } finally {
+                setSendingInvite(false);
+              }
+            }}
+            disabled={sendingInvite}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
           >
-            {t('jobs.actions.send')}
+            {sendingInvite ? t('auth.shared.loading') : t('jobs.actions.send')}
           </button>
         </>
       );

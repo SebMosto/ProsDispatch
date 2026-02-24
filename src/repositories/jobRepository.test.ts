@@ -90,7 +90,7 @@ describe('JobRepository', () => {
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe('unknown');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
@@ -137,7 +137,7 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };
@@ -164,7 +164,7 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };
@@ -180,6 +180,80 @@ describe('JobRepository', () => {
 
       expect(mockBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated Title' }));
       expect(result.data).toEqual(mockJob);
+    });
+  });
+
+  describe('inviteHomeowner', () => {
+    it('should call invite-homeowner function', async () => {
+      const jobId = 'job-123';
+      const mockToken = 'token-123';
+
+      mockClient.functions = {
+        invoke: vi.fn().mockResolvedValue({ data: { token: mockToken }, error: null }),
+      };
+
+      const result = await repository.inviteHomeowner(jobId);
+
+      expect(mockClient.functions.invoke).toHaveBeenCalledWith('invite-homeowner', {
+        body: { jobId },
+      });
+      expect(result.data).toEqual({ token: mockToken });
+    });
+
+    it('should handle function errors', async () => {
+      const jobId = 'job-123';
+      mockClient.functions = {
+        invoke: vi.fn().mockResolvedValue({ data: null, error: { message: 'Error' } }),
+      };
+
+      const result = await repository.inviteHomeowner(jobId);
+      expect(result.data).toBeNull();
+      expect(result.error?.message).toBe('Error');
+    });
+
+    it('should handle application errors', async () => {
+      const jobId = 'job-123';
+      mockClient.functions = {
+        invoke: vi.fn().mockResolvedValue({ data: { error: 'App Error' }, error: null }),
+      };
+
+      const result = await repository.inviteHomeowner(jobId);
+      expect(result.data).toBeNull();
+      expect(result.error?.message).toBe('App Error');
+    });
+  });
+
+  describe('getJobByToken', () => {
+    it('should call get_job_by_token RPC', async () => {
+      const token = 'token-123';
+      const mockJob = { id: 'job-123', title: 'Job' };
+
+      mockClient.rpc.mockResolvedValue({ data: mockJob, error: null });
+
+      const result = await repository.getJobByToken(token);
+
+      expect(mockClient.rpc).toHaveBeenCalledWith('get_job_by_token', {
+        token_input: token,
+      });
+      expect(result.data).toEqual(mockJob);
+    });
+  });
+
+  describe('respondToInvite', () => {
+    it('should call respond-to-job-invite function', async () => {
+      const token = 'token-123';
+      const action = 'approve';
+
+      mockClient.functions = {
+        invoke: vi.fn().mockResolvedValue({ data: { success: true }, error: null }),
+      };
+
+      const result = await repository.respondToInvite(token, action);
+
+      expect(mockClient.functions.invoke).toHaveBeenCalledWith('respond-to-job-invite', {
+        body: { token, action },
+      });
+      expect(result.data).toBeNull();
     });
   });
 });

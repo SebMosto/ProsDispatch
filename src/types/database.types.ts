@@ -306,6 +306,38 @@ export type Database = {
           },
         ]
       }
+      job_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          job_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          job_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          job_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_tokens_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_tokens: {
         Row: {
           expires_at: string
@@ -412,6 +444,12 @@ export type Database = {
           new_status: Database["public"]["Enums"]["job_status"]
         }
         Returns: boolean
+      }
+      get_job_by_token: {
+        Args: {
+          token_input: string
+        }
+        Returns: Json
       }
     }
     Enums: {
