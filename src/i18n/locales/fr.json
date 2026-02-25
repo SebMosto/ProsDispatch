@@ -160,6 +160,7 @@
     },
     "actions": {
       "send": "Envoyer au client",
+      "sending": "Envoi...",
       "approve": "Marquer comme approuvé",
       "start": "Commencer le travail",
       "complete": "Terminer le travail",
@@ -475,7 +476,21 @@
     "QST": "TVQ"
   },
   "errors": {
+    "missingToken": "Lien d'invitation invalide.",
+    "jobNotFound": "Travail non trouvé.",
+    "generic": "Quelque chose s'est mal passé.",
+    "errorOccurred": "Une erreur est survenue",
     "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
     "unexpected": "Une erreur inattendue est survenue."
+  },
+  "jobInvite": {
+    "subtitle": "Estimation pour {{client}}",
+    "property": "Propriété",
+    "serviceDate": "Date de service",
+    "description": "Description",
+    "alreadyApproved": "Ce travail a déjà été approuvé.",
+    "thankYou": "Merci",
+    "approvedMessage": "Vous avez approuvé ce travail avec succès.",
+    "declinedMessage": "Vous avez refusé ce travail. L'entrepreneur sera informé."
   }
 }

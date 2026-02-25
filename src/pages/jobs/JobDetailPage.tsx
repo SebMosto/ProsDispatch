@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
+import { supabase } from '../../lib/supabase';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
@@ -19,6 +20,7 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -93,6 +95,44 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!job) return;
+    setIsSending(true);
+    setActionError(null);
+
+    try {
+      const { error } = await supabase.functions.invoke('invite-homeowner', {
+        body: { job_id: job.id }
+      });
+
+      if (error) throw error;
+
+      // Update local cache
+      const nextStatus = 'sent';
+      const optimisticJob = { ...job, status: nextStatus, updated_at: new Date().toISOString() } satisfies JobRecord;
+
+      queryClient.setQueryData(['job', jobId], optimisticJob);
+      const previousLists = queryClient.getQueriesData<JobRecord[]>({ queryKey: ['jobs'] });
+      previousLists.forEach(([key, jobs]) => {
+        if (!jobs) return;
+        queryClient.setQueryData<JobRecord[]>(
+          key,
+          jobs.map((item) => (item.id === job.id ? { ...item, status: nextStatus, updated_at: optimisticJob.updated_at } : item)),
+        );
+      });
+
+      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      void queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+
+    } catch (error) {
+      console.error('Failed to send invite:', error);
+      const message = error instanceof Error ? error.message : 'Failed to send invite';
+      setActionError(message);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,10 +142,11 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+            onClick={handleSendInvite}
+            disabled={isSending}
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
           >
-            {t('jobs.actions.send')}
+            {isSending ? t('jobs.actions.sending') : t('jobs.actions.send')}
           </button>
         </>
       );

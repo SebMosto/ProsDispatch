@@ -53,6 +53,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   // Memoize the schema to react to language changes
   const InvoiceFormSchema = useMemo(() => {
     const InvoiceItemFormSchema = z.object({
+      id: z.string(),
       description: z.string().min(1, t('validation.descriptionRequired')),
       quantity: z.number().positive(t('validation.qtyPositive')),
       unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),

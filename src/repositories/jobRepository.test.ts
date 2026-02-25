@@ -90,7 +90,7 @@ describe('JobRepository', () => {
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe('validation');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
@@ -137,7 +137,7 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };
@@ -164,7 +164,7 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
+        then: function(resolve: (value: unknown) => void) {
              resolve({ data: null, error: null });
         }
       };

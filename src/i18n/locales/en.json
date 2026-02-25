@@ -160,6 +160,7 @@
     },
     "actions": {
       "send": "Send to Client",
+      "sending": "Sending...",
       "approve": "Mark as Approved",
       "start": "Start Job",
       "complete": "Complete Job",
@@ -475,7 +476,21 @@
     "QST": "QST"
   },
   "errors": {
+    "missingToken": "Invalid invitation link.",
+    "jobNotFound": "Job not found.",
+    "generic": "Something went wrong.",
+    "errorOccurred": "An error occurred",
     "checkoutNoUrl": "Failed to start checkout: No URL returned.",
     "unexpected": "An unexpected error occurred."
+  },
+  "jobInvite": {
+    "subtitle": "Job estimate for {{client}}",
+    "property": "Property",
+    "serviceDate": "Service Date",
+    "description": "Description",
+    "alreadyApproved": "This job has already been approved.",
+    "thankYou": "Thank You",
+    "approvedMessage": "You have successfully approved this job.",
+    "declinedMessage": "You have declined this job. The contractor will be notified."
   }
 }
