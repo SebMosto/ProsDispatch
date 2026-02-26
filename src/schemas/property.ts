@@ -66,5 +66,5 @@ export const PropertyUpdateSchema = PropertySchema.partial().refine(
   { message: 'validation.propertyUpdateRequired' },
 );
 
-export type PropertyCreateInput = z.infer<typeof PropertySchema>;
+export type PropertyCreateInput = z.input<typeof PropertySchema>;
 export type PropertyUpdateInput = z.infer<typeof PropertyUpdateSchema>;

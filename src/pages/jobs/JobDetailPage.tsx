@@ -93,6 +93,23 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleSendInvite = async () => {
+    if (!job) return;
+    setActionError(null);
+
+    try {
+      const result = await jobRepository.sendInvite(job.id);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      await queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+      await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to send invite';
+      setActionError(message);
+    }
+  };
+
   const renderActions = () => {
     if (!job) return null;
 
@@ -102,7 +119,7 @@ const JobDetailPage = () => {
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('sent')}
+            onClick={handleSendInvite}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
           >
             {t('jobs.actions.send')}

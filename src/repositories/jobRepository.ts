@@ -1,8 +1,11 @@
-import { reportApiOnline } from '../lib/network';
+import { reportApiOnline, reportApiOffline } from '../lib/network';
 import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+export type { JobRecord };
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -104,9 +107,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'validation',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error,
         },
       };
     }
@@ -124,7 +127,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) ?? undefined };
       }
     }
 
@@ -151,7 +154,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) ?? undefined };
       }
     }
 
@@ -169,6 +172,27 @@ export class JobRepository
 
     if (repositoryError) {
       return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data: null };
+  }
+
+  async sendInvite(jobId: string): Promise<RepositoryResult<void>> {
+    const { error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { job_id: jobId },
+    });
+
+    if (error) {
+      reportApiOffline();
+      return {
+        data: null,
+        error: {
+          message: error.message,
+          reason: 'server',
+          cause: error,
+        },
+      };
     }
 
     reportApiOnline();

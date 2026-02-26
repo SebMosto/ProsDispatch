@@ -179,6 +179,38 @@ export type Database = {
           },
         ]
       }
+      job_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          job_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          job_id: string
+          status?: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          job_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_tokens_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           client_id: string
