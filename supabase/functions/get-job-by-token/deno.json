@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "get-job-by-token": {
+      "verify_jwt": false
+    }
+  }
+}

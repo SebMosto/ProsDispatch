@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "invite-homeowner": {
+      "verify_jwt": true
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "respond-to-job-invite": {
+      "verify_jwt": false
+    }
+  }
+}

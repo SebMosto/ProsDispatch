@@ -20,6 +20,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
 const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
+const JobInvitePage = lazy(() => import('./pages/JobInvitePage').then(module => ({ default: module.JobInvitePage })));
 const JobsListPage = lazy(() => import('./pages/jobs/JobsListPage'));
 const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
@@ -35,8 +36,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
   const isPublicInvoice = pathname.startsWith('/pay/');
+  const isJobInvite = pathname.startsWith('/job-invite/');
 
-  if (isPublicInvoice) {
+  if (isPublicInvoice || isJobInvite) {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="border-b border-slate-200 bg-white">
@@ -192,6 +194,7 @@ const App = () => (
               }
             />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+            <Route path="/job-invite/:token" element={<JobInvitePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

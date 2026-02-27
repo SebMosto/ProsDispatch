@@ -3,9 +3,35 @@ import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
 import type { Repository, RepositoryListParams, RepositoryResult } from './base';
 import { BaseRepository } from './base';
+
+// Re-export types for consumers
+export type { JobRecord, JobCreateInput, JobUpdateInput, JobStatus };
+
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
+};
+
+// Define response type for getJobByToken
+export type PublicJobDetails = {
+  job: {
+    title: string;
+    description: string | null;
+    service_date: string | null;
+    client_name: string | undefined;
+    property_address: {
+      address_line1: string;
+      city: string;
+      province: string;
+      postal_code: string;
+    } | undefined;
+    status: JobStatus;
+  };
+  contractor: {
+    business_name: string;
+    full_name: string | null;
+    email: string;
+  };
 };
 
 const normalizeDate = (value: string | Date | null | undefined) => {
@@ -104,9 +130,9 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
+          reason: 'unknown',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
+          cause: parseResult.error.issues,
         },
       };
     }
@@ -124,7 +150,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) || undefined };
       }
     }
 
@@ -151,7 +177,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) || undefined };
       }
     }
 
@@ -173,6 +199,66 @@ export class JobRepository
 
     reportApiOnline();
     return { data: null };
+  }
+
+  /**
+   * Invites a homeowner to view and approve the job.
+   * Calls the `invite-homeowner` Edge Function.
+   */
+  async inviteHomeowner(jobId: string): Promise<RepositoryResult<{ token: string; message: string }>> {
+    const { data, error } = await this.client.functions.invoke('invite-homeowner', {
+      body: { jobId },
+    });
+
+    const repositoryError = this.toRepositoryError(error);
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data };
+  }
+
+  /**
+   * Retrieves limited job details using a public token.
+   * Calls the `get-job-by-token` Edge Function.
+   * Note: This uses the authenticated client but the function is public.
+   * Ideally, for unauthenticated users, we should use an anon client,
+   * but the standard client with anon key works for public functions too.
+   */
+  async getJobByToken(token: string): Promise<RepositoryResult<PublicJobDetails>> {
+    const { data, error } = await this.client.functions.invoke('get-job-by-token', {
+      body: { token },
+    });
+
+    const repositoryError = this.toRepositoryError(error);
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data };
+  }
+
+  /**
+   * Responds to a job invite (approve/decline).
+   * Calls the `respond-to-job-invite` Edge Function.
+   */
+  async respondToInvite(
+    token: string,
+    response: 'approve' | 'decline'
+  ): Promise<RepositoryResult<{ success: boolean; newStatus: JobStatus }>> {
+    const { data, error } = await this.client.functions.invoke('respond-to-job-invite', {
+      body: { token, response },
+    });
+
+    const repositoryError = this.toRepositoryError(error);
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data };
   }
 }
 
