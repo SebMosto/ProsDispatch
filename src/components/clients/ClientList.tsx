@@ -1,5 +1,41 @@
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useClients } from '../../hooks/useClients';
+import { useClients, type ClientWithPrimaryProperty } from '../../hooks/useClients';
+
+interface ClientListItemProps {
+  client: ClientWithPrimaryProperty;
+}
+
+const ClientListItem = memo(({ client }: ClientListItemProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <li className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
+      <div className="flex items-start justify-between gap-2">
+        <div className="space-y-0.5">
+          <p className="text-sm font-semibold text-slate-900">
+            {client.name ?? t('clients.list.unnamed')}
+          </p>
+          <p className="text-xs text-slate-700">{client.primary_property?.city || t('clients.list.cityFallback')}</p>
+        </div>
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+            client.type === 'business'
+              ? 'bg-blue-100 text-blue-800'
+              : 'bg-emerald-100 text-emerald-800'
+          }`}
+        >
+          {client.type === 'business' ? t('clients.list.types.business') : t('clients.list.types.individual')}
+        </span>
+      </div>
+      {client.primary_property?.address_line1 ? (
+        <p className="mt-2 text-xs text-slate-600">{client.primary_property.address_line1}</p>
+      ) : null}
+    </li>
+  );
+});
+
+ClientListItem.displayName = 'ClientListItem';
 
 const ClientList: React.FC = () => {
   const { t } = useTranslation();
@@ -24,28 +60,7 @@ const ClientList: React.FC = () => {
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {clients.map((client) => (
-              <li key={client.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-semibold text-slate-900">
-                      {client.name ?? t('clients.list.unnamed')}
-                    </p>
-                    <p className="text-xs text-slate-700">{client.primary_property?.city || t('clients.list.cityFallback')}</p>
-                  </div>
-                  <span
-                    className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
-                      client.type === 'business'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}
-                  >
-                    {client.type === 'business' ? t('clients.list.types.business') : t('clients.list.types.individual')}
-                  </span>
-                </div>
-                {client.primary_property?.address_line1 ? (
-                  <p className="mt-2 text-xs text-slate-600">{client.primary_property.address_line1}</p>
-                ) : null}
-              </li>
+              <ClientListItem key={client.id} client={client} />
             ))}
           </ul>
         )
