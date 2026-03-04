@@ -1,41 +1,42 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
 
-const requiredOptions = (t?: TFunction, key?: string) => ({
-  required_error: t ? t(key || 'validation.required') : (key || 'validation.required'),
-  invalid_type_error: t ? t('validation.invalidType') : 'validation.invalidType',
+const requiredOptions = (t: TFunction, key?: string) => ({
+  required_error: t(key || 'validation.required'),
+  invalid_type_error: t('validation.invalidType'),
 });
 
 /**
  * ProfileUpdateSchema - Schema for updating user profile
  */
-export const getProfileUpdateSchema = (t?: TFunction) => z.object({
+export const getProfileUpdateSchema = (t: TFunction) => z.object({
   full_name: z
     .string(requiredOptions(t, 'validation.nameRequired'))
-    .max(100, t ? t('validation.nameTooLong') : 'validation.nameTooLong')
+    .max(100, t('validation.nameTooLong'))
     .transform((val) => (val === '' ? null : val))
     .nullable()
     .optional(),
   business_name: z
     .string(requiredOptions(t, 'validation.businessNameRequired'))
-    .max(100, t ? t('validation.businessNameTooLong') : 'validation.businessNameTooLong')
+    .max(100, t('validation.businessNameTooLong'))
     .transform((val) => (val === '' ? null : val))
     .nullable()
     .optional(),
 });
 
-// Fallback for static analysis and Type Inference
+// STATIC SCHEMAS FOR TYPE INFERENCE ONLY
+// DO NOT USE FOR VALIDATION
 export const ProfileUpdateSchema = z.object({
   full_name: z
-    .string({ required_error: 'validation.nameRequired', invalid_type_error: 'validation.nameRequired' })
-    .min(1, 'validation.nameRequired')
-    .max(100, 'validation.nameTooLong')
+    .string()
+    .min(1)
+    .max(100)
     .nullable()
     .optional(),
   business_name: z
-    .string({ required_error: 'validation.businessNameRequired', invalid_type_error: 'validation.businessNameRequired' })
-    .min(1, 'validation.businessNameRequired')
-    .max(100, 'validation.businessNameTooLong')
+    .string()
+    .min(1)
+    .max(100)
     .nullable()
     .optional(),
 });

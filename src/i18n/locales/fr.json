@@ -470,10 +470,6 @@
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
   },
-  "taxes": {
-    "GST": "TPS",
-    "QST": "TVQ"
-  },
   "errors": {
     "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
     "unexpected": "Une erreur inattendue est survenue."
