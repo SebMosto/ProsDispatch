@@ -1,6 +1,16 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 
+interface ClientData {
+  name: string;
+}
+
+interface JobWithClient {
+  title: string;
+  contractor_id: string;
+  client: ClientData | null;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -74,6 +84,7 @@ Deno.serve(async (req) => {
           client:clients (name)
         `)
         .eq("id", jobToken.job_id)
+        .returns<JobWithClient>()
         .single();
 
       if (jobError || !job) {
@@ -92,8 +103,7 @@ Deno.serve(async (req) => {
           console.error("Failed to fetch contractor email", userError);
         } else {
           const resend = new Resend(resendApiKey);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const client = job.client as any;
+          const client = job.client;
           const clientName = client?.name || "Client";
           const jobTitle = job.title;
 
