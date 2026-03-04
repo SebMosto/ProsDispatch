@@ -50,7 +50,8 @@ describe('PropertyRepository', () => {
         city: 'Montreal',
         province: 'QC',
         postal_code: 'H1A 1A1',
-      };
+        country: 'CA',
+      } as const;
 
       const result = await repository.create(input);
 
@@ -86,11 +87,11 @@ describe('PropertyRepository', () => {
       const input = {
         client_id: 'client-123',
         address_line1: '123 Main St',
-        city: 'NY',
-        province: 'NY',
-        postal_code: '10001',
+        city: 'Quebec',
+        province: 'QC',
+        postal_code: 'G1A 0A2',
         country: 'US',
-      };
+      } as const;
 
       const result = await repository.create(input);
 

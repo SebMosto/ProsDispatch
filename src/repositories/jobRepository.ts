@@ -1,8 +1,10 @@
 import { reportApiOnline } from '../lib/network';
 import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
-import type { Repository, RepositoryListParams, RepositoryResult } from './base';
+import type { Repository, RepositoryListParams, RepositoryResult, RepositoryError } from './base';
 import { BaseRepository } from './base';
+
+export type { JobRecord } from '../schemas/job';
 export type JobListParams = RepositoryListParams & {
   status?: JobStatus[];
   includeDeleted?: boolean;
@@ -53,7 +55,7 @@ export class JobRepository
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {
-      return { data: null, error: repositoryError };
+      return { data: null, error: repositoryError ?? undefined };
     }
 
     reportApiOnline();
@@ -71,7 +73,7 @@ export class JobRepository
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {
-      return { data: null, error: repositoryError };
+      return { data: null, error: repositoryError ?? undefined };
     }
 
     reportApiOnline();
@@ -104,10 +106,10 @@ export class JobRepository
       return {
         data: null,
         error: {
-          type: 'unknown',
           message: 'Invalid data returned from create_job RPC',
-          details: parseResult.error.issues,
-        },
+          reason: 'validation',
+          cause: parseResult.error.issues,
+        } satisfies RepositoryError,
       };
     }
 
@@ -124,7 +126,7 @@ export class JobRepository
       });
 
       if (transitionError) {
-        return { data: null, error: this.toRepositoryError(transitionError) };
+        return { data: null, error: this.toRepositoryError(transitionError) ?? undefined };
       }
     }
 
@@ -140,10 +142,10 @@ export class JobRepository
         service_date,
       });
 
-      const payload = {
+      const payload: Database['public']['Tables']['jobs']['Update'] = {
         ...remainingFields,
         ...normalized,
-      } satisfies Database['public']['Tables']['jobs']['Update'];
+      };
 
       const { error: updateError } = await this.client
         .from('jobs')
@@ -151,7 +153,7 @@ export class JobRepository
         .eq('id', id);
 
       if (updateError) {
-        return { data: null, error: this.toRepositoryError(updateError) };
+        return { data: null, error: this.toRepositoryError(updateError) ?? undefined };
       }
     }
 
@@ -168,7 +170,7 @@ export class JobRepository
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {
-      return { data: null, error: repositoryError };
+      return { data: null, error: repositoryError ?? undefined };
     }
 
     reportApiOnline();
