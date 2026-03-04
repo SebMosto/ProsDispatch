@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useClients, type ClientWithPrimaryProperty } from '../../hooks/useClients';
+import { useClients } from '../../hooks/useClients';
+import type { ClientWithPrimaryProperty } from '../../types/clients';
 
 interface ClientListItemProps {
   client: ClientWithPrimaryProperty;
