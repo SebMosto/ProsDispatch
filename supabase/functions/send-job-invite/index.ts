@@ -114,8 +114,9 @@ Deno.serve(async (req) => {
 
     if (transitionError) {
       console.error("Transition error:", transitionError);
-      // We continue even if transition fails, but ideally we should rollback.
-      // For MVP1, we'll log it.
+      // The token creation should ideally be rolled back here.
+      // Throwing an error prevents the email from being sent and surfaces the failure.
+      throw new Error(`Failed to update job status: ${transitionError.message}`);
     }
 
     // 5. Send email
