@@ -1,6 +1,18 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 
+interface ClientRecord {
+  name: string;
+  email: string;
+}
+
+interface JobWithClient {
+  id: string;
+  title: string;
+  contractor_id: string;
+  client: ClientRecord | null;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -68,6 +80,7 @@ Deno.serve(async (req) => {
       `)
       .eq("id", jobId)
       .eq("contractor_id", user.id)
+      .returns<JobWithClient>()
       .single();
 
     if (jobError || !job) {
@@ -77,9 +90,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Cast client to any because join types are tricky in edge functions without full generated types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = job.client as any;
+    const client = job.client;
 
     if (!client?.email) {
       return new Response(JSON.stringify({ error: "Client does not have an email address" }), {
