@@ -118,8 +118,30 @@ export const JobRecordSchema = z.object({
   deleted_at: z.string().nullable(),
 });
 
+/**
+ * JobDetailsSchema - Schema for validating job details returned by the get-job-by-token edge function
+ */
+export const JobDetailsSchema = z.object({
+  title: z.string(),
+  description: z.string().nullable(),
+  status: z.string(),
+  service_date: z.string().nullable(),
+  client_name: z.string().nullable(),
+  property_address: z.object({
+    address_line1: z.string(),
+    city: z.string(),
+    province: z.string(),
+    postal_code: z.string(),
+  }).nullable(),
+  contractor: z.object({
+    name: z.string().nullable(),
+    business_name: z.string().nullable(),
+  }),
+});
+
 // Type exports for TypeScript inference
 export type JobCreateInput = z.input<typeof JobCreateSchema>;
 export type JobUpdateInput = z.input<typeof JobUpdateSchema>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 export type JobRecord = z.output<typeof JobRecordSchema>;
+export type JobDetails = z.infer<typeof JobDetailsSchema>;

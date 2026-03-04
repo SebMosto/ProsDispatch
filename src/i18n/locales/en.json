@@ -480,6 +480,7 @@
   },
   "common": {
     "notScheduled": "Not scheduled",
+    "notAvailable": "Not available",
     "processing": "Processing..."
   },
   "jobApproval": {

@@ -480,6 +480,7 @@
   },
   "common": {
     "notScheduled": "Non planifié",
+    "notAvailable": "Non disponible",
     "processing": "Traitement en cours..."
   },
   "jobApproval": {
