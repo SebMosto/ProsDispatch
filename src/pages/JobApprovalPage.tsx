@@ -28,6 +28,7 @@ export default function JobApprovalPage() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [job, setJob] = useState<JobDetails | null>(null);
   const [approved, setApproved] = useState(false);
 
@@ -68,6 +69,7 @@ export default function JobApprovalPage() {
 
   const handleApprove = async () => {
     setProcessing(true);
+    setActionError(null);
     try {
       const { data, error } = await supabase.functions.invoke('respond-to-job-invite', {
         body: { token, action: 'approve' },
@@ -84,7 +86,7 @@ export default function JobApprovalPage() {
       setApproved(true);
     } catch (err) {
       console.error('Error approving job:', err);
-      alert(t('jobApproval.actionError'));
+      setActionError(t('jobApproval.actionError'));
     } finally {
       setProcessing(false);
     }
@@ -158,6 +160,11 @@ export default function JobApprovalPage() {
               </div>
 
               <div className="pt-4">
+                {actionError && (
+                  <div className="mb-4 rounded-md bg-red-50 p-3">
+                    <p className="text-sm text-red-700">{actionError}</p>
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={handleApprove}
