@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { ClientSchema } from '../schemas/client';
-import { InvoiceDraftSchema } from '../schemas/invoice';
+import type { TFunction } from 'i18next';
+import { getClientSchema } from '../schemas/client';
+import { getInvoiceDraftSchema } from '../schemas/invoice';
+
+const tKey = ((key: string) => key) as TFunction;
 
 describe('ClientSchema Validation Messages', () => {
   it('should return localized key for name required (empty string)', () => {
@@ -9,7 +12,7 @@ describe('ClientSchema Validation Messages', () => {
       type: 'individual',
       preferred_language: 'en',
     };
-    const result = ClientSchema.safeParse(invalidClient);
+    const result = getClientSchema(tKey).safeParse(invalidClient);
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toBe('validation.nameRequired');
@@ -23,7 +26,7 @@ describe('ClientSchema Validation Messages', () => {
       type: 'individual',
       preferred_language: 'en',
     };
-    const result = ClientSchema.safeParse(invalidClient);
+    const result = getClientSchema(tKey).safeParse(invalidClient);
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toBe('validation.invalidEmail');
@@ -39,7 +42,7 @@ describe('InvoiceSchema Validation Messages', () => {
       invoice_number: '', // empty
       status: 'draft',
     };
-    const result = InvoiceDraftSchema.safeParse(invalidInvoice);
+    const result = getInvoiceDraftSchema(tKey).safeParse(invalidInvoice);
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toBe('validation.invoiceNumberRequired');
@@ -62,7 +65,7 @@ describe('InvoiceSchema Validation Messages', () => {
       items: [invalidItem]
     };
 
-    const result = InvoiceDraftSchema.safeParse(invalidInvoice);
+    const result = getInvoiceDraftSchema(tKey).safeParse(invalidInvoice);
     expect(result.success).toBe(false);
     if (!result.success) {
       const issue = result.error.issues.find(i => i.path.includes('unit_price'));

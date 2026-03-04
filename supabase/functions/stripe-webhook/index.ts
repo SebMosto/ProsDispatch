@@ -1,71 +1,56 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import Stripe from 'https://esm.sh/stripe@14.14.0?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import Stripe from "https://esm.sh/stripe@14.14.0?target=deno"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 console.log("Stripe Webhook Function Initialized")
 
 serve(async (req) => {
   try {
-    // 1. Setup & Secrets
-    const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY')
-    const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET')
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")
+    const STRIPE_WEBHOOK_SECRET = Deno.env.get("STRIPE_WEBHOOK_SECRET")
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 
     if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("Missing environment variables")
       return new Response("Server Configuration Error", { status: 500 })
     }
 
     const stripe = new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
+      apiVersion: "2023-10-16",
       httpClient: Stripe.createFetchHttpClient(),
     })
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-    // 2. Verify Signature
-    const signature = req.headers.get('Stripe-Signature')
+    const signature = req.headers.get("Stripe-Signature")
     if (!signature) {
       return new Response("No signature header", { status: 400 })
     }
 
     const body = await req.text()
-    let event;
+    let event
     try {
       event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET)
     } catch (err) {
-      console.error(`Webhook signature verification failed: ${err.message}`)
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 })
+      const message = err instanceof Error ? err.message : String(err)
+      return new Response(`Webhook Error: ${message}`, { status: 400 })
     }
 
-    // 3. Database Log
     console.log(`Processing event: ${event.type}`)
 
-    const { error: insertError } = await supabase
-      .from('stripe_events')
-      .insert({
-        id: event.id,
-        type: event.type,
-        event_created_at: new Date(event.created * 1000).toISOString(),
-        status: 'pending'
-      })
-
-    if (insertError) {
-      if (insertError.code !== '23505') { // Ignore duplicates
-        console.error('Failed to log event:', insertError)
-      } else {
-        console.log('Event already exists (Idempotency).')
-      }
-    }
+    await supabase.from("stripe_events").insert({
+      id: event.id,
+      type: event.type,
+      event_created_at: new Date(event.created * 1000).toISOString(),
+      status: "pending",
+    })
 
     return new Response(JSON.stringify({ received: true }), {
       headers: { "Content-Type": "application/json" },
       status: 200,
     })
-
   } catch (err) {
-    console.error(`Unexpected error: ${err.message}`)
-    return new Response("Internal Server Error", { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    return new Response(`Error: ${message}`, { status: 500 })
   }
 })

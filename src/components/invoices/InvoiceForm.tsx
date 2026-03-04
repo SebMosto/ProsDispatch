@@ -19,6 +19,7 @@ type InvoiceFormProps = {
 // Internal types for form state
 interface InvoiceFormValues {
   items: {
+    id: string;
     description: string;
     quantity: number;
     unitPrice: number;
@@ -31,6 +32,7 @@ const fromCents = (value: number) => value / 100;
 const buildDefaultItems = (invoice?: InvoiceWithItems | null): InvoiceFormValues['items'] => {
   if (!invoice?.invoice_items?.length) return [];
   return invoice.invoice_items.map((item) => ({
+    id: crypto.randomUUID(),
     description: item.description,
     quantity: item.quantity,
     unitPrice: fromCents(item.unit_price),
@@ -257,6 +259,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 setItems((prev) => [
                   ...prev,
                   {
+                    id: crypto.randomUUID(),
                     description: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -279,7 +282,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={`${item.description}-${index}`} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button

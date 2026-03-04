@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { JOB_STATUSES, JobCreateSchema, JobUpdateSchema } from '../schemas/job';
+import type { TFunction } from 'i18next';
+import { JOB_STATUSES, getJobCreateSchema, getJobUpdateSchema } from '../schemas/job';
+
+const tKey = ((key: string) => key) as TFunction;
+const JobCreateSchema = getJobCreateSchema(tKey);
+const JobUpdateSchema = getJobUpdateSchema(tKey);
 
 const validCreatePayload = {
   title: 'Kitchen faucet',
