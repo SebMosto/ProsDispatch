@@ -5,14 +5,14 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase configuration is missing. Authentication and database features will fail.');
+  throw new Error('Supabase configuration is missing. VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set in the environment.');
 }
 
 console.log('🔌 Supabase Client Initializing...');
 
 export const supabase = createClient<Database>(
-  supabaseUrl || '',
-  supabaseAnonKey || '',
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,
