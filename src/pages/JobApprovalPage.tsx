@@ -3,24 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { PageLoader } from '../components/ui/PageLoader';
-
-interface JobDetails {
-  title: string;
-  description: string | null;
-  status: string;
-  service_date: string | null;
-  client_name: string;
-  property_address: {
-    address_line1: string;
-    city: string;
-    province: string;
-    postal_code: string;
-  };
-  contractor: {
-    name: string;
-    business_name: string | null;
-  };
-}
+import { JobDetailsSchema, type JobDetails } from '../schemas/job';
 
 export default function JobApprovalPage() {
   const { token } = useParams<{ token: string }>();
@@ -50,9 +33,15 @@ export default function JobApprovalPage() {
         } else if (data.error) {
            setError(data.error);
         } else {
-          setJob(data);
-          if (data.status === 'approved') {
-            setApproved(true);
+          const parseResult = JobDetailsSchema.safeParse(data);
+          if (parseResult.success) {
+            setJob(parseResult.data);
+            if (parseResult.data.status === 'approved') {
+              setApproved(true);
+            }
+          } else {
+            console.error('Failed to validate job details:', parseResult.error);
+            setError(t('jobApproval.fetchError'));
           }
         }
       } catch (err) {
@@ -150,8 +139,12 @@ export default function JobApprovalPage() {
                   <div className="sm:col-span-1">
                     <dt className="text-sm font-medium text-gray-500">{t('jobApproval.property')}</dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {job.property_address.address_line1}<br />
-                      {job.property_address.city}, {job.property_address.province} {job.property_address.postal_code}
+                      {job.property_address ? (
+                        <>
+                          {job.property_address.address_line1}<br />
+                          {job.property_address.city}, {job.property_address.province} {job.property_address.postal_code}
+                        </>
+                      ) : t('common.notAvailable')}
                     </dd>
                   </div>
                 </dl>

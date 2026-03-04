@@ -1,16 +1,16 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 
-interface ClientRecord {
+interface ClientData {
   name: string;
-  email: string;
+  email: string | null;
 }
 
 interface JobWithClient {
   id: string;
   title: string;
   contractor_id: string;
-  client: ClientRecord | null;
+  client: ClientData | null;
 }
 
 const corsHeaders = {
