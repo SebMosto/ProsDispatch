@@ -65,9 +65,10 @@ Deno.serve(async (req) => {
 
     // 2. Handle Action
     if (action === "approve") {
-      const { error: transitionError } = await supabase.rpc("transition_job_state", {
-        job_id: jobToken.job_id,
-        new_status: "approved",
+      // Use the token-specific RPC that skips the auth.uid() ownership check.
+      // The token validation above is the authorisation mechanism here.
+      const { error: transitionError } = await supabase.rpc("approve_job_via_token", {
+        p_job_id: jobToken.job_id,
       });
 
       if (transitionError) {
