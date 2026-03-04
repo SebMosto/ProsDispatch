@@ -1,24 +1,24 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-interface ClientData {
-  name: string;
+interface JobClient {
+  name: string | null;
 }
 
-interface PropertyData {
-  address_line1: string;
-  city: string;
-  province: string;
-  postal_code: string;
+interface JobProperty {
+  address_line1: string | null;
+  city: string | null;
+  province: string | null;
+  postal_code: string | null;
 }
 
-interface JobWithRelations {
+interface JobData {
   title: string;
   description: string | null;
   status: string;
   service_date: string | null;
   contractor_id: string;
-  client: ClientData | null;
-  property: PropertyData | null;
+  client: JobClient | null;
+  property: JobProperty | null;
 }
 
 const corsHeaders = {
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
         )
       `)
       .eq("id", jobToken.job_id)
-      .returns<JobWithRelations>()
+      .returns<JobData>()
       .single();
 
     if (jobError || !job) {
@@ -118,16 +118,13 @@ Deno.serve(async (req) => {
       .single();
 
     // 5. Construct Response
-    const client = job.client;
-    const property = job.property;
-
     const responseData = {
       title: job.title,
       description: job.description,
       status: job.status,
       service_date: job.service_date,
-      client_name: client?.name,
-      property_address: property, // pass object
+      client_name: job.client?.name,
+      property_address: job.property, // pass object
       contractor: {
         name: profile?.full_name,
         business_name: profile?.business_name,
