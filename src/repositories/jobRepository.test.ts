@@ -9,8 +9,10 @@ vi.mock('../lib/network', () => ({
 
 describe('JobRepository', () => {
   let repository: JobRepository;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockClient: {
+    rpc: ReturnType<typeof vi.fn>;
+    from: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,6 +36,7 @@ describe('JobRepository', () => {
         title: 'New Job',
         description: 'Test Description',
         service_date: '2023-10-27',
+        status: 'draft' as const,
       };
 
       const mockData = {
@@ -66,12 +69,16 @@ describe('JobRepository', () => {
     });
 
     it('should handle RPC errors', async () => {
-      mockClient.rpc.mockResolvedValue({ data: null, error: { message: 'RPC Error' } });
+      mockClient.rpc.mockResolvedValue({
+        data: null,
+        error: { message: 'RPC Error', code: '500', details: null, hint: null },
+      });
 
       const result = await repository.create({
         client_id: '550e8400-e29b-41d4-a716-446655440001',
         property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
+        status: 'draft' as const,
       });
 
       expect(result.data).toBeNull();
@@ -87,10 +94,11 @@ describe('JobRepository', () => {
         client_id: '550e8400-e29b-41d4-a716-446655440001',
         property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
+        status: 'draft' as const,
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe<'validation'>('validation');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
@@ -137,9 +145,9 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        then: (resolve: (value: { data: unknown; error: null }) => void) => {
+          resolve({ data: null, error: null });
+        },
       };
 
       mockClient.from.mockReturnValue(mockBuilder);
@@ -164,9 +172,9 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        then: (resolve: (value: { data: unknown; error: null }) => void) => {
+          resolve({ data: null, error: null });
+        },
       };
 
       mockClient.from.mockReturnValue(mockBuilder);
