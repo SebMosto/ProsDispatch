@@ -473,5 +473,23 @@
   "errors": {
     "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
     "unexpected": "Une erreur inattendue est survenue."
+  },
+  "common": {
+    "notScheduled": "Non planifié",
+    "notAvailable": "Non disponible",
+    "processing": "Traitement en cours..."
+  },
+  "jobApproval": {
+    "invalidToken": "Jeton invalide ou manquant.",
+    "fetchError": "Impossible de charger les détails du travail. Veuillez réessayer plus tard.",
+    "actionError": "Impossible d'approuver le travail. Veuillez réessayer.",
+    "errorTitle": "Impossible de charger le travail",
+    "subtitle": "Examinez et approuvez les détails du travail ci-dessous.",
+    "approvedTitle": "Travail approuvé",
+    "approvedMessage": "Merci! L'entrepreneur a été informé.",
+    "serviceDate": "Date de service",
+    "property": "Propriété",
+    "approveButton": "Approuver le travail",
+    "declineInstructions": "Si vous devez apporter des modifications ou refuser, veuillez contacter l'entrepreneur directement."
   }
 }

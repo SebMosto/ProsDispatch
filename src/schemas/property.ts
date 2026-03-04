@@ -61,5 +61,5 @@ export const PropertySchema = z.object({
 
 export const PropertyUpdateSchema = PropertySchema.partial();
 
-export type PropertyCreateInput = z.infer<typeof PropertySchema>;
-export type PropertyUpdateInput = z.infer<typeof PropertyUpdateSchema>;
+export type PropertyCreateInput = z.input<typeof PropertySchema>;
+export type PropertyUpdateInput = z.input<typeof PropertyUpdateSchema>;
