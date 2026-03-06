@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { JobCreateSchema, JobUpdateSchema } from '../schemas/job';
+import { getJobCreateSchema, getJobUpdateSchema } from '../schemas/job';
+import type { TFunction } from 'i18next';
+
+const mockT = ((key: string) => key) as unknown as TFunction;
+const JobCreateSchema = getJobCreateSchema(mockT);
+const JobUpdateSchema = getJobUpdateSchema(mockT);
 
 describe('JobCreateSchema', () => {
   describe('Valid inputs', () => {
