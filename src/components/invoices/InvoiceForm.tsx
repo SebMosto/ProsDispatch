@@ -19,7 +19,7 @@ type InvoiceFormProps = {
 // Internal types for form state
 interface InvoiceFormValues {
   items: {
-    id: string;
+    id?: string;
     description: string;
     quantity: number;
     unitPrice: number;
