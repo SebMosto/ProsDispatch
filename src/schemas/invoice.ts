@@ -18,11 +18,6 @@ export const INVOICE_PAYMENT_METHODS = [
   'other',
 ] as const;
 
-const requiredOptions = (t: TFunction, key?: string) => ({
-  required_error: t(key || 'validation.required'),
-  invalid_type_error: t(key || 'validation.required'),
-});
-
 const getCurrencySchema = (t: TFunction) => z
   .number(requiredOptions(t))
   .int(t('validation.amountInteger'))

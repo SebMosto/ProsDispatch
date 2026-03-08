@@ -19,11 +19,6 @@ export const CANADIAN_PROVINCES = [
   'YT',
 ] as const;
 
-const requiredOptions = (t: TFunction, key?: string) => ({
-  required_error: t(key || 'validation.required'),
-  invalid_type_error: t(key || 'validation.required'),
-});
-
 export const getPropertySchema = (t: TFunction) => z.object({
   client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
     .uuid(t('validation.clientIdInvalid')),

@@ -13,11 +13,6 @@ export const JOB_STATUSES = [
   'archived',
 ] as const;
 
-const requiredOptions = (t: TFunction, key?: string) => ({
-  required_error: t(key || 'validation.required'),
-  invalid_type_error: t(key || 'validation.required'),
-});
-
 /**
  * JobCreateSchema - Schema for creating a new job
  */
