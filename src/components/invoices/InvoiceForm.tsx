@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
-import type { Resolver } from 'react-hook-form';
 import { useNavigate } from '../../lib/router';
 import { calculateInvoiceTotals } from '../../lib/taxCalculator';
 import { formatCurrency } from '../../lib/currency';

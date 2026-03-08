@@ -1,5 +1,4 @@
 import { reportApiOnline } from '../lib/network';
-import { supabase } from '../lib/supabase';
 import type { InvoiceDraftInput, InvoiceItemInput } from '../schemas/invoice';
 import type { Database } from '../types/database.types';
 import type { RepositoryError, RepositoryResult } from './base';
@@ -128,7 +127,7 @@ export class InvoiceRepository extends BaseRepository {
   }
 
   async createDraft(jobId: string, input: InvoiceDraftInput): Promise<RepositoryResult<InvoiceWithItems>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData, error: authError } = await this.client.auth.getUser();
 
     if (authError) {
       return {
