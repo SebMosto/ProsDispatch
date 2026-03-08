@@ -9,8 +9,10 @@ vi.mock('../lib/network', () => ({
 
 describe('JobRepository', () => {
   let repository: JobRepository;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockClient: {
+    rpc: ReturnType<typeof vi.fn>;
+    from: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,6 +36,7 @@ describe('JobRepository', () => {
         title: 'New Job',
         description: 'Test Description',
         service_date: '2023-10-27',
+        status: 'draft' as const,
       };
 
       const mockData = {
@@ -66,12 +69,16 @@ describe('JobRepository', () => {
     });
 
     it('should handle RPC errors', async () => {
-      mockClient.rpc.mockResolvedValue({ data: null, error: { message: 'RPC Error' } });
+      mockClient.rpc.mockResolvedValue({
+        data: null,
+        error: { message: 'RPC Error', code: '500', details: null, hint: null },
+      });
 
       const result = await repository.create({
         client_id: '550e8400-e29b-41d4-a716-446655440001',
         property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
+        status: 'draft' as const,
       });
 
       expect(result.data).toBeNull();
@@ -87,22 +94,108 @@ describe('JobRepository', () => {
         client_id: '550e8400-e29b-41d4-a716-446655440001',
         property_id: '550e8400-e29b-41d4-a716-446655440002',
         title: 'New Job',
+        status: 'draft' as const,
       });
 
       expect(result.data).toBeNull();
-      expect(result.error?.type).toBe('unknown');
+      expect(result.error?.reason).toBe<'validation'>('validation');
       expect(result.error?.message).toBe('Invalid data returned from create_job RPC');
     });
   });
 
+  describe('listByClient', () => {
+    it('should return jobs for client ordered by created_at DESC', async () => {
+      const clientId = '550e8400-e29b-41d4-a716-446655440001';
+      const mockJobs = [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440010',
+          contractor_id: '550e8400-e29b-41d4-a716-446655440003',
+          client_id: clientId,
+          property_id: '550e8400-e29b-41d4-a716-446655440002',
+          title: 'Job A',
+          description: null,
+          service_date: null,
+          status: 'draft',
+          created_at: '2023-01-02T00:00:00Z',
+          updated_at: '2023-01-02T00:00:00Z',
+          deleted_at: null,
+        },
+        {
+          id: '550e8400-e29b-41d4-a716-446655440011',
+          contractor_id: '550e8400-e29b-41d4-a716-446655440003',
+          client_id: clientId,
+          property_id: '550e8400-e29b-41d4-a716-446655440002',
+          title: 'Job B',
+          description: null,
+          service_date: null,
+          status: 'sent',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:00:00Z',
+          deleted_at: null,
+        },
+      ];
+
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({ data: mockJobs, error: null }),
+      };
+
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.listByClient(clientId);
+
+      expect(mockClient.from).toHaveBeenCalledWith('jobs');
+      expect(mockBuilder.eq).toHaveBeenCalledWith('client_id', clientId);
+      expect(mockBuilder.is).toHaveBeenCalledWith('deleted_at', null);
+      expect(mockBuilder.order).toHaveBeenCalledWith('created_at', { ascending: false });
+      expect(result.error).toBeUndefined();
+      expect(result.data).toHaveLength(2);
+      expect(result.data?.[0]?.title).toBe('Job A');
+    });
+
+    it('should return error when query fails', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'DB Error', code: '500', details: null, hint: null },
+        }),
+      };
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.listByClient('550e8400-e29b-41d4-a716-446655440001');
+
+      expect(result.data).toBeNull();
+      expect(result.error?.message).toBe('DB Error');
+    });
+  });
+
   describe('update', () => {
+    const mockJobComplete = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      contractor_id: '550e8400-e29b-41d4-a716-446655440001',
+      client_id: '550e8400-e29b-41d4-a716-446655440002',
+      property_id: '550e8400-e29b-41d4-a716-446655440003',
+      title: 'Updated Job',
+      description: 'Description',
+      service_date: '2023-01-01',
+      status: 'draft',
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z',
+      deleted_at: null,
+    };
+
     it('should call transition_job_state RPC if status is present', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { status: 'sent' as const };
 
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
-      const mockJob = { id: jobId, status: 'sent' };
+      const mockJob = { ...mockJobComplete, status: 'sent' };
 
       // Mock chain for get()
       const mockBuilder = {
@@ -125,9 +218,9 @@ describe('JobRepository', () => {
     });
 
     it('should call regular update if other fields are present', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { title: 'Updated Title' };
-      const mockJob = { id: jobId, title: 'Updated Title' };
+      const mockJob = { ...mockJobComplete, title: 'Updated Title' };
 
       // Mock chain that handles both update() and get() calls
       const mockBuilder = {
@@ -137,10 +230,9 @@ describe('JobRepository', () => {
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
         // Make the builder thenable to support await query
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        then: (resolve: (value: { data: unknown; error: null }) => void) => {
+          resolve({ data: null, error: null });
+        },
       };
 
       mockClient.from.mockReturnValue(mockBuilder);
@@ -153,9 +245,9 @@ describe('JobRepository', () => {
     });
 
     it('should handle both status and fields update', async () => {
-      const jobId = 'job-123';
+      const jobId = '550e8400-e29b-41d4-a716-446655440000';
       const input = { status: 'sent' as const, title: 'Updated Title' };
-      const mockJob = { id: jobId, status: 'sent', title: 'Updated Title' };
+      const mockJob = { ...mockJobComplete, status: 'sent', title: 'Updated Title' };
 
       mockClient.rpc.mockResolvedValue({ data: true, error: null });
 
@@ -165,10 +257,9 @@ describe('JobRepository', () => {
         eq: vi.fn().mockReturnThis(),
         is: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: mockJob, error: null }),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        then: function(resolve: any) {
-             resolve({ data: null, error: null });
-        }
+        then: (resolve: (value: { data: unknown; error: null }) => void) => {
+          resolve({ data: null, error: null });
+        },
       };
 
       mockClient.from.mockReturnValue(mockBuilder);

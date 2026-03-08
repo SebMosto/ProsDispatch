@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { clientRepository, type ClientRecord } from '../repositories/clientRepository';
+import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
 import type { RepositoryError } from '../repositories/base';
+import type { ClientWithPrimaryProperty } from '../types/clients';
 
-export type ClientWithPrimaryProperty = ClientRecord & {
-  primary_property?: { city: string; address_line1: string } | null;
-};
+export type { ClientWithPrimaryProperty };
 
 const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
   const map = new Map<string, { city: string; address_line1: string }>();

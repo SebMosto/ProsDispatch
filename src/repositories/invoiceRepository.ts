@@ -70,6 +70,42 @@ export class InvoiceRepository extends BaseRepository {
     return { data: data as InvoiceWithItems };
   }
 
+  /**
+   * List invoices for all jobs belonging to a client.
+   * Returns [] if the invoices table is not available (e.g. migration pending).
+   */
+  async listByClient(clientId: string): Promise<RepositoryResult<InvoiceRecord[]>> {
+    try {
+      const { data: jobs } = await this.client
+        .from('jobs')
+        .select('id')
+        .eq('client_id', clientId)
+        .is('deleted_at', null);
+
+      const jobIds = (jobs ?? []).map((j) => j.id);
+      if (jobIds.length === 0) {
+        return { data: [] };
+      }
+
+      const { data, error } = await this.client
+        .from('invoices')
+        .select('*')
+        .in('job_id', jobIds)
+        .order('invoice_number', { ascending: false });
+
+      const repositoryError = this.toRepositoryError(error);
+
+      if (repositoryError) {
+        return { data: null, error: repositoryError };
+      }
+
+      reportApiOnline();
+      return { data: (data ?? []) as InvoiceRecord[] };
+    } catch {
+      return { data: [] };
+    }
+  }
+
   async listByJob(jobId: string): Promise<RepositoryResult<InvoiceWithItems[]>> {
     const { data, error } = await this.client
       .from('invoices')

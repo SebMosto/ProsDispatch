@@ -367,14 +367,20 @@
     "list": {
       "pageTitle": "Clients",
       "header": "Client Registry",
-      "subHeader": "View customers and their primary properties.",
+      "subHeader": "View clients and their primary properties.",
       "newClient": "New Client",
       "title": "Clients",
-      "empty": "No clients yet. New clients will appear here.",
+      "empty": "No clients yet. Add your first client.",
       "error": "Unable to load clients.",
-      "cityFallback": "City unavailable",
+      "cityFallback": "City not available",
       "loading": "Loading...",
       "unnamed": "Unnamed client",
+      "search": "Search by name",
+      "jobCount": "{{count}} jobs",
+      "lastJob": "Last job",
+      "lastJobNever": "Never",
+      "typeHeader": "Type",
+      "jobsColumn": "Jobs",
       "types": {
         "business": "Business",
         "individual": "Individual"
@@ -394,9 +400,22 @@
       "addProperty": "Add property",
       "noProperties": "No properties yet.",
       "primaryProperty": "Primary property",
+      "lastServiced": "Last serviced: {{date}}",
+      "neverServiced": "Never serviced",
+      "jobHistory": "Job history",
+      "invoiceSummary": "Invoice & payment summary",
+      "totalInvoiced": "Total invoiced",
+      "totalPaid": "Total paid",
+      "outstanding": "Outstanding",
+      "noJobs": "No jobs yet for this client.",
+      "noInvoices": "No invoices yet.",
+      "editClient": "Edit client",
+      "deleteClient": "Delete client",
+      "deleteConfirm": "Are you sure you want to delete this client? This cannot be undone.",
+      "deleteBlocked": "Cannot delete: this client has active jobs.",
       "types": {
-         "business": "Business",
-         "individual": "Individual"
+        "business": "Business",
+        "individual": "Individual"
       }
     }
   },
@@ -470,12 +489,26 @@
     "finalInvoiceNoDraft": "Final invoices cannot remain in draft status",
     "oneLineItemRequired": "At least one line item is required"
   },
-  "taxes": {
-    "GST": "GST",
-    "QST": "QST"
-  },
   "errors": {
     "checkoutNoUrl": "Failed to start checkout: No URL returned.",
     "unexpected": "An unexpected error occurred."
+  },
+  "common": {
+    "notScheduled": "Not scheduled",
+    "notAvailable": "Not available",
+    "processing": "Processing..."
+  },
+  "jobApproval": {
+    "invalidToken": "Invalid or missing token.",
+    "fetchError": "Failed to load job details. Please try again later.",
+    "actionError": "Failed to approve job. Please try again.",
+    "errorTitle": "Unable to load job",
+    "subtitle": "Review and approve the job details below.",
+    "approvedTitle": "Job Approved",
+    "approvedMessage": "Thank you! The contractor has been notified.",
+    "serviceDate": "Service Date",
+    "property": "Property",
+    "approveButton": "Approve Job",
+    "declineInstructions": "If you need to make changes or decline, please contact the contractor directly."
   }
 }
