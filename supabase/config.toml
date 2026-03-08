@@ -389,3 +389,12 @@ verify_jwt = true
 
 [functions.create-portal-session]
 verify_jwt = true
+
+[functions.get-job-by-token]
+verify_jwt = false
+
+[functions.respond-to-job-invite]
+verify_jwt = false
+
+[functions.send-job-invite]
+verify_jwt = true
