@@ -19,7 +19,7 @@ export const INVOICE_PAYMENT_METHODS = [
 ] as const;
 
 const getCurrencySchema = (t?: TFunction) => z
-  .number(requiredOptions(t))
+  .number(requiredOptions(t, 'validation.amountRequired'))
   .int(t ? t('validation.amountInteger') : 'validation.amountInteger')
   .nonnegative(t ? t('validation.amountNonNegative') : 'validation.amountNonNegative');
 
