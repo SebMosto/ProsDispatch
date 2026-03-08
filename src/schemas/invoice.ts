@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
+import { requiredOptions } from './helpers';
 
 export const INVOICE_STATUSES = [
   'draft',
