@@ -5,7 +5,7 @@ import { requiredOptions } from './helpers';
 
 export const getClientSchema = (t?: TFunction) => z.object({
   name: z.string(requiredOptions(t, 'validation.nameRequired'))
-    .min(1, t ? t('validation.nameRequired') : 'validation.nameRequired'),
+    .min(1, requiredOptions(t, 'validation.nameRequired').required_error),
   email: z
     .string({
       invalid_type_error: t ? t('validation.invalidEmail') : 'validation.invalidEmail',
