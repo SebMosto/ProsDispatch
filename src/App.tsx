@@ -193,7 +193,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route path="/jobs/approve/:token" element={<JobApprovalPage />} />
+            <Route path={routePatterns.jobApproval} element={<JobApprovalPage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
