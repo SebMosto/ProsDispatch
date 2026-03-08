@@ -1,3 +1,16 @@
+## Cursor Context Files to Load
+
+> Attach the following files as context in Cursor before working on this spec:
+
+- `src/repositories/jobRepository.ts`
+- `src/repositories/clientRepository.ts`
+- `src/repositories/propertyRepository.ts`
+- `src/hooks/useJobs.ts`
+- `src/hooks/useJobMutations.ts`
+- `src/hooks/useCreateJob.ts`
+
+---
+
 # **SPEC-003: Job Management (MVP1)**
 
 **Version:** 1.2 (Canonical / Offline-Tolerant Aligned)  
