@@ -370,11 +370,17 @@
       "subHeader": "Voir les clients et leurs propriétés principales.",
       "newClient": "Nouveau client",
       "title": "Clients",
-      "empty": "Pas encore de clients. Les nouveaux clients apparaîtront ici.",
+      "empty": "Pas encore de clients. Ajoutez votre premier client.",
       "error": "Impossible de charger les clients.",
       "cityFallback": "Ville non disponible",
       "loading": "Chargement...",
       "unnamed": "Client sans nom",
+      "search": "Rechercher par nom",
+      "jobCount": "{{count}} mandats",
+      "lastJob": "Dernier mandat",
+      "lastJobNever": "Jamais",
+      "typeHeader": "Type",
+      "jobsColumn": "Mandats",
       "types": {
         "business": "Entreprise",
         "individual": "Particulier"
@@ -394,9 +400,22 @@
       "addProperty": "Ajouter une propriété",
       "noProperties": "Pas encore de propriétés.",
       "primaryProperty": "Propriété principale",
+      "lastServiced": "Dernier service : {{date}}",
+      "neverServiced": "Jamais servi",
+      "jobHistory": "Historique des mandats",
+      "invoiceSummary": "Résumé facturation et paiements",
+      "totalInvoiced": "Total facturé",
+      "totalPaid": "Total payé",
+      "outstanding": "Solde dû",
+      "noJobs": "Aucun mandat pour ce client.",
+      "noInvoices": "Aucune facture pour le moment.",
+      "editClient": "Modifier le client",
+      "deleteClient": "Supprimer le client",
+      "deleteConfirm": "Voulez-vous vraiment supprimer ce client ? Cette action est irréversible.",
+      "deleteBlocked": "Impossible de supprimer : ce client a des mandats actifs.",
       "types": {
-         "business": "Entreprise",
-         "individual": "Particulier"
+        "business": "Entreprise",
+        "individual": "Particulier"
       }
     }
   },

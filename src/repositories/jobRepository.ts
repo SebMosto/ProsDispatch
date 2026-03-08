@@ -36,6 +36,25 @@ export class JobRepository
     };
   }
 
+  async listByClient(clientId: string): Promise<RepositoryResult<JobRecord[]>> {
+    const { data, error } = await this.client
+      .from('jobs')
+      .select('*')
+      .eq('client_id', clientId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError ?? undefined };
+    }
+
+    reportApiOnline();
+    const parsedData = (data ?? []).map((record) => JobRecordSchema.parse(record));
+    return { data: parsedData };
+  }
+
   async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
     const { status, includeDeleted } = params ?? {};
 

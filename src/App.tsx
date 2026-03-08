@@ -25,6 +25,7 @@ const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
 const CreateClientPage = lazy(() => import('./pages/clients/CreateClientPage'));
 const CreatePropertyPage = lazy(() => import('./pages/clients/CreatePropertyPage'));
 const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
+const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
@@ -182,6 +183,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ClientDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clients/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <ClientEditPage />
                 </ProtectedRoute>
               }
             />

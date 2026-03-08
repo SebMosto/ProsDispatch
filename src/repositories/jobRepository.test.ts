@@ -103,6 +103,77 @@ describe('JobRepository', () => {
     });
   });
 
+  describe('listByClient', () => {
+    it('should return jobs for client ordered by created_at DESC', async () => {
+      const clientId = '550e8400-e29b-41d4-a716-446655440001';
+      const mockJobs = [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440010',
+          contractor_id: '550e8400-e29b-41d4-a716-446655440003',
+          client_id: clientId,
+          property_id: '550e8400-e29b-41d4-a716-446655440002',
+          title: 'Job A',
+          description: null,
+          service_date: null,
+          status: 'draft',
+          created_at: '2023-01-02T00:00:00Z',
+          updated_at: '2023-01-02T00:00:00Z',
+          deleted_at: null,
+        },
+        {
+          id: '550e8400-e29b-41d4-a716-446655440011',
+          contractor_id: '550e8400-e29b-41d4-a716-446655440003',
+          client_id: clientId,
+          property_id: '550e8400-e29b-41d4-a716-446655440002',
+          title: 'Job B',
+          description: null,
+          service_date: null,
+          status: 'sent',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:00:00Z',
+          deleted_at: null,
+        },
+      ];
+
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({ data: mockJobs, error: null }),
+      };
+
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.listByClient(clientId);
+
+      expect(mockClient.from).toHaveBeenCalledWith('jobs');
+      expect(mockBuilder.eq).toHaveBeenCalledWith('client_id', clientId);
+      expect(mockBuilder.is).toHaveBeenCalledWith('deleted_at', null);
+      expect(mockBuilder.order).toHaveBeenCalledWith('created_at', { ascending: false });
+      expect(result.error).toBeUndefined();
+      expect(result.data).toHaveLength(2);
+      expect(result.data?.[0]?.title).toBe('Job A');
+    });
+
+    it('should return error when query fails', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'DB Error', code: '500', details: null, hint: null },
+        }),
+      };
+      mockClient.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.listByClient('550e8400-e29b-41d4-a716-446655440001');
+
+      expect(result.data).toBeNull();
+      expect(result.error?.message).toBe('DB Error');
+    });
+  });
+
   describe('update', () => {
     const mockJobComplete = {
       id: '550e8400-e29b-41d4-a716-446655440000',
