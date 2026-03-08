@@ -1,3 +1,15 @@
+## Cursor Context Files to Load
+
+> Attach the following files as context in Cursor before working on this spec:
+
+- `src/repositories/clientRepository.ts`
+- `src/repositories/propertyRepository.ts`
+- `src/hooks/useClients.ts`
+- `src/hooks/useClientMutations.ts`
+- `src/hooks/useProperties.ts`
+
+---
+
 # **SPEC-002: Client & Property Registry (Shadow System)**
 
 **Version:** 1.2 (Canonical / Offline-Tolerant Aligned)  
