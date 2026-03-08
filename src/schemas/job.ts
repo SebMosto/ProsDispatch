@@ -13,25 +13,30 @@ export const JOB_STATUSES = [
   'archived',
 ] as const;
 
+const requiredOptions = (t: TFunction, key?: string) => ({
+  required_error: t(key || 'validation.required'),
+  invalid_type_error: t(key || 'validation.required'),
+});
+
 /**
  * JobCreateSchema - Schema for creating a new job
  */
-export const getJobCreateSchema = (t?: TFunction) => z.object({
+export const getJobCreateSchema = (t: TFunction) => z.object({
   client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
-    .uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
+    .uuid(t('validation.clientIdInvalid')),
   property_id: z.string(requiredOptions(t, 'validation.propertyIdInvalid'))
-    .uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid'),
+    .uuid(t('validation.propertyIdInvalid')),
   title: z
     .string(requiredOptions(t, 'validation.titleRequired'))
-    .min(2, t ? t('validation.titleRequired') : 'validation.titleRequired')
-    .max(80, t ? t('validation.titleTooLong') : 'validation.titleTooLong'),
+    .min(2, t('validation.titleRequired'))
+    .max(80, t('validation.titleTooLong')),
   description: z
     .string()
-    .max(2000, t ? t('validation.descriptionTooLong') : 'validation.descriptionTooLong')
+    .max(2000, t('validation.descriptionTooLong'))
     .optional(),
   service_date: z
     .union([
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'validation.invalidDate'),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.invalidDate')),
       z.date(),
     ])
     .optional(),
@@ -41,21 +46,21 @@ export const getJobCreateSchema = (t?: TFunction) => z.object({
 /**
  * JobUpdateSchema - Schema for updating job details
  */
-export const getJobUpdateSchema = (t?: TFunction) => z
+export const getJobUpdateSchema = (t: TFunction) => z
   .object({
-    client_id: z.string().uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid').optional(),
-    property_id: z.string().uuid(t ? t('validation.propertyIdInvalid') : 'validation.propertyIdInvalid').optional(),
+    client_id: z.string().uuid(t('validation.clientIdInvalid')).optional(),
+    property_id: z.string().uuid(t('validation.propertyIdInvalid')).optional(),
     title: z
       .string()
-      .min(2, t ? t('validation.titleRequired') : 'validation.titleRequired')
-      .max(80, t ? t('validation.titleTooLong') : 'validation.titleTooLong')
+      .min(2, t('validation.titleRequired'))
+      .max(80, t('validation.titleTooLong'))
       .optional(),
     description: z
-      .union([z.string().max(2000, t ? t('validation.descriptionTooLong') : 'validation.descriptionTooLong'), z.null()])
+      .union([z.string().max(2000, t('validation.descriptionTooLong')), z.null()])
       .optional(),
     service_date: z
       .union([
-        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t ? t('validation.invalidDate') : 'validation.invalidDate'),
+        z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.invalidDate')),
         z.date(),
         z.null(),
       ])
@@ -67,34 +72,33 @@ export const getJobUpdateSchema = (t?: TFunction) => z
       return Object.values(data).some((value) => value !== undefined);
     },
     {
-      message: t ? t('validation.jobUpdateRequired') : 'validation.jobUpdateRequired',
+      message: t('validation.jobUpdateRequired'),
     },
   );
 
-// Fallback for static analysis and Type Inference
+// STATIC SCHEMAS FOR TYPE INFERENCE ONLY
+// DO NOT USE FOR VALIDATION
 export const JobCreateSchema = z.object({
-  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
-    .uuid('validation.clientIdInvalid'),
-  property_id: z.string({ required_error: 'validation.propertyIdInvalid', invalid_type_error: 'validation.propertyIdInvalid' })
-    .uuid('validation.propertyIdInvalid'),
+  client_id: z.string().uuid(),
+  property_id: z.string().uuid(),
   title: z
-    .string({ required_error: 'validation.titleRequired', invalid_type_error: 'validation.titleRequired' })
-    .min(2, 'validation.titleRequired')
-    .max(80, 'validation.titleTooLong'),
+    .string()
+    .min(2)
+    .max(80),
   description: z
     .string()
-    .max(2000, 'validation.descriptionTooLong')
+    .max(2000)
     .optional(),
   service_date: z
     .union([
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'validation.invalidDate'),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       z.date(),
     ])
     .optional(),
   status: z.enum(JOB_STATUSES).default('draft'),
 });
 
-export const JobUpdateSchema = getJobUpdateSchema();
+export const JobUpdateSchema = JobCreateSchema.partial();
 
 /**
  * JobRecordSchema - Schema for validating job records from database
@@ -114,8 +118,30 @@ export const JobRecordSchema = z.object({
   deleted_at: z.string().nullable(),
 });
 
+/**
+ * JobDetailsSchema - Schema for validating job details returned by the get-job-by-token edge function
+ */
+export const JobDetailsSchema = z.object({
+  title: z.string(),
+  description: z.string().nullable(),
+  status: z.string(),
+  service_date: z.string().nullable(),
+  client_name: z.string().nullable(),
+  property_address: z.object({
+    address_line1: z.string(),
+    city: z.string(),
+    province: z.string(),
+    postal_code: z.string(),
+  }).nullable(),
+  contractor: z.object({
+    name: z.string().nullable(),
+    business_name: z.string().nullable(),
+  }),
+});
+
 // Type exports for TypeScript inference
-export type JobCreateInput = z.infer<typeof JobCreateSchema>;
-export type JobUpdateInput = z.infer<typeof JobUpdateSchema>;
+export type JobCreateInput = z.input<typeof JobCreateSchema>;
+export type JobUpdateInput = z.input<typeof JobUpdateSchema>;
 export type JobStatus = (typeof JOB_STATUSES)[number];
-export type JobRecord = z.infer<typeof JobRecordSchema>;
+export type JobRecord = z.output<typeof JobRecordSchema>;
+export type JobDetails = z.infer<typeof JobDetailsSchema>;
