@@ -370,11 +370,17 @@
       "subHeader": "Voir les clients et leurs propriétés principales.",
       "newClient": "Nouveau client",
       "title": "Clients",
-      "empty": "Pas encore de clients. Les nouveaux clients apparaîtront ici.",
+      "empty": "Pas encore de clients. Ajoutez votre premier client.",
       "error": "Impossible de charger les clients.",
       "cityFallback": "Ville non disponible",
       "loading": "Chargement...",
       "unnamed": "Client sans nom",
+      "search": "Rechercher par nom",
+      "jobCount": "{{count}} mandats",
+      "lastJob": "Dernier mandat",
+      "lastJobNever": "Jamais",
+      "typeHeader": "Type",
+      "jobsColumn": "Mandats",
       "types": {
         "business": "Entreprise",
         "individual": "Particulier"
@@ -394,9 +400,22 @@
       "addProperty": "Ajouter une propriété",
       "noProperties": "Pas encore de propriétés.",
       "primaryProperty": "Propriété principale",
+      "lastServiced": "Dernier service : {{date}}",
+      "neverServiced": "Jamais servi",
+      "jobHistory": "Historique des mandats",
+      "invoiceSummary": "Résumé facturation et paiements",
+      "totalInvoiced": "Total facturé",
+      "totalPaid": "Total payé",
+      "outstanding": "Solde dû",
+      "noJobs": "Aucun mandat pour ce client.",
+      "noInvoices": "Aucune facture pour le moment.",
+      "editClient": "Modifier le client",
+      "deleteClient": "Supprimer le client",
+      "deleteConfirm": "Voulez-vous vraiment supprimer ce client ? Cette action est irréversible.",
+      "deleteBlocked": "Impossible de supprimer : ce client a des mandats actifs.",
       "types": {
-         "business": "Entreprise",
-         "individual": "Particulier"
+        "business": "Entreprise",
+        "individual": "Particulier"
       }
     }
   },
@@ -470,12 +489,26 @@
     "finalInvoiceNoDraft": "Les factures finales ne peuvent pas rester à l'état de brouillon",
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
   },
-  "taxes": {
-    "GST": "TPS",
-    "QST": "TVQ"
-  },
   "errors": {
     "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
     "unexpected": "Une erreur inattendue est survenue."
+  },
+  "common": {
+    "notScheduled": "Non planifié",
+    "notAvailable": "Non disponible",
+    "processing": "Traitement en cours..."
+  },
+  "jobApproval": {
+    "invalidToken": "Jeton invalide ou manquant.",
+    "fetchError": "Impossible de charger les détails du travail. Veuillez réessayer plus tard.",
+    "actionError": "Impossible d'approuver le travail. Veuillez réessayer.",
+    "errorTitle": "Impossible de charger le travail",
+    "subtitle": "Examinez et approuvez les détails du travail ci-dessous.",
+    "approvedTitle": "Travail approuvé",
+    "approvedMessage": "Merci! L'entrepreneur a été informé.",
+    "serviceDate": "Date de service",
+    "property": "Propriété",
+    "approveButton": "Approuver le travail",
+    "declineInstructions": "Si vous devez apporter des modifications ou refuser, veuillez contacter l'entrepreneur directement."
   }
 }

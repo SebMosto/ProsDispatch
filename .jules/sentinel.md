@@ -1,21 +1,9 @@
-# Sentinel Journal
+## 2024-06-03 - Open Redirect Vulnerability in Edge Functions
+**Vulnerability:** The Edge Functions `create-checkout-session` and `create-portal-session` blindly trust the `returnUrl` provided by the client, using it as the `success_url`, `cancel_url`, or `return_url`. This allows an attacker to create checkout or portal sessions that redirect victims to malicious sites, potentially to steal session IDs or conduct phishing attacks.
+**Learning:** `returnUrl` must always be validated against a whitelist of trusted domains (e.g., the application's base URL) before being used in redirect flows.
+**Prevention:** Implement a validation function to ensure the `returnUrl` is relative, or if absolute, matches an allowed domain.
 
-## 2025-10-23 - Information Leakage in Auth Handling
-**Vulnerability:** Raw error messages from Supabase (`error.message`) were directly displayed to users in authentication forms.
-**Learning:** This exposes backend details and allows for user enumeration (e.g., distinguishing between "User not found" and "Invalid password"). Developers relying on client-side libraries often trust the library's error messages too much.
-**Prevention:** Always map authentication errors to generic, localized messages (e.g., "Invalid credentials") in the UI layer, while logging specific errors internally for debugging.
-
-## 2025-10-23 - Reverse Tabnapping in External Links
-**Vulnerability:** External links (e.g., PDF downloads) used `target="_blank"` without explicit `rel="noopener noreferrer"`.
-**Learning:** While modern browsers mitigate this, explicit `rel` attributes are required for robust defense-in-depth against malicious pages manipulating the origin page via `window.opener`.
-**Prevention:** Enforce `rel="noopener noreferrer"` on all external links opening in new tabs.
-
-## 2025-10-23 - Least Privilege in Edge Functions
-**Vulnerability:** Supabase Edge Functions were using `SUPABASE_SERVICE_ROLE_KEY` to read user profiles when the user's own Auth token (`supabaseClient`) would have sufficed.
-**Learning:** Over-reliance on Service Role keys in server-side functions bypasses Row Level Security (RLS), increasing the blast radius if the function is compromised or contains logic errors.
-**Prevention:** Always default to using the client provided `Authorization` header to create a Supabase client. Only upgrade to Service Role if strictly necessary (e.g., accessing data the user explicitly cannot see but the system needs).
-
-## 2025-10-24 - Open Redirect in Payment Flows
-**Vulnerability:** Supabase Edge Functions accepted an arbitrary `returnUrl` from the client for Stripe checkout success/cancel URLs.
-**Learning:** Developers often assume `returnUrl` will be a relative path or safe, but it can be any URL, allowing attackers to phish users after a legitimate payment flow.
-**Prevention:** Always validate `returnUrl` against a strict allowlist of origins (e.g., `SITE_URL` env var) before passing it to third-party services like Stripe.
+## 2024-06-03 - Hardcoded Secrets Bypassing Environment Variables
+**Vulnerability:** The `src/lib/supabase.ts` file had hardcoded `supabaseUrl` and `supabaseAnonKey` strings directly in the source code. While one was marked as a "Temporary Bypass", this completely subverted the environment variable system (`import.meta.env`) and caused secrets to be tracked in version control, creating a critical risk of exposing database credentials.
+**Learning:** Developers sometimes hardcode secrets temporarily for local debugging or due to environment issues, and forget to revert them before committing.
+**Prevention:** Always ensure configuration files pull secrets exclusively from environment variables.

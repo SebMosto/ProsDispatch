@@ -20,55 +20,31 @@ const isLocalEnvironment = (): boolean => {
 };
 
 export const validateReturnUrl = (url: string): string => {
+  let returnUrlObj: URL;
   try {
-    const returnUrlObj = new URL(url);
-    const siteUrlStr = Deno.env.get("SITE_URL");
-
-    // In non-local (production/staging) environments, SITE_URL is required.
-    // A missing SITE_URL would leave the allowlist as localhost-only, silently
-    // rejecting every real production returnUrl with a confusing 400.
-    if (!siteUrlStr && !isLocalEnvironment()) {
-      throw new Error(
-        "Server configuration error: SITE_URL environment variable is not set"
-      );
-    }
-
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-    ];
-
-    if (siteUrlStr) {
-      try {
-        const siteUrlObj = new URL(siteUrlStr);
-        // Only add if not already present to avoid duplicates (though harmless)
-        if (!allowedOrigins.includes(siteUrlObj.origin)) {
-          allowedOrigins.push(siteUrlObj.origin);
-        }
-      } catch {
-        // An unparseable SITE_URL in production is also a hard configuration error.
-        if (!isLocalEnvironment()) {
-          throw new Error(
-            "Server configuration error: SITE_URL environment variable is malformed"
-          );
-        }
-        console.error("Invalid SITE_URL environment variable:", siteUrlStr);
-      }
-    }
-
-    if (!allowedOrigins.includes(returnUrlObj.origin)) {
-      throw new Error(`Invalid return URL origin: ${returnUrlObj.origin}`);
-    }
-
-    return url;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      (error.message.startsWith("Invalid return URL origin") ||
-        error.message.startsWith("Server configuration error:"))
-    ) {
-      throw error;
-    }
+    returnUrlObj = new URL(url);
+  } catch {
     throw new Error("Invalid return URL format");
   }
+
+  const siteUrlStr = Deno.env.get("SITE_URL");
+  const allowedOrigins = new Set([
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+  ]);
+
+  if (siteUrlStr) {
+    try {
+      const siteUrlObj = new URL(siteUrlStr);
+      allowedOrigins.add(siteUrlObj.origin);
+    } catch {
+      console.error("Invalid SITE_URL environment variable:", siteUrlStr);
+    }
+  }
+
+  if (!allowedOrigins.has(returnUrlObj.origin)) {
+    throw new Error(`Invalid return URL origin: ${returnUrlObj.origin}`);
+  }
+
+  return url;
 };
