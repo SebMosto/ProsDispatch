@@ -50,7 +50,7 @@ serve(async (req) => {
       status: 200,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    return new Response(`Error: ${message}`, { status: 500 })
+    console.error("Webhook unexpected error:", err)
+    return new Response("Internal Server Error", { status: 500 })
   }
 })
