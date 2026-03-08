@@ -32,11 +32,11 @@ const ClientDetailPage = () => {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  const { data, loading, error } = useClientDetail(id ?? undefined);
+  const { data, loading, error } = useClientDetail(id!);
 
   const hasActiveJobs = useMemo(() => {
     if (!data?.jobs) return false;
-    return data.jobs.some((j) => ACTIVE_JOB_STATUSES.includes(j.status as JobStatus));
+    return data.jobs.some((j: { status: string }) => ACTIVE_JOB_STATUSES.includes(j.status as JobStatus));
   }, [data?.jobs]);
 
   const handleDelete = async () => {
@@ -207,7 +207,7 @@ const ClientDetailPage = () => {
           <p className="text-sm text-slate-700">{t('clients.detail.noProperties')}</p>
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {properties.map((property) => (
+            {properties.map((property: { id: string, nickname?: string | null, address_line1: string, address_line2?: string | null, city: string, province: string, postal_code: string }) => (
               <li key={property.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
                 <p className="text-sm font-semibold text-slate-900">
                   {property.nickname ?? t('clients.detail.primaryProperty')}
@@ -231,7 +231,7 @@ const ClientDetailPage = () => {
           <p className="text-sm text-slate-700">{t('clients.detail.noJobs')}</p>
         ) : (
           <ul className="divide-y divide-slate-100">
-            {jobs.map((job) => (
+            {jobs.map((job: { id: string, title: string, service_date: string | null, created_at: string, status: string }) => (
               <li key={job.id}>
                 <Link
                   to={`/jobs/${job.id}`}
@@ -280,7 +280,7 @@ const ClientDetailPage = () => {
               </div>
             </div>
             <ul className="divide-y divide-slate-100">
-              {invoices.map((inv) => (
+              {invoices.map((inv: { id: string, invoice_number: string, status: string, total_amount: number | null }) => (
                 <li key={inv.id}>
                   <Link
                     to={`/invoices/${inv.id}`}
