@@ -76,7 +76,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<InvoiceFormValues>({
-    resolver: zodResolver(InvoiceFormSchema) as unknown as Resolver<InvoiceFormValues>,
+    resolver: zodResolver(InvoiceFormSchema),
     defaultValues: {
       items: buildDefaultItems(invoice),
     },
