@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
+import { requiredOptions } from './helpers';
 
 export const JOB_STATUSES = [
   'draft',
@@ -11,11 +12,6 @@ export const JOB_STATUSES = [
   'paid',
   'archived',
 ] as const;
-
-const requiredOptions = (t: TFunction, key?: string) => ({
-  required_error: t(key || 'validation.required'),
-  invalid_type_error: t(key || 'validation.required'),
-});
 
 /**
  * JobCreateSchema - Schema for creating a new job

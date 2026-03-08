@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TFunction } from 'i18next';
+import { requiredOptions } from './helpers';
 
 // Full list for DB validity, UI can filter to ['QC', 'ON']
 export const CANADIAN_PROVINCES = [
@@ -17,11 +18,6 @@ export const CANADIAN_PROVINCES = [
   'SK',
   'YT',
 ] as const;
-
-const requiredOptions = (t: TFunction, key?: string) => ({
-  required_error: t(key || 'validation.required'),
-  invalid_type_error: t(key || 'validation.required'),
-});
 
 export const getPropertySchema = (t: TFunction) => z.object({
   client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
