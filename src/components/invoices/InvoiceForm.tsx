@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { useAuth } from '../../lib/auth';
+import type { Resolver } from 'react-hook-form';
 import { useNavigate } from '../../lib/router';
 import { calculateInvoiceTotals } from '../../lib/taxCalculator';
 import { formatCurrency } from '../../lib/currency';
@@ -53,6 +54,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   // Memoize the schema to react to language changes
   const InvoiceFormSchema = useMemo(() => {
     const InvoiceItemFormSchema = z.object({
+      id: z.string(),
       description: z.string().min(1, t('validation.descriptionRequired')),
       quantity: z.number().positive(t('validation.qtyPositive')),
       unitPrice: z.number().min(0, t('validation.unitPriceNonNegative')),

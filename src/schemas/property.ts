@@ -19,48 +19,48 @@ export const CANADIAN_PROVINCES = [
   'YT',
 ] as const;
 
-export const getPropertySchema = (t?: TFunction) => z.object({
+const requiredOptions = (t: TFunction, key?: string) => ({
+  required_error: t(key || 'validation.required'),
+  invalid_type_error: t(key || 'validation.required'),
+});
+
+export const getPropertySchema = (t: TFunction) => z.object({
   client_id: z.string(requiredOptions(t, 'validation.clientIdInvalid'))
-    .uuid(t ? t('validation.clientIdInvalid') : 'validation.clientIdInvalid'),
+    .uuid(t('validation.clientIdInvalid')),
   address_line1: z.string(requiredOptions(t, 'validation.required'))
-    .min(5, t ? t('validation.addressTooShort') : 'validation.addressTooShort'),
+    .min(5, t('validation.addressTooShort')),
   address_line2: z.string().optional(),
   city: z.string(requiredOptions(t, 'validation.cityRequired'))
-    .min(2, t ? t('validation.cityRequired') : 'validation.cityRequired'),
+    .min(2, t('validation.cityRequired')),
   province: z.enum(CANADIAN_PROVINCES, requiredOptions(t, 'validation.required')),
   postal_code: z
     .string(requiredOptions(t, 'validation.required'))
-    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, t ? t('validation.invalidPostalCode') : 'validation.invalidPostalCode'),
+    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, t('validation.invalidPostalCode')),
   country: z.string().default('CA'),
   nickname: z.string().optional(),
 });
 
-export const getPropertyUpdateSchema = (t?: TFunction) => getPropertySchema(t).partial().refine(
+export const getPropertyUpdateSchema = (t: TFunction) => getPropertySchema(t).partial().refine(
   (data) => Object.values(data).some((value) => value !== undefined),
-  { message: t ? t('validation.propertyUpdateRequired') : 'validation.propertyUpdateRequired' },
+  { message: t('validation.propertyUpdateRequired') }
 );
 
-// Fallback for static analysis
+// STATIC SCHEMAS FOR TYPE INFERENCE ONLY
+// DO NOT USE FOR VALIDATION
 export const PropertySchema = z.object({
-  client_id: z.string({ required_error: 'validation.clientIdInvalid', invalid_type_error: 'validation.clientIdInvalid' })
-    .uuid('validation.clientIdInvalid'),
-  address_line1: z.string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .min(5, 'validation.addressTooShort'),
+  client_id: z.string().uuid(),
+  address_line1: z.string().min(5),
   address_line2: z.string().optional(),
-  city: z.string({ required_error: 'validation.cityRequired', invalid_type_error: 'validation.cityRequired' })
-    .min(2, 'validation.cityRequired'),
-  province: z.enum(CANADIAN_PROVINCES, { required_error: 'validation.required', invalid_type_error: 'validation.required' }),
+  city: z.string().min(2),
+  province: z.enum(CANADIAN_PROVINCES),
   postal_code: z
-    .string({ required_error: 'validation.required', invalid_type_error: 'validation.required' })
-    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 'validation.invalidPostalCode'),
+    .string()
+    .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/),
   country: z.string().default('CA'),
   nickname: z.string().optional(),
 });
 
-export const PropertyUpdateSchema = PropertySchema.partial().refine(
-  (data) => Object.values(data).some((value) => value !== undefined),
-  { message: 'validation.propertyUpdateRequired' },
-);
+export const PropertyUpdateSchema = PropertySchema.partial();
 
-export type PropertyCreateInput = z.infer<typeof PropertySchema>;
-export type PropertyUpdateInput = z.infer<typeof PropertyUpdateSchema>;
+export type PropertyCreateInput = z.input<typeof PropertySchema>;
+export type PropertyUpdateInput = z.input<typeof PropertyUpdateSchema>;
