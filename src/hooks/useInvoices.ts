@@ -5,10 +5,12 @@ import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
   invoiceRepository,
-  type FinalizeInvoiceResult,
+  type InvoiceItemRecord,
   type InvoicePaymentMethod,
+  type InvoiceRecord,
   type InvoiceWithItems,
 } from '../repositories/invoiceRepository';
+import { supabase } from '../lib/supabase';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 
@@ -50,11 +52,40 @@ export const useInvoiceByToken = (token?: string) => {
     if (!token) {
       throw { message: t('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const result = await invoiceRepository.getInvoiceByToken(token);
-    if (result.error || !result.data) {
-      throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+    const { data, error } = await supabase.rpc('get_invoice_by_token' as never, { p_token: token } as never);
+
+    if (error) {
+      // Surface a generic validation-style error for invalid/expired tokens
+      const message =
+        error.message?.includes('TOKEN_INVALID_OR_EXPIRED') ?
+          t('public.invoice.expired') :
+          t('public.invoice.expired');
+      throw { message, reason: 'validation', cause: error } satisfies RepositoryError;
     }
-    return result.data;
+
+    // get_invoice_by_token returns a JSON envelope:
+    // { invoice, items, contractor_name, pdf_url }
+    const envelope = (data ?? null) as
+      | {
+          invoice: InvoiceRecord;
+          items: InvoiceItemRecord[];
+          contractor_name?: string | null;
+          pdf_url?: string | null;
+        }
+      | null;
+
+    if (!envelope?.invoice) {
+      throw { message: t('public.invoice.expired'), reason: 'validation' } satisfies RepositoryError;
+    }
+
+    const fullInvoice: InvoiceWithItems & { contractor_name?: string | null } = {
+      ...(envelope.invoice as InvoiceRecord),
+      invoice_items: (envelope.items ?? []) as InvoiceItemRecord[],
+      contractor_name: envelope.contractor_name ?? null,
+      pdf_url: envelope.pdf_url ?? envelope.invoice.pdf_url,
+    };
+
+    return fullInvoice;
   }, [token, t]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
@@ -155,13 +186,15 @@ export const useInvoiceMutations = () => {
     },
   });
 
-  const finalize = useMutation<FinalizeInvoiceResult, RepositoryError, string>({
+  const finalize = useMutation<void, RepositoryError, string>({
     mutationFn: async (id) => {
-      const result = await invoiceRepository.finalizeAndSend(id);
-      if (result.error || !result.data) {
-        throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+      const { data, error } = await supabase.functions.invoke('finalize-and-send-invoice', {
+        body: { invoice_id: id },
+      });
+
+      if (error || data?.error) {
+        throw (error ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
       }
-      return result.data;
     },
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] }).catch(() => {
@@ -205,3 +238,67 @@ export const useInvoiceMutations = () => {
     [createDraft, finalize, markAsPaid, updateDraft],
   );
 };
+
+// Additional hook helpers matching SPEC-000 naming
+
+export const useInvoicesByJob = (jobId: string) => useJobInvoices(jobId);
+
+export const useInvoicesByContractor = () => {
+  const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
+
+  const queryFn = useCallback(async () => {
+    const result = await invoiceRepository.listByContractor();
+    if (result.error) {
+      throw result.error;
+    }
+    return result.data ?? [];
+  }, []);
+
+  const query = useQuery<InvoiceRecord[], RepositoryError>({
+    queryKey,
+    queryFn,
+    staleTime: FIVE_MINUTES,
+  });
+
+  return {
+    invoices: query.data ?? [],
+    loading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  };
+};
+
+export const useCreateInvoiceDraft = () => {
+  const { createDraft } = useInvoiceMutations();
+  return createDraft;
+};
+
+export const useFinalizeInvoice = () => {
+  const { finalize } = useInvoiceMutations();
+  return finalize;
+};
+
+export const useVoidInvoice = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, RepositoryError, string>({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase.functions.invoke('void-invoice', {
+        body: { invoice_id: id },
+      });
+
+      if (error || data?.error) {
+        throw (error ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
+      }
+    },
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] }).catch(() => {
+        // noop
+      });
+      queryClient.invalidateQueries({ queryKey: ['invoice', id] }).catch(() => {
+        // noop
+      });
+    },
+  });
+};
+

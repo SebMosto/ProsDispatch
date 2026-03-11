@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InvoiceForm from '../../components/invoices/InvoiceForm';
 import MarkPaidModal from '../../components/invoices/MarkPaidModal';
-import { useInvoice } from '../../hooks/useInvoices';
+import { useInvoice, useVoidInvoice } from '../../hooks/useInvoices';
 import { Link, useLocation, useNavigate } from '../../lib/router';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
@@ -25,6 +25,7 @@ const InvoiceDetailPage = () => {
   const invoiceId = segments[1];
 
   const { invoice, loading, error } = useInvoice(invoiceId);
+  const voidMutation = useVoidInvoice();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -128,19 +129,27 @@ const InvoiceDetailPage = () => {
             {t('jobs.invoices.detailPage.markAsPaid')}
           </button>
         ) : null}
-        <button
-          type="button"
-          onClick={() => {
-            setActionError(null);
-            if (!window.confirm(t('jobs.invoices.detailPage.voidConfirm'))) {
-              return;
-            }
-            console.info('Void invoice requested', { invoice_id: invoice.id });
-          }}
-          className="inline-flex items-center justify-center rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
-        >
-          {t('jobs.invoices.detailPage.void')}
-        </button>
+        {invoice.status === 'sent' ? (
+          <button
+            type="button"
+            onClick={async () => {
+              setActionError(null);
+              if (!window.confirm(t('jobs.invoices.detailPage.voidConfirm'))) {
+                return;
+              }
+              try {
+                await voidMutation.mutateAsync(invoice.id);
+              } catch (err) {
+                const message =
+                  err instanceof Error ? err.message : t('jobs.invoices.detailPage.errorLoading');
+                setActionError(message);
+              }
+            }}
+            className="inline-flex items-center justify-center rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
+          >
+            {t('jobs.invoices.detailPage.void')}
+          </button>
+        ) : null}
       </section>
 
       {actionError ? (

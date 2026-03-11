@@ -139,49 +139,45 @@ const JobDetailPage = () => {
   const renderActions = () => {
     if (!job) return null;
 
+    const latestInvoice = invoices[0];
+
     // Draft: Can send to client
     if (job.status === 'draft') {
       return (
-        <>
-          <button
-            type="button"
-            onClick={handleSendInvite}
-            disabled={sendingInvite}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
-          >
-            {sendingInvite ? t('common.processing') : t('jobs.actions.send')}
-          </button>
-        </>
+        <button
+          type="button"
+          onClick={handleSendInvite}
+          disabled={sendingInvite}
+          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-50"
+        >
+          {sendingInvite ? t('common.processing') : t('jobs.actions.send')}
+        </button>
       );
     }
 
     // Sent: Can mark as approved by client
     if (job.status === 'sent') {
       return (
-        <>
-          <button
-            type="button"
-            onClick={() => performStatusChange('approved')}
-            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
-          >
-            {t('jobs.actions.approve')}
-          </button>
-        </>
+        <button
+          type="button"
+          onClick={() => performStatusChange('approved')}
+          className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+        >
+          {t('jobs.actions.approve')}
+        </button>
       );
     }
 
     // Approved: Can start work
     if (job.status === 'approved') {
       return (
-        <>
-          <button
-            type="button"
-            onClick={() => performStatusChange('in_progress')}
-            className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
-          >
-            {t('jobs.actions.start')}
-          </button>
-        </>
+        <button
+          type="button"
+          onClick={() => performStatusChange('in_progress')}
+          className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
+        >
+          {t('jobs.actions.start')}
+        </button>
       );
     }
 
@@ -207,13 +203,13 @@ const JobDetailPage = () => {
       );
     }
 
-    // Completed: Can invoice or archive
+    // Completed: Generate invoice or archive
     if (job.status === 'completed') {
       return (
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('invoiced')}
+            onClick={() => navigate(routePaths.createInvoice(job.id))}
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
           >
             {t('jobs.actions.invoice')}
@@ -229,37 +225,31 @@ const JobDetailPage = () => {
       );
     }
 
-    // Invoiced: Can mark as paid
-    if (job.status === 'invoiced') {
+    // Invoiced/Paid: View invoice, allow archive for paid
+    if ((job.status === 'invoiced' || job.status === 'paid') && latestInvoice) {
       return (
         <>
           <button
             type="button"
-            onClick={() => performStatusChange('paid')}
-            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+            onClick={() => navigate(routePaths.invoiceDetail(latestInvoice.id))}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
           >
-            {t('jobs.actions.paid')}
+            {t('jobs.invoices.detailPage.title')}
           </button>
+          {job.status === 'paid' ? (
+            <button
+              type="button"
+              onClick={() => performStatusChange('archived')}
+              className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
+            >
+              {t('jobs.actions.archive')}
+            </button>
+          ) : null}
         </>
       );
     }
 
-    // Paid: Can archive
-    if (job.status === 'paid') {
-      return (
-        <>
-          <button
-            type="button"
-            onClick={() => performStatusChange('archived')}
-            className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
-          >
-            {t('jobs.actions.archive')}
-          </button>
-        </>
-      );
-    }
-
-    // Archived: No actions available
+    // Archived or no matching action: no CTAs
     return null;
   };
 

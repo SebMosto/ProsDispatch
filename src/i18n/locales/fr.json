@@ -23,10 +23,22 @@
       "businessName": "Nom de l'entreprise",
       "email": "Courriel",
       "save": "Enregistrer",
-      "saving": "Enregistrement..."
+      "saving": "Enregistrement...",
+      "success": "Profil mis à jour avec succès.",
+      "error": "Échec de la mise à jour du profil."
     },
-    "success": "Profil mis à jour avec succès.",
-    "error": "Échec de la mise à jour du profil."
+    "stripe": {
+      "title": "Stripe Connect",
+      "subtitle": "Connectez votre compte bancaire pour recevoir les paiements de facture directement.",
+      "cta": "Connectez votre compte Stripe pour commencer à recevoir les paiements de vos factures.",
+      "connect": "Connecter votre banque",
+      "connected": "✅ Stripe est connecté pour les versements.",
+      "managePayouts": "Gérer les versements dans Stripe",
+      "incomplete": "La configuration Stripe est incomplète. Terminez l'intégration pour commencer à recevoir des versements.",
+      "retry": "Reprendre la configuration",
+      "refresh": "Actualiser l'état de la connexion",
+      "error": "Impossible de configurer Stripe Connect pour le moment."
+    }
   },
   "hero": {
     "title": "Répartition des entrepreneurs pensée pour les équipes mobiles",
@@ -510,5 +522,15 @@
     "property": "Propriété",
     "approveButton": "Approuver le travail",
     "declineInstructions": "Si vous devez apporter des modifications ou refuser, veuillez contacter l'entrepreneur directement."
+  },
+  "invoices": {
+    "public": {
+      "expired": "Ce lien de facture a expiré. Veuillez contacter votre entrepreneur.",
+      "alreadyPaid": "Cette facture a déjà été payée.",
+      "voided": "Cette facture a été annulée. Veuillez contacter votre entrepreneur.",
+      "payNow": "Payer maintenant",
+      "offline": "Connectez-vous à Internet pour payer cette facture.",
+      "thankYou": "Paiement reçu. Merci."
+    }
   }
 }

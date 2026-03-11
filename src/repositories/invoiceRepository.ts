@@ -10,12 +10,6 @@ export type InvoiceItemRecord = Database['public']['Tables']['invoice_items']['R
 export type InvoiceWithItems = InvoiceRecord & { invoice_items: InvoiceItemRecord[] };
 export type InvoicePaymentMethod = Database['public']['Enums']['invoice_payment_method'];
 
-export interface FinalizeInvoiceResult {
-  invoice: InvoiceRecord;
-  token: string;
-  pdfUrl: string;
-}
-
 export class InvoiceRepository extends BaseRepository {
   private buildInvoiceNumber() {
     const token = crypto.randomUUID().split('-')[0]?.toUpperCase();
@@ -104,6 +98,26 @@ export class InvoiceRepository extends BaseRepository {
     } catch {
       return { data: [] };
     }
+  }
+
+  /**
+   * List all invoices for the current contractor.
+   * Relying on RLS to scope results to auth.uid().
+   */
+  async listByContractor(): Promise<RepositoryResult<InvoiceRecord[]>> {
+    const { data, error } = await this.client
+      .from('invoices')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data: (data ?? []) as InvoiceRecord[] };
   }
 
   async listByJob(jobId: string): Promise<RepositoryResult<InvoiceWithItems[]>> {
@@ -223,58 +237,6 @@ export class InvoiceRepository extends BaseRepository {
     return this.fetchInvoiceWithItems(id);
   }
 
-  async finalizeAndSend(id: string): Promise<RepositoryResult<FinalizeInvoiceResult>> {
-    const token = crypto.randomUUID();
-    const pdfUrl = await this.generatePDF(id);
-
-    const { data, error } = await this.client
-      .from('invoices')
-      .update({
-        status: 'sent',
-        pdf_url: pdfUrl,
-      })
-      .eq('id', id)
-      .select('*')
-      .single();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError || !data) {
-      return { data: null, error: repositoryError ?? { message: 'Unknown error', reason: 'unknown' } };
-    }
-
-    const { error: tokenError } = await this.client.from('invoice_tokens').insert({
-      token,
-      invoice_id: id,
-    });
-
-    const repositoryTokenError = this.toRepositoryError(tokenError);
-
-    if (repositoryTokenError) {
-      return { data: null, error: repositoryTokenError };
-    }
-
-    this.sendEmail(data, token);
-
-    reportApiOnline();
-    return { data: { invoice: data, token, pdfUrl } };
-  }
-
-  async getInvoiceByToken(token: string): Promise<RepositoryResult<InvoiceWithItems>> {
-    const { data, error } = await this.client
-      .rpc('get_invoice_by_token' as never, { access_token: token } as never)
-      .single();
-
-    const repositoryError = this.toRepositoryError(error);
-
-    if (repositoryError) {
-      return { data: null, error: repositoryError };
-    }
-
-    reportApiOnline();
-    return { data: data as unknown as InvoiceWithItems };
-  }
-
   async markAsPaid(
     id: string,
     method: InvoicePaymentMethod,
@@ -300,18 +262,6 @@ export class InvoiceRepository extends BaseRepository {
 
     reportApiOnline();
     return { data };
-  }
-
-  private async generatePDF(invoiceId: string): Promise<string> {
-    return `https://example.com/invoices/${invoiceId}.pdf`;
-  }
-
-  private sendEmail(invoice: InvoiceRecord, token: string) {
-    console.info('Sending invoice email', {
-      invoice_id: invoice.id,
-      invoice_number: invoice.invoice_number,
-      token,
-    });
   }
 }
 
