@@ -1,7 +1,5 @@
-// Using Deno 2 compatible imports
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
-import { getErrorStatus } from "../_shared/errors.ts";
 import { validateReturnUrl } from "../_shared/security.ts";
 
 const corsHeaders = {
@@ -11,7 +9,6 @@ const corsHeaders = {
 
 type ProfileRow = {
   id: string;
-  email: string | null;
   stripe_customer_id: string | null;
 };
 
@@ -52,7 +49,6 @@ Deno.serve(async (req) => {
     });
     const serviceClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    // Authenticate user
     const {
       data: { user },
       error: authError,
@@ -65,81 +61,34 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Parse and validate returnUrl from client (used for safety only)
     const { returnUrl }: { returnUrl?: string | null } = await req.json().catch(() => ({ returnUrl: null }));
-    const defaultReturnUrl = `${SITE_URL}/dashboard`;
+    const defaultReturnUrl = `${SITE_URL}/settings/billing`;
     const safeReturnUrl = validateReturnUrl(returnUrl ?? defaultReturnUrl);
-    // We intentionally do not pass the raw client returnUrl to Stripe; this call
-    // exists to enforce the open-redirect mitigation pattern from sentinel.md.
-    void safeReturnUrl;
 
-    // Load contractor profile with service role to manage billing fields
     const { data: profile, error: profileError } = await serviceClient
       .from("profiles")
-      .select("id, email, stripe_customer_id")
+      .select("id, stripe_customer_id")
       .eq("id", user.id)
       .single<ProfileRow>();
 
     if (profileError) {
-      console.error("Error fetching profile for checkout session");
+      console.error("Error fetching profile for billing portal");
       return new Response(JSON.stringify({ error: "Unable to load profile" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    // Ensure we have or create a platform Stripe customer for SaaS billing
-    let stripeCustomerId = profile.stripe_customer_id;
-
-    if (!stripeCustomerId) {
-      const customer = await stripe.customers.create({
-        email: profile.email ?? user.email ?? undefined,
-        metadata: {
-          contractor_id: user.id,
-        },
-      });
-
-      stripeCustomerId = customer.id;
-
-      const { error: updateError } = await serviceClient
-        .from("profiles")
-        .update({ stripe_customer_id: stripeCustomerId })
-        .eq("id", user.id);
-
-      if (updateError) {
-        console.error("Failed to persist Stripe customer ID on profile");
-        return new Response(JSON.stringify({ error: "Unable to start subscription" }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500,
-        });
-      }
-    }
-
-    // Resolve Price via lookup key (no hardcoded IDs)
-    const prices = await stripe.prices.list({
-      lookup_keys: ["prosdispatch_monthly"],
-      active: true,
-    });
-
-    if (!prices.data.length) {
-      return new Response(JSON.stringify({ error: "No active price found for prosdispatch_monthly" }), {
+    if (!profile.stripe_customer_id) {
+      return new Response(JSON.stringify({ error: "No subscription found for this account" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        status: 400,
       });
     }
 
-    const price = prices.data.sort((a, b) => b.created - a.created)[0];
-
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      customer: stripeCustomerId,
-      line_items: [{ price: price.id, quantity: 1 }],
-      subscription_data: {
-        trial_period_days: 14,
-        metadata: { contractor_id: user.id },
-      },
-      success_url: `${SITE_URL}/dashboard?subscribed=true`,
-      cancel_url: `${SITE_URL}/subscribe?cancelled=true`,
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: safeReturnUrl,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
@@ -147,27 +96,12 @@ Deno.serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Error in create-checkout-session:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("create-billing-portal-session error", { message });
 
-    const statusCode = getErrorStatus(error);
-
-    let publicMessage = "Internal Server Error";
-
-    if (statusCode === 400) {
-      publicMessage = "Bad Request";
-
-      if (error instanceof Error) {
-        if (error.message.startsWith("Missing ") || error.message.startsWith("Invalid ")) {
-          publicMessage = error.message;
-        }
-      }
-    } else if (statusCode === 401) {
-      publicMessage = "Unauthorized";
-    }
-
-    return new Response(JSON.stringify({ error: publicMessage }), {
+    return new Response(JSON.stringify({ error: "Failed to create billing portal session" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: statusCode,
+      status: 500,
     });
   }
 });
