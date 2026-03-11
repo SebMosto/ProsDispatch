@@ -24,7 +24,7 @@ describe('useSubscription', () => {
     vi.clearAllMocks();
   });
 
-  it('should call create-checkout-session with priceId and returnUrl', async () => {
+  it('should call create-checkout-session with returnUrl', async () => {
     const mockInvoke = supabase.functions.invoke as unknown as Mock;
     mockInvoke.mockResolvedValue({ data: { url: 'https://checkout.stripe.com/test' }, error: null });
 
@@ -48,12 +48,11 @@ describe('useSubscription', () => {
     const { result } = renderHook(() => useSubscription());
 
     await act(async () => {
-      await result.current.checkout('price_123');
+      await result.current.checkout();
     });
 
     expect(mockInvoke).toHaveBeenCalledWith('create-checkout-session', {
       body: {
-        priceId: 'price_123',
         returnUrl: mockOrigin,
       },
     });
@@ -74,7 +73,7 @@ describe('useSubscription', () => {
      const { result } = renderHook(() => useSubscription());
 
      await act(async () => {
-       await result.current.checkout('price_123');
+       await result.current.checkout();
      });
 
      expect(result.current.error).toBe('Supabase error');
