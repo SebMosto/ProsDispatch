@@ -13,9 +13,27 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   session: Session | null;
   refreshProfile: () => Promise<void>;
+  subscriptionStatus: string | null;
+  isSubscribed: boolean;
+  trialDaysRemaining: number;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export const calculateTrialDaysRemaining = (endDate: string | null): number => {
+  if (!endDate) {
+    return 0;
+  }
+
+  const end = new Date(endDate).getTime();
+  if (Number.isNaN(end)) {
+    return 0;
+  }
+
+  const diff = end - Date.now();
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  return Math.max(0, days);
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -85,6 +103,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await fetchProfile(user);
         }
       },
+      subscriptionStatus: profile?.subscription_status ?? null,
+      isSubscribed: ['active', 'trialing'].includes(profile?.subscription_status ?? ''),
+      trialDaysRemaining: calculateTrialDaysRemaining(profile?.subscription_end_date ?? null),
     }),
     [loading, profile, session, user, fetchProfile],
   );
@@ -101,9 +122,11 @@ export const useAuth = () => {
 };
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, profile, isSubscribed } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
+
+  const ALLOWED_WITHOUT_SUBSCRIPTION = ['/subscribe', '/settings/billing', '/settings/stripe'];
 
   if (loading) {
     return (
@@ -115,6 +138,15 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  const isOnAllowedRoute = ALLOWED_WITHOUT_SUBSCRIPTION.some((route) =>
+    location.pathname.startsWith(route),
+  );
+
+  if (!isSubscribed && !isOnAllowedRoute) {
+    // Gate access to subscription-only areas of the contractor app
+    return <Navigate to="/subscribe" replace />;
   }
 
   return <>{children}</>;
