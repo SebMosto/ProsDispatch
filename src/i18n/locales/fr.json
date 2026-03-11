@@ -502,9 +502,49 @@
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
   },
   "errors": {
-    "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
-    "unexpected": "Une erreur inattendue est survenue."
+  "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
+  "unexpected": "Une erreur inattendue est survenue."
   },
+  "subscribe": {
+    "title": "Commencez votre essai gratuit de 14 jours",
+    "subtitle": "Ensuite 20 $/mois. Annulez à tout moment.",
+    "feature1": "Gérez tous vos travaux en un seul endroit",
+    "feature2": "Envoyez des factures professionnelles et soyez payé rapidement",
+    "feature3": "Gardez vos dossiers clients organisés",
+    "cta": "Commencer l'essai gratuit",
+    "pastDue": {
+      "message": "Votre paiement a échoué. Mettez à jour votre mode de paiement pour conserver l'accès.",
+      "cta": "Mettre à jour le mode de paiement"
+    },
+    "trialing": {
+      "message": "Vous êtes en essai gratuit — {{days}} jours restants",
+      "cta": "Activer l'abonnement",
+      "support": "Des questions? Contactez le soutien."
+    }
+  },
+  "billing": {
+    "title": "Facturation",
+    "status": {
+      "trialing": "Essai",
+      "active": "Actif",
+      "past_due": "En retard",
+      "canceled": "Annulé"
+    },
+    "trialEnds": "L'essai se termine le {{date}}",
+    "nextBilling": "Prochaine facturation le {{date}}",
+    "manage": "Gérer l'abonnement",
+    "updatePayment": "Mettre à jour le paiement"
+  },
+  "dashboard": {
+    "trial": {
+      "banner": "Il vous reste {{days}} jours dans votre essai gratuit. Activez votre abonnement pour conserver l'accès.",
+      "cta": "Activer maintenant",
+      "urgent": "Votre essai se termine aujourd'hui. Activez votre abonnement pour conserver l'accès."
+    },
+    "subscribed": {
+      "toast": "Tout est prêt ! Bienvenue sur ProsDispatch."
+    }
+  }
   "common": {
     "notScheduled": "Non planifié",
     "notAvailable": "Non disponible",

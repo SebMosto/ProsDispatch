@@ -502,9 +502,49 @@
     "oneLineItemRequired": "At least one line item is required"
   },
   "errors": {
-    "checkoutNoUrl": "Failed to start checkout: No URL returned.",
-    "unexpected": "An unexpected error occurred."
+  "checkoutNoUrl": "Failed to start checkout: No URL returned.",
+  "unexpected": "An unexpected error occurred."
   },
+  "subscribe": {
+    "title": "Start your free 14-day trial",
+    "subtitle": "Then $20/month. Cancel anytime.",
+    "feature1": "Manage all your jobs in one place",
+    "feature2": "Send professional invoices and get paid fast",
+    "feature3": "Keep your client records organized",
+    "cta": "Start Free Trial",
+    "pastDue": {
+      "message": "Your payment failed. Update your payment method to keep access.",
+      "cta": "Update payment method"
+    },
+    "trialing": {
+      "message": "You're on a free trial — {{days}} days remaining",
+      "cta": "Activate subscription",
+      "support": "Questions? Contact support."
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "status": {
+      "trialing": "Trial",
+      "active": "Active",
+      "past_due": "Past Due",
+      "canceled": "Cancelled"
+    },
+    "trialEnds": "Trial ends {{date}}",
+    "nextBilling": "Next billing {{date}}",
+    "manage": "Manage subscription",
+    "updatePayment": "Update payment"
+  },
+  "dashboard": {
+    "trial": {
+      "banner": "You have {{days}} days left in your free trial. Activate your subscription to keep access.",
+      "cta": "Activate now",
+      "urgent": "Your trial ends today. Activate your subscription to keep access."
+    },
+    "subscribed": {
+      "toast": "You're all set! Welcome to ProsDispatch."
+    }
+  }
   "common": {
     "notScheduled": "Not scheduled",
     "notAvailable": "Not available",

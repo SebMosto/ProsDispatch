@@ -1,12 +1,34 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
-import { useSubscription } from '../hooks/useSubscription'; // <--- IMPORT THIS
+import { useLocation, useNavigate } from '../lib/router';
 
 const DashboardPage = () => {
   const { t } = useTranslation();
-  const { user, profile, signOut } = useAuth();
-  const { checkout, isLoading, error } = useSubscription(); // <--- USE HOOK
-  const TEST_PRICE_ID = "price_1Sq0myL7ioFFaVuvoWjd7pgP";
+  const { user, profile, signOut, subscriptionStatus, trialDaysRemaining } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showSubscribedToast, setShowSubscribedToast] = useState(false);
+
+  const showTrialBanner = useMemo(() => {
+    if (subscriptionStatus !== 'trialing') return false;
+    if (trialDaysRemaining <= 0) return false;
+    if (sessionStorage.getItem('pd_trial_banner_dismissed') === '1') return false;
+    return true;
+  }, [subscriptionStatus, trialDaysRemaining]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('subscribed') === 'true') {
+      setShowSubscribedToast(true);
+      params.delete('subscribed');
+      navigate({ pathname: location.pathname, search: params.toString() ? `?${params.toString()}` : '' }, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
+
+  const dismissTrialBanner = () => {
+    sessionStorage.setItem('pd_trial_banner_dismissed', '1');
+  };
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
@@ -16,26 +38,40 @@ const DashboardPage = () => {
         <p className="text-sm text-slate-600">{t('auth.dashboard.subtitle')}</p>
       </header>
 
-      {/* --- TEMPORARY SUBSCRIPTION TEST SECTION --- */}
-      <section className="rounded-lg border border-blue-200 bg-blue-50 p-4 shadow-sm">
-        <h2 className="font-semibold text-blue-900">{t('auth.dashboard.subscriptionTest')}</h2>
-        <p className="mb-3 text-sm text-blue-700">{t('auth.dashboard.testConnection')}</p>
+      {showSubscribedToast && (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          {t('dashboard.subscribed.toast')}
+        </div>
+      )}
 
-        {error && (
-          <div className="mb-3 rounded bg-red-100 p-2 text-sm text-red-700">
-            {error}
+      {showTrialBanner && (
+        <section className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p>
+                {trialDaysRemaining === 1
+                  ? t('dashboard.trial.urgent')
+                  : t('dashboard.trial.banner', { days: trialDaysRemaining })}
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate('/subscribe')}
+                className="mt-2 inline-flex items-center rounded-md bg-slate-900 px-3 py-1 text-xs font-semibold text-white shadow-sm hover:bg-slate-800"
+              >
+                {t('dashboard.trial.cta')}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={dismissTrialBanner}
+              aria-label="Dismiss"
+              className="text-xs text-amber-700 hover:text-amber-900"
+            >
+              ×
+            </button>
           </div>
-        )}
-
-        <button
-          onClick={() => checkout(TEST_PRICE_ID)}
-          disabled={isLoading}
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isLoading ? t('auth.dashboard.processing') : t('auth.dashboard.testUpgrade')}
-        </button>
-      </section>
-      {/* ------------------------------------------- */}
+        </section>
+      )}
 
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
