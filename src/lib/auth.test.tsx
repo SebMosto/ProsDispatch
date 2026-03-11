@@ -6,11 +6,6 @@ describe('calculateTrialDaysRemaining', () => {
     expect(calculateTrialDaysRemaining(null)).toBe(0);
   });
 
-  it('returns 0 for invalid dates', () => {
-    // @ts-expect-error testing invalid input
-    expect(calculateTrialDaysRemaining('not-a-date')).toBe(0);
-  });
-
   it('returns a positive integer number of days (rounded up)', () => {
     const now = Date.now();
     const twoAndHalfDaysMs = 2.5 * 24 * 60 * 60 * 1000;

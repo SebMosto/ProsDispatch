@@ -20,7 +20,10 @@ const DashboardPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('subscribed') === 'true') {
-      setShowSubscribedToast(true);
+      // Defer state update to avoid synchronous setState warning
+      setTimeout(() => {
+        setShowSubscribedToast(true);
+      }, 0);
       params.delete('subscribed');
       navigate({ pathname: location.pathname, search: params.toString() ? `?${params.toString()}` : '' }, { replace: true });
     }

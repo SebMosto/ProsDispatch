@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth';
 
-type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | string | null;
-
 const SubscribePage = () => {
   const { t } = useTranslation();
   const { subscriptionStatus, trialDaysRemaining } = useAuth();

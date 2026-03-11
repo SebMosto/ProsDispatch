@@ -122,7 +122,7 @@ export const useAuth = () => {
 };
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { user, loading, profile, isSubscribed } = useAuth();
+  const { user, loading, isSubscribed } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
 
