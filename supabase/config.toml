@@ -384,10 +384,19 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [functions.stripe-webhook]
 verify_jwt = false
 
+[functions.stripe-webhook-handler]
+verify_jwt = false
+
 [functions.create-checkout-session]
 verify_jwt = true
 
 [functions.create-portal-session]
+verify_jwt = true
+
+[functions.create-billing-portal-session]
+verify_jwt = true
+
+[functions.create-connect-onboarding]
 verify_jwt = true
 
 [functions.get-job-by-token]
@@ -397,4 +406,16 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-job-invite]
+verify_jwt = true
+
+[functions.create-payment-intent]
+verify_jwt = false
+
+[functions.generate-invoice-pdf]
+verify_jwt = false
+
+[functions.finalize-and-send-invoice]
+verify_jwt = true
+
+[functions.void-invoice]
 verify_jwt = true
