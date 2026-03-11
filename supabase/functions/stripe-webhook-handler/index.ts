@@ -20,6 +20,21 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    async function updateProfileByCustomerId(
+      customerId: string,
+      updates: Partial<{ subscription_status: string; subscription_end_date: string }>,
+    ) {
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("stripe_customer_id", customerId);
+
+      if (error) {
+        console.error("Profile update failed:", error.message);
+        // No PII in logs — do not log customerId or email
+      }
+    }
+
     const signature = req.headers.get("stripe-signature");
     if (!signature) {
       return new Response("No signature header", { status: 400 });
@@ -120,6 +135,68 @@ serve(async (req) => {
             stripe_connect_onboarded: onboardingComplete,
           })
           .eq("stripe_connect_id", accountId);
+        break;
+      }
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.mode !== "subscription") {
+          break;
+        }
+        const customerId = session.customer as string | null;
+        const subscriptionId = session.subscription as string | null;
+
+        if (!customerId || !subscriptionId) {
+          break;
+        }
+
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+        await updateProfileByCustomerId(customerId, {
+          subscription_status: subscription.status,
+          subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+        break;
+      }
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId = subscription.customer as string | null;
+
+        if (!customerId) {
+          break;
+        }
+
+        await updateProfileByCustomerId(customerId, {
+          subscription_status: subscription.status,
+          subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+        break;
+      }
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId = subscription.customer as string | null;
+
+        if (!customerId) {
+          break;
+        }
+
+        await updateProfileByCustomerId(customerId, {
+          subscription_status: "canceled",
+          subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+        break;
+      }
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const customerId = invoice.customer as string | null;
+
+        if (!customerId) {
+          break;
+        }
+
+        await updateProfileByCustomerId(customerId, {
+          subscription_status: "past_due",
+        });
         break;
       }
       default:
