@@ -5,7 +5,7 @@ This directory contains Supabase Edge Functions for handling Stripe integration.
 ## Functions
 
 ### 1. stripe-webhook-handler
-Handles Stripe webhook events to sync subscription status, invoice payments, and Stripe Connect account updates with Supabase.
+Handles Stripe webhook events to sync subscription status with Supabase.
 
 **Events handled:**
 - `payment_intent.succeeded` - Marks invoice as paid, expires token, transitions job to paid
