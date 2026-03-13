@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import { useLocation, useNavigate } from '../lib/router';
+import JobList from '../components/jobs/JobList';
+import type { JobStatus } from '../schemas/job';
 
 const DashboardPage = () => {
   const { t } = useTranslation();
@@ -9,6 +11,7 @@ const DashboardPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showSubscribedToast, setShowSubscribedToast] = useState(false);
+  const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
 
   const showTrialBanner = useMemo(() => {
     if (subscriptionStatus !== 'trialing') return false;
@@ -97,7 +100,40 @@ const DashboardPage = () => {
         </dl>
       </section>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-4">
+        <div className="flex border-b border-slate-200">
+          <button
+            type="button"
+            className={`border-b-2 px-4 py-2 text-sm font-medium ${
+              activeTab === 'active'
+                ? 'border-slate-900 text-slate-900'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+            onClick={() => setActiveTab('active')}
+          >
+            {t('dashboard.tabs.active')}
+          </button>
+          <button
+            type="button"
+            className={`border-b-2 px-4 py-2 text-sm font-medium ${
+              activeTab === 'history'
+                ? 'border-slate-900 text-slate-900'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+            onClick={() => setActiveTab('history')}
+          >
+            {t('dashboard.tabs.history')}
+          </button>
+        </div>
+
+        {activeTab === 'active' ? (
+          <JobList key="active" params={{ status: ['sent', 'approved', 'in_progress', 'completed', 'invoiced'] as JobStatus[] }} />
+        ) : (
+          <JobList key="history" params={{ status: ['paid', 'archived'] as JobStatus[] }} />
+        )}
+      </section>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-8">
         <p className="text-sm text-slate-600">{t('auth.dashboard.sessionNote')}</p>
         <button
           type="button"
