@@ -8,10 +8,12 @@ This directory contains Supabase Edge Functions for handling Stripe integration.
 Handles Stripe webhook events to sync subscription status with Supabase.
 
 **Events handled:**
+- `payment_intent.succeeded` - Marks invoice as paid, expires token, transitions job to paid
 - `checkout.session.completed` - Links Stripe customer to user profile
 - `customer.subscription.created` - Creates new subscription record
 - `customer.subscription.updated` - Updates subscription status
 - `customer.subscription.deleted` - Marks subscription as cancelled
+- `account.updated` - Updates `stripe_connect_onboarded` on contractor profile
 
 **Environment Variables Required:**
 - `STRIPE_SECRET_KEY` - Your Stripe secret key
@@ -116,10 +118,12 @@ The `deno.json` file in this directory configures:
 2. Click **Add endpoint**
 3. Enter your function URL: `https://your-project.supabase.co/functions/v1/stripe-webhook-handler`
 4. Select events to listen for:
+   - `payment_intent.succeeded`
    - `checkout.session.completed`
    - `customer.subscription.created`
    - `customer.subscription.updated`
    - `customer.subscription.deleted`
+   - `account.updated`
 5. Copy the signing secret and set it as `STRIPE_WEBHOOK_SECRET`
 
 ## Database Schema
@@ -131,6 +135,8 @@ These functions expect the following tables:
 - `stripe_customer_id` (text, nullable)
 - `subscription_status` (text, nullable)
 - `subscription_end_date` (timestamp, nullable)
+- `stripe_connect_id` (text, nullable)
+- `stripe_connect_onboarded` (boolean, nullable)
 
 ### stripe_events
 - `id` (text, primary key) - Stripe event ID

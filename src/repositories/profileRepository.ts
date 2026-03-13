@@ -11,11 +11,33 @@ export interface ProfileFormData {
   business_name: string | null;
 }
 
+export interface ProfileStripeConnectData {
+  stripe_connect_id: string | null;
+  stripe_connect_onboarded: boolean;
+}
+
 export class ProfileRepository extends BaseRepository {
   async get(id: string): Promise<RepositoryResult<ProfileFormData>> {
     const { data, error } = await this.client
       .from('profiles')
       .select('full_name, business_name')
+      .eq('id', id)
+      .single();
+
+    const repositoryError = this.toRepositoryError(error);
+
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data };
+  }
+
+  async getStripeConnect(id: string): Promise<RepositoryResult<ProfileStripeConnectData>> {
+    const { data, error } = await this.client
+      .from('profiles')
+      .select('stripe_connect_id, stripe_connect_onboarded')
       .eq('id', id)
       .single();
 
