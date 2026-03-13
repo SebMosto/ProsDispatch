@@ -1,3 +1,8 @@
+---
+description: 
+alwaysApply: true
+---
+
 # CLAUDE.md — ProsDispatch AI Assistant Guide
 
 This file provides context for AI assistants working in this repository. Read it before making any changes.
