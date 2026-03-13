@@ -572,5 +572,13 @@
       "offline": "Connectez-vous à Internet pour payer cette facture.",
       "thankYou": "Paiement reçu. Merci."
     }
+  },
+  "admin": {
+    "title": "Portail d'administration",
+    "totalUsers": "Nombre total d'utilisateurs",
+    "totalJobs": "Nombre total d'emplois",
+    "activeJobs": "Emplois actifs",
+    "error": "Échec du chargement des métriques d'administration",
+    "unauthorized": "Accès non autorisé"
   }
 }

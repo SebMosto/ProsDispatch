@@ -30,6 +30,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
@@ -231,6 +232,14 @@ const App = () => (
             />
             <Route path={routePatterns.jobApproval} element={<JobApprovalPage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboardPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
