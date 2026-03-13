@@ -4,7 +4,7 @@ This directory contains Supabase Edge Functions for handling Stripe integration.
 
 ## Functions
 
-### 1. stripe-webhook
+### 1. stripe-webhook-handler
 Handles Stripe webhook events to sync subscription status with Supabase.
 
 **Events handled:**
@@ -81,10 +81,10 @@ Creates a Stripe Customer Portal session for managing subscriptions.
 supabase start
 
 # Serve a specific function
-supabase functions serve stripe-webhook --env-file .env.local
+supabase functions serve stripe-webhook-handler --env-file .env.local
 
 # Invoke a function
-curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-webhook' \
+curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-webhook-handler' \
   --header 'Authorization: Bearer YOUR_ANON_KEY' \
   --header 'Content-Type: application/json' \
   --data '{"key":"value"}'
@@ -96,7 +96,7 @@ curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-we
 supabase functions deploy
 
 # Deploy a specific function
-supabase functions deploy stripe-webhook
+supabase functions deploy stripe-webhook-handler
 
 # Set environment variables (secrets)
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...
@@ -114,7 +114,7 @@ The `deno.json` file in this directory configures:
 ### Stripe Webhook Setup
 1. In Stripe Dashboard, go to **Developers** > **Webhooks**
 2. Click **Add endpoint**
-3. Enter your function URL: `https://your-project.supabase.co/functions/v1/stripe-webhook`
+3. Enter your function URL: `https://your-project.supabase.co/functions/v1/stripe-webhook-handler`
 4. Select events to listen for:
    - `checkout.session.completed`
    - `customer.subscription.created`
