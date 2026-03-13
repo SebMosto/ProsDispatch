@@ -1,9 +1,14 @@
 import JobCard from './JobCard';
 import { useJobs } from '../../hooks/useJobs';
 import { useTranslation } from 'react-i18next';
+import type { JobListParams } from '../../repositories/jobRepository';
 
-const JobList = () => {
-  const { jobs, loading, error, refetch } = useJobs();
+interface JobListProps {
+  params?: JobListParams;
+}
+
+const JobList = ({ params }: JobListProps = {}) => {
+  const { jobs, loading, error, refetch } = useJobs(params);
   const { t } = useTranslation();
 
   if (loading) {

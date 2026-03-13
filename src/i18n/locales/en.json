@@ -543,6 +543,10 @@
     },
     "subscribed": {
       "toast": "You're all set! Welcome to ProsDispatch."
+    },
+    "tabs": {
+      "active": "Active",
+      "history": "History"
     }
   },
   "common": {
