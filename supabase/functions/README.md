@@ -4,14 +4,16 @@ This directory contains Supabase Edge Functions for handling Stripe integration.
 
 ## Functions
 
-### 1. stripe-webhook
-Handles Stripe webhook events to sync subscription status with Supabase.
+### 1. stripe-webhook-handler
+Handles Stripe webhook events to sync subscription status, invoice payments, and Stripe Connect account updates with Supabase.
 
 **Events handled:**
+- `payment_intent.succeeded` - Marks invoice as paid, expires token, transitions job to paid
 - `checkout.session.completed` - Links Stripe customer to user profile
 - `customer.subscription.created` - Creates new subscription record
 - `customer.subscription.updated` - Updates subscription status
 - `customer.subscription.deleted` - Marks subscription as cancelled
+- `account.updated` - Updates `stripe_connect_onboarded` on contractor profile
 
 **Environment Variables Required:**
 - `STRIPE_SECRET_KEY` - Your Stripe secret key
@@ -81,10 +83,10 @@ Creates a Stripe Customer Portal session for managing subscriptions.
 supabase start
 
 # Serve a specific function
-supabase functions serve stripe-webhook --env-file .env.local
+supabase functions serve stripe-webhook-handler --env-file .env.local
 
 # Invoke a function
-curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-webhook' \
+curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-webhook-handler' \
   --header 'Authorization: Bearer YOUR_ANON_KEY' \
   --header 'Content-Type: application/json' \
   --data '{"key":"value"}'
@@ -96,7 +98,7 @@ curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-we
 supabase functions deploy
 
 # Deploy a specific function
-supabase functions deploy stripe-webhook
+supabase functions deploy stripe-webhook-handler
 
 # Set environment variables (secrets)
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...
@@ -114,12 +116,14 @@ The `deno.json` file in this directory configures:
 ### Stripe Webhook Setup
 1. In Stripe Dashboard, go to **Developers** > **Webhooks**
 2. Click **Add endpoint**
-3. Enter your function URL: `https://your-project.supabase.co/functions/v1/stripe-webhook`
+3. Enter your function URL: `https://your-project.supabase.co/functions/v1/stripe-webhook-handler`
 4. Select events to listen for:
+   - `payment_intent.succeeded`
    - `checkout.session.completed`
    - `customer.subscription.created`
    - `customer.subscription.updated`
    - `customer.subscription.deleted`
+   - `account.updated`
 5. Copy the signing secret and set it as `STRIPE_WEBHOOK_SECRET`
 
 ## Database Schema
@@ -131,6 +135,8 @@ These functions expect the following tables:
 - `stripe_customer_id` (text, nullable)
 - `subscription_status` (text, nullable)
 - `subscription_end_date` (timestamp, nullable)
+- `stripe_connect_id` (text, nullable)
+- `stripe_connect_onboarded` (boolean, nullable)
 
 ### stripe_events
 - `id` (text, primary key) - Stripe event ID
