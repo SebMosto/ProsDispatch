@@ -3,19 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { PageLoader } from '../components/ui/PageLoader';
-import { profileRepository } from '../repositories/profileRepository';
-
-type StripeProfileFields = {
-  stripe_connect_id?: string | null;
-  stripe_connect_onboarded?: boolean | null;
-};
+import { profileRepository, type ProfileStripeConnectData } from '../repositories/profileRepository';
 
 const StripeConnectPage = () => {
   const { t } = useTranslation();
   const { user, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const [profileState, setProfileState] = useState<StripeProfileFields | null>(null);
+  const [profileState, setProfileState] = useState<ProfileStripeConnectData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,15 +20,14 @@ const StripeConnectPage = () => {
         return;
       }
 
-      const { data, error: repoError } = await profileRepository.get(user.id as string);
+      const { data, error: repoError } = await profileRepository.getStripeConnect(user.id as string);
       if (repoError) {
         console.error('Error loading profile for Stripe Connect', repoError);
         setError(t('settings.stripe.error'));
       } else if (data) {
-        const fullProfile = data as StripeProfileFields;
         setProfileState({
-          stripe_connect_id: fullProfile.stripe_connect_id ?? null,
-          stripe_connect_onboarded: fullProfile.stripe_connect_onboarded ?? false,
+          stripe_connect_id: data.stripe_connect_id,
+          stripe_connect_onboarded: data.stripe_connect_onboarded,
         });
       }
       setLoading(false);
@@ -70,15 +64,14 @@ const StripeConnectPage = () => {
   const handleRefreshStatus = async () => {
     if (!user) return;
     setLoading(true);
-    const { data, error: repoError } = await profileRepository.get(user.id as string);
+    const { data, error: repoError } = await profileRepository.getStripeConnect(user.id as string);
     if (repoError) {
       console.error('Error refreshing Stripe profile', repoError);
       setError(t('settings.stripe.error'));
     } else if (data) {
-      const fullProfile = data as StripeProfileFields;
       setProfileState({
-        stripe_connect_id: fullProfile.stripe_connect_id ?? null,
-        stripe_connect_onboarded: fullProfile.stripe_connect_onboarded ?? false,
+        stripe_connect_id: data.stripe_connect_id,
+        stripe_connect_onboarded: data.stripe_connect_onboarded,
       });
       await refreshProfile();
     }

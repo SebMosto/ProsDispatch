@@ -11,9 +11,8 @@ vi.mock('../lib/auth', () => ({
 
 vi.mock('../repositories/profileRepository', () => ({
   profileRepository: {
-    get: vi.fn().mockResolvedValue({
+    getStripeConnect: vi.fn().mockResolvedValue({
       data: {
-        id: 'user-1',
         stripe_connect_id: null,
         stripe_connect_onboarded: false,
       },
