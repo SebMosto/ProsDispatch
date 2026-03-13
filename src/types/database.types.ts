@@ -72,6 +72,10 @@ export type Database = {
           stripe_customer_id: string | null
           subscription_status: string
           subscription_end_date: string | null
+          tax_gst_rate: number
+          tax_qst_rate: number
+          stripe_connect_id: string | null
+          stripe_connect_onboarded: boolean
         }
         Insert: {
           business_name?: string | null
@@ -84,6 +88,10 @@ export type Database = {
           stripe_customer_id?: string | null
           subscription_status?: string
           subscription_end_date?: string | null
+          tax_gst_rate?: number
+          tax_qst_rate?: number
+          stripe_connect_id?: string | null
+          stripe_connect_onboarded?: boolean
         }
         Update: {
           business_name?: string | null
@@ -96,6 +104,10 @@ export type Database = {
           stripe_customer_id?: string | null
           subscription_status?: string
           subscription_end_date?: string | null
+          tax_gst_rate?: number
+          tax_qst_rate?: number
+          stripe_connect_id?: string | null
+          stripe_connect_onboarded?: boolean
         }
         Relationships: []
       }
@@ -396,6 +408,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_job_via_token: {
+        Args: {
+          p_job_id: string
+        }
+        Returns: boolean
+      }
       create_job: {
         Args: {
           client_id: string
@@ -403,6 +421,12 @@ export type Database = {
           title: string
           description?: string | null
           service_date?: string | null
+        }
+        Returns: Json
+      }
+      get_invoice_by_token: {
+        Args: {
+          p_token: string
         }
         Returns: Json
       }

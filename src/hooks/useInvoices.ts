@@ -52,7 +52,7 @@ export const useInvoiceByToken = (token?: string) => {
     if (!token) {
       throw { message: t('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const { data, error } = await supabase.rpc('get_invoice_by_token' as never, { p_token: token } as never);
+    const { data, error } = await supabase.rpc('get_invoice_by_token', { p_token: token });
 
     if (error) {
       // Surface a generic validation-style error for invalid/expired tokens
