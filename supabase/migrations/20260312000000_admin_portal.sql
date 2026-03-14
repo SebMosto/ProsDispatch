@@ -32,3 +32,29 @@ $$;
 
 -- Grant execution to authenticated users (the function itself checks for 'admin' role)
 GRANT EXECUTE ON FUNCTION public.get_admin_metrics() TO authenticated;
+
+-- Security: Prevent users from self-assigning an elevated role.
+-- The "Users can update own profile" policy created in 20260117000000_monetization.sql only
+-- protects billing fields, leaving 'role' freely writable. Any authenticated user could set
+-- role = 'admin' and then pass the check above to call this SECURITY DEFINER function.
+--
+-- We extend the policy with ALTER POLICY (no gap, no DROP window) to also make 'role'
+-- immutable for regular users. Only the service_role (used by privileged Edge Functions)
+-- is permitted to change it via the separate "Service role can update billing fields" policy.
+--
+-- NOTE: The WITH CHECK clause only has access to new row values, not OLD; subqueries are
+-- the standard way to read the current persisted value for comparison in this context.
+ALTER POLICY "Users can update own profile" ON public.profiles
+  WITH CHECK (
+    -- Billing fields must not change (carried over from monetization migration).
+    ROW(stripe_customer_id, subscription_status, subscription_end_date) IS NOT DISTINCT FROM (
+      SELECT ROW(stripe_customer_id, subscription_status, subscription_end_date)
+      FROM public.profiles
+      WHERE id = auth.uid()
+    )
+    AND
+    -- Role must not change; only service_role / privileged functions may alter it.
+    role IS NOT DISTINCT FROM (
+      SELECT role FROM public.profiles WHERE id = auth.uid()
+    )
+  );
