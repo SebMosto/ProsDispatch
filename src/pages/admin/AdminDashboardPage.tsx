@@ -19,7 +19,13 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        if (!profile || profile.role !== 'admin') {
+        if (!profile) {
+          setError(t('admin.error'));
+          setLoading(false);
+          return;
+        }
+
+        if (profile.role !== 'admin') {
           setError(t('admin.unauthorized'));
           setLoading(false);
           return;
