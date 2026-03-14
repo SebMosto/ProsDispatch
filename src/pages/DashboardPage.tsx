@@ -2,9 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import { useLocation, useNavigate } from '../lib/router';
+import JobList from '../components/jobs/JobList';
+import type { JobStatus } from '../schemas/job';
+
+const ACTIVE_STATUSES: JobStatus[] = ['sent', 'approved', 'in_progress', 'completed', 'invoiced'];
+const HISTORY_STATUSES: JobStatus[] = ['draft', 'paid', 'archived'];
 
 const DashboardPage = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const { user, profile, signOut, subscriptionStatus, trialDaysRemaining } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -97,7 +103,37 @@ const DashboardPage = () => {
         </dl>
       </section>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-4">
+        <div className="border-b border-slate-200">
+          <nav aria-label="Tabs" className="-mb-px flex space-x-8">
+            <button
+              type="button"
+              onClick={() => setActiveTab('active')}
+              className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium ${
+                activeTab === 'active'
+                  ? 'border-indigo-500 text-indigo-600'
+                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+              }`}
+            >
+              {t('jobs.tabs.active')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('history')}
+              className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium ${
+                activeTab === 'history'
+                  ? 'border-indigo-500 text-indigo-600'
+                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+              }`}
+            >
+              {t('jobs.tabs.history')}
+            </button>
+          </nav>
+        </div>
+        <JobList status={activeTab === 'active' ? ACTIVE_STATUSES : HISTORY_STATUSES} />
+      </section>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-8">
         <p className="text-sm text-slate-600">{t('auth.dashboard.sessionNote')}</p>
         <button
           type="button"

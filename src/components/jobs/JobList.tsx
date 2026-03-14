@@ -1,9 +1,16 @@
 import JobCard from './JobCard';
 import { useJobs } from '../../hooks/useJobs';
 import { useTranslation } from 'react-i18next';
+import type { JobStatus } from '../../schemas/job';
+import { useMemo } from 'react';
 
-const JobList = () => {
-  const { jobs, loading, error, refetch } = useJobs();
+interface JobListProps {
+  status?: JobStatus[];
+}
+
+const JobList = ({ status }: JobListProps = {}) => {
+  const params = useMemo(() => (status ? { status } : undefined), [status]);
+  const { jobs, loading, error, refetch } = useJobs(params);
   const { t } = useTranslation();
 
   if (loading) {
