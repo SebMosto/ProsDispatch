@@ -126,7 +126,7 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const { t } = useTranslation();
 
-  const ALLOWED_WITHOUT_SUBSCRIPTION = ['/subscribe', '/settings/billing', '/settings/stripe'];
+  const ALLOWED_WITHOUT_SUBSCRIPTION = ['/subscribe', '/settings/billing', '/settings/stripe', '/admin'];
 
   if (loading) {
     return (
