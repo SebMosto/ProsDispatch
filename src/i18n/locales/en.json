@@ -110,6 +110,10 @@
     }
   },
   "jobs": {
+    "tabs": {
+      "active": "Active",
+      "history": "History"
+    },
     "createPage": {
        "breadCrumb": "Jobs",
        "header": "Create & Manage Jobs",

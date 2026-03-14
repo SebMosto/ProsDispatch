@@ -9,3 +9,7 @@
 ## 2026-06-15 - React List Rendering with Translations
 **Learning:** When extracting list items to `React.memo` components that require localization, it's safer to call `useTranslation()` *inside* the memoized component rather than passing the `t` function as a prop. Passing `t` as a prop can break memoization if the reference is not perfectly stable, whereas calling it inside ensures the component only re-renders when the language actually changes or its specific props change.
 **Action:** Always call hooks like `useTranslation` inside the memoized list item component instead of passing them down from the parent list.
+
+## 2026-03-12 - Dashboard Tabs
+**Learning:** Dashboard required tabs to view Active vs History statuses. Reusing the `JobList` component required modifying it to accept a `status` prop array to filter the `useJobs` hook correctly without causing side-effects. Playwright E2E verification for authenticated routes requires login bypass or a test user seeded.
+**Action:** When filtering a component powered by a hook, define the parameters (like `status`) inside an interface and memoize the params object before passing it to the hook to avoid re-render loops.

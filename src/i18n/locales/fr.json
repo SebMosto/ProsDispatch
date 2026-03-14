@@ -122,6 +122,10 @@
     }
   },
   "jobs": {
+    "tabs": {
+      "active": "Actifs",
+      "history": "Historique"
+    },
     "createPage": {
        "breadCrumb": "Travaux",
        "header": "Créer et gérer les travaux",
