@@ -572,5 +572,13 @@
       "offline": "Connect to the internet to pay this invoice.",
       "thankYou": "Payment received. Thank you."
     }
+  },
+  "admin": {
+    "title": "Admin Portal",
+    "totalUsers": "Total Users",
+    "totalJobs": "Total Jobs",
+    "activeJobs": "Active Jobs",
+    "error": "Failed to load admin metrics",
+    "unauthorized": "Unauthorized access"
   }
 }
