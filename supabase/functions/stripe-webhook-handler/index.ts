@@ -225,7 +225,8 @@ serve(async (req) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return new Response(`Error: ${message}`, { status: 500 });
+    console.error(`Webhook error: ${message}`);
+    return new Response("Internal Server Error", { status: 500 });
   }
 });
 

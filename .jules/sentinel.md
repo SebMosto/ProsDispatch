@@ -12,3 +12,8 @@
 **Vulnerability:** Supabase Edge Functions accepted an arbitrary `returnUrl` from the client for Stripe checkout success/cancel URLs.
 **Learning:** Developers often assume `returnUrl` will be a relative path or safe, but it can be any URL, allowing attackers to phish users after a legitimate payment flow.
 **Prevention:** Always validate `returnUrl` against a strict allowlist of origins (e.g., `SITE_URL` env var) before passing it to third-party services like Stripe.
+
+## 2024-06-03 - Information Disclosure in Webhooks
+**Vulnerability:** The `stripe-webhook-handler` Edge Function returned raw error messages in HTTP 500 responses (`Error: ${err.message}`).
+**Learning:** Raw errors can leak internal system details, potentially exposing sensitive information or database configurations to an attacker triggering the webhook.
+**Prevention:** Catch all unhandled exceptions at the top level of Edge Functions, log the detailed error internally (`console.error`), and return a generic "Internal Server Error" response to the caller.
