@@ -11,6 +11,7 @@
       "newJob": "New Job",
       "clients": "Clients",
       "settings": "Settings",
+      "admin": "Admin",
       "active": "Active"
     }
   },
@@ -435,6 +436,15 @@
       "subtotal": "Subtotal",
       "payNow": "Pay Now",
       "downloadPdf": "Download PDF"
+    }
+  },
+  "admin": {
+    "title": "Admin Portal",
+    "subtitle": "Platform metrics overview.",
+    "metrics": {
+      "totalUsers": "Total Users",
+      "activeJobs": "Active Jobs",
+      "totalRevenue": "Total Revenue"
     }
   },
   "settings": {

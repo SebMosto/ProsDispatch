@@ -30,10 +30,11 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+const AdminPortalPage = lazy(() => import('./pages/AdminPortalPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -78,6 +79,11 @@ const AppShell = ({ children }: { children: ReactNode }) => {
               <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
                 {t('layout.nav.clients')}
               </Link>
+              {profile?.role === 'admin' ? (
+                <Link className="text-sm font-medium text-slate-800 hover:underline" to="/admin">
+                  {t('layout.nav.admin')}
+                </Link>
+              ) : null}
             </div>
           ) : null}
           <LanguageSwitcher />
@@ -231,6 +237,14 @@ const App = () => (
             />
             <Route path={routePatterns.jobApproval} element={<JobApprovalPage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPortalPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

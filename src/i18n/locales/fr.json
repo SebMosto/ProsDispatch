@@ -11,6 +11,7 @@
       "newJob": "Nouveau travail",
       "clients": "Clients",
       "settings": "Paramètres",
+      "admin": "Administration",
       "active": "Actif"
     }
   },
@@ -447,6 +448,15 @@
       "subtotal": "Sous-total",
       "payNow": "Payer maintenant",
       "downloadPdf": "Télécharger le PDF"
+    }
+  },
+  "admin": {
+    "title": "Portail d'administration",
+    "subtitle": "Aperçu des indicateurs de la plateforme.",
+    "metrics": {
+      "totalUsers": "Total des utilisateurs",
+      "activeJobs": "Mandats actifs",
+      "totalRevenue": "Revenu total"
     }
   },
   "settings": {
