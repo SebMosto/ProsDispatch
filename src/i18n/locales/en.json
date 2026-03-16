@@ -11,8 +11,20 @@
       "newJob": "New Job",
       "clients": "Clients",
       "settings": "Settings",
+      "admin": "Admin",
       "active": "Active"
     }
+  },
+  "admin": {
+    "title": "Admin Portal",
+    "subtitle": "Platform metrics and insights",
+    "metrics": {
+      "totalContractors": "Total Contractors",
+      "totalJobs": "Total Jobs",
+      "activeJobs": "Active Jobs"
+    },
+    "error": "Failed to load metrics",
+    "accessDenied": "Access denied"
   },
   "settings": {
     "title": "Settings",

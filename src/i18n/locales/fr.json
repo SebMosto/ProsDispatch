@@ -11,8 +11,20 @@
       "newJob": "Nouveau travail",
       "clients": "Clients",
       "settings": "Paramètres",
+      "admin": "Admin",
       "active": "Actif"
     }
+  },
+  "admin": {
+    "title": "Portail d'administration",
+    "subtitle": "Indicateurs et statistiques de la plateforme",
+    "metrics": {
+      "totalContractors": "Total des entrepreneurs",
+      "totalJobs": "Total des travaux",
+      "activeJobs": "Travaux actifs"
+    },
+    "error": "Échec du chargement des statistiques",
+    "accessDenied": "Accès refusé"
   },
   "settings": {
     "title": "Paramètres",
