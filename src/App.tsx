@@ -22,6 +22,7 @@ const BillingSettingsPage = lazy(() => import('./pages/BillingSettingsPage'));
 const StripeConnectPage = lazy(() => import('./pages/StripeConnectPage'));
 const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
+const InvoicesListPage = lazy(() => import('./pages/invoices/InvoicesListPage'));
 const PublicInvoicePage = lazy(() => import('./pages/public/PublicInvoicePage'));
 const JobsListPage = lazy(() => import('./pages/jobs/JobsListPage'));
 const ClientsListPage = lazy(() => import('./pages/clients/ClientsListPage'));
@@ -164,6 +165,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <JobDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute>
+                  <InvoicesListPage />
                 </ProtectedRoute>
               }
             />

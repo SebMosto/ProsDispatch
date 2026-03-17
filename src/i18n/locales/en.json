@@ -10,8 +10,10 @@
       "jobs": "Jobs",
       "newJob": "New Job",
       "clients": "Clients",
+      "invoices": "Invoices",
       "settings": "Settings",
-      "active": "Active"
+      "active": "Active",
+      "overdueCount": "{{count}} overdue invoices"
     }
   },
   "settings": {
@@ -659,6 +661,14 @@
     "declineInstructions": "If you need to make changes or decline, please contact the contractor directly."
   },
   "invoices": {
+    "list": {
+      "pageTitle": "Invoices",
+      "header": "Invoice History",
+      "subHeader": "Track sent invoices and outstanding balances.",
+      "empty": "No invoices yet.",
+      "error": "Unable to load invoices.",
+      "retry": "Retry"
+    },
     "public": {
       "expired": "This invoice link has expired. Please contact your contractor.",
       "alreadyPaid": "This invoice has already been paid.",
