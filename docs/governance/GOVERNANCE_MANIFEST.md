@@ -100,4 +100,18 @@ Governance policies are living but tightly controlled:
 
 * **No go-live with open P0s:** It is strictly disallowed to launch or deploy with any known P0 issues (test failures, security holes, broken layout, etc.). All P0s must be resolved or formally downgraded (which itself requires justification) before release. The governance's role is to ensure we do not compromise on critical quality for deadlines.
 
+## Known Gotchas and Build Requirements
+
+* **Tailwind CSS directives required in `src/index.css`:** The file `src/index.css` **must** contain the following three directives at the very top:
+
+  ```css
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  ```
+
+  Without these directives, Tailwind scans source files and generates a class list but emits no CSS output. The result is a complete styling outage — the app renders with zero styles applied. This caused a full styling outage on **2026-03-16**. If styles ever appear missing in a build or dev server, verify these directives are present and in the correct order before investigating anything else.
+
+---
+
 By adhering to this Governance Manifest and its companion documents, the Dispatch MVP1 team will rebuild the application with disciplined execution, ensuring the final product meets all specified requirements, quality bars, and user expectations set out at project inception.
