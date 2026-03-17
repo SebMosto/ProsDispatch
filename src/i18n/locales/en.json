@@ -13,22 +13,35 @@
       "invoices": "Invoices",
       "settings": "Settings",
       "active": "Active",
-      "overdueCount": "{{count}} overdue invoices"
+      "overdueCount": "{{count}} overdue invoices",
+      "adminPortal": "Admin Portal"
     }
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your profile and account settings.",
+    "subtitle": "Manage your profile and business details.",
     "profile": {
       "title": "Profile",
       "fullName": "Full Name",
       "businessName": "Business Name",
-      "email": "Email",
+      "email": "Email Address",
       "save": "Save Changes",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "success": "Profile updated successfully.",
+      "error": "Unable to update profile."
     },
-    "success": "Profile updated successfully.",
-    "error": "Failed to update profile."
+    "stripe": {
+      "title": "Stripe Connect",
+      "subtitle": "Connect your bank account to receive invoice payments directly.",
+      "cta": "Connect your Stripe account to start receiving payments for invoices.",
+      "connect": "Connect your bank",
+      "connected": "✅ Stripe is connected for payouts.",
+      "managePayouts": "Manage payouts in Stripe",
+      "incomplete": "Stripe setup is incomplete. Finish onboarding to start receiving payouts.",
+      "retry": "Resume setup",
+      "refresh": "Refresh connection status",
+      "error": "Unable to set up Stripe Connect right now."
+    }
   },
   "hero": {
     "title": "Contractor dispatching built for mobile teams",
@@ -172,9 +185,9 @@
   },
   "jobs": {
     "createPage": {
-       "breadCrumb": "Jobs",
-       "header": "Create & Manage Jobs",
-       "subHeader": "Drafts are saved locally even if you reload."
+      "breadCrumb": "Jobs",
+      "header": "Create & Manage Jobs",
+      "subHeader": "Drafts are saved locally even if you reload."
     },
     "create": {
       "title": "Create job",
@@ -350,18 +363,17 @@
         "noLineItems": "No line items were recorded.",
         "qtyFormat": "Qty {{quantity}} × {{price}}",
         "subtotalLabel": "Subtotal",
-        "totalDueLabel": "Total Due",
-        "downloadPdf": "Download PDF"
+        "totalDueLabel": "Total Due"
       }
     }
   },
   "properties": {
-     "createPage": {
-       "breadCrumb": "Properties",
-       "header": "Create Property",
-       "subHeader": "Assign a property to an existing client.",
-       "backToClient": "Back to Client"
-     },
+    "createPage": {
+      "breadCrumb": "Properties",
+      "header": "Create Property",
+      "subHeader": "Assign a property to an existing client.",
+      "backToClient": "Back to Client"
+    },
     "create": {
       "title": "Create property",
       "subtitle": "Add a property for an existing client.",
@@ -391,10 +403,10 @@
   },
   "clients": {
     "createPage": {
-       "breadCrumb": "Clients",
-       "header": "Create Client",
-       "subHeader": "Add a new client to the registry.",
-       "backToClients": "Back to Clients"
+      "breadCrumb": "Clients",
+      "header": "Create Client",
+      "subHeader": "Add a new client to the registry.",
+      "backToClients": "Back to Clients"
     },
     "create": {
       "title": "Create client",
@@ -498,32 +510,6 @@
       "downloadPdf": "Download PDF"
     }
   },
-  "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your profile and business details.",
-    "profile": {
-      "title": "Profile",
-      "fullName": "Full Name",
-      "businessName": "Business Name",
-      "email": "Email Address",
-      "save": "Save Changes",
-      "saving": "Saving...",
-      "success": "Profile updated successfully.",
-      "error": "Unable to update profile."
-    },
-    "stripe": {
-      "title": "Stripe Connect",
-      "subtitle": "Connect your bank account to receive invoice payments directly.",
-      "cta": "Connect your Stripe account to start receiving payments for invoices.",
-      "connect": "Connect your bank",
-      "connected": "✅ Stripe is connected for payouts.",
-      "managePayouts": "Manage payouts in Stripe",
-      "incomplete": "Stripe setup is incomplete. Finish onboarding to start receiving payouts.",
-      "retry": "Resume setup",
-      "refresh": "Refresh connection status",
-      "error": "Unable to set up Stripe Connect right now."
-    }
-  },
   "validation": {
     "required": "Field required",
     "invalidEmail": "Invalid email",
@@ -563,8 +549,8 @@
     "oneLineItemRequired": "At least one line item is required"
   },
   "errors": {
-  "checkoutNoUrl": "Failed to start checkout: No URL returned.",
-  "unexpected": "An unexpected error occurred."
+    "checkoutNoUrl": "Failed to start checkout: No URL returned.",
+    "unexpected": "An unexpected error occurred."
   },
   "subscribe": {
     "title": "Start your free 14-day trial",

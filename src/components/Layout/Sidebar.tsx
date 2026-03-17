@@ -2,6 +2,7 @@ import { Link, useLocation } from '../../lib/router';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { useInvoicesByContractor } from '../../hooks/useInvoices';
+import { useAuth } from '../../lib/auth';
 
 const isActive = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -14,14 +15,21 @@ const Sidebar = () => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const overdueCount = useOverdueCount();
+  const { profile } = useAuth();
 
-  const NAV_ITEMS = useMemo(() => [
-    { label: t('layout.nav.dashboard'), href: '/dashboard' },
-    { label: t('layout.nav.jobs'), href: '/jobs' },
-    { label: t('layout.nav.clients'), href: '/clients' },
-    { label: t('layout.nav.invoices'), href: '/invoices', badge: overdueCount > 0 ? overdueCount : undefined },
-    { label: t('layout.nav.settings'), href: '/settings' },
-  ], [t, overdueCount]);
+  const NAV_ITEMS = useMemo(() => {
+    const items = [
+      { label: t('layout.nav.dashboard'), href: '/dashboard' },
+      { label: t('layout.nav.jobs'), href: '/jobs' },
+      { label: t('layout.nav.clients'), href: '/clients' },
+      { label: t('layout.nav.invoices'), href: '/invoices', badge: overdueCount > 0 ? overdueCount : undefined },
+      { label: t('layout.nav.settings'), href: '/settings' },
+    ];
+    if (profile?.role === 'admin') {
+      items.push({ label: t('layout.nav.adminPortal'), href: '/admin' });
+    }
+    return items;
+  }, [t, overdueCount, profile]);
 
   return (
     <aside className="hidden w-56 shrink-0 md:block">
@@ -63,14 +71,21 @@ export const BottomNav = () => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const overdueCount = useOverdueCount();
+  const { profile } = useAuth();
 
-  const NAV_ITEMS = useMemo(() => [
-    { label: t('layout.nav.dashboard'), href: '/dashboard' },
-    { label: t('layout.nav.jobs'), href: '/jobs' },
-    { label: t('layout.nav.clients'), href: '/clients' },
-    { label: t('layout.nav.invoices'), href: '/invoices', badge: overdueCount > 0 ? overdueCount : undefined },
-    { label: t('layout.nav.settings'), href: '/settings' },
-  ], [t, overdueCount]);
+  const NAV_ITEMS = useMemo(() => {
+    const items = [
+      { label: t('layout.nav.dashboard'), href: '/dashboard' },
+      { label: t('layout.nav.jobs'), href: '/jobs' },
+      { label: t('layout.nav.clients'), href: '/clients' },
+      { label: t('layout.nav.invoices'), href: '/invoices', badge: overdueCount > 0 ? overdueCount : undefined },
+      { label: t('layout.nav.settings'), href: '/settings' },
+    ];
+    if (profile?.role === 'admin') {
+      items.push({ label: t('layout.nav.adminPortal'), href: '/admin' });
+    }
+    return items;
+  }, [t, overdueCount, profile]);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-10 border-t border-slate-200 bg-white shadow-inner md:hidden">

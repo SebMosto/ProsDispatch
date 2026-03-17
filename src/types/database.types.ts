@@ -430,6 +430,15 @@ export type Database = {
         }
         Returns: Json
       }
+      get_admin_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_users: number
+          total_jobs: number
+          total_revenue: number
+          active_subscriptions: number
+        }
+      }
       transition_job_state: {
         Args: {
           job_id: string

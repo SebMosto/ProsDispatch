@@ -13,33 +13,22 @@
       "invoices": "Factures",
       "settings": "Paramètres",
       "active": "Actif",
-      "overdueCount": "{{count}} factures en retard"
+      "overdueCount": "{{count}} factures en retard",
+      "adminPortal": "Portail Admin"
     }
   },
   "settings": {
     "title": "Paramètres",
-    "subtitle": "Gérez votre profil et les paramètres de votre compte.",
+    "subtitle": "Gérez votre profil et les détails de votre entreprise.",
     "profile": {
       "title": "Profil",
       "fullName": "Nom complet",
       "businessName": "Nom de l'entreprise",
-      "email": "Courriel",
-      "save": "Enregistrer",
+      "email": "Adresse courriel",
+      "save": "Enregistrer les modifications",
       "saving": "Enregistrement...",
       "success": "Profil mis à jour avec succès.",
-      "error": "Échec de la mise à jour du profil."
-    },
-    "stripe": {
-      "title": "Stripe Connect",
-      "subtitle": "Connectez votre compte bancaire pour recevoir les paiements de facture directement.",
-      "cta": "Connectez votre compte Stripe pour commencer à recevoir les paiements de vos factures.",
-      "connect": "Connecter votre banque",
-      "connected": "✅ Stripe est connecté pour les versements.",
-      "managePayouts": "Gérer les versements dans Stripe",
-      "incomplete": "La configuration Stripe est incomplète. Terminez l'intégration pour commencer à recevoir des versements.",
-      "retry": "Reprendre la configuration",
-      "refresh": "Actualiser l'état de la connexion",
-      "error": "Impossible de configurer Stripe Connect pour le moment."
+      "error": "Impossible de mettre à jour le profil."
     }
   },
   "hero": {
@@ -184,9 +173,9 @@
   },
   "jobs": {
     "createPage": {
-       "breadCrumb": "Travaux",
-       "header": "Créer et gérer les travaux",
-       "subHeader": "Les brouillons sont enregistrés localement même si vous rechargez."
+      "breadCrumb": "Travaux",
+      "header": "Créer et gérer les travaux",
+      "subHeader": "Les brouillons sont enregistrés localement même si vous rechargez."
     },
     "create": {
       "title": "Créer un travail",
@@ -362,18 +351,17 @@
         "noLineItems": "Aucun élément de ligne enregistré.",
         "qtyFormat": "Qté {{quantity}} × {{price}}",
         "subtotalLabel": "Sous-total",
-        "totalDueLabel": "Total dû",
-        "downloadPdf": "Télécharger le PDF"
+        "totalDueLabel": "Total dû"
       }
     }
   },
   "properties": {
-     "createPage": {
-       "breadCrumb": "Propriétés",
-       "header": "Créer une propriété",
-       "subHeader": "Attribuer une propriété à un client existant.",
-       "backToClient": "Retour au client"
-     },
+    "createPage": {
+      "breadCrumb": "Propriétés",
+      "header": "Créer une propriété",
+      "subHeader": "Attribuer une propriété à un client existant.",
+      "backToClient": "Retour au client"
+    },
     "create": {
       "title": "Créer une propriété",
       "subtitle": "Ajouter une propriété pour un client existant.",
@@ -403,10 +391,10 @@
   },
   "clients": {
     "createPage": {
-       "breadCrumb": "Clients",
-       "header": "Créer un client",
-       "subHeader": "Ajouter un nouveau client au registre.",
-       "backToClients": "Retour aux clients"
+      "breadCrumb": "Clients",
+      "header": "Créer un client",
+      "subHeader": "Ajouter un nouveau client au registre.",
+      "backToClients": "Retour aux clients"
     },
     "create": {
       "title": "Créer un client",
@@ -510,20 +498,6 @@
       "downloadPdf": "Télécharger le PDF"
     }
   },
-  "settings": {
-    "title": "Paramètres",
-    "subtitle": "Gérez votre profil et les détails de votre entreprise.",
-    "profile": {
-      "title": "Profil",
-      "fullName": "Nom complet",
-      "businessName": "Nom de l'entreprise",
-      "email": "Adresse courriel",
-      "save": "Enregistrer les modifications",
-      "saving": "Enregistrement...",
-      "success": "Profil mis à jour avec succès.",
-      "error": "Impossible de mettre à jour le profil."
-    }
-  },
   "validation": {
     "required": "Champ requis",
     "invalidEmail": "Adresse courriel invalide",
@@ -563,8 +537,8 @@
     "oneLineItemRequired": "Au moins un élément de ligne est requis"
   },
   "errors": {
-  "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
-  "unexpected": "Une erreur inattendue est survenue."
+    "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
+    "unexpected": "Une erreur inattendue est survenue."
   },
   "subscribe": {
     "title": "Commencez votre essai gratuit de 14 jours",
