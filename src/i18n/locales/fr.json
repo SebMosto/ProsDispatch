@@ -70,6 +70,65 @@
     "title": "Vous êtes hors ligne",
     "body": "Les modifications sont enregistrées sur votre appareil. Vous pourrez soumettre une fois de retour en ligne."
   },
+  "login": {
+    "label": "Accès entrepreneur",
+    "title": "Connexion à Dispatch",
+    "subtitle": "Gérez vos mandats, clients et paiements.",
+    "email": "COURRIEL",
+    "password": "MOT DE PASSE",
+    "forgot": "Mot de passe oublié?",
+    "cta": "Connexion",
+    "divider": "pas encore de compte?",
+    "register": "Créer votre compte entrepreneur →",
+    "pilot": "Programme pilote",
+    "navLink": "Connexion",
+    "error": "Courriel ou mot de passe invalide",
+    "darkMode": "Mode sombre"
+  },
+  "register": {
+    "label": "Nouveau compte entrepreneur",
+    "title": "Créer votre compte",
+    "subtitle": "Prêt en quelques minutes. Aucune formation requise.",
+    "required_note": "* Champ obligatoire",
+    "first": "Prénom",
+    "last": "Nom",
+    "biz": "Nom de l'entreprise",
+    "trade": "Métier",
+    "trade_other": "Autre",
+    "trade_placeholder": "Choisir votre métier…",
+    "trade_plumbing": "Plomberie",
+    "trade_hvac": "CVC",
+    "trade_electrical": "Électricité",
+    "trade_general": "Entrepreneur général",
+    "trade_roofing": "Toiture",
+    "div_account": "Identifiants du compte",
+    "email": "Courriel",
+    "password": "Mot de passe",
+    "confirm": "Confirmer",
+    "cta": "Créer le compte",
+    "terms": "En créant un compte, vous acceptez nos ",
+    "terms_tos": "Conditions d'utilisation",
+    "terms_and": " et notre ",
+    "terms_pp": "Politique de confidentialité",
+    "signin_pre": "Déjà un compte ? ",
+    "signin": "Se connecter →",
+    "error": "Impossible de créer le compte. Vérifiez vos informations et réessayez.",
+    "ph_other": "Décrivez votre métier…",
+    "password_mismatch": "Les mots de passe ne correspondent pas."
+  },
+  "forgot": {
+    "back": "Retour à la connexion",
+    "label": "Réinitialisation",
+    "title": "Mot de passe oublié ?",
+    "subtitle": "Entrez l'adresse courriel liée à votre compte. Nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "email": "Courriel",
+    "cta": "Envoyer le lien",
+    "success_title": "Vérifiez vos courriels",
+    "success_body": "Si un compte existe pour {{email}}, un lien a été envoyé. Vérifiez votre boîte de réception et les indésirables.",
+    "back_cta": "Retour à la connexion",
+    "resend_pre": "Vous ne l'avez pas reçu ? ",
+    "resend": "Renvoyer"
+  },
   "auth": {
     "shared": {
       "email": "Courriel",
@@ -536,6 +595,42 @@
     "updatePayment": "Mettre à jour le paiement"
   },
   "dashboard": {
+    "greeting": "Bonjour, {{name}}.",
+    "greetingFallback": "Bonjour.",
+    "newClient": "Nouveau client",
+    "newJob": "Nouveau travail",
+    "alert": {
+      "overdue": "{{count}} factures en retard — {{amount}} $ en souffrance.",
+      "lastSent": "Dernier envoi il y a {{days}} jours.",
+      "viewInvoices": "Voir les factures →"
+    },
+    "stats": {
+      "needAttention": "À traiter",
+      "ofActive": "{{count}} sur {{total}} actifs",
+      "overdueInvoices": "Factures en retard",
+      "countAndAmount": "{{count}} — {{amount}} $",
+      "revenueMonth": "Revenus (ce mois)",
+      "totalClients": "Total clients"
+    },
+    "recentJobs": "Travaux récents",
+    "viewAll": "Tout voir →",
+    "overdueCard": {
+      "title": "Factures en retard",
+      "daysOverdue": "{{count}} jours de retard",
+      "overdue": "En retard",
+      "resend": "Renvoyer",
+      "empty": "Aucune facture en retard."
+    },
+    "upcoming": {
+      "title": "À venir",
+      "calendar": "Calendrier →",
+      "empty": "Aucun travail à venir."
+    },
+    "emptyJobs": "Aucun travail récent.",
+    "toast": {
+      "statusUpdated": "Statut mis à jour.",
+      "resendSent": "Renvoyé sur demande."
+    },
     "trial": {
       "banner": "Il vous reste {{days}} jours dans votre essai gratuit. Activez votre abonnement pour conserver l'accès.",
       "cta": "Activer maintenant",

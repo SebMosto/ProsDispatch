@@ -13,6 +13,7 @@ import { PageLoader } from './components/ui/PageLoader';
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SignUpPage = lazy(() => import('./pages/auth/SignUpPage'));
 const SignInPage = lazy(() => import('./pages/auth/SignInPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const CreateJobPage = lazy(() => import('./pages/jobs/CreateJobPage'));
 const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
@@ -101,6 +102,7 @@ const App = () => (
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<SignInPage />} />
             <Route path="/register" element={<SignUpPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route
               path="/subscribe"
               element={

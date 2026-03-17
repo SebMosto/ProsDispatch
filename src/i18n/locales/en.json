@@ -58,6 +58,65 @@
     "title": "You’re offline",
     "body": "Changes are saved on your device. You can submit when you’re back online."
   },
+  "login": {
+    "label": "Contractor access",
+    "title": "Sign in to Dispatch",
+    "subtitle": "Manage your jobs, clients, and payments.",
+    "email": "EMAIL",
+    "password": "PASSWORD",
+    "forgot": "Forgot password?",
+    "cta": "Sign in",
+    "divider": "no account yet?",
+    "register": "Create your contractor account →",
+    "pilot": "Pilot Program",
+    "navLink": "Login",
+    "error": "Invalid email or password",
+    "darkMode": "Dark mode"
+  },
+  "register": {
+    "label": "New contractor account",
+    "title": "Create your account",
+    "subtitle": "Get set up in minutes. No training required.",
+    "required_note": "* Required field",
+    "first": "First name",
+    "last": "Last name",
+    "biz": "Business name",
+    "trade": "Trade",
+    "trade_other": "Other",
+    "trade_placeholder": "Select your trade…",
+    "trade_plumbing": "Plumbing",
+    "trade_hvac": "HVAC",
+    "trade_electrical": "Electrical",
+    "trade_general": "General contractor",
+    "trade_roofing": "Roofing",
+    "div_account": "Account credentials",
+    "email": "Email",
+    "password": "Password",
+    "confirm": "Confirm",
+    "cta": "Create account",
+    "terms": "By creating an account you agree to our ",
+    "terms_tos": "Terms of Service",
+    "terms_and": " and ",
+    "terms_pp": "Privacy Policy",
+    "signin_pre": "Already have an account? ",
+    "signin": "Sign in →",
+    "error": "Unable to create account. Please check your details and try again.",
+    "ph_other": "Describe your trade…",
+    "password_mismatch": "Passwords do not match."
+  },
+  "forgot": {
+    "back": "Back to sign in",
+    "label": "Password reset",
+    "title": "Forgot your password?",
+    "subtitle": "Enter the email address linked to your account. We'll send you a link to reset your password.",
+    "email": "Email",
+    "cta": "Send reset link",
+    "success_title": "Check your email",
+    "success_body": "If an account exists for {{email}}, a reset link has been sent. Check your inbox and spam folder.",
+    "back_cta": "Back to sign in",
+    "resend_pre": "Didn't receive it? ",
+    "resend": "Send again"
+  },
   "auth": {
     "shared": {
       "email": "Email",
@@ -536,6 +595,42 @@
     "updatePayment": "Update payment"
   },
   "dashboard": {
+    "greeting": "Good morning, {{name}}.",
+    "greetingFallback": "Good morning.",
+    "newClient": "New client",
+    "newJob": "New job",
+    "alert": {
+      "overdue": "{{count}} overdue invoices — {{amount}} outstanding.",
+      "lastSent": "Last sent {{days}} days ago.",
+      "viewInvoices": "View invoices →"
+    },
+    "stats": {
+      "needAttention": "Need attention",
+      "ofActive": "{{count}} of {{total}} active",
+      "overdueInvoices": "Overdue invoices",
+      "countAndAmount": "{{count}} — {{amount}}",
+      "revenueMonth": "Revenue (this month)",
+      "totalClients": "Total clients"
+    },
+    "recentJobs": "Recent jobs",
+    "viewAll": "View all →",
+    "overdueCard": {
+      "title": "Overdue invoices",
+      "daysOverdue": "{{count}} days overdue",
+      "overdue": "Overdue",
+      "resend": "Resend",
+      "empty": "No overdue invoices."
+    },
+    "upcoming": {
+      "title": "Upcoming",
+      "calendar": "Calendar →",
+      "empty": "No upcoming jobs."
+    },
+    "emptyJobs": "No recent jobs.",
+    "toast": {
+      "statusUpdated": "Status updated.",
+      "resendSent": "Resend requested."
+    },
     "trial": {
       "banner": "You have {{days}} days left in your free trial. Activate your subscription to keep access.",
       "cta": "Activate now",
