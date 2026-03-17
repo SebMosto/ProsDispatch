@@ -144,11 +144,12 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     location.pathname.startsWith(route),
   );
 
-  // TODO: re-enable subscription gate post-pilot
-  // if (!isSubscribed && !isOnAllowedRoute) {
-  //   // Gate access to subscription-only areas of the contractor app
-  //   return <Navigate to="/subscribe" replace />;
-  // }
+  // Pilot: set VITE_SUBSCRIPTION_GATE_ENABLED=true in Vercel env vars to re-enable post-pilot
+  const subscriptionGateEnabled = import.meta.env.VITE_SUBSCRIPTION_GATE_ENABLED === 'true';
+  if (subscriptionGateEnabled && !isSubscribed && !isOnAllowedRoute) {
+    // Gate access to subscription-only areas of the contractor app
+    return <Navigate to="/subscribe" replace />;
+  }
 
   return <>{children}</>;
 };
