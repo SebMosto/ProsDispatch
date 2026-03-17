@@ -144,10 +144,11 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     location.pathname.startsWith(route),
   );
 
-  if (!isSubscribed && !isOnAllowedRoute) {
-    // Gate access to subscription-only areas of the contractor app
-    return <Navigate to="/subscribe" replace />;
-  }
+  // TODO: re-enable subscription gate post-pilot
+  // if (!isSubscribed && !isOnAllowedRoute) {
+  //   // Gate access to subscription-only areas of the contractor app
+  //   return <Navigate to="/subscribe" replace />;
+  // }
 
   return <>{children}</>;
 };
