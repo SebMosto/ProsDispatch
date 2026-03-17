@@ -32,6 +32,10 @@ This **Governance Manifest** defines the unified rules and standards for the Dis
 
 * **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **Critical (Enforced)**
 
+* **SPEC-DESIGN-001: Design System (docs/DESIGN_SYSTEM.md)** — **Critical (Enforced)**
+
+* **SPEC-DESIGN-002: Screen Specs (docs/SCREEN_SPECS.md)** — **Critical (Enforced)**
+
 ## Functional Scope & Constraints (MVP1)
 
 This restart imposes strict functional boundaries to keep the product focused:
