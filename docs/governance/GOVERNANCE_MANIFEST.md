@@ -101,3 +101,19 @@ Governance policies are living but tightly controlled:
 * **No go-live with open P0s:** It is strictly disallowed to launch or deploy with any known P0 issues (test failures, security holes, broken layout, etc.). All P0s must be resolved or formally downgraded (which itself requires justification) before release. The governance's role is to ensure we do not compromise on critical quality for deadlines.
 
 By adhering to this Governance Manifest and its companion documents, the Dispatch MVP1 team will rebuild the application with disciplined execution, ensuring the final product meets all specified requirements, quality bars, and user expectations set out at project inception.
+
+## Known Gotchas & Build Requirements
+
+### Tailwind CSS directives must be present in `src/index.css`
+
+`src/index.css` **must** contain the following three directives at the very top of the file:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+**Why this matters:** PostCSS and the `tailwindcss` plugin scan source files to collect utility class names, but they only emit CSS at the injection points declared by these directives. If the directives are absent, Tailwind processes the build without error yet produces no output CSS — every utility class silently resolves to nothing. This caused a **complete styling outage on 2026-03-16** where all Tailwind-based layouts and components rendered unstyled.
+
+**Rule:** These three lines must remain at the top of `src/index.css` and must never be removed, commented out, or moved. Any PR that deletes them should be blocked in review.
