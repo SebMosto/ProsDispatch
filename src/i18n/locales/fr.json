@@ -10,8 +10,10 @@
       "jobs": "Travaux",
       "newJob": "Nouveau travail",
       "clients": "Clients",
+      "invoices": "Factures",
       "settings": "Paramètres",
-      "active": "Actif"
+      "active": "Actif",
+      "overdueCount": "{{count}} factures en retard"
     }
   },
   "settings": {
@@ -659,6 +661,14 @@
     "declineInstructions": "Si vous devez apporter des modifications ou refuser, veuillez contacter l'entrepreneur directement."
   },
   "invoices": {
+    "list": {
+      "pageTitle": "Factures",
+      "header": "Historique des factures",
+      "subHeader": "Suivez les factures envoyées et les soldes impayés.",
+      "empty": "Aucune facture pour l'instant.",
+      "error": "Impossible de charger les factures.",
+      "retry": "Réessayer"
+    },
     "public": {
       "expired": "Ce lien de facture a expiré. Veuillez contacter votre entrepreneur.",
       "alreadyPaid": "Cette facture a déjà été payée.",
