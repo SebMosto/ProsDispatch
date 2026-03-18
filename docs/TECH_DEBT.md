@@ -25,7 +25,7 @@ Integrate the Google Places Autocomplete API on all address fields to improve da
 **Suggested implementation notes:**
 - Use `@react-google-maps/api` or the official `@googlemaps/js-api-loader` package
 - Wrap the autocomplete widget in a controlled component that populates the existing `street`, `city`, `province`, and `postal_code` fields from the Places result
-- Gate behind `VITE_GOOGLE_PLACES_API_KEY` env var; fall back to plain text input when the key is absent
+- Gate behind `VITE_GOOGLE_MAPS_KEY` env var; fall back to plain text input when the key is absent
 - Add the env var to `.env.example` and the CI secrets checklist
 
 **Acceptance criteria (when resumed):**
