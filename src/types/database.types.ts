@@ -437,6 +437,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_admin_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_contractors: number
+          total_jobs: number
+          active_jobs: number
+        }
+      }
     }
     Enums: {
       client_type: "individual" | "business"

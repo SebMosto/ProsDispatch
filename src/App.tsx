@@ -32,6 +32,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+const AdminPortalPage = lazy(() => import('./pages/admin/AdminPortalPage'));
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
@@ -237,6 +238,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <CreatePropertyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPortalPage />
                 </ProtectedRoute>
               }
             />
