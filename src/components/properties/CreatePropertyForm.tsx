@@ -4,6 +4,7 @@ import SyncBadge from '../system/SyncBadge';
 import AddressAutocomplete from '../ui/AddressAutocomplete';
 import { CANADIAN_PROVINCES } from '../../schemas/property';
 import { useCreatePropertyForm } from './useCreatePropertyForm';
+import { useClients } from '../../hooks/useClients';
 
 interface CreatePropertyFormProps {
   clientId?: string;
@@ -19,6 +20,8 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
     applyAddressSelection,
     onSubmit,
   } = useCreatePropertyForm({ clientId });
+
+  const { clients, loading: clientsLoading, error: clientsError } = useClients();
 
   const {
     control,
@@ -53,12 +56,27 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           <label className="block text-sm font-medium text-slate-800" htmlFor="client_id">
             {t('properties.create.labels.clientId')}
           </label>
-          <input
+          <select
             id="client_id"
-            type="text"
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('client_id')}
-          />
+            disabled={clientsLoading || clients.length === 0}
+          >
+            <option value="">{t('clients.detail.noSelection')}</option>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name ?? t('clients.list.unnamed')}
+              </option>
+            ))}
+          </select>
+          {clientsLoading ? (
+            <p className="text-xs text-slate-600">{t('clients.list.loading')}</p>
+          ) : null}
+          {clientsError ? (
+            <p className="text-xs text-red-600" role="alert">
+              {t('clients.list.error')}
+            </p>
+          ) : null}
           {errors.client_id?.message ? <p className="text-xs text-red-600">{errors.client_id.message}</p> : null}
         </div>
 

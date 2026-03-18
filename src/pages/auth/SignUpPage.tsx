@@ -33,6 +33,17 @@ const SignUpPage = () => {
     }
   }, [trade]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   const showOtherInput = trade === 'other';
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -120,7 +131,7 @@ const SignUpPage = () => {
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
-        <div className="w-full max-w-[460px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white px-10 pt-10 pb-9 shadow-brutal">
+        <div className="w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[14px] border-2 border-[#0F172A] bg-white px-10 pt-10 pb-9 shadow-brutal">
           <p className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]">
             {t('register.label')}
           </p>
