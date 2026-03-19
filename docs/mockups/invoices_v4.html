@@ -1,0 +1,341 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .app { background: hsl(220 20% 97%); min-height: 700px; display: flex; flex-direction: column; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-size: 13px; }
+  .topbar { background: #fff; border-bottom: 1.5px solid #0F172A; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+  .logo { display: flex; align-items: center; gap: 9px; }
+  .logo-icon { width: 30px; height: 30px; background: #0F172A; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .logo-wordmark { display: flex; align-items: center; gap: 8px; }
+  .logo-name { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .logo-div { width: 1px; height: 15px; background: #94A3B8; }
+  .logo-sub { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .topbar-lang { display: flex; align-items: center; gap: 5px; background: #F1F5F9; border: none; border-radius: 999px; padding: 4px 12px 4px 8px; font-size: 12px; font-weight: 500; color: #0F172A; cursor: pointer; font-family: inherit; }
+  .avatar { width: 30px; height: 30px; background: #FF5C1B; border: 2px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #1F1308; cursor: pointer; }
+  .body { display: flex; flex: 1; }
+  .sidebar { width: 160px; background: #fff; border-right: 1.5px solid #0F172A; display: flex; flex-direction: column; flex-shrink: 0; padding: 12px 0; }
+  .nav-section-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #CBD5E1; padding: 0 12px; margin: 14px 0 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 500; color: #64748B; cursor: pointer; border: none; background: transparent; font-family: inherit; width: 100%; text-align: left; border-left: 3px solid transparent; transition: background 0.1s, color 0.1s; }
+  .nav-item:hover { background: hsl(220 20% 97%); color: #0F172A; }
+  .nav-item.active { color: #0F172A; font-weight: 700; border-left: 3px solid #FF5C1B; background: hsl(220 20% 97%); }
+  .nav-badge { margin-left: auto; background: #FF5C1B; color: #1F1308; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 999px; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid #E2E8F0; padding: 10px 12px 0; }
+  .sidebar-user { display: flex; align-items: center; gap: 7px; }
+  .sidebar-avatar { width: 26px; height: 26px; background: #FF5C1B; border: 1.5px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #1F1308; flex-shrink: 0; }
+  .sidebar-name { font-size: 11px; font-weight: 700; color: #0F172A; }
+  .sidebar-role { font-size: 10px; color: #94A3B8; }
+  .main { flex: 1; padding: 22px 20px; overflow-y: auto; min-width: 0; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .page-title { font-size: 19px; font-weight: 700; color: #0F172A; }
+  .btn-primary { display: flex; align-items: center; gap: 6px; height: 36px; background: #FF5C1B; color: #1F1308; border: 2px solid #0F172A; border-radius: 7px; padding: 0 13px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-primary:hover { box-shadow: 4px 4px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  .summary-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 18px; }
+  .sum-card { background: #fff; border: 2px solid #0F172A; border-radius: 9px; padding: 13px 14px; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); }
+  .sum-label { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #94A3B8; margin-bottom: 5px; }
+  .sum-value { font-size: 19px; font-weight: 700; color: #0F172A; line-height: 1; margin-bottom: 3px; }
+  .sum-sub { font-size: 10px; color: #94A3B8; }
+  .sum-card.needs-action { border-color: #FF5C1B; box-shadow: 2px 2px 0 0 rgba(255,92,27,0.35); }
+  .sum-card.needs-action .sum-value { color: #FF5C1B; }
+  .sum-card.success { border-color: #16A34A; box-shadow: 2px 2px 0 0 rgba(22,101,52,0.3); }
+  .sum-card.success .sum-value { color: #16A34A; }
+  .filter-row { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-tab { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 6px; border: 1.5px solid #CBD5E1; background: #fff; color: #64748B; cursor: pointer; font-family: inherit; transition: all 0.1s; }
+  .filter-tab:hover { border-color: #0F172A; color: #0F172A; }
+  .filter-tab.active { background: #0F172A; color: #fff; border-color: #0F172A; }
+  .filter-tab .count { display: inline-block; background: #FF5C1B; color: #1F1308; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 999px; margin-left: 5px; }
+  .filter-tab.active .count { background: #fff; color: #0F172A; }
+
+  .invoice-table { background: #fff; border: 2px solid #0F172A; border-radius: 9px; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); overflow: hidden; width: 100%; }
+
+  /* Key change: Invoice shrunk to 56px, Amount to 66px, Client gets 2fr */
+  .inv-grid { display: grid; grid-template-columns: 56px 2fr 66px 74px 78px 90px; width: 100%; gap: 10px; }
+
+  .table-head { background: hsl(220 20% 97%); border-bottom: 1.5px solid #0F172A; }
+  .table-head .inv-grid { padding: 9px 14px; align-items: center; }
+  .th { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #94A3B8; white-space: nowrap; }
+
+  .invoice-row { border-bottom: 1px solid #F1F5F9; cursor: pointer; transition: background 0.1s; }
+  .invoice-row:last-child { border-bottom: none; }
+  .invoice-row:hover { background: hsl(220 20% 97%); }
+  .invoice-row .inv-grid { padding: 11px 14px; align-items: center; }
+
+  .inv-number { font-size: 11px; font-weight: 700; color: #0F172A; white-space: nowrap; }
+  .inv-client { min-width: 0; }
+  .inv-client-name { font-size: 12px; font-weight: 600; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .inv-client-addr { font-size: 10px; color: #94A3B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .inv-amount { font-size: 12px; font-weight: 700; color: #0F172A; white-space: nowrap; }
+  .inv-date { font-size: 11px; color: #64748B; white-space: nowrap; }
+  .inv-date.overdue { color: #FF5C1B; font-weight: 700; }
+  .status-badge { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; border: 1.5px solid; white-space: nowrap; }
+  .sb-draft { background: #F1F5F9; color: #475569; border-color: #CBD5E1; }
+  .sb-sent { background: #FFF7ED; color: #EA580C; border-color: #EA580C; }
+  .sb-overdue { background: #FFF1EC; color: #FF5C1B; border-color: #FF5C1B; font-weight: 800; }
+  .sb-paid { background: #F0FDF4; color: #16A34A; border-color: #16A34A; }
+  .inv-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+  .action-btn { display: flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 5px; border: 1.5px solid; cursor: pointer; font-family: inherit; transition: background 0.1s; white-space: nowrap; }
+  .action-btn.send { color: #FF5C1B; border-color: #FF5C1B; background: transparent; }
+  .action-btn.send:hover { background: #FFF7ED; }
+  .action-btn.paid-btn { color: #16A34A; border-color: #16A34A; background: transparent; }
+  .action-btn.paid-btn:hover { background: #F0FDF4; }
+  .action-btn.undo { color: #64748B; border-color: #CBD5E1; background: transparent; }
+  .action-btn.undo:hover { background: #F1F5F9; color: #0F172A; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #fff; font-size: 12px; font-weight: 600; padding: 9px 18px; border-radius: 8px; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; z-index: 99; }
+  .toast.show { opacity: 1; }
+  .feedback-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .feedback-btn { font-size: 12px; padding: 5px 12px; border: 1.5px solid #0F172A; border-radius: 6px; background: transparent; cursor: pointer; color: #0F172A; font-family: inherit; font-weight: 500; }
+  .feedback-btn:hover { background: #0F172A; color: #fff; }
+</style>
+
+<div class="app">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white"/>
+          <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-wordmark">
+        <span class="logo-name">Dispatch</span>
+        <div class="logo-div"></div>
+        <span class="logo-sub">Labs</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-lang">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5"/><path d="M9 9l2-5 2 5M9.7 7.5h2.6"/></svg>
+        FR
+      </button>
+      <div class="avatar">JT</div>
+    </div>
+  </nav>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 3V1M11 3V1M2 7h12"/></svg>
+        Jobs
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
+        Clients
+      </button>
+      <button class="nav-item active">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="12" height="13" rx="1"/><path d="M5 6h6M5 9h6M5 12h4"/></svg>
+        Invoices
+        <span class="nav-badge">2</span>
+      </button>
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/></svg>
+        Settings
+      </button>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">JT</div>
+          <div>
+            <div class="sidebar-name">Jean Tremblay</div>
+            <div class="sidebar-role">Plomberie</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title">Invoices</div>
+        <button class="btn-primary">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg>
+          New invoice
+        </button>
+      </div>
+
+      <div class="summary-strip">
+        <div class="sum-card needs-action"><div class="sum-label">Overdue</div><div class="sum-value">$3,400</div><div class="sum-sub">2 invoices</div></div>
+        <div class="sum-card needs-action"><div class="sum-label">Awaiting payment</div><div class="sum-value">$2,100</div><div class="sum-sub">3 sent</div></div>
+        <div class="sum-card success"><div class="sum-label">Paid (March)</div><div class="sum-value">$6,200</div><div class="sum-sub">4 invoices</div></div>
+        <div class="sum-card"><div class="sum-label">Total (March)</div><div class="sum-value">$11,700</div><div class="sum-sub">9 invoices</div></div>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-tab active" onclick="setFilter('all',this)">All <span class="count">9</span></button>
+        <button class="filter-tab" onclick="setFilter('overdue',this)">Overdue <span class="count">2</span></button>
+        <button class="filter-tab" onclick="setFilter('sent',this)">Sent</button>
+        <button class="filter-tab" onclick="setFilter('paid',this)">Paid</button>
+        <button class="filter-tab" onclick="setFilter('draft',this)">Draft</button>
+      </div>
+
+      <div class="invoice-table">
+        <div class="table-head">
+          <div class="inv-grid">
+            <div class="th">Invoice</div>
+            <div class="th">Client</div>
+            <div class="th">Amount</div>
+            <div class="th">Date</div>
+            <div class="th">Status</div>
+            <div class="th" style="text-align:right">Actions</div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="overdue" onclick="showToast('Opening INV-041…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-041</div>
+            <div class="inv-client"><div class="inv-client-name">Martin Côté</div><div class="inv-client-addr">482 Rue St-Denis</div></div>
+            <div class="inv-amount">$1,800</div>
+            <div class="inv-date overdue">Mar 6 · 8d</div>
+            <div><span class="status-badge sb-overdue">Overdue</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn send" onclick="handleResend(this,'Martin Côté')"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l12 6-12 6V8.5l8-1.5-8-1.5V1z"/></svg>Resend</button></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="overdue" onclick="showToast('Opening INV-039…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-039</div>
+            <div class="inv-client"><div class="inv-client-name">Lucie Poirier</div><div class="inv-client-addr">230 Rue Sherbrooke</div></div>
+            <div class="inv-amount">$1,600</div>
+            <div class="inv-date overdue">Mar 2 · 12d</div>
+            <div><span class="status-badge sb-overdue">Overdue</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn send" onclick="handleResend(this,'Lucie Poirier')"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l12 6-12 6V8.5l8-1.5-8-1.5V1z"/></svg>Resend</button></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="sent" onclick="showToast('Opening INV-043…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-043</div>
+            <div class="inv-client"><div class="inv-client-name">Sophie Lavoie</div><div class="inv-client-addr">77 Boul. Décarie</div></div>
+            <div class="inv-amount">$900</div>
+            <div class="inv-date">Mar 12</div>
+            <div><span class="status-badge sb-sent">Sent</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn paid-btn" onclick="markPaid(this,'Sophie Lavoie','sent')">Mark paid</button></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="sent" onclick="showToast('Opening INV-042…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-042</div>
+            <div class="inv-client"><div class="inv-client-name">René Bergeron</div><div class="inv-client-addr">14 Ave. Victoria</div></div>
+            <div class="inv-amount">$650</div>
+            <div class="inv-date">Mar 10</div>
+            <div><span class="status-badge sb-sent">Sent</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn paid-btn" onclick="markPaid(this,'René Bergeron','sent')">Mark paid</button></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="sent" onclick="showToast('Opening INV-040…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-040</div>
+            <div class="inv-client"><div class="inv-client-name">Hélène Gagnon</div><div class="inv-client-addr">55 Rue Notre-Dame O.</div></div>
+            <div class="inv-amount">$550</div>
+            <div class="inv-date">Mar 8</div>
+            <div><span class="status-badge sb-sent">Sent</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn paid-btn" onclick="markPaid(this,'Hélène Gagnon','sent')">Mark paid</button></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="paid" onclick="showToast('Opening INV-038…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-038</div>
+            <div class="inv-client"><div class="inv-client-name">Marc Dubois</div><div class="inv-client-addr">18 Boul. Saint-Laurent</div></div>
+            <div class="inv-amount">$2,100</div>
+            <div class="inv-date">Mar 5</div>
+            <div><span class="status-badge sb-paid">Paid</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="paid" onclick="showToast('Opening INV-037…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-037</div>
+            <div class="inv-client"><div class="inv-client-name">Nathalie Roy</div><div class="inv-client-addr">9 Ch. Remembrance</div></div>
+            <div class="inv-amount">$1,400</div>
+            <div class="inv-date">Mar 3</div>
+            <div><span class="status-badge sb-paid">Paid</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"></div>
+          </div>
+        </div>
+
+        <div class="invoice-row" data-status="draft" onclick="showToast('Opening INV-044…')">
+          <div class="inv-grid">
+            <div class="inv-number">INV-044</div>
+            <div class="inv-client"><div class="inv-client-name">François Morin</div><div class="inv-client-addr">9 Ch. Remembrance</div></div>
+            <div class="inv-amount">$1,200</div>
+            <div class="inv-date">Mar 14</div>
+            <div><span class="status-badge sb-draft">Draft</span></div>
+            <div class="inv-actions" onclick="event.stopPropagation()"><button class="action-btn send" onclick="handleSend(this,'François Morin')"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l12 6-12 6V8.5l8-1.5-8-1.5V1z"/></svg>Send</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div style="padding: 16px 24px; border-top: 1px solid var(--color-border-tertiary); margin-top: 8px;">
+  <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;">Give feedback:</div>
+  <div class="feedback-row">
+    <button class="feedback-btn" onclick="sendPrompt('The invoices screen looks good, what should we design next?')">Looks good → What\'s next?</button>
+    <button class="feedback-btn" onclick="sendPrompt('The invoices screen needs changes: ')">Custom feedback ↗</button>
+  </div>
+</div>
+
+<script>
+let activeFilter = 'all';
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.invoice-row').forEach(row => {
+    row.style.display = (f === 'all' || row.dataset.status === f) ? '' : 'none';
+  });
+}
+function handleSend(btn, name) {
+  btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l12 6-12 6V8.5l8-1.5-8-1.5V1z"/></svg> Resend';
+  const row = btn.closest('.invoice-row');
+  row.dataset.status = 'sent';
+  row.querySelector('.status-badge').className = 'status-badge sb-sent';
+  row.querySelector('.status-badge').textContent = 'Sent';
+  btn.onclick = function() { handleResend(btn, name); };
+  showToast('Invoice sent to ' + name);
+}
+function handleResend(btn, name) { showToast('Reminder sent to ' + name); }
+function markPaid(btn, name, prevStatus) {
+  const row = btn.closest('.invoice-row');
+  const badge = row.querySelector('.status-badge');
+  const prevBadgeClass = badge.className;
+  const prevBadgeText = badge.textContent;
+  const prevStatusVal = row.dataset.status;
+  row.dataset.status = 'paid';
+  badge.className = 'status-badge sb-paid';
+  badge.textContent = 'Paid';
+  const actions = btn.closest('.inv-actions');
+  actions.innerHTML = '<button class="action-btn undo">Undo</button>';
+  const undoBtn = actions.querySelector('.undo');
+  const t = setTimeout(() => { undoBtn.style.display = 'none'; }, 8000);
+  undoBtn.onclick = function() {
+    clearTimeout(t);
+    row.dataset.status = prevStatusVal;
+    badge.className = prevBadgeClass;
+    badge.textContent = prevBadgeText;
+    actions.innerHTML = '<button class="action-btn paid-btn" onclick="markPaid(this,\'' + name + '\',\'' + prevStatusVal + '\')">Mark paid</button>';
+    if (activeFilter !== 'all') setFilter(activeFilter, document.querySelector('.filter-tab.active'));
+    showToast('Undone — ' + name + ' back to ' + prevBadgeText.toLowerCase());
+  };
+  if (activeFilter !== 'all') setFilter(activeFilter, document.querySelector('.filter-tab.active'));
+  showToast('Marked as paid · ' + name);
+}
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
