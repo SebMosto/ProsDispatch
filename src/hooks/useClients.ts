@@ -9,12 +9,12 @@ export type { ClientWithPrimaryProperty };
 
 const FETCH_TIMEOUT_MS = 10_000;
 
-const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+const withTimeout = <T>(promise: Promise<T>, ms: number, message: string): Promise<T> =>
   Promise.race([
     promise,
     new Promise<never>((_, reject) =>
       setTimeout(
-        () => reject({ message: 'Unable to load your data. Please check your connection and try again.', reason: 'network' } satisfies RepositoryError),
+        () => reject({ message, reason: 'network' } satisfies RepositoryError),
         ms,
       ),
     ),
