@@ -16,6 +16,16 @@
       "overdueCount": "{{count}} overdue invoices"
     }
   },
+  "admin": {
+    "title": "Admin Portal",
+    "subtitle": "Platform statistics overview",
+    "metrics": {
+      "totalUsers": "Total Users",
+      "totalJobs": "Total Jobs",
+      "activeJobs": "Active Jobs",
+      "error": "Failed to load admin metrics"
+    }
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your profile and account settings.",

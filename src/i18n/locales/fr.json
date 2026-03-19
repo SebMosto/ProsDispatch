@@ -16,6 +16,16 @@
       "overdueCount": "{{count}} factures en retard"
     }
   },
+  "admin": {
+    "title": "Portail d'administration",
+    "subtitle": "Aperçu des statistiques de la plateforme",
+    "metrics": {
+      "totalUsers": "Total des utilisateurs",
+      "totalJobs": "Total des travaux",
+      "activeJobs": "Travaux actifs",
+      "error": "Échec du chargement des métriques d'administration"
+    }
+  },
   "settings": {
     "title": "Paramètres",
     "subtitle": "Gérez votre profil et les paramètres de votre compte.",
