@@ -15,11 +15,6 @@ import { supabase } from '../lib/supabase';
 const FIVE_MINUTES = 5 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 10_000;
 
-const TIMEOUT_ERROR: RepositoryError = {
-  message: 'Unable to load your data. Please check your connection and try again.',
-  reason: 'network',
-};
-
 export const useInvoice = (id?: string) => {
   const { t } = useTranslation();
 
@@ -250,6 +245,7 @@ export const useInvoiceMutations = () => {
 export const useInvoicesByJob = (jobId: string) => useJobInvoices(jobId);
 
 export const useInvoicesByContractor = () => {
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async () => {
@@ -260,12 +256,12 @@ export const useInvoicesByContractor = () => {
       if (result.error) throw result.error;
       return result.data ?? [];
     } catch (err) {
-      if (controller.signal.aborted) throw TIMEOUT_ERROR;
+      if (controller.signal.aborted) throw { message: t('errors.timeout'), reason: 'network' } satisfies RepositoryError;
       throw err;
     } finally {
       clearTimeout(timer);
     }
-  }, []);
+  }, [t]);
 
   const query = useQuery<InvoiceRecord[], RepositoryError>({
     queryKey,

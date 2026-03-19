@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
 import type { RepositoryError } from '../repositories/base';
@@ -8,11 +9,6 @@ import type { ClientWithPrimaryProperty } from '../types/clients';
 export type { ClientWithPrimaryProperty };
 
 const FETCH_TIMEOUT_MS = 10_000;
-
-const TIMEOUT_ERROR: RepositoryError = {
-  message: 'Unable to load your data. Please check your connection and try again.',
-  reason: 'network',
-};
 
 const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
   const map = new Map<string, { city: string; address_line1: string }>();
@@ -30,6 +26,7 @@ const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
 };
 
 export const useClients = () => {
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ['clients'], []);
 
   const queryFn = useCallback(async () => {
@@ -56,12 +53,12 @@ export const useClients = () => {
         primary_property: propertyMap.get(client.id) ?? null,
       }));
     } catch (err) {
-      if (controller.signal.aborted) throw TIMEOUT_ERROR;
+      if (controller.signal.aborted) throw { message: t('errors.timeout'), reason: 'network' } satisfies RepositoryError;
       throw err;
     } finally {
       clearTimeout(timer);
     }
-  }, []);
+  }, [t]);
 
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
     queryKey,
