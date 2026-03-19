@@ -1,0 +1,431 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .app { background: hsl(220 20% 97%); min-height: 700px; display: flex; flex-direction: column; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-size: 13px; }
+  .topbar { background: #fff; border-bottom: 1.5px solid #0F172A; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+  .logo { display: flex; align-items: center; gap: 9px; }
+  .logo-icon { width: 30px; height: 30px; background: #0F172A; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .logo-wordmark { display: flex; align-items: center; gap: 8px; }
+  .logo-name { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .logo-div { width: 1px; height: 15px; background: #94A3B8; }
+  .logo-sub { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .topbar-lang { display: flex; align-items: center; gap: 5px; background: #F1F5F9; border: none; border-radius: 999px; padding: 4px 12px 4px 8px; font-size: 12px; font-weight: 500; color: #0F172A; cursor: pointer; font-family: inherit; }
+  .avatar { width: 30px; height: 30px; background: #FF5C1B; border: 2px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #1F1308; cursor: pointer; }
+  .body { display: flex; flex: 1; }
+  .sidebar { width: 160px; background: #fff; border-right: 1.5px solid #0F172A; display: flex; flex-direction: column; flex-shrink: 0; padding: 12px 0; }
+  .nav-section-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #CBD5E1; padding: 0 12px; margin: 14px 0 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 500; color: #64748B; cursor: pointer; border: none; background: transparent; font-family: inherit; width: 100%; text-align: left; border-left: 3px solid transparent; transition: background 0.1s, color 0.1s; }
+  .nav-item:hover { background: hsl(220 20% 97%); color: #0F172A; }
+  .nav-item.active { color: #0F172A; font-weight: 700; border-left: 3px solid #FF5C1B; background: hsl(220 20% 97%); }
+  .nav-badge { margin-left: auto; background: #FF5C1B; color: #1F1308; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 999px; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid #E2E8F0; padding: 10px 12px 0; }
+  .sidebar-user { display: flex; align-items: center; gap: 7px; }
+  .sidebar-avatar { width: 26px; height: 26px; background: #FF5C1B; border: 1.5px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #1F1308; flex-shrink: 0; }
+  .sidebar-name { font-size: 11px; font-weight: 700; color: #0F172A; }
+  .sidebar-role { font-size: 10px; color: #94A3B8; }
+  .main { flex: 1; padding: 22px 20px; overflow-y: auto; min-width: 0; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+  .page-title { font-size: 19px; font-weight: 700; color: #0F172A; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  /* Fixed search — padding-left clears icon */
+  .search-wrap { position: relative; display: flex; align-items: center; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; display: flex; }
+  .search-input { height: 36px; border: 1.5px solid #CBD5E1; border-radius: 7px; padding: 0 12px 0 30px; font-size: 12px; font-family: inherit; color: #0F172A; background: #fff; outline: none; width: 200px; transition: border-color 0.1s; }
+  .search-input:focus { border-color: #FF5C1B; }
+  .search-input::placeholder { color: #94A3B8; }
+  .btn-primary { display: flex; align-items: center; gap: 6px; height: 36px; background: #FF5C1B; color: #1F1308; border: 2px solid #0F172A; border-radius: 7px; padding: 0 13px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-primary:hover { box-shadow: 4px 4px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  .filter-row { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-tab { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 6px; border: 1.5px solid #CBD5E1; background: #fff; color: #64748B; cursor: pointer; font-family: inherit; transition: all 0.1s; }
+  .filter-tab:hover { border-color: #0F172A; color: #0F172A; }
+  .filter-tab.active { background: #0F172A; color: #fff; border-color: #0F172A; }
+  .filter-tab .ct { display: inline-block; background: #FF5C1B; color: #1F1308; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 999px; margin-left: 5px; }
+  .filter-tab.active .ct { background: #fff; color: #0F172A; }
+
+  /* Jobs table */
+  .jobs-table { background: #fff; border: 2px solid #0F172A; border-radius: 9px; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); overflow: hidden; width: 100%; }
+
+  /* Strict grid: Status | Job | Client | Date | Chevron */
+  .job-grid { display: grid; grid-template-columns: 110px 2fr 1.5fr 80px 36px; width: 100%; gap: 0; }
+
+  .table-head { background: hsl(220 20% 97%); border-bottom: 1.5px solid #0F172A; }
+  .table-head .job-grid { padding: 9px 14px; align-items: center; gap: 12px; }
+  .th { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #94A3B8; white-space: nowrap; text-align: left; }
+  .th.right { text-align: right; }
+
+  /* Accordion row wrapper */
+  .job-row-wrap { border-bottom: 1px solid #F1F5F9; }
+  .job-row-wrap:last-child { border-bottom: none; }
+  .job-row-wrap.open { background: hsl(220 20% 97%); }
+
+  /* Main row */
+  .job-row { cursor: pointer; transition: background 0.1s; -webkit-tap-highlight-color: rgba(255,92,27,0.08); }
+  .job-row:hover { background: hsl(220 20% 97%); }
+  .job-row-wrap.open .job-row { background: hsl(220 20% 97%); border-bottom: 1px solid #E2E8F0; }
+  .job-row .job-grid { padding: 12px 14px; align-items: center; gap: 12px; }
+
+  /* Status chip */
+  .status-chip { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; border: 1.5px solid; white-space: nowrap; cursor: pointer; transition: transform 0.1s; }
+  .status-chip[data-tappable]:hover { transform: translateY(-1px); }
+  .status-chip[data-tappable]::after { content: ' ↻'; font-size: 8px; opacity: 0.5; }
+  .s-draft { background: #F1F5F9; color: #475569; border-color: #CBD5E1; }
+  .s-sent { background: #FFF7ED; color: #EA580C; border-color: #EA580C; }
+  .s-approved { background: #EFF6FF; color: #2563EB; border-color: #2563EB; }
+  .s-progress { background: #F5F3FF; color: #7C3AED; border-color: #7C3AED; }
+  .s-completed { background: #F0FDF4; color: #16A34A; border-color: #16A34A; }
+  .s-invoiced { background: #FFF7ED; color: #EA580C; border-color: #EA580C; }
+
+  .job-addr { font-size: 13px; font-weight: 700; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .job-desc { font-size: 11px; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .job-client-cell { font-size: 12px; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .job-date { font-size: 11px; color: #64748B; white-space: nowrap; }
+  .job-date.soon { color: #FF5C1B; font-weight: 700; }
+
+  /* Chevron */
+  .chevron-cell { display: flex; align-items: center; justify-content: flex-end; }
+  .chevron { color: #94A3B8; transition: transform 0.2s; flex-shrink: 0; }
+  .job-row-wrap.open .chevron { transform: rotate(180deg); color: #FF5C1B; }
+
+  /* Expanded detail panel */
+  .job-detail { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .job-row-wrap.open .job-detail { max-height: 300px; }
+  .detail-inner { padding: 14px 16px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .detail-field label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #94A3B8; display: block; margin-bottom: 4px; }
+  .detail-field p { font-size: 12px; color: #0F172A; font-weight: 500; }
+  .detail-field p.muted { color: #64748B; font-weight: 400; }
+  .detail-actions { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 4px; padding-top: 12px; border-top: 1px solid #E2E8F0; }
+  .btn-edit { display: flex; align-items: center; gap: 5px; height: 32px; background: #fff; color: #0F172A; border: 1.5px solid #0F172A; border-radius: 6px; padding: 0 12px; font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-edit:hover { box-shadow: 3px 3px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  .btn-invoice { display: flex; align-items: center; gap: 5px; height: 32px; background: transparent; color: #FF5C1B; border: 1.5px solid #FF5C1B; border-radius: 6px; padding: 0 12px; font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+  .btn-invoice:hover { background: #FFF7ED; }
+  .btn-status-advance { display: flex; align-items: center; gap: 5px; height: 32px; background: #FF5C1B; color: #1F1308; border: 1.5px solid #0F172A; border-radius: 6px; padding: 0 12px; font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-status-advance:hover { box-shadow: 3px 3px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+
+  .empty { padding: 40px; text-align: center; color: #94A3B8; font-size: 13px; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #fff; font-size: 12px; font-weight: 600; padding: 9px 18px; border-radius: 8px; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; z-index: 99; }
+  .toast.show { opacity: 1; }
+  .feedback-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .feedback-btn { font-size: 12px; padding: 5px 12px; border: 1.5px solid #0F172A; border-radius: 6px; background: transparent; cursor: pointer; color: #0F172A; font-family: inherit; font-weight: 500; }
+  .feedback-btn:hover { background: #0F172A; color: #fff; }
+</style>
+
+<div class="app">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white"/>
+          <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-wordmark">
+        <span class="logo-name">Dispatch</span>
+        <div class="logo-div"></div>
+        <span class="logo-sub">Labs</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-lang">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5"/><path d="M9 9l2-5 2 5M9.7 7.5h2.6"/></svg>
+        FR
+      </button>
+      <div class="avatar">JT</div>
+    </div>
+  </nav>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item active"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 3V1M11 3V1M2 7h12"/></svg>Jobs<span class="nav-badge">3</span></button>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Clients</button>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="12" height="13" rx="1"/><path d="M5 6h6M5 9h6M5 12h4"/></svg>Invoices<span class="nav-badge">2</span></button>
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/></svg>Settings</button>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">JT</div>
+          <div><div class="sidebar-name">Jean Tremblay</div><div class="sidebar-role">Plomberie</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title">Jobs</div>
+        <div class="header-right">
+          <div class="search-wrap">
+            <span class="search-icon">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+            </span>
+            <input class="search-input" placeholder="Search address or client…" oninput="applyFilters()" />
+          </div>
+          <button class="btn-primary">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg>
+            New job
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-tab active" onclick="setFilter('active',this)">Active <span class="ct">5</span></button>
+        <button class="filter-tab" onclick="setFilter('draft',this)">Draft</button>
+        <button class="filter-tab" onclick="setFilter('sent',this)">Awaiting approval</button>
+        <button class="filter-tab" onclick="setFilter('completed',this)">Completed</button>
+        <button class="filter-tab" onclick="setFilter('all',this)">All</button>
+      </div>
+
+      <div class="jobs-table" id="jobs-table">
+        <!-- Header -->
+        <div class="table-head">
+          <div class="job-grid">
+            <div class="th">Status</div>
+            <div class="th">Job</div>
+            <div class="th">Client</div>
+            <div class="th">Date</div>
+            <div class="th"></div>
+          </div>
+        </div>
+
+        <!-- Rows -->
+        <div class="job-row-wrap" data-status="progress" data-search="482 rue st-denis martin côté pipe replacement basement">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-progress" data-tappable onclick="flipStatus(this,event)">In progress</span></div>
+              <div><div class="job-addr">482 Rue St-Denis</div><div class="job-desc">Pipe replacement — basement</div></div>
+              <div class="job-client-cell">Martin Côté</div>
+              <div class="job-date soon">Mar 16</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>482 Rue St-Denis, Montréal</p></div>
+              <div class="detail-field"><label>Client</label><p>Martin Côté</p></div>
+              <div class="detail-field"><label>Service date</label><p>March 16, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">Pipe replacement in basement — section near water heater corroded.</p></div>
+              <div class="detail-field"><label>Last updated</label><p class="muted">Mar 13, 2026</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0041</p></div>
+              <div class="detail-actions">
+                <button class="btn-status-advance" onclick="event.stopPropagation(); showToast('Status → Completed')">Mark completed</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0041…')">
+                  <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>
+                  Edit job
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-row-wrap" data-status="approved" data-search="77 boul. décarie sophie lavoie water heater install">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-approved" data-tappable onclick="flipStatus(this,event)">Approved</span></div>
+              <div><div class="job-addr">77 Boul. Décarie</div><div class="job-desc">Water heater install</div></div>
+              <div class="job-client-cell">Sophie Lavoie</div>
+              <div class="job-date soon">Mar 18</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>77 Boul. Décarie, Montréal</p></div>
+              <div class="detail-field"><label>Client</label><p>Sophie Lavoie</p></div>
+              <div class="detail-field"><label>Service date</label><p>March 18, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">Replace 40-gal electric water heater. Unit is 12 years old, showing signs of corrosion.</p></div>
+              <div class="detail-field"><label>Last updated</label><p class="muted">Mar 11, 2026</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0040</p></div>
+              <div class="detail-actions">
+                <button class="btn-status-advance" onclick="event.stopPropagation(); showToast('Status → In progress')">Start job</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0040…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>Edit job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-row-wrap" data-status="sent" data-search="230 rue sherbrooke lucie poirier annual inspection">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-sent">Awaiting</span></div>
+              <div><div class="job-addr">230 Rue Sherbrooke</div><div class="job-desc">Annual inspection</div></div>
+              <div class="job-client-cell">Lucie Poirier</div>
+              <div class="job-date">Mar 21</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>230 Rue Sherbrooke O., Montréal</p></div>
+              <div class="detail-field"><label>Client</label><p>Lucie Poirier</p></div>
+              <div class="detail-field"><label>Service date</label><p>March 21, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">Annual plumbing inspection. Sent for client approval — awaiting response.</p></div>
+              <div class="detail-field"><label>Sent</label><p class="muted">Mar 9, 2026</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0039</p></div>
+              <div class="detail-actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0039…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>Edit job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-row-wrap" data-status="progress" data-search="14 ave. victoria rené bergeron emergency drain clearing">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-progress" data-tappable onclick="flipStatus(this,event)">In progress</span></div>
+              <div><div class="job-addr">14 Ave. Victoria</div><div class="job-desc">Emergency drain clearing</div></div>
+              <div class="job-client-cell">René Bergeron</div>
+              <div class="job-date">Mar 10</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>14 Ave. Victoria, Westmount</p></div>
+              <div class="detail-field"><label>Client</label><p>René Bergeron</p></div>
+              <div class="detail-field"><label>Service date</label><p>March 10, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">Emergency call — main drain blocked. Snake and camera inspection required.</p></div>
+              <div class="detail-field"><label>Last updated</label><p class="muted">Mar 10, 2026</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0038</p></div>
+              <div class="detail-actions">
+                <button class="btn-status-advance" onclick="event.stopPropagation(); showToast('Status → Completed')">Mark completed</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0038…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>Edit job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-row-wrap" data-status="completed" data-search="18 boul. saint-laurent marc dubois kitchen sink install">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-completed">Completed</span></div>
+              <div><div class="job-addr">18 Boul. Saint-Laurent</div><div class="job-desc">Kitchen sink install</div></div>
+              <div class="job-client-cell">Marc Dubois</div>
+              <div class="job-date">Mar 5</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>18 Boul. Saint-Laurent, Montréal</p></div>
+              <div class="detail-field"><label>Client</label><p>Marc Dubois</p></div>
+              <div class="detail-field"><label>Completed</label><p>March 5, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">New undermount sink installation with faucet and drain assembly.</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0035</p></div>
+              <div class="detail-field"></div>
+              <div class="detail-actions">
+                <button class="btn-invoice" onclick="event.stopPropagation(); showToast('Creating invoice for Marc Dubois…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="1" width="10" height="12" rx="1"/><path d="M5 5h4M5 8h4M5 11h2"/></svg>Create invoice</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0035…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>Edit job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-row-wrap" data-status="draft" data-search="9 ch. remembrance françois morin bathroom rough-in">
+          <div class="job-row" onclick="toggleRow(this)">
+            <div class="job-grid">
+              <div><span class="status-chip s-draft" data-tappable onclick="flipStatus(this,event)">Draft</span></div>
+              <div><div class="job-addr">9 Ch. Remembrance</div><div class="job-desc">New bathroom rough-in</div></div>
+              <div class="job-client-cell">François Morin</div>
+              <div class="job-date">Mar 24</div>
+              <div class="chevron-cell"><svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg></div>
+            </div>
+          </div>
+          <div class="job-detail">
+            <div class="detail-inner">
+              <div class="detail-field"><label>Address</label><p>9 Ch. Remembrance, Westmount</p></div>
+              <div class="detail-field"><label>Client</label><p>François Morin</p></div>
+              <div class="detail-field"><label>Service date</label><p>March 24, 2026</p></div>
+              <div class="detail-field"><label>Description</label><p class="muted">Rough-in for new bathroom addition — supply and drain lines. Draft pending review.</p></div>
+              <div class="detail-field"><label>Created</label><p class="muted">Mar 14, 2026</p></div>
+              <div class="detail-field"><label>Job ID</label><p class="muted">JOB-0044</p></div>
+              <div class="detail-actions">
+                <button class="btn-status-advance" onclick="event.stopPropagation(); showToast('Job sent to François Morin for approval')">Send for approval</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); showToast('Opening edit — JOB-0044…')"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>Edit job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty" style="display:none">No jobs match this filter.</div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div style="padding: 16px 24px; border-top: 1px solid var(--color-border-tertiary); margin-top: 8px;">
+  <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;">Give feedback:</div>
+  <div class="feedback-row">
+    <button class="feedback-btn" onclick="sendPrompt('The jobs list looks good, move to Client list mockup')">Looks good → Client list</button>
+    <button class="feedback-btn" onclick="sendPrompt('The jobs list needs changes: ')">Custom feedback ↗</button>
+  </div>
+</div>
+
+<script>
+let activeFilter = 'active';
+const activeStatuses = ['progress','approved','sent'];
+
+function toggleRow(rowEl) {
+  const wrap = rowEl.closest('.job-row-wrap');
+  const isOpen = wrap.classList.contains('open');
+  document.querySelectorAll('.job-row-wrap.open').forEach(w => w.classList.remove('open'));
+  if (!isOpen) wrap.classList.add('open');
+}
+
+function flipStatus(el, e) {
+  e.stopPropagation();
+  const cycle = {
+    'Draft':       { next: 'Awaiting',    cls: 's-sent' },
+    'Awaiting':    { next: 'Approved',    cls: 's-approved' },
+    'Approved':    { next: 'In progress', cls: 's-progress' },
+    'In progress': { next: 'Completed',   cls: 's-completed' },
+  };
+  const current = el.textContent.replace(' ↻','').trim();
+  const next = cycle[current];
+  if (!next) return;
+  el.className = 'status-chip ' + next.cls;
+  el.textContent = next.next;
+  if (next.next === 'Completed') { delete el.dataset.tappable; el.onclick = null; }
+  showToast('Status → ' + next.next);
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.querySelector('.search-input').value.toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.job-row-wrap').forEach(row => {
+    const s = row.dataset.status;
+    const text = row.dataset.search;
+    const statusMatch =
+      activeFilter === 'all' ? true :
+      activeFilter === 'active' ? activeStatuses.includes(s) :
+      activeFilter === 'draft' ? s === 'draft' :
+      activeFilter === 'sent' ? s === 'sent' :
+      activeFilter === 'completed' ? (s === 'completed' || s === 'invoiced') : true;
+    const searchMatch = !q || text.includes(q);
+    const show = statusMatch && searchMatch;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+}
+
+applyFilters();
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>

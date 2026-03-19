@@ -1,0 +1,362 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .app { background: hsl(220 20% 97%); min-height: 700px; display: flex; flex-direction: column; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-size: 13px; }
+  .topbar { background: #fff; border-bottom: 1.5px solid #0F172A; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+  .logo { display: flex; align-items: center; gap: 9px; }
+  .logo-icon { width: 30px; height: 30px; background: #0F172A; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .logo-wordmark { display: flex; align-items: center; gap: 8px; }
+  .logo-name { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .logo-div { width: 1px; height: 15px; background: #94A3B8; }
+  .logo-sub { font-weight: 700; font-size: 14px; color: #0F172A; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .topbar-lang { display: flex; align-items: center; gap: 5px; background: #F1F5F9; border: none; border-radius: 999px; padding: 4px 12px 4px 8px; font-size: 12px; font-weight: 500; color: #0F172A; cursor: pointer; font-family: inherit; }
+  .avatar { width: 30px; height: 30px; background: #FF5C1B; border: 2px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #1F1308; cursor: pointer; }
+  .body { display: flex; flex: 1; }
+  .sidebar { width: 160px; background: #fff; border-right: 1.5px solid #0F172A; display: flex; flex-direction: column; flex-shrink: 0; padding: 12px 0; }
+  .nav-section-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #CBD5E1; padding: 0 12px; margin: 14px 0 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 500; color: #64748B; cursor: pointer; border: none; background: transparent; font-family: inherit; width: 100%; text-align: left; border-left: 3px solid transparent; transition: background 0.1s, color 0.1s; }
+  .nav-item:hover { background: hsl(220 20% 97%); color: #0F172A; }
+  .nav-item.active { color: #0F172A; font-weight: 700; border-left: 3px solid #FF5C1B; background: hsl(220 20% 97%); }
+  .nav-badge { margin-left: auto; background: #FF5C1B; color: #1F1308; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 999px; }
+  .sidebar-footer { margin-top: auto; border-top: 1px solid #E2E8F0; padding: 10px 12px 0; }
+  .sidebar-user { display: flex; align-items: center; gap: 7px; }
+  .sidebar-avatar-el { width: 26px; height: 26px; background: #FF5C1B; border: 1.5px solid #0F172A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #1F1308; flex-shrink: 0; }
+  .sidebar-name { font-size: 11px; font-weight: 700; color: #0F172A; }
+  .sidebar-role { font-size: 10px; color: #94A3B8; }
+  .main { flex: 1; padding: 22px 20px; overflow-y: auto; min-width: 0; }
+
+  /* Breadcrumb */
+  .breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+  .back-btn { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #64748B; cursor: pointer; border: none; background: none; font-family: inherit; padding: 0; transition: color 0.1s; }
+  .back-btn:hover { color: #0F172A; }
+  .breadcrumb-sep { color: #CBD5E1; font-size: 12px; }
+  .breadcrumb-current { font-size: 12px; font-weight: 600; color: #0F172A; }
+
+  /* Header card — all contact info in one place */
+  .profile-card { background: #fff; border: 2px solid #0F172A; border-radius: 10px; box-shadow: 3px 3px 0 0 rgba(15,23,42,0.9); padding: 20px 22px; margin-bottom: 14px; }
+  .profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  .profile-left { display: flex; align-items: flex-start; gap: 14px; flex: 1; min-width: 0; }
+  .profile-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #0F172A; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; background: #FFF1EC; color: #FF5C1B; }
+  .profile-name { font-size: 19px; font-weight: 700; color: #0F172A; margin-bottom: 5px; }
+  .profile-primary-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #64748B; }
+  .meta-item a { color: #FF5C1B; text-decoration: none; font-weight: 500; }
+  .meta-item a:hover { text-decoration: underline; }
+  .profile-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-primary { display: flex; align-items: center; gap: 6px; height: 34px; background: #FF5C1B; color: #1F1308; border: 2px solid #0F172A; border-radius: 7px; padding: 0 12px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-primary:hover { box-shadow: 4px 4px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  .btn-outline { display: flex; align-items: center; gap: 6px; height: 34px; background: #fff; color: #0F172A; border: 2px solid #0F172A; border-radius: 7px; padding: 0 12px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.1s, transform 0.1s; white-space: nowrap; }
+  .btn-outline:hover { box-shadow: 4px 4px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  /* Secondary meta row — language, source, since */
+  .profile-secondary-meta { display: flex; align-items: center; gap: 0; border-top: 1px solid #F1F5F9; padding-top: 12px; flex-wrap: wrap; }
+  .secondary-meta-item { display: flex; flex-direction: column; gap: 2px; padding-right: 24px; margin-right: 24px; border-right: 1px solid #E2E8F0; }
+  .secondary-meta-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .secondary-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #94A3B8; }
+  .secondary-meta-value { font-size: 12px; font-weight: 600; color: #0F172A; }
+
+  /* KPI strip */
+  .kpi-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+  .kpi-card { background: #fff; border: 2px solid #0F172A; border-radius: 9px; padding: 12px 14px; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #94A3B8; margin-bottom: 4px; }
+  .kpi-value { font-size: 19px; font-weight: 700; color: #0F172A; line-height: 1; margin-bottom: 2px; }
+  .kpi-sub { font-size: 10px; color: #94A3B8; }
+  .kpi-card.success { border-color: #16A34A; box-shadow: 2px 2px 0 0 rgba(22,101,52,0.3); }
+  .kpi-card.success .kpi-value { color: #16A34A; }
+  .kpi-card.warning { border-color: #FF5C1B; box-shadow: 2px 2px 0 0 rgba(255,92,27,0.3); }
+  .kpi-card.warning .kpi-value { color: #FF5C1B; }
+
+  /* Unified history card */
+  .history-card { background: #fff; border: 2px solid #0F172A; border-radius: 10px; box-shadow: 2px 2px 0 0 rgba(15,23,42,0.9); overflow: hidden; }
+
+  /* Sticky card header with tabs + filter */
+  .history-header { position: sticky; top: 0; background: #fff; border-bottom: 1.5px solid #0F172A; z-index: 2; }
+  .tab-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 0; }
+  .tabs { display: flex; gap: 0; }
+  .tab-btn { font-size: 13px; font-weight: 600; color: #94A3B8; padding: 6px 14px 10px; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2.5px solid transparent; transition: color 0.1s, border-color 0.1s; }
+  .tab-btn.active { color: #0F172A; border-bottom: 2.5px solid #FF5C1B; }
+  .tab-btn:hover:not(.active) { color: #64748B; }
+  .filter-select-wrap { position: relative; padding-bottom: 10px; }
+  .filter-select { height: 30px; border: 1.5px solid #CBD5E1; border-radius: 6px; padding: 0 24px 0 10px; font-size: 11px; font-family: inherit; color: #0F172A; background: #fff; outline: none; appearance: none; cursor: pointer; transition: border-color 0.1s; }
+  .filter-select:focus { border-color: #FF5C1B; }
+  .filter-select-wrap::after { content: ''; position: absolute; right: 8px; top: 50%; transform: translateY(-65%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #64748B; pointer-events: none; }
+
+  /* Scrollable content area */
+  .history-scroll { max-height: 400px; overflow-y: auto; }
+  .history-scroll::-webkit-scrollbar { width: 4px; }
+  .history-scroll::-webkit-scrollbar-track { background: transparent; }
+  .history-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+  /* Job rows */
+  .job-row { display: grid; grid-template-columns: 2fr 80px 90px; gap: 10px; padding: 11px 16px; border-bottom: 1px solid #F1F5F9; align-items: center; cursor: pointer; transition: background 0.1s; }
+  .job-row:last-child { border-bottom: none; }
+  .job-row:hover { background: hsl(220 20% 97%); }
+  .job-addr { font-size: 12px; font-weight: 700; color: #0F172A; }
+  .job-desc { font-size: 10px; color: #64748B; margin-top: 1px; }
+  .job-date { font-size: 11px; color: #64748B; white-space: nowrap; }
+  .job-date.hot { color: #FF5C1B; font-weight: 700; }
+
+  /* Invoice rows */
+  .inv-row { display: grid; grid-template-columns: 70px 1fr 90px 90px; gap: 10px; padding: 11px 16px; border-bottom: 1px solid #F1F5F9; align-items: center; cursor: pointer; transition: background 0.1s; }
+  .inv-row:last-child { border-bottom: none; }
+  .inv-row:hover { background: hsl(220 20% 97%); }
+  .inv-num { font-size: 11px; font-weight: 700; color: #0F172A; }
+  .inv-desc { font-size: 12px; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .inv-amount { font-size: 13px; font-weight: 700; color: #0F172A; }
+  .inv-amount.overdue { color: #FF5C1B; }
+  .inv-amount.paid { color: #16A34A; }
+
+  /* Status badges */
+  .sb { display: inline-flex; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; border: 1.5px solid; white-space: nowrap; }
+  .sb-completed { background: #F0FDF4; color: #16A34A; border-color: #16A34A; }
+  .sb-progress { background: #F5F3FF; color: #7C3AED; border-color: #7C3AED; }
+  .sb-invoiced { background: #FFF7ED; color: #EA580C; border-color: #EA580C; }
+  .sb-paid { background: #F0FDF4; color: #16A34A; border-color: #16A34A; }
+  .sb-overdue { background: #FFF1EC; color: #FF5C1B; border-color: #FF5C1B; font-weight: 800; }
+
+  .empty-state { padding: 32px; text-align: center; color: #94A3B8; font-size: 12px; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #fff; font-size: 12px; font-weight: 600; padding: 9px 18px; border-radius: 8px; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; z-index: 99; }
+  .toast.show { opacity: 1; }
+  .feedback-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .feedback-btn { font-size: 12px; padding: 5px 12px; border: 1.5px solid #0F172A; border-radius: 6px; background: transparent; cursor: pointer; color: #0F172A; font-family: inherit; font-weight: 500; }
+  .feedback-btn:hover { background: #0F172A; color: #fff; }
+</style>
+
+<div class="app">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white"/>
+          <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-wordmark">
+        <span class="logo-name">Dispatch</span>
+        <div class="logo-div"></div>
+        <span class="logo-sub">Labs</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-lang">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5"/><path d="M9 9l2-5 2 5M9.7 7.5h2.6"/></svg>
+        FR
+      </button>
+      <div class="avatar">JT</div>
+    </div>
+  </nav>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 3V1M11 3V1M2 7h12"/></svg>Jobs<span class="nav-badge">3</span></button>
+      <button class="nav-item active"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Clients</button>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="12" height="13" rx="1"/><path d="M5 6h6M5 9h6M5 12h4"/></svg>Invoices<span class="nav-badge">2</span></button>
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/></svg>Settings</button>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar-el">JT</div>
+          <div><div class="sidebar-name">Jean Tremblay</div><div class="sidebar-role">Plomberie</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="breadcrumb">
+        <button class="back-btn" onclick="showToast('Back to clients…')">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11L5 7l4-4"/></svg>
+          Clients
+        </button>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Martin Côté</span>
+      </div>
+
+      <!-- Consolidated header card -->
+      <div class="profile-card">
+        <div class="profile-top">
+          <div class="profile-left">
+            <div class="profile-avatar">MC</div>
+            <div>
+              <div class="profile-name">Martin Côté</div>
+              <div class="profile-primary-meta">
+                <div class="meta-item">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 1C4.8 1 3 2.8 3 5c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="7" cy="5" r="1.5"/></svg>
+                  482 Rue St-Denis, Montréal
+                </div>
+                <div class="meta-item">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2h2.5l1 3-1.5 1a9 9 0 0 0 4 4l1-1.5 3 1V12a1 1 0 0 1-1 1C5 13 1 8.3 1 3a1 1 0 0 1 1-1z"/></svg>
+                  <a href="#">514 555-0182</a>
+                </div>
+                <div class="meta-item">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="12" height="9" rx="1"/><path d="M1 5l6 4 6-4"/></svg>
+                  <a href="#">martin.cote@gmail.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn-primary" onclick="showToast('New job for Martin Côté…')">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg>
+              New job
+            </button>
+            <button class="btn-outline" onclick="showToast('Editing Martin Côté…')">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>
+              Edit
+            </button>
+          </div>
+        </div>
+        <!-- Secondary meta: language, source, since -->
+        <div class="profile-secondary-meta">
+          <div class="secondary-meta-item">
+            <div class="secondary-meta-label">Language</div>
+            <div class="secondary-meta-value">Français</div>
+          </div>
+          <div class="secondary-meta-item">
+            <div class="secondary-meta-label">Source</div>
+            <div class="secondary-meta-value">Referral</div>
+          </div>
+          <div class="secondary-meta-item">
+            <div class="secondary-meta-label">Client since</div>
+            <div class="secondary-meta-value">January 2025</div>
+          </div>
+          <div class="secondary-meta-item">
+            <div class="secondary-meta-label">Property</div>
+            <div class="secondary-meta-value">482 Rue St-Denis</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi-card">
+          <div class="kpi-label">Total jobs</div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi-card success">
+          <div class="kpi-label">Revenue</div>
+          <div class="kpi-value">$6,450</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Last service</div>
+          <div class="kpi-value" style="font-size:14px;">Mar 13</div>
+          <div class="kpi-sub">Pipe replacement</div>
+        </div>
+        <div class="kpi-card warning">
+          <div class="kpi-label">Outstanding</div>
+          <div class="kpi-value">$1,800</div>
+          <div class="kpi-sub">1 overdue invoice</div>
+        </div>
+      </div>
+
+      <!-- Unified history card -->
+      <div class="history-card">
+        <div class="history-header">
+          <div class="tab-row">
+            <div class="tabs">
+              <button class="tab-btn active" id="tab-jobs" onclick="switchTab('jobs')">Jobs</button>
+              <button class="tab-btn" id="tab-invoices" onclick="switchTab('invoices')">Invoices</button>
+            </div>
+            <div class="filter-select-wrap" id="property-filter-wrap">
+              <select class="filter-select" id="property-filter" onchange="filterJobs()">
+                <option value="all">All properties</option>
+                <option value="482">482 Rue St-Denis</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs tab -->
+        <div class="history-scroll" id="jobs-tab">
+          <div class="job-row" data-addr="482" onclick="showToast('Opening JOB-0041…')">
+            <div><div class="job-addr">482 Rue St-Denis</div><div class="job-desc">Pipe replacement — basement</div></div>
+            <div class="job-date hot">Mar 13</div>
+            <span class="sb sb-progress">In progress</span>
+          </div>
+          <div class="job-row" data-addr="482" onclick="showToast('Opening JOB-0036…')">
+            <div><div class="job-addr">482 Rue St-Denis</div><div class="job-desc">Annual plumbing inspection</div></div>
+            <div class="job-date">Oct 2025</div>
+            <span class="sb sb-completed">Completed</span>
+          </div>
+          <div class="job-row" data-addr="482" onclick="showToast('Opening JOB-0028…')">
+            <div><div class="job-addr">482 Rue St-Denis</div><div class="job-desc">Water pressure fix</div></div>
+            <div class="job-date">May 2025</div>
+            <span class="sb sb-invoiced">Invoiced</span>
+          </div>
+          <div class="job-row" data-addr="482" onclick="showToast('Opening JOB-0012…')">
+            <div><div class="job-addr">482 Rue St-Denis</div><div class="job-desc">Initial service call</div></div>
+            <div class="job-date">Jan 2025</div>
+            <span class="sb sb-completed">Completed</span>
+          </div>
+        </div>
+
+        <!-- Invoices tab (hidden by default) -->
+        <div class="history-scroll" id="invoices-tab" style="display:none">
+          <div class="inv-row" onclick="showToast('Opening INV-041…')">
+            <div class="inv-num">INV-041</div>
+            <div class="inv-desc">Pipe replacement — basement</div>
+            <div class="inv-amount overdue">$1,800</div>
+            <span class="sb sb-overdue">Overdue</span>
+          </div>
+          <div class="inv-row" onclick="showToast('Opening INV-033…')">
+            <div class="inv-num">INV-033</div>
+            <div class="inv-desc">Annual plumbing inspection</div>
+            <div class="inv-amount paid">$2,100</div>
+            <span class="sb sb-paid">Paid</span>
+          </div>
+          <div class="inv-row" onclick="showToast('Opening INV-021…')">
+            <div class="inv-num">INV-021</div>
+            <div class="inv-desc">Water pressure fix</div>
+            <div class="inv-amount paid">$1,650</div>
+            <span class="sb sb-paid">Paid</span>
+          </div>
+          <div class="inv-row" onclick="showToast('Opening INV-008…')">
+            <div class="inv-num">INV-008</div>
+            <div class="inv-desc">Initial service call</div>
+            <div class="inv-amount paid">$900</div>
+            <span class="sb sb-paid">Paid</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div style="padding: 16px 24px; border-top: 1px solid var(--color-border-tertiary); margin-top: 8px;">
+  <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;">Give feedback:</div>
+  <div class="feedback-row">
+    <button class="feedback-btn" onclick="sendPrompt('The client detail looks good, move to Settings mockup')">Looks good → Settings</button>
+    <button class="feedback-btn" onclick="sendPrompt('The client detail needs changes: ')">Custom feedback ↗</button>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.getElementById('tab-jobs').classList.toggle('active', tab === 'jobs');
+  document.getElementById('tab-invoices').classList.toggle('active', tab === 'invoices');
+  document.getElementById('jobs-tab').style.display = tab === 'jobs' ? '' : 'none';
+  document.getElementById('invoices-tab').style.display = tab === 'invoices' ? '' : 'none';
+  document.getElementById('property-filter-wrap').style.display = tab === 'jobs' ? '' : 'none';
+}
+
+function filterJobs() {
+  const val = document.getElementById('property-filter').value;
+  document.querySelectorAll('#jobs-tab .job-row').forEach(row => {
+    row.style.display = (val === 'all' || row.dataset.addr === val) ? '' : 'none';
+  });
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>

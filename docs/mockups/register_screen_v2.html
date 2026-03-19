@@ -1,0 +1,252 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .page { background: hsl(220 20% 97%); min-height: 680px; display: flex; flex-direction: column; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+  .topbar { background: hsl(220 20% 97%); border-bottom: 1px solid #CBD5E1; padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 9px; }
+  .logo-icon { width: 32px; height: 32px; background: #0F172A; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-wordmark { display: flex; align-items: center; gap: 9px; }
+  .logo-name { font-weight: 700; font-size: 15px; color: #0F172A; letter-spacing: -0.3px; }
+  .logo-divider { width: 1px; height: 17px; background: #94A3B8; }
+  .logo-sub { font-weight: 700; font-size: 15px; color: #0F172A; letter-spacing: -0.3px; }
+  .topbar-right { display: flex; align-items: center; gap: 4px; }
+  .lang-pill { display: flex; align-items: center; gap: 6px; background: #E2E8F0; border: none; border-radius: 999px; padding: 5px 14px 5px 10px; font-size: 13px; font-weight: 500; color: #0F172A; cursor: pointer; font-family: inherit; transition: background 0.12s; }
+  .lang-pill:hover { background: #CBD5E1; }
+  .icon-btn { width: 34px; height: 34px; border: none; background: transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; margin: 0 1px; transition: background 0.12s, color 0.12s; }
+  .icon-btn:hover { background: #E2E8F0; color: #0F172A; }
+  .topbar-sep { width: 1px; height: 18px; background: #CBD5E1; margin: 0 4px; }
+  .topbar-link { font-size: 13px; color: #64748B; font-weight: 500; cursor: pointer; padding: 6px 10px; border-radius: 6px; border: none; background: transparent; font-family: inherit; transition: color 0.12s; }
+  .topbar-link:hover { color: #0F172A; }
+  .topbar-login { font-size: 13px; font-weight: 700; color: #0F172A; cursor: pointer; padding: 6px 10px; border-radius: 6px; border: none; background: transparent; font-family: inherit; }
+  .topbar-login:hover { background: #E2E8F0; }
+  .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+  .card { background: #fff; border: 2px solid #0F172A; border-radius: 14px; box-shadow: 4px 4px 0 0 rgba(15,23,42,0.9); padding: 40px 40px 36px; width: 100%; max-width: 460px; }
+  .card-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: #FF5C1B; text-transform: uppercase; margin-bottom: 10px; }
+  .card-title { font-size: 24px; font-weight: 700; color: #0F172A; line-height: 1.2; margin-bottom: 6px; }
+  .card-sub { font-size: 14px; color: #64748B; margin-bottom: 28px; line-height: 1.5; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase; color: #0F172A; margin-bottom: 7px; }
+  .field input { width: 100%; height: 44px; border: 2px solid #0F172A; border-radius: 10px; padding: 0 14px; font-size: 14px; font-family: inherit; color: #0F172A; background: hsl(220 20% 97%); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  .field input:focus { border-color: #FF5C1B; box-shadow: 0 0 0 3px rgba(255,92,27,0.15); }
+  .field input::placeholder { color: #94A3B8; }
+  .field select { width: 100%; height: 44px; border: 2px solid #0F172A; border-radius: 10px; padding: 0 14px; font-size: 14px; font-family: inherit; color: #0F172A; background: hsl(220 20% 97%); outline: none; appearance: none; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .field select:focus { border-color: #FF5C1B; box-shadow: 0 0 0 3px rgba(255,92,27,0.15); }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #0F172A; pointer-events: none; }
+  .other-input-wrap { margin-top: 10px; overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.2s ease, opacity 0.2s ease; }
+  .other-input-wrap.visible { max-height: 60px; opacity: 1; }
+  .other-input-wrap input { width: 100%; height: 44px; border: 2px solid #FF5C1B; border-radius: 10px; padding: 0 14px; font-size: 14px; font-family: inherit; color: #0F172A; background: hsl(220 20% 97%); outline: none; box-shadow: 0 0 0 3px rgba(255,92,27,0.12); }
+  .other-input-wrap input:focus { box-shadow: 0 0 0 3px rgba(255,92,27,0.25); }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 4px 0 20px; }
+  .divider-line { flex: 1; height: 1px; background: #E2E8F0; }
+  .divider-text { font-size: 11px; color: #94A3B8; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; }
+  .btn-primary { width: 100%; height: 48px; background: #FF5C1B; color: #1F1308; border: 2px solid #0F172A; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 3px 3px 0 0 rgba(15,23,42,0.9); transition: box-shadow 0.12s, transform 0.12s; margin-top: 4px; }
+  .btn-primary:hover { box-shadow: 5px 5px 0 0 rgba(15,23,42,0.9); transform: translate(-1px,-1px); }
+  .btn-primary:active { box-shadow: 1px 1px 0 0 rgba(15,23,42,0.9); transform: translate(1px,1px); }
+  .terms { font-size: 11px; color: #94A3B8; text-align: center; margin-top: 14px; line-height: 1.6; }
+  .terms a { color: #64748B; text-decoration: underline; cursor: pointer; }
+  .signin-link { text-align: center; font-size: 13px; color: #64748B; margin-top: 16px; }
+  .signin-link a { color: #FF5C1B; font-weight: 700; text-decoration: none; cursor: pointer; }
+  .signin-link a:hover { text-decoration: underline; }
+  .feedback-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .feedback-btn { font-size: 12px; padding: 5px 12px; border: 1.5px solid #0F172A; border-radius: 6px; background: transparent; cursor: pointer; color: #0F172A; font-family: inherit; font-weight: 500; }
+  .feedback-btn:hover { background: #0F172A; color: #fff; }
+</style>
+
+<div class="page">
+  <nav class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white"/>
+          <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-wordmark">
+        <span class="logo-name">Dispatch</span>
+        <div class="logo-divider"></div>
+        <span class="logo-sub">Labs</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="lang-pill" onclick="toggleLang()">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5"/>
+          <path d="M9 9l2-5 2 5M9.7 7.5h2.6"/>
+        </svg>
+        <span id="lang-label">Français</span>
+      </button>
+      <button class="icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M14 10.5A6.5 6.5 0 0 1 5.5 2a6.5 6.5 0 1 0 8.5 8.5z" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="topbar-sep"></div>
+      <button class="topbar-link" id="nav-pilot">Pilot Program</button>
+      <button class="topbar-login" id="nav-login">Login</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="card">
+      <div class="card-label" id="card-label">New contractor account</div>
+      <div class="card-title" id="card-title">Create your account</div>
+      <div class="card-sub" id="card-sub">Get set up in minutes. No training required.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label id="label-first">First name</label>
+          <input type="text" id="input-first" placeholder="Jean" />
+        </div>
+        <div class="field">
+          <label id="label-last">Last name</label>
+          <input type="text" id="input-last" placeholder="Tremblay" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="label-biz">Business name</label>
+        <input type="text" id="input-biz" placeholder="Tremblay Plomberie Inc." />
+      </div>
+
+      <div class="field">
+        <label id="label-trade">Trade</label>
+        <div class="select-wrap">
+          <select id="input-trade" onchange="handleTradeChange()">
+            <option value="" id="opt-select">Select your trade…</option>
+            <option value="plumbing" id="opt-plumbing">Plumbing</option>
+            <option value="hvac" id="opt-hvac">HVAC</option>
+            <option value="electrical" id="opt-electrical">Electrical</option>
+            <option value="general" id="opt-general">General contractor</option>
+            <option value="roofing" id="opt-roofing">Roofing</option>
+            <option value="other" id="opt-other">Other</option>
+          </select>
+        </div>
+        <div class="other-input-wrap" id="other-wrap">
+          <input type="text" id="input-other" placeholder="Describe your trade…" />
+        </div>
+      </div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text" id="div-account">Account credentials</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="field">
+        <label id="label-email">Email</label>
+        <input type="email" id="input-email" placeholder="you@example.com" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label id="label-pw">Password</label>
+          <input type="password" id="input-pw" placeholder="••••••••" />
+        </div>
+        <div class="field">
+          <label id="label-pw2">Confirm</label>
+          <input type="password" id="input-pw2" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-create">Create account</button>
+
+      <div class="terms">
+        <span id="terms-text">By creating an account you agree to our </span><a id="terms-tos">Terms of Service</a><span id="terms-and"> and </span><a id="terms-pp">Privacy Policy</a>.
+      </div>
+      <div class="signin-link"><span id="signin-pre">Already have an account? </span><a id="signin-link">Sign in →</a></div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 16px 24px; border-top: 1px solid var(--color-border-tertiary); margin-top: 8px;">
+  <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px;">Give feedback:</div>
+  <div class="feedback-row">
+    <button class="feedback-btn" onclick="sendPrompt('The register screen looks good, move to Forgot Password mockup')">Looks good → Forgot Password</button>
+    <button class="feedback-btn" onclick="sendPrompt('The register screen needs changes: ')">Custom feedback ↗</button>
+  </div>
+</div>
+
+<script>
+const copy = {
+  en: {
+    lang: 'Français', pilot: 'Pilot Program', login: 'Login',
+    label: 'New contractor account', title: 'Create your account', sub: 'Get set up in minutes. No training required.',
+    first: 'First name', last: 'Last name', biz: 'Business name', trade: 'Trade',
+    email: 'Email', pw: 'Password', pw2: 'Confirm',
+    ph_first: 'Jean', ph_last: 'Tremblay', ph_biz: 'Tremblay Plomberie Inc.', ph_email: 'you@example.com',
+    ph_other: 'Describe your trade…',
+    opt_select: 'Select your trade…', opt_plumbing: 'Plumbing', opt_hvac: 'HVAC',
+    opt_electrical: 'Electrical', opt_general: 'General contractor', opt_roofing: 'Roofing', opt_other: 'Other',
+    div_account: 'Account credentials', btn: 'Create account',
+    terms: 'By creating an account you agree to our ', tos: 'Terms of Service', and: ' and ', pp: 'Privacy Policy',
+    signin_pre: 'Already have an account? ', signin: 'Sign in →'
+  },
+  fr: {
+    lang: 'English', pilot: 'Programme pilote', login: 'Connexion',
+    label: 'Nouveau compte entrepreneur', title: 'Créer votre compte', sub: 'Prêt en quelques minutes. Aucune formation requise.',
+    first: 'Prénom', last: 'Nom', biz: "Nom de l'entreprise", trade: 'Métier',
+    email: 'Courriel', pw: 'Mot de passe', pw2: 'Confirmer',
+    ph_first: 'Jean', ph_last: 'Tremblay', ph_biz: 'Tremblay Plomberie Inc.', ph_email: 'vous@exemple.com',
+    ph_other: 'Décrivez votre métier…',
+    opt_select: 'Choisir votre métier…', opt_plumbing: 'Plomberie', opt_hvac: 'CVC',
+    opt_electrical: 'Électricité', opt_general: 'Entrepreneur général', opt_roofing: 'Toiture', opt_other: 'Autre',
+    div_account: 'Identifiants du compte', btn: 'Créer le compte',
+    terms: 'En créant un compte, vous acceptez nos ', tos: "Conditions d'utilisation", and: ' et notre ', pp: 'Politique de confidentialité',
+    signin_pre: 'Déjà un compte ? ', signin: 'Se connecter →'
+  }
+};
+let lang = 'en';
+
+function handleTradeChange() {
+  const val = document.getElementById('input-trade').value;
+  const wrap = document.getElementById('other-wrap');
+  const t = copy[lang];
+  if (val === 'other') {
+    wrap.classList.add('visible');
+    document.getElementById('input-other').placeholder = t.ph_other;
+    document.getElementById('input-other').focus();
+  } else {
+    wrap.classList.remove('visible');
+  }
+}
+
+function toggleLang() {
+  lang = lang === 'en' ? 'fr' : 'en';
+  const t = copy[lang];
+  document.getElementById('lang-label').textContent = t.lang;
+  document.getElementById('nav-pilot').textContent = t.pilot;
+  document.getElementById('nav-login').textContent = t.login;
+  document.getElementById('card-label').textContent = t.label;
+  document.getElementById('card-title').textContent = t.title;
+  document.getElementById('card-sub').textContent = t.sub;
+  document.getElementById('label-first').textContent = t.first;
+  document.getElementById('label-last').textContent = t.last;
+  document.getElementById('label-biz').textContent = t.biz;
+  document.getElementById('label-trade').textContent = t.trade;
+  document.getElementById('label-email').textContent = t.email;
+  document.getElementById('label-pw').textContent = t.pw;
+  document.getElementById('label-pw2').textContent = t.pw2;
+  document.getElementById('input-first').placeholder = t.ph_first;
+  document.getElementById('input-last').placeholder = t.ph_last;
+  document.getElementById('input-biz').placeholder = t.ph_biz;
+  document.getElementById('input-email').placeholder = t.ph_email;
+  document.getElementById('input-other').placeholder = t.ph_other;
+  document.getElementById('opt-select').textContent = t.opt_select;
+  document.getElementById('opt-plumbing').textContent = t.opt_plumbing;
+  document.getElementById('opt-hvac').textContent = t.opt_hvac;
+  document.getElementById('opt-electrical').textContent = t.opt_electrical;
+  document.getElementById('opt-general').textContent = t.opt_general;
+  document.getElementById('opt-roofing').textContent = t.opt_roofing;
+  document.getElementById('opt-other').textContent = t.opt_other;
+  document.getElementById('div-account').textContent = t.div_account;
+  document.getElementById('btn-create').textContent = t.btn;
+  document.getElementById('terms-text').textContent = t.terms;
+  document.getElementById('terms-tos').textContent = t.tos;
+  document.getElementById('terms-and').textContent = t.and;
+  document.getElementById('terms-pp').textContent = t.pp;
+  document.getElementById('signin-pre').textContent = t.signin_pre;
+  document.getElementById('signin-link').textContent = t.signin;
+}
+</script>
