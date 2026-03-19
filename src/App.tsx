@@ -33,6 +33,12 @@ const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
 
+const AuthRedirect = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+};
+
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -100,7 +106,14 @@ const App = () => (
       <AppShell>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/"
+              element={
+                <AuthRedirect>
+                  <HomePage />
+                </AuthRedirect>
+              }
+            />
             <Route path="/login" element={<SignInPage />} />
             <Route path="/register" element={<SignUpPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

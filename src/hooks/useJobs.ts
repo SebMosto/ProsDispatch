@@ -5,12 +5,24 @@ import { jobRepository } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 10_000;
+
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject({ message: 'Unable to load your data. Please check your connection and try again.', reason: 'network' } satisfies RepositoryError),
+        ms,
+      ),
+    ),
+  ]);
 
 export const useJobs = (params?: JobListParams) => {
   const queryKey = useMemo(() => ['jobs', params ?? {}], [params]);
 
   const queryFn = useCallback(async () => {
-    const result = await jobRepository.list(params);
+    const result = await withTimeout(jobRepository.list(params), FETCH_TIMEOUT_MS);
     if (result.error) {
       throw result.error;
     }
@@ -21,6 +33,7 @@ export const useJobs = (params?: JobListParams) => {
     queryKey,
     queryFn,
     staleTime: FIVE_MINUTES,
+    retry: false,
   });
 
   return useMemo(

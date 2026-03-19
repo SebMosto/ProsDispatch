@@ -13,6 +13,18 @@ import {
 import { supabase } from '../lib/supabase';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 10_000;
+
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject({ message: 'Unable to load your data. Please check your connection and try again.', reason: 'network' } satisfies RepositoryError),
+        ms,
+      ),
+    ),
+  ]);
 
 export const useInvoice = (id?: string) => {
   const { t } = useTranslation();
@@ -247,7 +259,7 @@ export const useInvoicesByContractor = () => {
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async () => {
-    const result = await invoiceRepository.listByContractor();
+    const result = await withTimeout(invoiceRepository.listByContractor(), FETCH_TIMEOUT_MS);
     if (result.error) {
       throw result.error;
     }
@@ -258,6 +270,7 @@ export const useInvoicesByContractor = () => {
     queryKey,
     queryFn,
     staleTime: FIVE_MINUTES,
+    retry: false,
   });
 
   return {

@@ -7,6 +7,19 @@ import type { ClientWithPrimaryProperty } from '../types/clients';
 
 export type { ClientWithPrimaryProperty };
 
+const FETCH_TIMEOUT_MS = 10_000;
+
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject({ message: 'Unable to load your data. Please check your connection and try again.', reason: 'network' } satisfies RepositoryError),
+        ms,
+      ),
+    ),
+  ]);
+
 const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
   const map = new Map<string, { city: string; address_line1: string }>();
 
@@ -26,7 +39,7 @@ export const useClients = () => {
   const queryKey = useMemo(() => ['clients'], []);
 
   const queryFn = useCallback(async () => {
-    const clientsResult = await clientRepository.list();
+    const clientsResult = await withTimeout(clientRepository.list(), FETCH_TIMEOUT_MS);
 
     if (clientsResult.error) {
       throw clientsResult.error;
@@ -35,9 +48,10 @@ export const useClients = () => {
     const clients = clientsResult.data ?? [];
     if (!clients.length) return [];
 
-    const propertiesResult = await propertyRepository.list({
-      clientIds: clients.map((client) => client.id),
-    });
+    const propertiesResult = await withTimeout(
+      propertyRepository.list({ clientIds: clients.map((client) => client.id) }),
+      FETCH_TIMEOUT_MS,
+    );
 
     if (propertiesResult.error) {
       throw propertiesResult.error;
@@ -55,6 +69,7 @@ export const useClients = () => {
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
     queryKey,
     queryFn,
+    retry: false,
   });
 
   return useMemo(
