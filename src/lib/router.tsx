@@ -5,6 +5,7 @@ export const routePatterns = {
   invoiceDetail: '/invoices/:id',
   publicInvoice: '/pay/:token',
   jobApproval: '/jobs/approve/:token',
+  adminPortal: '/admin',
 };
 
 export const routePaths = {
@@ -12,4 +13,5 @@ export const routePaths = {
   invoiceDetail: (id: string) => `/invoices/${id}`,
   publicInvoice: (token: string) => `/pay/${token}`,
   jobApproval: (token: string) => `/jobs/approve/${token}`,
+  adminPortal: () => '/admin',
 };
