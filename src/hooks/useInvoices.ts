@@ -13,6 +13,7 @@ import {
 import { supabase } from '../lib/supabase';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 10_000;
 
 export const useInvoice = (id?: string) => {
   const { t } = useTranslation();
@@ -244,20 +245,29 @@ export const useInvoiceMutations = () => {
 export const useInvoicesByJob = (jobId: string) => useJobInvoices(jobId);
 
 export const useInvoicesByContractor = () => {
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async () => {
-    const result = await invoiceRepository.listByContractor();
-    if (result.error) {
-      throw result.error;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const result = await invoiceRepository.listByContractor(controller.signal);
+      if (result.error) throw result.error;
+      return result.data ?? [];
+    } catch (err) {
+      if (controller.signal.aborted) throw { message: t('errors.timeout'), reason: 'network' } satisfies RepositoryError;
+      throw err;
+    } finally {
+      clearTimeout(timer);
     }
-    return result.data ?? [];
-  }, []);
+  }, [t]);
 
   const query = useQuery<InvoiceRecord[], RepositoryError>({
     queryKey,
     queryFn,
     staleTime: FIVE_MINUTES,
+    retry: false,
   });
 
   return {

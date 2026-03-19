@@ -1,6 +1,6 @@
 {
   "layout": {
-    "brand": "ProsDispatch",
+    "brand": "Dispatch | Labs",
     "initials": "PD",
     "languageLabel": "Sélection de la langue",
     "languageEnglish": "English",
@@ -564,7 +564,8 @@
   },
   "errors": {
   "checkoutNoUrl": "Impossible de démarrer le paiement : aucune URL renvoyée.",
-  "unexpected": "Une erreur inattendue est survenue."
+  "unexpected": "Une erreur inattendue est survenue.",
+  "timeout": "Impossible de charger vos données. Veuillez vérifier votre connexion et réessayer."
   },
   "subscribe": {
     "title": "Commencez votre essai gratuit de 14 jours",

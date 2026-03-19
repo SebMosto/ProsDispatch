@@ -55,7 +55,7 @@ export class JobRepository
     return { data: parsedData };
   }
 
-  async list(params?: JobListParams): Promise<RepositoryResult<JobRecord[]>> {
+  async list(params?: JobListParams, signal?: AbortSignal): Promise<RepositoryResult<JobRecord[]>> {
     const { status, includeDeleted } = params ?? {};
 
     let query = this.client
@@ -69,6 +69,10 @@ export class JobRepository
 
     if (!includeDeleted) {
       query = query.is('deleted_at', null);
+    }
+
+    if (signal) {
+      query = query.abortSignal(signal);
     }
 
     const { data, error } = await query;

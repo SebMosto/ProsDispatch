@@ -1,6 +1,6 @@
 {
   "layout": {
-    "brand": "ProsDispatch",
+    "brand": "Dispatch | Labs",
     "initials": "PD",
     "languageLabel": "Language selection",
     "languageEnglish": "English",
@@ -564,7 +564,8 @@
   },
   "errors": {
   "checkoutNoUrl": "Failed to start checkout: No URL returned.",
-  "unexpected": "An unexpected error occurred."
+  "unexpected": "An unexpected error occurred.",
+  "timeout": "Unable to load your data. Please check your connection and try again."
   },
   "subscribe": {
     "title": "Start your free 14-day trial",

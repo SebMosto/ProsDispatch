@@ -1,11 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
 import type { RepositoryError } from '../repositories/base';
 import type { ClientWithPrimaryProperty } from '../types/clients';
 
 export type { ClientWithPrimaryProperty };
+
+const FETCH_TIMEOUT_MS = 10_000;
 
 const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
   const map = new Map<string, { city: string; address_line1: string }>();
@@ -23,38 +26,44 @@ const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
 };
 
 export const useClients = () => {
+  const { t } = useTranslation();
   const queryKey = useMemo(() => ['clients'], []);
 
   const queryFn = useCallback(async () => {
-    const clientsResult = await clientRepository.list();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const clientsResult = await clientRepository.list(undefined, controller.signal);
+      if (clientsResult.error) throw clientsResult.error;
 
-    if (clientsResult.error) {
-      throw clientsResult.error;
+      const clients = clientsResult.data ?? [];
+      if (!clients.length) return [];
+
+      const propertiesResult = await propertyRepository.list(
+        { clientIds: clients.map((client) => client.id) },
+        controller.signal,
+      );
+      if (propertiesResult.error) throw propertiesResult.error;
+
+      const properties = propertiesResult.data ?? [];
+      const propertyMap = buildPrimaryPropertyMap(properties);
+
+      return clients.map((client) => ({
+        ...client,
+        primary_property: propertyMap.get(client.id) ?? null,
+      }));
+    } catch (err) {
+      if (controller.signal.aborted) throw { message: t('errors.timeout'), reason: 'network' } satisfies RepositoryError;
+      throw err;
+    } finally {
+      clearTimeout(timer);
     }
-
-    const clients = clientsResult.data ?? [];
-    if (!clients.length) return [];
-
-    const propertiesResult = await propertyRepository.list({
-      clientIds: clients.map((client) => client.id),
-    });
-
-    if (propertiesResult.error) {
-      throw propertiesResult.error;
-    }
-
-    const properties = propertiesResult.data ?? [];
-    const propertyMap = buildPrimaryPropertyMap(properties);
-
-    return clients.map((client) => ({
-      ...client,
-      primary_property: propertyMap.get(client.id) ?? null,
-    }));
-  }, []);
+  }, [t]);
 
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
     queryKey,
     queryFn,
+    retry: false,
   });
 
   return useMemo(
