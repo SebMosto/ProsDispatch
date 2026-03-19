@@ -15,16 +15,10 @@ import { supabase } from '../lib/supabase';
 const FIVE_MINUTES = 5 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 10_000;
 
-const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
-  Promise.race([
-    promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject({ message: 'Unable to load your data. Please check your connection and try again.', reason: 'network' } satisfies RepositoryError),
-        ms,
-      ),
-    ),
-  ]);
+const TIMEOUT_ERROR: RepositoryError = {
+  message: 'Unable to load your data. Please check your connection and try again.',
+  reason: 'network',
+};
 
 export const useInvoice = (id?: string) => {
   const { t } = useTranslation();
@@ -259,11 +253,18 @@ export const useInvoicesByContractor = () => {
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async () => {
-    const result = await withTimeout(invoiceRepository.listByContractor(), FETCH_TIMEOUT_MS);
-    if (result.error) {
-      throw result.error;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const result = await invoiceRepository.listByContractor(controller.signal);
+      if (result.error) throw result.error;
+      return result.data ?? [];
+    } catch (err) {
+      if (controller.signal.aborted) throw TIMEOUT_ERROR;
+      throw err;
+    } finally {
+      clearTimeout(timer);
     }
-    return result.data ?? [];
   }, []);
 
   const query = useQuery<InvoiceRecord[], RepositoryError>({

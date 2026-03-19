@@ -13,7 +13,7 @@ export class ClientRepository
   extends BaseRepository
   implements Repository<ClientRecord, ClientCreateInput, ClientUpdateInput, ClientListParams>
 {
-  async list(params?: ClientListParams): Promise<RepositoryResult<ClientRecord[]>> {
+  async list(params?: ClientListParams, signal?: AbortSignal): Promise<RepositoryResult<ClientRecord[]>> {
     const { includeDeleted } = params ?? {};
 
     const query = this.client
@@ -25,7 +25,7 @@ export class ClientRepository
       query.is('deleted_at', null);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await (signal ? query.abortSignal(signal) : query);
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {

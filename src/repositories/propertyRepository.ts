@@ -15,7 +15,7 @@ export class PropertyRepository
   extends BaseRepository
   implements Repository<PropertyRecord, PropertyCreateInput, PropertyUpdateInput, PropertyListParams>
 {
-  async list(params?: PropertyListParams): Promise<RepositoryResult<PropertyRecord[]>> {
+  async list(params?: PropertyListParams, signal?: AbortSignal): Promise<RepositoryResult<PropertyRecord[]>> {
     const { clientIds, clientId, includeDeleted } = params ?? {};
 
     const query = this.client
@@ -35,7 +35,7 @@ export class PropertyRepository
       query.is('deleted_at', null);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await (signal ? query.abortSignal(signal) : query);
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {

@@ -104,11 +104,17 @@ export class InvoiceRepository extends BaseRepository {
    * List all invoices for the current contractor.
    * Relying on RLS to scope results to auth.uid().
    */
-  async listByContractor(): Promise<RepositoryResult<InvoiceRecord[]>> {
-    const { data, error } = await this.client
+  async listByContractor(signal?: AbortSignal): Promise<RepositoryResult<InvoiceRecord[]>> {
+    let query = this.client
       .from('invoices')
       .select('*')
       .order('created_at', { ascending: false });
+
+    if (signal) {
+      query = query.abortSignal(signal);
+    }
+
+    const { data, error } = await query;
 
     const repositoryError = this.toRepositoryError(error);
 
