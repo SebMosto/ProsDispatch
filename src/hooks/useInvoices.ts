@@ -22,7 +22,7 @@ export const useInvoice = (id?: string) => {
     tRef.current = t;
   }, [t]);
 
-  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
+  const queryFn = useCallback(async () => {
     if (!id) {
       throw { message: tRef.current('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
     }

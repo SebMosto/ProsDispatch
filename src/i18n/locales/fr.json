@@ -18,6 +18,111 @@
       "overdueCount": "{{count}} factures en retard"
     }
   },
+  "home": {
+    "topbar": {
+      "logoMain": "Dispatch",
+      "logoSub": "Labs",
+      "languageAria": "Changer la langue",
+      "languageToggle": "English",
+      "darkModeAria": "Activer le mode sombre",
+      "pilot": "Programme Pilote",
+      "login": "Se connecter"
+    },
+    "hero": {
+      "badge": "Programme Pilote",
+      "titleLine1": "Gerez vos chantiers.",
+      "titleLine2": "Soyez paye en 48h.",
+      "subtitle": "La premiere plateforme de gestion de jobs concue pour les entrepreneurs. Devis, approbations, factures et paiements - bilingue et conforme a la Loi 25.",
+      "primaryCta": "Creer votre compte gratuit",
+      "demoCta": "Voir la demo",
+      "trialNote": "60 jours d'essai gratuit - Aucune carte requise",
+      "cards": {
+        "jobsLabel": "Jobs recents",
+        "r1": {
+          "address": "482 Rue St-Denis",
+          "description": "Remplacement tuyaux - Martin Cote",
+          "status": "En cours"
+        },
+        "r2": {
+          "address": "77 Boul. Decarie",
+          "description": "Chauffe-eau - Sophie Lavoie",
+          "status": "Approuve"
+        },
+        "r3": {
+          "address": "14 Ave. Victoria",
+          "description": "Urgence drain - Rene Bergeron",
+          "status": "Termine"
+        },
+        "revenueLabel": "Revenus (mars)",
+        "revenueValue": "$6,200",
+        "revenueSub": "4 factures payees",
+        "pendingLabel": "En attente",
+        "pendingValue": "$3,400",
+        "pendingSub": "2 en retard"
+      }
+    },
+    "features": {
+      "eyebrow": "Ce que vous obtenez",
+      "title": "Tout ce qu'il faut pour gerer vos jobs",
+      "subtitle": "Concu pour les entrepreneurs independants. Pas de formation requise.",
+      "items": {
+        "jobs": {
+          "title": "Gestion des jobs",
+          "description": "Creez un job, envoyez pour approbation, demarrez et terminez - tout depuis votre telephone."
+        },
+        "clients": {
+          "title": "Gestion des clients",
+          "description": "Tous vos clients, adresses, historique de jobs et factures en un seul endroit."
+        },
+        "billing": {
+          "title": "Facturation illimitee",
+          "description": "Generez et envoyez des factures professionnelles des qu'un job est termine. Aucune limite."
+        },
+        "stripe": {
+          "title": "Paiements Stripe Connect",
+          "description": "Recevez directement sur votre compte bancaire - sans intermediaire ni fonds retenus."
+        }
+      }
+    },
+    "pilot": {
+      "eyebrow": "Programme Pilote",
+      "title": "Rejoignez les premiers entrepreneurs a bord",
+      "body": "Nous accueillons un nombre limite d'entrepreneurs pour notre programme pilote. Acces complet avec accompagnement blanc-gant inclus.",
+      "b1": "Numerisation gratuite de vos dossiers papier",
+      "b2": "60 jours d'essai gratuit - aucune carte requise",
+      "b3": "Support direct avec le fondateur",
+      "cta": "Demander l'acces pilote",
+      "spots": "Places limitees"
+    },
+    "pricing": {
+      "eyebrow": "Tarifs",
+      "title": "Simple et transparent",
+      "subtitle": "Pas de frais caches. Pas de contrat. Annulez en tout temps.",
+      "badge": "Acces complet",
+      "plan": "Pro",
+      "price": "$20",
+      "period": "/mois",
+      "trial": "Apres 60 jours d'essai gratuit",
+      "features": {
+        "f1": "Creation et gestion de jobs",
+        "f2": "Gestion des clients",
+        "f3": "Facturation illimitee",
+        "f4": "Stripe Connect - paiements directs",
+        "f5": "Rapports et telechargement PDF",
+        "f6": "Support"
+      },
+      "cta": "Commencer l'essai gratuit"
+    },
+    "footer": {
+      "logo": "Dispatch | Labs",
+      "links": {
+        "terms": "Conditions d'utilisation",
+        "privacy": "Confidentialite",
+        "contact": "Contact"
+      },
+      "compliance": "Conforme a la Loi 25 - Donnees hebergees au Canada"
+    }
+  },
   "settings": {
     "title": "Paramètres",
     "subtitle": "Gérez votre profil et les paramètres de votre compte.",

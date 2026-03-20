@@ -18,6 +18,111 @@
       "overdueCount": "{{count}} overdue invoices"
     }
   },
+  "home": {
+    "topbar": {
+      "logoMain": "Dispatch",
+      "logoSub": "Labs",
+      "languageAria": "Toggle language",
+      "languageToggle": "Français",
+      "darkModeAria": "Toggle dark mode",
+      "pilot": "Pilot Program",
+      "login": "Sign in"
+    },
+    "hero": {
+      "badge": "Pilot Program",
+      "titleLine1": "Manage your jobs.",
+      "titleLine2": "Get paid in 48h.",
+      "subtitle": "The first job management platform built for independent contractors. Estimates, approvals, invoices and payments - bilingual and Law 25 compliant.",
+      "primaryCta": "Create your free account",
+      "demoCta": "See the demo",
+      "trialNote": "60-day free trial - No card required",
+      "cards": {
+        "jobsLabel": "Recent jobs",
+        "r1": {
+          "address": "482 Rue St-Denis",
+          "description": "Pipe replacement - Martin Cote",
+          "status": "In progress"
+        },
+        "r2": {
+          "address": "77 Boul. Decarie",
+          "description": "Water heater - Sophie Lavoie",
+          "status": "Approved"
+        },
+        "r3": {
+          "address": "14 Ave. Victoria",
+          "description": "Drain emergency - Rene Bergeron",
+          "status": "Completed"
+        },
+        "revenueLabel": "Revenue (March)",
+        "revenueValue": "$6,200",
+        "revenueSub": "4 invoices paid",
+        "pendingLabel": "Outstanding",
+        "pendingValue": "$3,400",
+        "pendingSub": "2 overdue"
+      }
+    },
+    "features": {
+      "eyebrow": "What you get",
+      "title": "Everything you need to run your jobs",
+      "subtitle": "Built for independent contractors. No training required.",
+      "items": {
+        "jobs": {
+          "title": "Job management",
+          "description": "Create a job, send for approval, start and complete - all from your phone."
+        },
+        "clients": {
+          "title": "Client management",
+          "description": "All your clients, addresses, job history and invoices in one place."
+        },
+        "billing": {
+          "title": "Unlimited billing",
+          "description": "Generate and send professional invoices as soon as a job is done. No limits."
+        },
+        "stripe": {
+          "title": "Stripe Connect payments",
+          "description": "Receive directly into your bank account - no middleman, no held funds."
+        }
+      }
+    },
+    "pilot": {
+      "eyebrow": "Pilot Program",
+      "title": "Join the first contractors on board",
+      "body": "We are onboarding a limited number of contractors for our pilot program. Full access with white-glove onboarding included.",
+      "b1": "Free digitization of your paper records",
+      "b2": "60-day free trial - no card required",
+      "b3": "Direct support from the founder",
+      "cta": "Request pilot access",
+      "spots": "Limited spots available"
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "Simple and transparent",
+      "subtitle": "No hidden fees. No contract. Cancel anytime.",
+      "badge": "Full access",
+      "plan": "Pro",
+      "price": "$20",
+      "period": "/month",
+      "trial": "After 60-day free trial",
+      "features": {
+        "f1": "Job creation and management",
+        "f2": "Client management",
+        "f3": "Unlimited billing",
+        "f4": "Stripe Connect - direct payments",
+        "f5": "Reports and PDF download",
+        "f6": "Support"
+      },
+      "cta": "Start free trial"
+    },
+    "footer": {
+      "logo": "Dispatch | Labs",
+      "links": {
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "contact": "Contact"
+      },
+      "compliance": "Law 25 compliant - Data hosted in Canada"
+    }
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your profile and account settings.",
