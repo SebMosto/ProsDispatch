@@ -20,13 +20,13 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const KNOWN_SUBSCRIPTION_STATUSES = ['active', 'trialing', 'canceled', 'past_due', 'unpaid', 'paused'] as const;
+const KNOWN_STATUSES_SET = new Set(['active', 'trialing', 'canceled', 'past_due', 'unpaid', 'paused']);
 
 // Pilot: unknown/incomplete Stripe statuses default to trialing
 export const normalizeSubscriptionStatus = (status: string | null | undefined): string | null => {
   if (!status) return null;
-  if (status === 'incomplete' || status === 'incomplete_expired') return 'trialing';
-  if (!(KNOWN_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)) return 'trialing';
+  if (status === 'incomplete' || status === 'incomplete_expired') return null;
+  if (!KNOWN_STATUSES_SET.has(status)) return 'trialing';
   return status;
 };
 
@@ -99,8 +99,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [fetchProfile]);
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const normalizedStatus = normalizeSubscriptionStatus(profile?.subscription_status);
+    return {
       user,
       profile,
       loading,
@@ -113,12 +114,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await fetchProfile(user);
         }
       },
-      subscriptionStatus: normalizeSubscriptionStatus(profile?.subscription_status),
-      isSubscribed: ['active', 'trialing'].includes(normalizeSubscriptionStatus(profile?.subscription_status) ?? ''),
+      subscriptionStatus: normalizedStatus,
+      isSubscribed: ['active', 'trialing'].includes(normalizedStatus ?? ''),
       trialDaysRemaining: calculateTrialDaysRemaining(profile?.subscription_end_date ?? null),
-    }),
-    [loading, profile, session, user, fetchProfile],
-  );
+    };
+  }, [loading, profile, session, user, fetchProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
