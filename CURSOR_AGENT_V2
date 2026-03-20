@@ -1,0 +1,283 @@
+# CURSOR_AGENT_V2.md — ProsDispatch Fix Run #2
+# Generated: 2026-03-20 | Based on live audit + source code review
+
+## READ THESE FIRST
+1. CLAUDE.md
+2. AGENTS.md
+3. .beads/beads.jsonl
+4. CURSOR_AGENT.md (previous run context)
+
+## STOP HOOK — run after every bead, ALL must pass
+  npm run typecheck
+  npm run lint
+  npm run test
+  npm run check:i18n
+  npm run check:stack
+
+If Stop Hook fails 3 times on the same bead:
+  Add "BLOCKED: [reason]" to bead history in .beads/beads.jsonl
+  Move to next bead. Never leave broken code committed.
+
+---
+
+## WHAT WAS CONFIRMED FIXED IN RUN #1
+- BUG-011: vercel.json SPA rewrite ✅
+- BUG-010: settings.error i18n key ✅
+- BUG-012: Page titles (Invoices, Settings correct) ✅
+- BUG-015: Settings sections (all 8 present) ✅
+- Notification toggle defaults ✅
+- Toggle ON colour = #0F172A navy CONFIRMED via computed CSS ✅
+- User avatar in topbar ✅
+- Active nav left-border indicator ✅
+
+## WHAT STILL NEEDS FIXING (this run)
+
+---
+
+### BUG-009-V2 [P0] AbortError still firing — root cause is in useInvoices.ts
+Files: src/hooks/useInvoices.ts, src/hooks/useClients.ts
+
+CONFIRMED by reading source code:
+useJobs.ts is correctly fixed.
+useClients.ts is correctly fixed.
+
+The AbortError is coming from useInvoices.ts — specifically the
+useInvoicesByContractor hook which is called inside the Sidebar
+component via useOverdueCount(). This runs on EVERY page because
+the sidebar mounts on every authenticated route.
+
+The problem is in useInvoice and useInvoiceByToken — both still have
+t() in their useCallback dependency arrays:
+
+  // useInvoice — BROKEN
+  const queryFn = useCallback(async () => {
+    if (!id) {
+      throw { message: t('validation.invoiceIdRequired'), ... }
+    }
+    ...
+  }, [id, t]);  // <-- t causes recreation every render
+
+  // useInvoiceByToken — BROKEN
+  const queryFn = useCallback(async () => {
+    if (!token) {
+      throw { message: t('validation.invoiceTokenRequired'), ... }
+    }
+    ...
+  }, [token, t]);  // <-- t causes recreation every render
+
+FIX for useInvoice:
+  Extract the validation message outside the callback using a ref
+  or move the t() call outside useCallback entirely:
+
+  const { t } = useTranslation();
+  const tRef = useRef(t);
+  useEffect(() => { tRef.current = t; }, [t]);
+
+  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
+    if (!id) {
+      throw { message: tRef.current('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
+    }
+    const result = await invoiceRepository.get(id, signal);
+    if (result.error || !result.data) {
+      throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
+    }
+    return result.data;
+  }, [id]);  // t removed — use tRef.current instead
+
+FIX for useInvoiceByToken — same pattern:
+  Use tRef.current inside callback instead of t directly.
+  Remove t from dependency array.
+  Add signal parameter to queryFn.
+
+ALSO CHECK: useInvoicesByContractor in the same file is used by the
+Sidebar on every page. Confirm it uses TanStack native signal and has
+no t() dependency. Looking at the source it appears correct — but
+verify it does not trigger the abort by adding a console.log temporarily
+to confirm it resolves successfully when the sidebar mounts.
+
+Commit: fix(BUG-009-V2): remove t() from useInvoice and useInvoiceByToken queryFn deps
+
+---
+
+### BUG-014-V2 [P1] Sidebar showing raw i18n keys + missing SVG icons
+File: src/components/Layout/Sidebar.tsx
+File: src/i18n/locales/en.json
+File: src/i18n/locales/fr.json
+
+CONFIRMED by reading source code:
+The Sidebar uses t('layout.nav.main') and t('layout.nav.account') for
+section labels. These keys are MISSING from en.json and fr.json —
+the layout.nav object only has: dashboard, jobs, clients, invoices,
+settings, newJob, active, overdueCount.
+
+FIX 1 — Add missing keys to en.json under layout.nav:
+  "main": "Main",
+  "account": "Account"
+
+Add to fr.json under layout.nav:
+  "main": "Principal",
+  "account": "Compte"
+
+FIX 2 — Replace letter initials with SVG icons in Sidebar.tsx.
+Currently each nav item renders:
+  <span className="size-[14px]">{item.label.charAt(0)}</span>
+
+Replace with proper inline SVGs per docs/mockups/dashboard_v4.html.
+Read that file before writing any SVG code.
+Icon sizes: width="14" height="14" stroke="currentColor" strokeWidth="1.8"
+strokeLinecap="round" strokeLinejoin="round"
+
+Dashboard icon (grid of 4 squares):
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="1" y="1" width="6" height="6" rx="1"/>
+    <rect x="9" y="1" width="6" height="6" rx="1"/>
+    <rect x="1" y="9" width="6" height="6" rx="1"/>
+    <rect x="9" y="9" width="6" height="6" rx="1"/>
+  </svg>
+
+Jobs icon (calendar):
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="3" width="12" height="11" rx="1"/>
+    <path d="M5 3V1M11 3V1M2 7h12"/>
+  </svg>
+
+Clients icon (person):
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="5" r="3"/>
+    <path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/>
+  </svg>
+
+Invoices icon (document with lines):
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="12" height="13" rx="1"/>
+    <path d="M5 6h6M5 9h6M5 12h4"/>
+  </svg>
+
+Settings icon (gear/sun):
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="3"/>
+    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/>
+  </svg>
+
+Add icons to the NAV_ITEMS array as a new icon property and render
+them in place of the letter initial span.
+
+FIX 3 — Sidebar footer is showing business_name as the role line.
+Current code: profile?.business_name ?? 'Contractor'
+Change to:    profile?.trade ?? 'Contractor'
+This matches the spec: role line should show trade (Plomberie, HVAC etc.)
+
+Commit: fix(BUG-014-V2): add missing i18n keys, replace letter initials with SVG icons, fix footer role
+
+---
+
+### BUG-012-V2 [P1] Dashboard greeting still missing first name
+File: src/pages/DashboardPage.tsx (find actual path)
+
+CONFIRMED from live audit: "Good morning." shows without a name.
+Profile IS loaded (we confirmed the DB row exists with full_name).
+The issue is the component is not passing the name to the greeting.
+
+Find the greeting render and fix:
+  const { profile } = useAuth();
+  const firstName = profile?.full_name?.split(' ')[0] ?? null;
+
+  // In JSX:
+  {firstName
+    ? t('dashboard.greeting', { name: firstName })
+    : t('dashboard.greetingFallback')
+  }
+
+Both keys exist in en.json:
+  dashboard.greeting = "Good morning, {{name}}."
+  dashboard.greetingFallback = "Good morning."
+
+Commit: fix(BUG-012-V2): wire first name to dashboard greeting
+
+---
+
+### BUG-017 [P1] Settings profile fields empty on load
+File: src/pages/SettingsPage.tsx (find actual path)
+
+The profile fields (First Name, Last Name, Business Name, Phone)
+are all blank on load. The profile data IS in the DB. The form is
+not being initialized with values from useAuth().profile.
+
+Find the settings form and ensure it uses useEffect or defaultValues
+to seed form fields from profile when profile becomes available:
+
+  const { profile } = useAuth();
+  const { register, reset } = useForm();
+
+  useEffect(() => {
+    if (profile) {
+      const nameParts = profile.full_name?.split(' ') ?? [];
+      reset({
+        firstName: nameParts[0] ?? '',
+        lastName: nameParts.slice(1).join(' ') ?? '',
+        businessName: profile.business_name ?? '',
+        phone: profile.phone ?? '',
+      });
+    }
+  }, [profile, reset]);
+
+Also: the "Unable to update profile." error should only show AFTER
+a failed save attempt, not on page load. Find the error state and
+wrap it with a condition: only show if formState.isSubmitted or
+a save was attempted.
+
+Commit: fix(BUG-017): seed settings form from profile, hide error on initial load
+
+---
+
+### BUG-018 [P2] Dark mode moon icon in public topbar
+File: find the public topbar or App.tsx / main layout
+
+The moon icon / dark mode toggle appears in the login and register
+topbar. It is not in the spec. Find the component rendering it and
+remove it entirely.
+
+Search codebase for: dark mode, moon, theme toggle, darkMode
+Remove the button/icon. If a ThemeProvider or DarkModeToggle
+component exists, remove its usage from the public topbar only
+(do not remove from Settings if it was intentionally placed there).
+
+Commit: fix(BUG-018): remove dark mode toggle from public topbar
+
+---
+
+### BUG-019 [P2] Language toggle wrong style on public pages
+File: src/components/LanguageSwitcher.tsx (confirmed exists in repo)
+
+Authenticated topbar now shows globe icon + "EN" pill — this is
+correct on desktop. But public pages (login, register, forgot password)
+still show a segmented "English | Français" double-button.
+
+Read docs/mockups/forgot_password_v1.html for the correct public
+topbar language pill style:
+  background: #E2E8F0; border-radius: 999px; padding: 5px 14px 5px 10px;
+  font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;
+  Globe SVG icon + language label
+
+Update LanguageSwitcher.tsx to use the pill style consistently
+on both public and authenticated routes.
+
+Commit: fix(BUG-019): unify language switcher to pill style on all routes
+
+---
+
+## AFTER ALL BUGS — update beads ledger
+
+Append to .beads/beads.jsonl:
+{"id":"bead_010_ui_audit_fixes_v2","title":"UI Audit Fix Run #2 — AbortError root cause, sidebar icons, i18n keys, settings form","status":"closed","created_at":"2026-03-20T00:00:00Z","history":["BUG-009-V2: Removed t() from useInvoice and useInvoiceByToken queryFn deps using tRef pattern","BUG-014-V2: Added layout.nav.main and layout.nav.account to en.json and fr.json, replaced letter initials with SVG icons, fixed footer role line","BUG-012-V2: Wired first name from profile to dashboard greeting","BUG-017: Seeded settings form fields from profile on load, hidden error on initial render","BUG-018: Removed dark mode moon icon from public topbar","BUG-019: Unified language switcher to pill style on all routes"]}
+
+---
+
+## HALLUCINATION PREVENTION
+- Read the actual source file before editing — never assume
+- Read docs/mockups/dashboard_v4.html for any sidebar/topbar change
+- Check en.json before creating any key — most likely already exists
+- Never write a Supabase query in a component — use repositories
+- Never expose raw error.message in JSX
+- Never use red #EF4444 for non-delete actions
+- Never add routes outside src/App.tsx
