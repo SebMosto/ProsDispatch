@@ -811,6 +811,11 @@
     },
     "subscribed": {
       "toast": "You're all set! Welcome to ProsDispatch."
+    },
+    "loadingTimeout": {
+      "title": "Unable to load your dashboard.",
+      "message": "Please check your connection and try again.",
+      "retry": "Retry"
     }
   },
   "common": {

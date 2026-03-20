@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect, useMemo } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
@@ -107,12 +107,26 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const ProtectedLayout = () => (
+  <ProtectedRoute>
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  </ProtectedRoute>
+);
+
+const PublicLayout = () => (
+  <AppShell>
+    <Outlet />
+  </AppShell>
+);
+
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
-      <AppShell>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route element={<PublicLayout />}>
             <Route
               path="/"
               element={
@@ -124,148 +138,33 @@ const App = () => (
             <Route path="/login" element={<SignInPage />} />
             <Route path="/register" element={<SignUpPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route
-              path="/subscribe"
-              element={
-                <ProtectedRoute>
-                  <SubscribePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <SettingsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings/billing"
-              element={
-                <ProtectedRoute>
-                  <BillingSettingsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings/stripe"
-              element={
-                <ProtectedRoute>
-                  <StripeConnectPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs"
-              element={
-                <ProtectedRoute>
-                  <JobsListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs/new"
-              element={
-                <ProtectedRoute>
-                  <CreateJobPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobs/:id"
-              element={
-                <ProtectedRoute>
-                  <JobDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/invoices"
-              element={
-                <ProtectedRoute>
-                  <InvoicesListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routePatterns.createInvoice}
-              element={
-                <ProtectedRoute>
-                  <CreateInvoicePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path={routePatterns.invoiceDetail}
-              element={
-                <ProtectedRoute>
-                  <InvoiceDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/invoices/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <InvoiceDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients"
-              element={
-                <ProtectedRoute>
-                  <ClientsListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/new"
-              element={
-                <ProtectedRoute>
-                  <CreateClientPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/:id"
-              element={
-                <ProtectedRoute>
-                  <ClientDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <ClientEditPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/clients/:id/properties/new"
-              element={
-                <ProtectedRoute>
-                  <CreatePropertyPage />
-                </ProtectedRoute>
-              }
-            />
             <Route path={routePatterns.jobApproval} element={<JobApprovalPage />} />
             <Route path={routePatterns.publicInvoice} element={<PublicInvoicePage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </AppShell>
+          </Route>
+
+          <Route element={<ProtectedLayout />}>
+            <Route path="/subscribe" element={<SubscribePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings/billing" element={<BillingSettingsPage />} />
+            <Route path="/settings/stripe" element={<StripeConnectPage />} />
+            <Route path="/jobs" element={<JobsListPage />} />
+            <Route path="/jobs/new" element={<CreateJobPage />} />
+            <Route path="/jobs/:id" element={<JobDetailPage />} />
+            <Route path="/invoices" element={<InvoicesListPage />} />
+            <Route path={routePatterns.createInvoice} element={<CreateInvoicePage />} />
+            <Route path={routePatterns.invoiceDetail} element={<InvoiceDetailPage />} />
+            <Route path="/invoices/:id/edit" element={<InvoiceDetailPage />} />
+            <Route path="/clients" element={<ClientsListPage />} />
+            <Route path="/clients/new" element={<CreateClientPage />} />
+            <Route path="/clients/:id" element={<ClientDetailPage />} />
+            <Route path="/clients/:id/edit" element={<ClientEditPage />} />
+            <Route path="/clients/:id/properties/new" element={<CreatePropertyPage />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </AuthProvider>
   </BrowserRouter>
 );

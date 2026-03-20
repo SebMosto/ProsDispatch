@@ -58,6 +58,7 @@ const DashboardPage = () => {
   const queryClient = useQueryClient();
   const [showSubscribedToast, setShowSubscribedToast] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
   const { jobs, loading: jobsLoading, error: jobsError, refetch: refetchJobs } = useJobs();
   const { clients, loading: clientsLoading } = useClients();
@@ -194,6 +195,32 @@ const DashboardPage = () => {
   const loading = jobsLoading || clientsLoading || invoicesLoading;
   const error = jobsError;
   const errorText = error?.reason === 'network' ? t('errors.timeout') : t('errors.unexpected');
+
+  useEffect(() => {
+    if (!loading) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setLoadingTimedOut(true);
+    }, 8000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [loading]);
+
+  if (loading && loadingTimedOut && !error) {
+    return (
+      <main className="mx-auto flex min-h-[60vh] w-full max-w-5xl flex-col items-start justify-center gap-3 px-4 py-6 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold text-slate-900">{t('dashboard.loadingTimeout.title')}</p>
+        <p className="text-sm text-slate-600">{t('dashboard.loadingTimeout.message')}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="inline-flex h-[36px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-[13px] text-xs font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
+        >
+          {t('dashboard.loadingTimeout.retry')}
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">

@@ -821,6 +821,11 @@
     },
     "subscribed": {
       "toast": "Tout est prêt ! Bienvenue sur ProsDispatch."
+    },
+    "loadingTimeout": {
+      "title": "Impossible de charger votre tableau de bord.",
+      "message": "Vérifiez votre connexion et réessayez.",
+      "retry": "Réessayer"
     }
   },
   "common": {
