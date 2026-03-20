@@ -20,6 +20,16 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const KNOWN_SUBSCRIPTION_STATUSES = ['active', 'trialing', 'canceled', 'past_due', 'unpaid', 'paused'] as const;
+
+// Pilot: unknown/incomplete Stripe statuses default to trialing
+export const normalizeSubscriptionStatus = (status: string | null | undefined): string | null => {
+  if (!status) return null;
+  if (status === 'incomplete' || status === 'incomplete_expired') return 'trialing';
+  if (!(KNOWN_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)) return 'trialing';
+  return status;
+};
+
 export const calculateTrialDaysRemaining = (endDate: string | null): number => {
   if (!endDate) {
     return 0;
@@ -103,8 +113,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await fetchProfile(user);
         }
       },
-      subscriptionStatus: profile?.subscription_status ?? null,
-      isSubscribed: ['active', 'trialing'].includes(profile?.subscription_status ?? ''),
+      subscriptionStatus: normalizeSubscriptionStatus(profile?.subscription_status),
+      isSubscribed: ['active', 'trialing'].includes(normalizeSubscriptionStatus(profile?.subscription_status) ?? ''),
       trialDaysRemaining: calculateTrialDaysRemaining(profile?.subscription_end_date ?? null),
     }),
     [loading, profile, session, user, fetchProfile],
