@@ -8,14 +8,12 @@ const ClientsListPage = () => {
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-600">{t('clients.list.pageTitle')}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{t('clients.list.header')}</h1>
-          <p className="text-sm text-slate-600">{t('clients.list.subHeader')}</p>
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">{t('clients.list.pageTitle')}</h1>
         </div>
         <div className="hidden flex-wrap gap-2 sm:flex">
           <Link
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-3 py-2 text-sm font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
             to="/clients/new"
           >
             {t('clients.list.newClient')}
@@ -27,7 +25,7 @@ const ClientsListPage = () => {
 
       <Link
         to="/clients/new"
-        className="fixed bottom-24 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-2xl font-bold text-white shadow-lg transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 md:hidden"
+        className="fixed bottom-24 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#0F172A] bg-[#FF5C1B] text-2xl font-bold text-[#1F1308] shadow-brutal transition focus:outline-none focus:ring-2 focus:ring-[#0F172A]/30 focus:ring-offset-2 md:hidden"
         aria-label={t('clients.list.newClient')}
       >
         +

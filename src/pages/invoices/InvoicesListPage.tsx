@@ -5,20 +5,19 @@ import { useInvoicesByContractor } from '../../hooks/useInvoices';
 const InvoicesListPage = () => {
   const { t } = useTranslation();
   const { invoices, loading, error, refetch } = useInvoicesByContractor();
+  const errorText = error?.reason === 'network' ? t('errors.timeout') : t('errors.unexpected');
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-600">{t('invoices.list.pageTitle')}</p>
-        <h1 className="text-2xl font-semibold text-slate-900">{t('invoices.list.header')}</h1>
-        <p className="text-sm text-slate-600">{t('invoices.list.subHeader')}</p>
+        <h1 className="text-2xl font-semibold text-slate-900">{t('invoices.list.pageTitle')}</h1>
       </header>
 
       {error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          <p>{t('invoices.list.error')}</p>
+          <p>{errorText}</p>
           <button
-            className="mt-2 text-sm font-semibold underline"
+            className="mt-2 inline-flex h-[36px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-[13px] text-xs font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
             onClick={() => { refetch().catch(() => {}); }}
           >
             {t('invoices.list.retry')}

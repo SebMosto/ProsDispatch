@@ -9,6 +9,10 @@ const mockT = (key: string) => key;
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: mockT,
+    i18n: {
+      language: 'en',
+      changeLanguage: vi.fn().mockResolvedValue(undefined),
+    },
   }),
 }));
 
@@ -44,6 +48,9 @@ describe('SettingsPage', () => {
     (useAuth as unknown as Mock).mockReturnValue({ 
       user: mockUser,
       refreshProfile: mockRefreshProfile,
+      profile: null,
+      subscriptionStatus: 'trialing',
+      trialDaysRemaining: 14,
     });
   });
 
@@ -53,9 +60,10 @@ describe('SettingsPage', () => {
 
     render(<SettingsPage />);
 
-    expect(await screen.findByDisplayValue('John Doe')).toBeInTheDocument();
+    expect(await screen.findByDisplayValue('John')).toBeInTheDocument();
+    expect(await screen.findByDisplayValue('Doe')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('Acme Corp')).toBeInTheDocument();
-    expect(screen.getByLabelText('settings.profile.email')).toHaveValue('test@example.com');
+    expect(screen.getByText('test@example.com')).toBeInTheDocument();
 
     expect(profileRepository.get).toHaveBeenCalledWith(mockUser.id);
   });
@@ -68,11 +76,11 @@ describe('SettingsPage', () => {
     render(<SettingsPage />);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('settings.profile.fullName')).toHaveValue('John Doe');
+      expect(screen.getByDisplayValue('John')).toBeInTheDocument();
     });
 
-    const nameInput = screen.getByLabelText('settings.profile.fullName');
-    fireEvent.change(nameInput, { target: { value: 'Jane Doe' } });
+    const firstNameInput = screen.getByLabelText('settings.fields.firstName');
+    fireEvent.change(firstNameInput, { target: { value: 'Jane' } });
 
     const saveButton = screen.getByRole('button', { name: 'settings.profile.save' });
     fireEvent.click(saveButton);
@@ -85,7 +93,7 @@ describe('SettingsPage', () => {
     });
 
     expect(mockRefreshProfile).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('settings.success')).toBeInTheDocument();
+    expect(screen.getByText('settings.profile.success')).toBeInTheDocument();
   });
 
   it('displays an error message if profile fetch fails', async () => {
@@ -97,7 +105,7 @@ describe('SettingsPage', () => {
     render(<SettingsPage />);
 
     // Check for error message
-    expect(await screen.findByText('settings.error')).toBeInTheDocument();
+    expect(await screen.findByText('settings.profile.error')).toBeInTheDocument();
   });
 
   it('displays an error message if profile update fails', async () => {
@@ -111,13 +119,13 @@ describe('SettingsPage', () => {
     render(<SettingsPage />);
 
     // Wait for form to be populated
-    await screen.findByDisplayValue('John Doe');
+    await screen.findByDisplayValue('John');
 
     const saveButton = screen.getByRole('button', { name: 'settings.profile.save' });
     fireEvent.click(saveButton);
 
     // Check for error message
-    expect(await screen.findByText('settings.error')).toBeInTheDocument();
+    expect(await screen.findByText('settings.profile.error')).toBeInTheDocument();
     expect(mockRefreshProfile).not.toHaveBeenCalled();
   });
 });

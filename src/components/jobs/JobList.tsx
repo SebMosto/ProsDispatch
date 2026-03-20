@@ -19,14 +19,15 @@ const JobList = () => {
   }
 
   if (error) {
+    const errorText = error.reason === 'network' ? t('errors.timeout') : t('errors.unexpected');
     return (
       <section className="space-y-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
         <p className="font-semibold">{t('jobs.list.error')}</p>
-        <p className="text-red-600">{error.message}</p>
+        <p className="text-red-600">{errorText}</p>
         <button
           type="button"
           onClick={() => refetch()}
-          className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-500"
+          className="inline-flex h-[36px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-[13px] text-xs font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
         >
           {t('jobs.list.retry')}
         </button>

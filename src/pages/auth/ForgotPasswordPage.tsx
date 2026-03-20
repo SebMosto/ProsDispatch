@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
-import { Link, useNavigate } from '../../lib/router';
+import { Link } from '../../lib/router';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const ForgotPasswordPage = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -70,7 +69,7 @@ const ForgotPasswordPage = () => {
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal">
+        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal-auth">
           {!success ? (
             <>
               <Link

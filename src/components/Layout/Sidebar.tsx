@@ -2,6 +2,7 @@ import { Link, useLocation } from '../../lib/router';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { useInvoicesByContractor } from '../../hooks/useInvoices';
+import { useAuth } from '../../lib/auth';
 
 const isActive = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -13,48 +14,84 @@ const useOverdueCount = () => {
 const Sidebar = () => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
+  const { profile } = useAuth();
   const overdueCount = useOverdueCount();
+  const initials = useMemo(() => {
+    const fullName = profile?.full_name?.trim() ?? '';
+    if (!fullName) return 'PD';
+    const parts = fullName.split(/\s+/).filter(Boolean);
+    return `${parts[0]?.[0] ?? ''}${parts[1]?.[0] ?? ''}`.toUpperCase() || 'PD';
+  }, [profile?.full_name]);
 
   const NAV_ITEMS = useMemo(() => [
-    { label: t('layout.nav.dashboard'), href: '/dashboard' },
-    { label: t('layout.nav.jobs'), href: '/jobs' },
-    { label: t('layout.nav.clients'), href: '/clients' },
-    { label: t('layout.nav.invoices'), href: '/invoices', badge: overdueCount > 0 ? overdueCount : undefined },
-    { label: t('layout.nav.settings'), href: '/settings' },
+    { label: t('layout.nav.dashboard'), href: '/dashboard', section: 'main' },
+    { label: t('layout.nav.jobs'), href: '/jobs', section: 'main' },
+    { label: t('layout.nav.clients'), href: '/clients', section: 'main' },
+    { label: t('layout.nav.invoices'), href: '/invoices', section: 'main', badge: overdueCount > 0 ? overdueCount : undefined },
+    { label: t('layout.nav.settings'), href: '/settings', section: 'account' },
   ], [t, overdueCount]);
 
   return (
-    <aside className="hidden w-56 shrink-0 md:block">
-      <nav className="space-y-1 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                active ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-800 hover:bg-slate-100'
-              }`}
-            >
-              <span>{item.label}</span>
-              {item.badge != null ? (
-                <span
-                  className={`ml-2 inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-bold ${
-                    active ? 'bg-white text-slate-900' : 'bg-red-500 text-white'
-                  }`}
-                  aria-label={t('layout.nav.overdueCount', { count: item.badge })}
-                >
-                  {item.badge}
-                </span>
-              ) : active ? (
-                <span className="text-xs font-medium text-white/80" aria-hidden>
-                  {t('layout.nav.active')}
-                </span>
-              ) : null}
-            </Link>
-          );
-        })}
-      </nav>
+    <aside className="hidden w-[160px] shrink-0 border-r-[1.5px] border-[#0F172A] bg-white py-3 md:flex md:flex-col">
+      <div className="mb-1 mt-[14px] px-3 text-[9px] font-bold uppercase tracking-[1px] text-[#CBD5E1]">
+        {t('layout.nav.main')}
+      </div>
+      {NAV_ITEMS.filter((item) => item.section === 'main').map((item) => {
+        const active = isActive(pathname, item.href);
+        return (
+          <Link
+            key={item.href}
+            to={item.href}
+            className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
+              active
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A]'
+                : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
+            }`}
+          >
+            <span className="size-[14px]">{item.label.charAt(0)}</span>
+            <span>{item.label}</span>
+            {item.badge != null ? (
+              <span
+                className="ml-auto rounded-full bg-[#FF5C1B] px-[5px] py-[1px] text-[9px] font-bold text-[#1F1308]"
+                aria-label={t('layout.nav.overdueCount', { count: item.badge })}
+              >
+                {item.badge}
+              </span>
+            ) : null}
+          </Link>
+        );
+      })}
+      <div className="mb-1 mt-[14px] px-3 text-[9px] font-bold uppercase tracking-[1px] text-[#CBD5E1]">
+        {t('layout.nav.account')}
+      </div>
+      {NAV_ITEMS.filter((item) => item.section === 'account').map((item) => {
+        const active = isActive(pathname, item.href);
+        return (
+          <Link
+            key={item.href}
+            to={item.href}
+            className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
+              active
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A]'
+                : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
+            }`}
+          >
+            <span className="size-[14px]">{item.label.charAt(0)}</span>
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+      <div className="mt-auto border-t border-[#E2E8F0] px-3 pt-[10px]">
+        <div className="flex items-center gap-[7px]">
+          <div className="flex h-[26px] w-[26px] items-center justify-center rounded-full border-[1.5px] border-[#0F172A] bg-[#FF5C1B] text-[9px] font-bold text-[#1F1308]">
+            {initials}
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-[#0F172A]">{profile?.full_name ?? t('layout.brand')}</div>
+            <div className="text-[10px] text-[#94A3B8]">{profile?.business_name ?? 'Contractor'}</div>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 };
@@ -73,22 +110,22 @@ export const BottomNav = () => {
   ], [t, overdueCount]);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-10 border-t border-slate-200 bg-white shadow-inner md:hidden">
-      <ul className="flex items-center justify-around px-2 py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-10 h-[56px] border-t-[1.5px] border-[#0F172A] bg-white md:hidden">
+      <ul className="flex h-full items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = isActive(pathname, item.href);
           return (
             <li key={item.href} className="w-full">
               <Link
                 to={item.href}
-                className={`relative flex h-full flex-col items-center justify-center gap-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
-                  active ? 'bg-slate-900 text-white' : 'text-slate-800 hover:bg-slate-100'
+                className={`relative flex h-full flex-col items-center justify-center gap-1 px-3 py-2 text-xs font-semibold transition ${
+                  active ? 'text-[#0F172A]' : 'text-[#64748B]'
                 }`}
               >
                 <span>{item.label}</span>
                 {item.badge != null ? (
                   <span
-                    className="absolute right-1 top-1 inline-flex min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 py-0.5 text-[10px] font-bold text-white"
+                    className="absolute right-1 top-1 inline-flex min-w-[1rem] items-center justify-center rounded-full bg-[#FF5C1B] px-1 py-0.5 text-[10px] font-bold text-[#1F1308]"
                     aria-label={t('layout.nav.overdueCount', { count: item.badge })}
                   >
                     {item.badge}

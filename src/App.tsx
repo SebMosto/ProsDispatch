@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { AuthProvider, ProtectedRoute } from './lib/auth';
 import { useTranslation } from 'react-i18next';
@@ -41,8 +41,15 @@ const AuthRedirect = ({ children }: { children: ReactNode }) => {
 
 const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { pathname } = useLocation();
+  const languageCode = i18n.language?.startsWith('fr') ? 'FR' : 'EN';
+  const initials = useMemo(() => {
+    const fullName = profile?.full_name?.trim() ?? '';
+    if (!fullName) return t('layout.initials');
+    const parts = fullName.split(/\s+/).filter(Boolean);
+    return `${parts[0]?.[0] ?? ''}${parts[1]?.[0] ?? ''}`.toUpperCase() || t('layout.initials');
+  }, [profile?.full_name, t]);
 
   useEffect(() => {
     document.documentElement.lang = i18n.language;
@@ -66,34 +73,46 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <div className="brand" aria-label={t('layout.brand')}>
-          {t('layout.brand')}
+    <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px]">
+      <header className="flex h-[52px] items-center justify-between border-b-[1.5px] border-[#0F172A] bg-white px-5">
+        <div className="flex items-center gap-[9px]">
+          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#0F172A]">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
+              <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white" />
+              <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white" />
+            </svg>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[14px] font-bold text-[#0F172A]">Dispatch</span>
+            <span className="mx-2 h-[15px] w-px bg-[#94A3B8]" />
+            <span className="text-[14px] font-bold text-[#0F172A]">Labs</span>
+          </div>
         </div>
-        <nav aria-label="Main navigation" className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage(languageCode === 'EN' ? 'fr' : 'en').catch(() => {})}
+            className="flex items-center gap-[5px] rounded-full bg-[#F1F5F9] px-3 py-1 text-[12px] font-medium text-[#0F172A]"
+            aria-label={t('layout.languageLabel')}
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5" />
+              <path d="M9 9l2-5 2 5M9.7 7.5h2.6" />
+            </svg>
+            {languageCode}
+          </button>
           {user ? (
-            <div className="flex items-center gap-3 md:hidden">
-              <Link className="text-sm font-medium text-slate-800 hover:underline" to="/dashboard">
-                {t('layout.nav.dashboard')}
-              </Link>
-              <Link className="text-sm font-medium text-slate-800 hover:underline" to="/jobs">
-                {t('layout.nav.jobs')}
-              </Link>
-              <Link className="text-sm font-medium text-slate-800 hover:underline" to="/jobs/new">
-                {t('layout.nav.newJob')}
-              </Link>
-              <Link className="text-sm font-medium text-slate-800 hover:underline" to="/clients">
-                {t('layout.nav.clients')}
-              </Link>
+            <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-[#0F172A] bg-[#FF5C1B] text-[11px] font-bold text-[#1F1308]">
+              {initials}
             </div>
-          ) : null}
-          <LanguageSwitcher />
-        </nav>
+          ) : (
+            <LanguageSwitcher />
+          )}
+        </div>
       </header>
-      <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 pb-20 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-6xl gap-0 pb-20 pt-0 sm:px-0">
         {user ? <Sidebar /> : null}
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 px-4 pt-6 sm:px-6 lg:px-8">{children}</div>
       </div>
       {user ? <BottomNav /> : null}
     </div>

@@ -131,7 +131,7 @@ const SignUpPage = () => {
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
-        <div className="w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[14px] border-2 border-[#0F172A] bg-white px-10 pt-10 pb-9 shadow-brutal">
+        <div className="w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[14px] border-2 border-[#0F172A] bg-white px-10 pt-10 pb-9 shadow-brutal-auth">
           <p className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]">
             {t('register.label')}
           </p>

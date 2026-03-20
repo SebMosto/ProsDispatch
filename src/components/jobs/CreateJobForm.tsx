@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, type Resolver } from 'react-hook-form';
+import { Controller, useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
-import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
 import { usePersistentForm } from '../../persistence/usePersistentForm';
-import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
 import { getJobCreateSchema, JobCreateSchema as StaticJobCreateSchema } from '../../schemas/job';
 import { useCreateJob } from '../../hooks/useCreateJob';
+import { useClients } from '../../hooks/useClients';
+import { useProperties } from '../../hooks/useProperties';
 
 const DRAFT_STORAGE_KEY = 'job:create:draft';
 
@@ -26,7 +26,6 @@ const initialValues: FormValues = {
 const CreateJobForm = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isOnline } = useNetworkStatus();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
@@ -45,6 +44,8 @@ const CreateJobForm = () => {
     handleSubmit,
     reset,
     watch,
+    control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema) as Resolver<FormValues>,
@@ -88,13 +89,13 @@ const CreateJobForm = () => {
       reset(initialValues);
     },
   });
+  const selectedClientId = watch('client_id');
+  const { clients, loading: clientsLoading } = useClients();
+  const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);
 
-  const syncState: SyncBadgeState = useMemo(() => {
-    if (!draft.hydrated) return 'ONLINE_SYNCING';
-    if (!isOnline) return 'OFFLINE_DRAFT';
-    if (draft.draftStatus === 'saved_locally') return 'ONLINE_DRAFT_PENDING';
-    return 'ONLINE_SYNCED';
-  }, [draft.draftStatus, draft.hydrated, isOnline]);
+  useEffect(() => {
+    setValue('property_id', '');
+  }, [selectedClientId, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
@@ -125,12 +126,8 @@ const CreateJobForm = () => {
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <header className="flex items-center justify-between gap-2">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900">{t('jobs.create.title')}</h2>
-          <p className="text-sm text-slate-600">{t('jobs.create.subtitle')}</p>
-        </div>
-        <SyncBadge state={syncState} />
+      <header>
+        <h2 className="text-lg font-semibold text-slate-900">{t('jobs.create.title')}</h2>
       </header>
 
       {submitSuccess ? (
@@ -163,31 +160,61 @@ const CreateJobForm = () => {
             <label className="block text-sm font-medium text-slate-800" htmlFor="client_id">
               {t('jobs.create.labels.clientId')}
             </label>
-            <input
-              id="client_id"
-              type="text"
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-              {...register('client_id')}
+            <Controller
+              control={control}
+              name="client_id"
+              render={({ field }) => (
+                <select
+                  id="client_id"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                  {...field}
+                >
+                  <option value="">
+                    {clientsLoading ? t('common.processing') : t('clients.list.empty')}
+                  </option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             />
             {errors.client_id?.message ? (
               <p className="text-xs text-red-600">{errors.client_id.message}</p>
             ) : null}
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-800" htmlFor="property_id">
-              {t('jobs.create.labels.propertyId')}
-            </label>
-            <input
-              id="property_id"
-              type="text"
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-              {...register('property_id')}
-            />
-            {errors.property_id?.message ? (
-              <p className="text-xs text-red-600">{errors.property_id.message}</p>
-            ) : null}
-          </div>
+          {selectedClientId ? (
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-slate-800" htmlFor="property_id">
+                {t('jobs.create.labels.propertyId')}
+              </label>
+              <Controller
+                control={control}
+                name="property_id"
+                render={({ field }) => (
+                  <select
+                    id="property_id"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                    {...field}
+                  >
+                    <option value="">
+                      {propertiesLoading ? t('common.processing') : t('jobs.create.labels.propertyId')}
+                    </option>
+                    {properties.map((property) => (
+                      <option key={property.id} value={property.id}>
+                        {property.address_line1}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+              {errors.property_id?.message ? (
+                <p className="text-xs text-red-600">{errors.property_id.message}</p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="space-y-1">
@@ -195,7 +222,6 @@ const CreateJobForm = () => {
             <label className="block text-sm font-medium text-slate-800" htmlFor="description">
               {t('jobs.create.labels.description')}
             </label>
-            <span className="text-xs text-amber-700">{t('jobs.create.descriptionWarning')}</span>
           </div>
           <textarea
             id="description"

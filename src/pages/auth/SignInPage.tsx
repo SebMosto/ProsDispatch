@@ -105,7 +105,7 @@ const SignInPage = () => {
 
       {/* Centered card — SCREEN_SPECS §1 Login */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal">
+        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal-auth">
           <p
             className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]"
             aria-hidden

@@ -25,7 +25,9 @@
       "businessName": "Business Name",
       "email": "Email",
       "save": "Save Changes",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "success": "Profile updated successfully.",
+      "error": "Unable to update profile."
     },
     "success": "Profile updated successfully.",
     "error": "Failed to update profile."
@@ -33,7 +35,7 @@
   "hero": {
     "title": "Contractor dispatching built for mobile teams",
     "subtitle": "Manage jobs, approvals, and Stripe Connect payments with bilingual workflows.",
-    "primaryCta": "Start onboarding",
+    "primaryCta": "Create your account",
     "secondaryCta": "Review product brief"
   },
   "features": {
@@ -501,6 +503,67 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your profile and business details.",
+    "sections": {
+      "language": "Language",
+      "interfaceLanguage": "Interface language",
+      "notifications": "Notifications",
+      "billing": "Billing & subscription",
+      "stripe": "Stripe Connect - Payouts",
+      "passwordSecurity": "Password & security",
+      "password": "Password",
+      "privacy": "Data & privacy - Loi 25",
+      "danger": "Danger zone"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "trade": "Trade",
+      "phone": "Phone"
+    },
+    "trades": {
+      "plumbing": "Plumbing",
+      "hvac": "HVAC",
+      "electrical": "Electrical",
+      "general": "General contractor",
+      "roofing": "Roofing",
+      "other": "Other"
+    },
+    "actions": {
+      "change": "Change",
+      "reset": "Reset"
+    },
+    "notifications": {
+      "jobApprovals": {
+        "title": "Job approvals",
+        "description": "Email me when a client approves a job."
+      },
+      "invoicePaid": {
+        "title": "Invoice paid",
+        "description": "Email me when an invoice is paid."
+      },
+      "overdue": {
+        "title": "Overdue reminders",
+        "description": "Remind me when invoices are overdue."
+      },
+      "marketing": {
+        "title": "Marketing emails",
+        "description": "Product updates and announcements."
+      }
+    },
+    "password": {
+      "lastChanged": "Last changed recently"
+    },
+    "privacy": {
+      "body": "ProsDispatch handles your data according to Loi 25. You can request access, export, or deletion of your personal information at any time.",
+      "export": "Export my data",
+      "policy": "Privacy policy",
+      "contact": "Contact data officer"
+    },
+    "danger": {
+      "title": "Delete account",
+      "description": "Permanently deletes your account, jobs, clients, and invoices. This cannot be undone.",
+      "delete": "Delete account"
+    },
     "profile": {
       "title": "Profile",
       "fullName": "Full Name",

@@ -126,10 +126,7 @@ const DashboardPage = () => {
     if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('pd_trial_banner_dismissed', '1');
   }, []);
 
-  const first_name = useMemo(() => {
-    const name = profile?.full_name?.trim() ?? '';
-    return name ? name.split(/\s+/)[0] ?? '' : '';
-  }, [profile?.full_name]);
+  const firstName = useMemo(() => profile?.full_name?.split(' ')[0] ?? null, [profile?.full_name]);
 
   const clientMap = useMemo(() => {
     const m = new Map<string, string>();
@@ -196,6 +193,7 @@ const DashboardPage = () => {
 
   const loading = jobsLoading || clientsLoading || invoicesLoading;
   const error = jobsError;
+  const errorText = error?.reason === 'network' ? t('errors.timeout') : t('errors.unexpected');
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
@@ -203,7 +201,7 @@ const DashboardPage = () => {
       <header className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-[19px] font-bold text-slate-900">
-            {first_name ? t('dashboard.greeting', { name: first_name }) : t('dashboard.greetingFallback')}
+            {firstName ? t('dashboard.greeting', { name: firstName }) : t('dashboard.greetingFallback')}
           </h1>
           <p className="text-xs text-slate-500">{formatDate(new Date())}</p>
         </div>
@@ -279,11 +277,11 @@ const DashboardPage = () => {
       {error && (
         <section className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">{t('jobs.list.error')}</p>
-          <p>{error.message}</p>
+          <p>{errorText}</p>
           <button
             type="button"
             onClick={() => refetchJobs()}
-            className="mt-2 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-500"
+            className="mt-2 inline-flex h-[36px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-[13px] text-xs font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
           >
             {t('jobs.list.retry')}
           </button>

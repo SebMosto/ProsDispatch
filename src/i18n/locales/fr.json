@@ -45,7 +45,7 @@
   "hero": {
     "title": "Répartition des entrepreneurs pensée pour les équipes mobiles",
     "subtitle": "Gérez les travaux, les approbations et les paiements Stripe Connect avec des parcours bilingues.",
-    "primaryCta": "Commencer l'inscription",
+    "primaryCta": "Creer votre compte",
     "secondaryCta": "Consulter le cahier produit"
   },
   "features": {
@@ -513,6 +513,67 @@
   "settings": {
     "title": "Paramètres",
     "subtitle": "Gérez votre profil et les détails de votre entreprise.",
+    "sections": {
+      "language": "Langue",
+      "interfaceLanguage": "Langue d'interface",
+      "notifications": "Notifications",
+      "billing": "Facturation et abonnement",
+      "stripe": "Stripe Connect - Versements",
+      "passwordSecurity": "Mot de passe et sécurité",
+      "password": "Mot de passe",
+      "privacy": "Données et confidentialité - Loi 25",
+      "danger": "Zone de danger"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "trade": "Métier",
+      "phone": "Téléphone"
+    },
+    "trades": {
+      "plumbing": "Plomberie",
+      "hvac": "CVC",
+      "electrical": "Électricité",
+      "general": "Entrepreneur général",
+      "roofing": "Toiture",
+      "other": "Autre"
+    },
+    "actions": {
+      "change": "Changer",
+      "reset": "Réinitialiser"
+    },
+    "notifications": {
+      "jobApprovals": {
+        "title": "Approbations de travaux",
+        "description": "M'envoyer un courriel lorsqu'un client approuve un travail."
+      },
+      "invoicePaid": {
+        "title": "Facture payée",
+        "description": "M'envoyer un courriel lorsqu'une facture est payée."
+      },
+      "overdue": {
+        "title": "Rappels de retard",
+        "description": "Me rappeler quand des factures sont en retard."
+      },
+      "marketing": {
+        "title": "Courriels marketing",
+        "description": "Mises à jour produit et annonces."
+      }
+    },
+    "password": {
+      "lastChanged": "Dernière modification récente"
+    },
+    "privacy": {
+      "body": "ProsDispatch traite vos données conformément à la Loi 25. Vous pouvez demander l'accès, l'exportation ou la suppression de vos renseignements personnels en tout temps.",
+      "export": "Exporter mes données",
+      "policy": "Politique de confidentialité",
+      "contact": "Contacter le responsable"
+    },
+    "danger": {
+      "title": "Supprimer le compte",
+      "description": "Supprime définitivement votre compte, vos travaux, vos clients et vos factures. Cette action est irréversible.",
+      "delete": "Supprimer le compte"
+    },
     "profile": {
       "title": "Profil",
       "fullName": "Nom complet",
@@ -522,6 +583,18 @@
       "saving": "Enregistrement...",
       "success": "Profil mis à jour avec succès.",
       "error": "Impossible de mettre à jour le profil."
+    },
+    "stripe": {
+      "title": "Stripe Connect",
+      "subtitle": "Connectez votre compte bancaire pour recevoir les paiements de facture directement.",
+      "cta": "Connectez votre compte Stripe pour commencer à recevoir les paiements de vos factures.",
+      "connect": "Connecter votre banque",
+      "connected": "Stripe est connecté pour les versements.",
+      "managePayouts": "Gérer les versements dans Stripe",
+      "incomplete": "La configuration Stripe est incomplète. Terminez l'intégration pour commencer à recevoir des versements.",
+      "retry": "Reprendre la configuration",
+      "refresh": "Actualiser l'état de la connexion",
+      "error": "Impossible de configurer Stripe Connect pour le moment."
     }
   },
   "validation": {
