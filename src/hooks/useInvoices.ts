@@ -26,7 +26,7 @@ export const useInvoice = (id?: string) => {
     if (!id) {
       throw { message: tRef.current('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const result = await invoiceRepository.get(id, signal);
+    const result = await invoiceRepository.get(id);
     if (result.error || !result.data) {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
@@ -62,7 +62,11 @@ export const useInvoiceByToken = (token?: string) => {
     if (!token) {
       throw { message: tRef.current('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const { data, error } = await supabase.rpc('get_invoice_by_token', { p_token: token }, { signal });
+    let query = supabase.rpc('get_invoice_by_token', { p_token: token });
+    if (signal) {
+      query = query.abortSignal(signal);
+    }
+    const { data, error } = await query;
 
     if (error) {
       // Surface a generic validation-style error for invalid/expired tokens

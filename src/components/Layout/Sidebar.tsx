@@ -114,7 +114,7 @@ const Sidebar = () => {
           </div>
           <div>
             <div className="text-[11px] font-bold text-[#0F172A]">{profile?.full_name ?? t('layout.brand')}</div>
-            <div className="text-[10px] text-[#94A3B8]">{profile?.trade ?? 'Contractor'}</div>
+            <div className="text-[10px] text-[#94A3B8]">{profile?.business_name ?? 'Contractor'}</div>
           </div>
         </div>
       </div>

@@ -19,8 +19,6 @@ const SettingsPage = () => {
   const [hasSaveAttempted, setHasSaveAttempted] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [trade, setTrade] = useState('plumbing');
-  const [phone, setPhone] = useState('');
   const [notifState, setNotifState] = useState({
     jobApprovals: true,
     invoicePaid: true,
@@ -50,8 +48,6 @@ const SettingsPage = () => {
       const [first = '', ...rest] = fullName.split(/\s+/);
       setFirstName(first);
       setLastName(rest.join(' '));
-      setTrade(profile.trade ?? 'plumbing');
-      setPhone(profile.phone ?? '');
       reset({
         full_name: profile.full_name ?? '',
         business_name: profile.business_name ?? '',
@@ -70,8 +66,6 @@ const SettingsPage = () => {
       const { error } = await profileRepository.update(user.id, {
         ...data,
         full_name: combinedFullName || data.full_name,
-        trade,
-        phone,
       });
 
       if (error) {
@@ -119,21 +113,9 @@ const SettingsPage = () => {
               <input id="business_name" type="text" {...register('business_name')} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]" />
               <div />
             </div>
-            <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
-              <label htmlFor="trade" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.fields.trade')}</label>
-              <select id="trade" value={trade} onChange={(e) => setTrade(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]">
-                <option value="plumbing">{t('settings.trades.plumbing')}</option>
-                <option value="hvac">{t('settings.trades.hvac')}</option>
-                <option value="electrical">{t('settings.trades.electrical')}</option>
-                <option value="general">{t('settings.trades.general')}</option>
-                <option value="roofing">{t('settings.trades.roofing')}</option>
-                <option value="other">{t('settings.trades.other')}</option>
-              </select>
-              <div />
-            </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 px-[18px] py-[13px]">
-              <label htmlFor="phone" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.fields.phone')}</label>
-              <input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]" />
+              <div />
+              <div />
               <button type="submit" disabled={saving} className="h-[30px] rounded-[5px] border border-[#0F172A] bg-[#FF5C1B] px-3 text-[11px] font-bold text-[#1F1308]">
                 {saving ? t('settings.profile.saving') : t('settings.profile.save')}
               </button>
