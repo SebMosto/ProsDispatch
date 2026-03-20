@@ -117,9 +117,7 @@ const SignUpPage = () => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-[#E2E8F0] py-1.5 pl-2.5 pr-3.5 text-[13px] font-medium hover:bg-[#CBD5E1]">
-            <LanguageSwitcher />
-          </div>
+          <LanguageSwitcher />
           <span className="h-[18px] w-px bg-[#CBD5E1]" aria-hidden />
           <Link to="/" className="text-[13px] font-medium text-[#64748B] hover:text-[#0F172A]">
             {t('login.pilot')}

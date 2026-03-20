@@ -43,7 +43,6 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
   const { pathname } = useLocation();
-  const languageCode = i18n.language?.startsWith('fr') ? 'FR' : 'EN';
   const initials = useMemo(() => {
     const fullName = profile?.full_name?.trim() ?? '';
     if (!fullName) return t('layout.initials');
@@ -89,18 +88,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => i18n.changeLanguage(languageCode === 'EN' ? 'fr' : 'en').catch(() => {})}
-            className="flex items-center gap-[5px] rounded-full bg-[#F1F5F9] px-3 py-1 text-[12px] font-medium text-[#0F172A]"
-            aria-label={t('layout.languageLabel')}
-          >
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5" />
-              <path d="M9 9l2-5 2 5M9.7 7.5h2.6" />
-            </svg>
-            {languageCode}
-          </button>
+          <LanguageSwitcher />
           {user ? (
             <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-[#0F172A] bg-[#FF5C1B] text-[11px] font-bold text-[#1F1308]">
               {initials}

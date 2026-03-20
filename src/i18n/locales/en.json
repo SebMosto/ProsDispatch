@@ -6,6 +6,8 @@
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "main": "Main",
+      "account": "Account",
       "dashboard": "Dashboard",
       "jobs": "Jobs",
       "newJob": "New Job",

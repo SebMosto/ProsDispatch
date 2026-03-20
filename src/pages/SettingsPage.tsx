@@ -16,6 +16,7 @@ const SettingsPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [hasSaveAttempted, setHasSaveAttempted] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [trade, setTrade] = useState('plumbing');
@@ -40,35 +41,28 @@ const SettingsPage = () => {
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await profileRepository.get(user.id);
-
-      if (error) {
-        setMessage({ type: 'error', text: t('settings.profile.error') });
-      } else if (data) {
-        const fullName = data.full_name?.trim() ?? '';
-        const [first = '', ...rest] = fullName.split(/\s+/);
-        setFirstName(first);
-        setLastName(rest.join(' '));
-        reset({
-          full_name: data.full_name,
-          business_name: data.business_name,
-        });
-      }
-
+    if (!user) {
       setLoading(false);
-    };
-
-    fetchProfile();
-  }, [user, reset, t]);
+      return;
+    }
+    if (profile) {
+      const fullName = profile.full_name?.trim() ?? '';
+      const [first = '', ...rest] = fullName.split(/\s+/);
+      setFirstName(first);
+      setLastName(rest.join(' '));
+      setTrade(profile.trade ?? 'plumbing');
+      setPhone(profile.phone ?? '');
+      reset({
+        full_name: profile.full_name ?? '',
+        business_name: profile.business_name ?? '',
+      });
+    }
+    setLoading(false);
+  }, [user, profile, reset]);
 
   const onSubmit = async (data: ProfileUpdateInput) => {
     if (!user) return;
+    setHasSaveAttempted(true);
     setSaving(true);
     setMessage(null);
     try {
@@ -76,6 +70,8 @@ const SettingsPage = () => {
       const { error } = await profileRepository.update(user.id, {
         ...data,
         full_name: combinedFullName || data.full_name,
+        trade,
+        phone,
       });
 
       if (error) {
@@ -142,7 +138,7 @@ const SettingsPage = () => {
                 {saving ? t('settings.profile.saving') : t('settings.profile.save')}
               </button>
             </div>
-            {(errors.full_name || errors.business_name || message) ? (
+            {(errors.full_name || errors.business_name || (hasSaveAttempted && message)) ? (
               <div className={`mx-[18px] mb-[13px] rounded-md px-3 py-2 text-xs ${message?.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 {errors.full_name?.message || errors.business_name?.message || message?.text}
               </div>

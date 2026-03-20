@@ -6,6 +6,8 @@
     "languageEnglish": "English",
     "languageFrench": "Français",
     "nav": {
+      "main": "Principal",
+      "account": "Compte",
       "dashboard": "Tableau de bord",
       "jobs": "Travaux",
       "newJob": "Nouveau travail",

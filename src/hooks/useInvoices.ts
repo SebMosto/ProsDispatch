@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { InvoiceDraftInput } from '../schemas/invoice';
@@ -16,17 +16,22 @@ const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
   const { t } = useTranslation();
+  const tRef = useRef(t);
 
-  const queryFn = useCallback(async () => {
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
+  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
     if (!id) {
-      throw { message: t('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
+      throw { message: tRef.current('validation.invoiceIdRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const result = await invoiceRepository.get(id);
+    const result = await invoiceRepository.get(id, signal);
     if (result.error || !result.data) {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
     return result.data;
-  }, [id, t]);
+  }, [id]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
 
@@ -47,19 +52,24 @@ export const useInvoice = (id?: string) => {
 
 export const useInvoiceByToken = (token?: string) => {
   const { t } = useTranslation();
+  const tRef = useRef(t);
 
-  const queryFn = useCallback(async () => {
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
+  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
     if (!token) {
-      throw { message: t('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
+      throw { message: tRef.current('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    const { data, error } = await supabase.rpc('get_invoice_by_token', { p_token: token });
+    const { data, error } = await supabase.rpc('get_invoice_by_token', { p_token: token }, { signal });
 
     if (error) {
       // Surface a generic validation-style error for invalid/expired tokens
       const message =
         error.message?.includes('TOKEN_INVALID_OR_EXPIRED') ?
-          t('public.invoice.expired') :
-          t('public.invoice.expired');
+          tRef.current('public.invoice.expired') :
+          tRef.current('public.invoice.expired');
       throw { message, reason: 'validation', cause: error } satisfies RepositoryError;
     }
 
@@ -75,7 +85,7 @@ export const useInvoiceByToken = (token?: string) => {
       | null;
 
     if (!envelope?.invoice) {
-      throw { message: t('public.invoice.expired'), reason: 'validation' } satisfies RepositoryError;
+      throw { message: tRef.current('public.invoice.expired'), reason: 'validation' } satisfies RepositoryError;
     }
 
     const fullInvoice: InvoiceWithItems & { contractor_name?: string | null } = {
@@ -86,7 +96,7 @@ export const useInvoiceByToken = (token?: string) => {
     };
 
     return fullInvoice;
-  }, [token, t]);
+  }, [token]);
 
   const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 

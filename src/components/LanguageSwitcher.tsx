@@ -1,33 +1,32 @@
 import { useTranslation } from 'react-i18next';
 
-type Language = 'en' | 'fr';
-
 const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation();
-  const activeLanguage = i18n.language.startsWith('fr') ? 'fr' : 'en';
+  const isFrench = i18n.language.startsWith('fr');
+  const activeLanguage = isFrench ? 'FR' : 'EN';
 
-  const handleChange = (language: Language) => {
-    i18n.changeLanguage(language).then(() => {
-      // Explicitly persist preference to ensure offline boot works
-      localStorage.setItem('i18nextLng', language);
-    }).catch((error) => {
-      console.error('Language change failed', error);
+  const handleToggle = () => {
+    const nextLanguage = isFrench ? 'en' : 'fr';
+    i18n.changeLanguage(nextLanguage).then(() => {
+      localStorage.setItem('i18nextLng', nextLanguage);
+    }).catch(() => {
+      // noop
     });
   };
 
   return (
-    <div className="language-switcher" role="group" aria-label={t('layout.languageLabel')}>
-      {(['en', 'fr'] as Language[]).map((language) => (
-        <button
-          key={language}
-          type="button"
-          className={`language-button${activeLanguage === language ? ' is-active' : ''}`}
-          onClick={() => handleChange(language)}
-        >
-          {language === 'en' ? t('layout.languageEnglish') : t('layout.languageFrench')}
-        </button>
-      ))}
-    </div>
+    <button
+      type="button"
+      onClick={handleToggle}
+      className="flex items-center gap-[6px] rounded-full bg-[#E2E8F0] px-[10px] py-[5px] pr-[14px] text-[13px] font-medium text-[#0F172A] transition-colors hover:bg-[#CBD5E1]"
+      aria-label={t('layout.languageLabel')}
+    >
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M2 4h8M6 2v2M3 4c0 3 2 5 4 6M7 4c-.5 2-2 4-4 5.5" />
+        <path d="M9 9l2-5 2 5M9.7 7.5h2.6" />
+      </svg>
+      {activeLanguage}
+    </button>
   );
 };
 

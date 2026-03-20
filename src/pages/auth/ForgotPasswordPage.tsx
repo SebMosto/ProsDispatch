@@ -56,9 +56,7 @@ const ForgotPasswordPage = () => {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-[#E2E8F0] py-1.5 pl-2.5 pr-3.5 text-[13px] font-medium">
-            <LanguageSwitcher />
-          </div>
+          <LanguageSwitcher />
           <Link to="/" className="text-[13px] text-[#64748B] hover:text-[#FF5C1B]">
             {t('login.pilot')}
           </Link>

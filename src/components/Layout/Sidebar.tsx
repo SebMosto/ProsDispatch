@@ -24,11 +24,37 @@ const Sidebar = () => {
   }, [profile?.full_name]);
 
   const NAV_ITEMS = useMemo(() => [
-    { label: t('layout.nav.dashboard'), href: '/dashboard', section: 'main' },
-    { label: t('layout.nav.jobs'), href: '/jobs', section: 'main' },
-    { label: t('layout.nav.clients'), href: '/clients', section: 'main' },
-    { label: t('layout.nav.invoices'), href: '/invoices', section: 'main', badge: overdueCount > 0 ? overdueCount : undefined },
-    { label: t('layout.nav.settings'), href: '/settings', section: 'account' },
+    {
+      label: t('layout.nav.dashboard'),
+      href: '/dashboard',
+      section: 'main',
+      icon: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="1" width="6" height="6" rx="1" /><rect x="9" y="1" width="6" height="6" rx="1" /><rect x="1" y="9" width="6" height="6" rx="1" /><rect x="9" y="9" width="6" height="6" rx="1" /></svg>,
+    },
+    {
+      label: t('layout.nav.jobs'),
+      href: '/jobs',
+      section: 'main',
+      icon: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="12" height="11" rx="1" /><path d="M5 3V1M11 3V1M2 7h12" /></svg>,
+    },
+    {
+      label: t('layout.nav.clients'),
+      href: '/clients',
+      section: 'main',
+      icon: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="5" r="3" /><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" /></svg>,
+    },
+    {
+      label: t('layout.nav.invoices'),
+      href: '/invoices',
+      section: 'main',
+      icon: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="12" height="13" rx="1" /><path d="M5 6h6M5 9h6M5 12h4" /></svg>,
+      badge: overdueCount > 0 ? overdueCount : undefined,
+    },
+    {
+      label: t('layout.nav.settings'),
+      href: '/settings',
+      section: 'account',
+      icon: <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="8" r="3" /><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4" /></svg>,
+    },
   ], [t, overdueCount]);
 
   return (
@@ -48,7 +74,7 @@ const Sidebar = () => {
                 : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
             }`}
           >
-            <span className="size-[14px]">{item.label.charAt(0)}</span>
+            <span className="size-[14px]">{item.icon}</span>
             <span>{item.label}</span>
             {item.badge != null ? (
               <span
@@ -76,7 +102,7 @@ const Sidebar = () => {
                 : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
             }`}
           >
-            <span className="size-[14px]">{item.label.charAt(0)}</span>
+            <span className="size-[14px]">{item.icon}</span>
             <span>{item.label}</span>
           </Link>
         );
@@ -88,7 +114,7 @@ const Sidebar = () => {
           </div>
           <div>
             <div className="text-[11px] font-bold text-[#0F172A]">{profile?.full_name ?? t('layout.brand')}</div>
-            <div className="text-[10px] text-[#94A3B8]">{profile?.business_name ?? 'Contractor'}</div>
+            <div className="text-[10px] text-[#94A3B8]">{profile?.trade ?? 'Contractor'}</div>
           </div>
         </div>
       </div>
