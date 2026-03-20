@@ -172,6 +172,18 @@
       "errorRetryable": "⚠️ Needs attention"
     }
   },
+  "admin": {
+    "title": "Admin Portal",
+    "description": "Platform-wide metrics and health.",
+    "error": "Failed to load metrics",
+    "metrics": {
+      "users": "Total Users",
+      "activeUsers": "{{count}} active (30d)",
+      "jobs": "Total Jobs",
+      "activeJobs": "{{count}} active",
+      "revenue": "Total Revenue (All Time)"
+    }
+  },
   "jobs": {
     "createPage": {
        "breadCrumb": "Jobs",

@@ -182,6 +182,18 @@
       "errorRetryable": "⚠️ Action requise"
     }
   },
+  "admin": {
+    "title": "Portail d'Administration",
+    "description": "Métriques de la plateforme.",
+    "error": "Impossible de charger les métriques",
+    "metrics": {
+      "users": "Utilisateurs Totaux",
+      "activeUsers": "{{count}} actifs (30j)",
+      "jobs": "Mandats Totaux",
+      "activeJobs": "{{count}} actifs",
+      "revenue": "Revenu Total"
+    }
+  },
   "jobs": {
     "createPage": {
        "breadCrumb": "Travaux",
