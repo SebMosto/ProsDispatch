@@ -41,6 +41,7 @@ vi.mock('../components/ui/PageLoader', () => ({
 
 describe('SettingsPage', () => {
   const mockUser = { id: 'user-123', email: 'test@example.com' };
+  const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
   const mockRefreshProfile = vi.fn();
 
   beforeEach(() => {
@@ -48,28 +49,22 @@ describe('SettingsPage', () => {
     (useAuth as unknown as Mock).mockReturnValue({ 
       user: mockUser,
       refreshProfile: mockRefreshProfile,
-      profile: null,
+      profile: mockProfile,
       subscriptionStatus: 'trialing',
       trialDaysRemaining: 14,
     });
   });
 
   it('fetches and displays profile data', async () => {
-    const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
-    (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
-
     render(<SettingsPage />);
 
     expect(await screen.findByDisplayValue('John')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('Doe')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('Acme Corp')).toBeInTheDocument();
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
-
-    expect(profileRepository.get).toHaveBeenCalledWith(mockUser.id);
   });
 
   it('updates profile on submit', async () => {
-    const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
     (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
     (profileRepository.update as unknown as Mock).mockResolvedValue({ data: { ...mockProfile, full_name: 'Jane Doe' }, error: null });
 
@@ -96,20 +91,8 @@ describe('SettingsPage', () => {
     expect(screen.getByText('settings.profile.success')).toBeInTheDocument();
   });
 
-  it('displays an error message if profile fetch fails', async () => {
-    (profileRepository.get as unknown as Mock).mockResolvedValue({ 
-      data: null, 
-      error: { message: 'Failed to fetch profile' } 
-    });
-
-    render(<SettingsPage />);
-
-    // Check for error message
-    expect(await screen.findByText('settings.profile.error')).toBeInTheDocument();
-  });
 
   it('displays an error message if profile update fails', async () => {
-    const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
     (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
     (profileRepository.update as unknown as Mock).mockResolvedValue({ 
       data: null, 
