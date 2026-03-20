@@ -39,34 +39,36 @@ describe('useInvoices hooks', () => {
   });
 
   it('useInvoiceByToken returns invoice from RPC envelope', async () => {
-    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      data: {
-        invoice: {
-          id: 'inv-1',
-          job_id: 'job-1',
-          contractor_id: 'ctr-1',
-          invoice_number: 'INV-001',
-          status: 'sent',
-          subtotal: 1000,
-          tax_data: [],
-          total_amount: 1000,
-          pdf_url: null,
-        },
-        items: [
-          {
-            id: 'item-1',
-            invoice_id: 'inv-1',
-            description: 'Test line',
-            quantity: 1,
-            unit_price: 1000,
-            amount: 1000,
+    const mockQuery = {
+      abortSignal: vi.fn().mockReturnThis(),
+      then: function(resolve: (value: unknown) => void) {
+        resolve({
+          data: {
+            invoice: {
+              id: 'inv-1',
+              job_id: 'job-1',
+              contractor_id: 'ctr-1',
+              invoice_number: 'INV-001',
+              status: 'sent',
+              subtotal: 1000,
+              tax_data: [],
+            },
+            items: [
+              {
+                id: 'item-1',
+                invoice_id: 'inv-1',
+                description: 'Service',
+                quantity: 1,
+                unit_price: 1000,
+                amount: 1000,
+              },
+            ],
           },
-        ],
-        contractor_name: 'Test Contractor',
-        pdf_url: null,
-      },
-      error: null,
-    });
+          error: null,
+        });
+      }
+    };
+    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockQuery);
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvoiceByToken('test-token'), { wrapper });
