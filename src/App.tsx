@@ -32,6 +32,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+const AdminPortalPage = lazy(() => import('./pages/admin/AdminPortalPage'));
 
 const AuthRedirect = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -160,6 +161,7 @@ const App = () => (
             <Route path="/clients/:id" element={<ClientDetailPage />} />
             <Route path="/clients/:id/edit" element={<ClientEditPage />} />
             <Route path="/clients/:id/properties/new" element={<CreatePropertyPage />} />
+            <Route path="/admin" element={<AdminPortalPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
