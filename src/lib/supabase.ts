@@ -8,8 +8,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase configuration is missing. VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set in the environment.');
 }
 
-console.log('🔌 Supabase Client Initializing...');
-
 export const supabase = createClient<Database>(
   supabaseUrl,
   supabaseAnonKey,
@@ -26,8 +24,3 @@ export const supabase = createClient<Database>(
     },
   }
 );
-
-// Helper to check connection
-supabase.auth.onAuthStateChange((event) => {
-  console.log('🔐 Auth State Change:', event);
-});

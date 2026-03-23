@@ -61,6 +61,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!error && data) {
       setProfile(data as Tables<'profiles'>);
     } else {
+      if (error) {
+        console.error('Failed to fetch profile:', error);
+      }
       setProfile(null);
     }
   }, []);
@@ -68,34 +71,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       setLoading(true);
-      const { data } = await supabase.auth.getSession();
-      const currentSession = data.session;
-      setSession(currentSession);
-      const currentUser = currentSession?.user ?? null;
-      setUser(currentUser);
+      try {
+        const { data } = await supabase.auth.getSession();
+        const currentSession = data.session;
+        setSession(currentSession);
+        const currentUser = currentSession?.user ?? null;
+        setUser(currentUser);
 
-      if (currentUser) {
-        await fetchProfile(currentUser);
+        if (currentUser) {
+          await fetchProfile(currentUser);
+        } else {
+          setProfile(null);
+        }
+      } catch {
+        setProfile(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initializeAuth();
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setSession(nextSession);
-      const nextUser = nextSession?.user ?? null;
-      setUser(nextUser);
-      if (nextUser) {
-        await fetchProfile(nextUser);
-      } else {
+      setLoading(true);
+      try {
+        setSession(nextSession);
+        const nextUser = nextSession?.user ?? null;
+        setUser(nextUser);
+        if (nextUser) {
+          await fetchProfile(nextUser);
+        } else {
+          setProfile(null);
+        }
+      } catch {
         setProfile(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
+
+    const loadingSafetyTimeout = window.setTimeout(() => {
+      setLoading((currentLoading) => (currentLoading ? false : currentLoading));
+    }, 5000);
 
     return () => {
       listener?.subscription.unsubscribe();
+      window.clearTimeout(loadingSafetyTimeout);
     };
   }, [fetchProfile]);
 
