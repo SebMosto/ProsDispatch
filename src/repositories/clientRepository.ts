@@ -58,6 +58,7 @@ export class ClientRepository
     const { data: authData, error: authError } = await this.client.auth.getSession();
 
     if (authError) {
+      console.error('CLIENT CREATE: auth error', authError);
       return {
         data: null,
         error: {
@@ -69,6 +70,7 @@ export class ClientRepository
     }
 
     if (!authData?.session?.user) {
+      console.error('CLIENT CREATE: no session user', authData);
       return {
         data: null,
         error: {

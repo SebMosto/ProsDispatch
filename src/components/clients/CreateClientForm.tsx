@@ -76,7 +76,7 @@ const CreateClientForm: React.FC = () => {
     return 'ONLINE_SYNCED';
   }, [draft.draftStatus, draft.hydrated, isOnline]);
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = (values: FormValues) => {
     setSubmitError(null);
     setSubmitSuccess(null);
 
@@ -95,15 +95,17 @@ const CreateClientForm: React.FC = () => {
       return;
     }
 
-    try {
-      await createMutation.mutateAsync(parsed.data);
-      setSubmitSuccess(t('clients.create.statuses.success'));
-      await draft.clearDraft();
-      reset(initialValues);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : t('clients.create.errors.generic');
-      setSubmitError(message);
-    }
+    createMutation.mutate(parsed.data, {
+      onSuccess: () => {
+        setSubmitSuccess(t('clients.create.statuses.success'));
+        void draft.clearDraft();
+        reset(initialValues);
+      },
+      onError: (error) => {
+        const message = error instanceof Error ? error.message : t('clients.create.errors.generic');
+        setSubmitError(message);
+      },
+    });
   };
 
   return (
@@ -195,9 +197,11 @@ const CreateClientForm: React.FC = () => {
         <button
           type="submit"
           className="flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isSubmitting}
+          disabled={isSubmitting || createMutation.isPending}
         >
-          {isSubmitting ? t('clients.create.actions.submitting') : t('clients.create.actions.submit')}
+          {isSubmitting || createMutation.isPending
+            ? t('clients.create.actions.submitting')
+            : t('clients.create.actions.submit')}
         </button>
       </form>
     </section>
