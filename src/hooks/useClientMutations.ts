@@ -32,7 +32,10 @@ export const useCreateClientMutation = () => {
   return useMutation<ClientRecord, RepositoryError, ClientCreateInput, { previousClients: CachedClientEntries }>(
     {
       mutationFn: async (input) => {
-        const result = await clientRepository.create(input).catch((error: unknown) => {
+        if (!user?.id) {
+          throw new Error('Not authenticated');
+        }
+        const result = await clientRepository.create(input, user.id).catch((error: unknown) => {
           console.error('useCreateClientMutation: repository.create failed', error);
           throw error;
         });

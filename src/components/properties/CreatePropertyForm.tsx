@@ -14,9 +14,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
   const { t } = useTranslation();
   const {
     formMethods,
-    syncState,
     submitError,
-    submitSuccess,
     applyAddressSelection,
     onSubmit,
   } = useCreatePropertyForm({ clientId });
@@ -37,14 +35,9 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           <h2 className="text-lg font-semibold text-slate-900">{t('properties.create.title')}</h2>
           <p className="text-sm text-slate-600">{t('properties.create.subtitle')}</p>
         </div>
-        <SyncBadge state={syncState} />
+        <SyncBadge state="ONLINE_SYNCED" />
       </header>
 
-      {submitSuccess ? (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">
-          {submitSuccess}
-        </p>
-      ) : null}
       {submitError ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
           {submitError}

@@ -1,17 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
-import { usePersistentForm } from '../../persistence/usePersistentForm';
-import { useNetworkStatus } from '../../lib/network';
 import { useAuth } from '../../lib/auth';
+import { useNavigate } from '../../lib/router';
 import { getPropertySchema } from '../../schemas/property';
 import { propertyRepository } from '../../repositories/propertyRepository';
 import { type AddressSelection } from '../ui/AddressAutocomplete';
-import { type SyncBadgeState } from '../system/SyncBadge';
-
-const DRAFT_STORAGE_KEY = 'property:create:draft';
 
 // We need a way to get the type without the function call.
 // Since we don't have a static schema that matches the localized one exactly in terms of message keys but does in structure:
@@ -41,62 +37,30 @@ interface UseCreatePropertyFormProps {
 export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isOnline } = useNetworkStatus();
+  const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   const baseValues = useMemo<FormValues>(() => ({
     ...initialValues,
     client_id: clientId ?? initialValues.client_id,
   }), [clientId]);
 
-  const draft = usePersistentForm<FormValues>({
-    storageKey: DRAFT_STORAGE_KEY,
-    initialValues: baseValues,
-  });
-
-  const hasAppliedDraft = useRef(false);
-
   const PropertySchema = useMemo(() => getPropertySchema(t), [t]);
 
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(PropertySchema) as Resolver<FormValues>,
-    defaultValues: draft.values,
+    defaultValues: baseValues,
   });
 
   const {
     reset,
-    watch,
     setValue,
   } = formMethods;
 
   useEffect(() => {
-    if (!draft.hydrated || hasAppliedDraft.current) return;
-    reset(draft.values);
-    hasAppliedDraft.current = true;
-  }, [draft.values, draft.hydrated, reset]);
-
-  useEffect(() => {
-    if (!clientId || !draft.hydrated) return;
+    if (!clientId) return;
     setValue('client_id', clientId);
-  }, [clientId, draft.hydrated, setValue]);
-
-  useEffect(() => {
-    if (!draft.hydrated) return undefined;
-
-    const subscription = watch((value) => {
-      draft.setValues(value as FormValues);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [draft, draft.hydrated, watch]);
-
-  const syncState: SyncBadgeState = useMemo(() => {
-    if (!draft.hydrated) return 'ONLINE_SYNCING';
-    if (!isOnline) return 'OFFLINE_DRAFT';
-    if (draft.draftStatus === 'saved_locally') return 'ONLINE_DRAFT_PENDING';
-    return 'ONLINE_SYNCED';
-  }, [draft.draftStatus, draft.hydrated, isOnline]);
+  }, [clientId, setValue]);
 
   const applyAddressSelection = (selection: AddressSelection) => {
     setValue('address_line1', selection.address_line1);
@@ -107,9 +71,8 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
-    setSubmitSuccess(null);
 
-    if (!user) {
+    if (!user?.id) {
       setSubmitError(t('properties.create.errors.auth'));
       return;
     }
@@ -126,16 +89,15 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     }
 
     try {
-      const result = await propertyRepository.create(parsed.data).catch((error: unknown) => {
+      const result = await propertyRepository.create(parsed.data, user.id).catch((error: unknown) => {
         console.error('useCreatePropertyForm: propertyRepository.create failed', error);
         throw error;
       });
       if (result.error) {
         throw result.error;
       }
-      setSubmitSuccess(t('properties.create.statuses.success'));
-      await draft.clearDraft();
       reset(baseValues);
+      navigate(`/clients/${parsed.data.client_id}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : t('properties.create.errors.generic');
       setSubmitError(message);
@@ -144,9 +106,7 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
 
   return {
     formMethods,
-    syncState,
     submitError,
-    submitSuccess,
     applyAddressSelection,
     onSubmit,
   };

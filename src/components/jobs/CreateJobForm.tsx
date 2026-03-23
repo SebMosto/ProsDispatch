@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { z } from 'zod';
-import { usePersistentForm } from '../../persistence/usePersistentForm';
 import { useAuth } from '../../lib/auth';
+import { useNavigate } from '../../lib/router';
 import { getJobCreateSchema, JobCreateSchema as StaticJobCreateSchema } from '../../schemas/job';
-import { useCreateJob } from '../../hooks/useCreateJob';
+import { useCreateJobMutation } from '../../hooks/useJobMutations';
 import { useClients } from '../../hooks/useClients';
 import { useProperties } from '../../hooks/useProperties';
-
-const DRAFT_STORAGE_KEY = 'job:create:draft';
 
 type FormValues = z.infer<typeof StaticJobCreateSchema>;
 
@@ -26,15 +24,8 @@ const initialValues: FormValues = {
 const CreateJobForm = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-
-  const draft = usePersistentForm<FormValues>({
-    storageKey: DRAFT_STORAGE_KEY,
-    initialValues,
-  });
-
-  const hasAppliedDraft = useRef(false);
 
   // Memoize the schema to react to language changes
   const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
@@ -49,46 +40,9 @@ const CreateJobForm = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(JobCreateSchema) as Resolver<FormValues>,
-    defaultValues: draft.values,
+    defaultValues: initialValues,
   });
-
-  useEffect(() => {
-    if (!draft.hydrated || hasAppliedDraft.current) return;
-
-    reset(draft.values);
-    hasAppliedDraft.current = true;
-  }, [draft.values, draft.hydrated, reset]);
-
-  const debounceRef = useRef<number | null>(null);
-  const { setValues, hydrated } = draft;
-
-  useEffect(() => {
-    if (!hydrated) return undefined;
-
-    const subscription = watch((value) => {
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-      debounceRef.current = window.setTimeout(() => {
-        setValues(value as FormValues);
-      }, 300);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-    };
-  }, [hydrated, setValues, watch]);
-
-  const { createJob, isLoading } = useCreateJob({
-    onSuccess: () => {
-      setSubmitSuccess(t('jobs.create.statuses.success'));
-      void draft.clearDraft();
-      reset(initialValues);
-    },
-  });
+  const createMutation = useCreateJobMutation();
   const selectedClientId = watch('client_id');
   const { clients, loading: clientsLoading } = useClients();
   const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);
@@ -99,9 +53,8 @@ const CreateJobForm = () => {
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
-    setSubmitSuccess(null);
 
-    if (!user) {
+    if (!user?.id) {
       setSubmitError(t('jobs.create.errors.auth'));
       return;
     }
@@ -117,7 +70,9 @@ const CreateJobForm = () => {
     }
 
     try {
-      await createJob(parsed.data);
+      await createMutation.mutateAsync(parsed.data);
+      reset(initialValues);
+      navigate('/jobs');
     } catch (error) {
       const message = error instanceof Error ? error.message : t('jobs.create.errors.generic');
       setSubmitError(message);
@@ -130,11 +85,6 @@ const CreateJobForm = () => {
         <h2 className="text-lg font-semibold text-slate-900">{t('jobs.create.title')}</h2>
       </header>
 
-      {submitSuccess ? (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">
-          {submitSuccess}
-        </p>
-      ) : null}
       {submitError ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
           {submitError}
@@ -253,21 +203,11 @@ const CreateJobForm = () => {
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting || createMutation.isPending}
           >
-            {isSubmitting || isLoading ? t('jobs.create.actions.submitting') : t('jobs.create.actions.submit')}
-          </button>
-
-          <button
-            type="button"
-            className="text-sm font-medium text-slate-700 underline-offset-2 hover:underline"
-            onClick={() => {
-              void draft.clearDraft();
-              reset(initialValues);
-            }}
-            disabled={draft.draftStatus === 'idle' && !draft.isDirty}
-          >
-            {t('jobs.create.actions.clearDraft')}
+            {isSubmitting || createMutation.isPending
+              ? t('jobs.create.actions.submitting')
+              : t('jobs.create.actions.submit')}
           </button>
         </div>
       </form>

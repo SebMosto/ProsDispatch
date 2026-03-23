@@ -54,23 +54,8 @@ export class ClientRepository
     return { data };
   }
 
-  async create(input: ClientCreateInput): Promise<RepositoryResult<ClientRecord>> {
-    const { data: authData, error: authError } = await this.client.auth.getSession();
-
-    if (authError) {
-      console.error('CLIENT CREATE: auth error', authError);
-      return {
-        data: null,
-        error: {
-          message: authError.message,
-          reason: 'validation',
-          cause: authError,
-        },
-      };
-    }
-
-    if (!authData?.session?.user) {
-      console.error('CLIENT CREATE: no session user', authData);
+  async create(input: ClientCreateInput, contractorId?: string): Promise<RepositoryResult<ClientRecord>> {
+    if (!contractorId) {
       return {
         data: null,
         error: {
@@ -81,7 +66,7 @@ export class ClientRepository
     }
 
     const payload = {
-      contractor_id: authData.session.user.id,
+      contractor_id: contractorId,
       name: input.name,
       email: input.email ? input.email : null,
       preferred_language: input.preferred_language ?? 'en',

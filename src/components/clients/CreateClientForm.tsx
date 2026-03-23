@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver } from 'react-hook-form';
 import type { z } from 'zod';
-import SyncBadge, { type SyncBadgeState } from '../system/SyncBadge';
-import { usePersistentForm } from '../../persistence/usePersistentForm';
-import { useNetworkStatus } from '../../lib/network';
+import SyncBadge from '../system/SyncBadge';
 import { useAuth } from '../../lib/auth';
+import { useNavigate } from '../../lib/router';
 import { getClientSchema, ClientSchema as StaticClientSchema } from '../../schemas/client';
 import { useCreateClientMutation } from '../../hooks/useClientMutations';
 import { useTranslation } from 'react-i18next';
-
-const DRAFT_STORAGE_KEY = 'client:create:draft';
 
 type FormValues = z.infer<typeof StaticClientSchema>;
 
@@ -24,16 +21,8 @@ const initialValues: FormValues = {
 const CreateClientForm: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isOnline } = useNetworkStatus();
+  const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-
-  const draft = usePersistentForm<FormValues>({
-    storageKey: DRAFT_STORAGE_KEY,
-    initialValues,
-  });
-
-  const hasAppliedDraft = useRef(false);
 
   // Use useMemo to recreate the schema when the language changes
   const ClientSchema = useMemo(() => getClientSchema(t), [t]);
@@ -47,40 +36,14 @@ const CreateClientForm: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(ClientSchema) as Resolver<FormValues>,
-    defaultValues: draft.values,
+    defaultValues: initialValues,
   });
-
-  useEffect(() => {
-    if (!draft.hydrated || hasAppliedDraft.current) return;
-
-    reset(draft.values);
-    hasAppliedDraft.current = true;
-  }, [draft.values, draft.hydrated, reset]);
-
-  useEffect(() => {
-    if (!draft.hydrated) return undefined;
-
-    const subscription = watch((value) => {
-      draft.setValues(value as FormValues);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [draft, draft.hydrated, watch]);
 
   const createMutation = useCreateClientMutation();
 
-  const syncState: SyncBadgeState = useMemo(() => {
-    if (!draft.hydrated) return 'ONLINE_SYNCING';
-    if (!isOnline) return 'OFFLINE_DRAFT';
-    if (draft.draftStatus === 'saved_locally') return 'ONLINE_DRAFT_PENDING';
-    return 'ONLINE_SYNCED';
-  }, [draft.draftStatus, draft.hydrated, isOnline]);
-
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
-    setSubmitSuccess(null);
-
-    if (!user) {
+    if (!user?.id) {
       setSubmitError(t('clients.create.errors.auth'));
       return;
     }
@@ -95,17 +58,15 @@ const CreateClientForm: React.FC = () => {
       return;
     }
 
-    createMutation.mutate(parsed.data, {
-      onSuccess: () => {
-        setSubmitSuccess(t('clients.create.statuses.success'));
-        void draft.clearDraft();
-        reset(initialValues);
-      },
-      onError: (error) => {
-        const message = error instanceof Error ? error.message : t('clients.create.errors.generic');
-        setSubmitError(message);
-      },
-    });
+    try {
+      await createMutation.mutateAsync(parsed.data);
+      reset(initialValues);
+      navigate('/clients');
+    } catch (error) {
+      const message =
+        (error as { message?: string })?.message ?? t('clients.create.errors.generic');
+      setSubmitError(message);
+    }
   };
 
   return (
@@ -115,14 +76,9 @@ const CreateClientForm: React.FC = () => {
           <h2 className="text-lg font-semibold text-slate-900">{t('clients.create.title')}</h2>
           <p className="text-sm text-slate-600">{t('clients.create.subtitle')}</p>
         </div>
-        <SyncBadge state={syncState} />
+        <SyncBadge state="ONLINE_SYNCED" />
       </header>
 
-      {submitSuccess ? (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">
-          {submitSuccess}
-        </p>
-      ) : null}
       {submitError ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
           {submitError}
@@ -138,7 +94,7 @@ const CreateClientForm: React.FC = () => {
                 key={option}
                 type="button"
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                  draft.values.type === option
+                  watch('type') === option
                     ? 'border-slate-900 bg-slate-900 text-white'
                     : 'border-slate-200 bg-white text-slate-800'
                 }`}
