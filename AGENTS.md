@@ -1,3 +1,7 @@
+> **Before every task, read [TASK_PROTOCOL.md](./TASK_PROTOCOL.md).**
+> It defines the mandatory Ralph Loop: Audit → Plan → Execute → Verify → Log.
+> Every task must follow it. Every task must update `.beads/beads.jsonl`.
+
 # AGENTS.md
 
 > **Canonical Protocol for AI Agents working on ProsDispatch**
