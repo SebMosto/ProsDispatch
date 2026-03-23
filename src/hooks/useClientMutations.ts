@@ -32,7 +32,10 @@ export const useCreateClientMutation = () => {
   return useMutation<ClientRecord, RepositoryError, ClientCreateInput, { previousClients: CachedClientEntries }>(
     {
       mutationFn: async (input) => {
-        const result = await clientRepository.create(input);
+        const result = await clientRepository.create(input).catch((error: unknown) => {
+          console.error('useCreateClientMutation: repository.create failed', error);
+          throw error;
+        });
         if (result.error || !result.data) {
           throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
         }
@@ -73,7 +76,10 @@ export const useUpdateClientMutation = (clientId: string) => {
   return useMutation<ClientRecord, RepositoryError, ClientUpdateInput, { previousClients: CachedClientEntries }>(
     {
       mutationFn: async (input) => {
-        const result = await clientRepository.update(clientId, input);
+        const result = await clientRepository.update(clientId, input).catch((error: unknown) => {
+          console.error('useUpdateClientMutation: repository.update failed', error);
+          throw error;
+        });
         if (result.error || !result.data) {
           throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
         }

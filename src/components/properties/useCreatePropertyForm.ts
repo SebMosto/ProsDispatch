@@ -126,7 +126,10 @@ export const useCreatePropertyForm = ({ clientId }: UseCreatePropertyFormProps) 
     }
 
     try {
-      const result = await propertyRepository.create(parsed.data);
+      const result = await propertyRepository.create(parsed.data).catch((error: unknown) => {
+        console.error('useCreatePropertyForm: propertyRepository.create failed', error);
+        throw error;
+      });
       if (result.error) {
         throw result.error;
       }
