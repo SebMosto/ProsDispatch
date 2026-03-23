@@ -503,6 +503,13 @@ const DashboardPage = () => {
           {toast}
         </div>
       )}
+
+      <Link
+        to="/jobs/new"
+        className="fixed bottom-20 right-4 z-20 inline-flex h-11 min-h-[44px] items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-4 font-bold text-white shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px]"
+      >
+        {t('jobs.new')}
+      </Link>
     </main>
   );
 };
