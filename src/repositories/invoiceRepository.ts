@@ -148,7 +148,7 @@ export class InvoiceRepository extends BaseRepository {
   }
 
   async createDraft(jobId: string, input: InvoiceDraftInput): Promise<RepositoryResult<InvoiceWithItems>> {
-    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const { data: authData, error: authError } = await supabase.auth.getSession();
 
     if (authError) {
       return {
@@ -161,7 +161,7 @@ export class InvoiceRepository extends BaseRepository {
       };
     }
 
-    if (!authData?.user) {
+    if (!authData?.session?.user) {
       return {
         data: null,
         error: {
@@ -175,7 +175,7 @@ export class InvoiceRepository extends BaseRepository {
     const taxData = input.tax_data ?? [];
 
     const payload = {
-      contractor_id: authData.user.id,
+      contractor_id: authData.session.user.id,
       job_id: jobId,
       invoice_number: invoiceNumber,
       status: 'draft',

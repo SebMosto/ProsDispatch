@@ -55,7 +55,7 @@ export class ClientRepository
   }
 
   async create(input: ClientCreateInput): Promise<RepositoryResult<ClientRecord>> {
-    const { data: authData, error: authError } = await this.client.auth.getUser();
+    const { data: authData, error: authError } = await this.client.auth.getSession();
 
     if (authError) {
       return {
@@ -68,7 +68,7 @@ export class ClientRepository
       };
     }
 
-    if (!authData?.user) {
+    if (!authData?.session?.user) {
       return {
         data: null,
         error: {
@@ -79,7 +79,7 @@ export class ClientRepository
     }
 
     const payload = {
-      contractor_id: authData.user.id,
+      contractor_id: authData.session.user.id,
       name: input.name,
       email: input.email ? input.email : null,
       preferred_language: input.preferred_language ?? 'en',

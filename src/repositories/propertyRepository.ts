@@ -65,7 +65,7 @@ export class PropertyRepository
   }
 
   async create(input: PropertyCreateInput): Promise<RepositoryResult<PropertyRecord>> {
-    const { data: authData, error: authError } = await this.client.auth.getUser();
+    const { data: authData, error: authError } = await this.client.auth.getSession();
 
     if (authError) {
       return {
@@ -78,7 +78,7 @@ export class PropertyRepository
       };
     }
 
-    if (!authData?.user) {
+    if (!authData?.session?.user) {
       return {
         data: null,
         error: {
@@ -89,7 +89,7 @@ export class PropertyRepository
     }
 
     const payload = {
-      contractor_id: authData.user.id,
+      contractor_id: authData.session.user.id,
       client_id: input.client_id,
       address_line1: input.address_line1,
       address_line2: input.address_line2 ?? null,
