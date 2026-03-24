@@ -92,7 +92,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     initializeAuth();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
+      // Only gate loading for a fresh sign-in; INITIAL_SESSION is covered by initializeAuth
+      const isFreshSignIn = event === 'SIGNED_IN';
+      if (isFreshSignIn) {
+        setLoading(true);
+      }
       try {
         setSession(nextSession);
         const nextUser = nextSession?.user ?? null;
@@ -104,6 +109,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch {
         setProfile(null);
+      } finally {
+        if (isFreshSignIn) {
+          setLoading(false);
+        }
       }
     });
 
