@@ -53,7 +53,7 @@ describe('PropertyRepository', () => {
         country: 'CA',
       } as const;
 
-      const result = await repository.create(input);
+      const result = await repository.create(input, mockUser.id);
 
       expect(result.data).toEqual(mockData);
       expect(mockInsert).toHaveBeenCalledWith({
@@ -93,7 +93,7 @@ describe('PropertyRepository', () => {
         country: 'US',
       } as const;
 
-      const result = await repository.create(input);
+      const result = await repository.create(input, mockUser.id);
 
       expect(result.data).toEqual(mockData);
       expect(mockInsert).toHaveBeenCalledWith({
