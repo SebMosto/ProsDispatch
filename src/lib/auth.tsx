@@ -104,8 +104,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch {
         setProfile(null);
-      } finally {
-        setLoading(false);
       }
     });
 
