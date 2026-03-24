@@ -34,12 +34,10 @@ export const calculateTrialDaysRemaining = (endDate: string | null): number => {
   if (!endDate) {
     return 0;
   }
-
   const end = new Date(endDate).getTime();
   if (Number.isNaN(end)) {
     return 0;
   }
-
   const diff = end - Date.now();
   const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
   return Math.max(0, days);
@@ -57,7 +55,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .select('*')
       .eq('id', currentUser.id)
       .single();
-
     if (!error && data) {
       setProfile(data as Tables<'profiles'>);
     } else {
@@ -77,7 +74,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(currentSession);
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
-
         if (currentUser) {
           await fetchProfile(currentUser);
         } else {
@@ -92,8 +88,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     initializeAuth();
 
+    // onAuthStateChange handles silent background session updates only.
+    // Loading state is managed exclusively by initializeAuth above.
+    // Removing setLoading from this listener prevents:
+    //   1. UI hang after mutations (re-triggering loading on every SIGNED_IN event)
+    //   2. Race condition where finally fires before initializeAuth completes
+    // Per Gemini + Codex review, 2026-03-23.
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setLoading(true);
       try {
         setSession(nextSession);
         const nextUser = nextSession?.user ?? null;
@@ -105,8 +106,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch {
         setProfile(null);
-      } finally {
-        setLoading(false);
       }
     });
 
