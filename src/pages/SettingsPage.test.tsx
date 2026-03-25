@@ -45,17 +45,17 @@ describe('SettingsPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as unknown as Mock).mockReturnValue({ 
-      user: mockUser,
-      refreshProfile: mockRefreshProfile,
-      profile: null,
-      subscriptionStatus: 'trialing',
-      trialDaysRemaining: 14,
-    });
   });
 
   it('fetches and displays profile data', async () => {
     const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
+    (useAuth as unknown as Mock).mockReturnValue({ 
+      user: mockUser,
+      refreshProfile: mockRefreshProfile,
+      profile: mockProfile,
+      subscriptionStatus: 'trialing',
+      trialDaysRemaining: 14,
+    });
     (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
 
     render(<SettingsPage />);
@@ -70,6 +70,13 @@ describe('SettingsPage', () => {
 
   it('updates profile on submit', async () => {
     const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
+    (useAuth as unknown as Mock).mockReturnValue({
+      user: mockUser,
+      refreshProfile: mockRefreshProfile,
+      profile: mockProfile,
+      subscriptionStatus: 'trialing',
+      trialDaysRemaining: 14,
+    });
     (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
     (profileRepository.update as unknown as Mock).mockResolvedValue({ data: { ...mockProfile, full_name: 'Jane Doe' }, error: null });
 
@@ -93,10 +100,17 @@ describe('SettingsPage', () => {
     });
 
     expect(mockRefreshProfile).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('settings.profile.success')).toBeInTheDocument();
+    expect(await screen.findByText('settings.profile.success')).toBeInTheDocument();
   });
 
   it('displays an error message if profile fetch fails', async () => {
+    (useAuth as unknown as Mock).mockReturnValue({
+      user: mockUser,
+      refreshProfile: mockRefreshProfile,
+      profile: null,
+      subscriptionStatus: 'trialing',
+      trialDaysRemaining: 14,
+    });
     (profileRepository.get as unknown as Mock).mockResolvedValue({ 
       data: null, 
       error: { message: 'Failed to fetch profile' } 
@@ -110,6 +124,13 @@ describe('SettingsPage', () => {
 
   it('displays an error message if profile update fails', async () => {
     const mockProfile = { full_name: 'John Doe', business_name: 'Acme Corp' };
+    (useAuth as unknown as Mock).mockReturnValue({
+      user: mockUser,
+      refreshProfile: mockRefreshProfile,
+      profile: mockProfile,
+      subscriptionStatus: 'trialing',
+      trialDaysRemaining: 14,
+    });
     (profileRepository.get as unknown as Mock).mockResolvedValue({ data: mockProfile, error: null });
     (profileRepository.update as unknown as Mock).mockResolvedValue({ 
       data: null, 

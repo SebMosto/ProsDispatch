@@ -39,22 +39,38 @@ const SettingsPage = () => {
   });
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    if (profile) {
-      const fullName = profile.full_name?.trim() ?? '';
-      const [first = '', ...rest] = fullName.split(/\s+/);
-      setFirstName(first);
-      setLastName(rest.join(' '));
-      reset({
-        full_name: profile.full_name ?? '',
-        business_name: profile.business_name ?? '',
-      });
-    }
-    setLoading(false);
-  }, [user, profile, reset]);
+    let isMounted = true;
+    const loadProfile = async () => {
+      if (!user) {
+        if (isMounted) setLoading(false);
+        return;
+      }
+
+      const { data, error } = await profileRepository.get(user.id);
+
+      if (isMounted) {
+        if (error || !data) {
+          setMessage({ type: 'error', text: t('settings.profile.error') });
+          setHasSaveAttempted(true); // so the error is shown
+        } else {
+          const fullName = data.full_name?.trim() ?? '';
+          const [first = '', ...rest] = fullName.split(/\s+/);
+          setFirstName(first);
+          setLastName(rest.join(' '));
+          reset({
+            full_name: data.full_name ?? '',
+            business_name: data.business_name ?? '',
+          });
+        }
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, [user, reset, t]);
 
   const onSubmit = async (data: ProfileUpdateInput) => {
     if (!user) return;
