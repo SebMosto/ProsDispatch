@@ -66,13 +66,17 @@ export class PropertyRepository
 
   async create(input: PropertyCreateInput, contractorId?: string): Promise<RepositoryResult<PropertyRecord>> {
     if (!contractorId) {
-      return {
-        data: null,
-        error: {
-          message: 'User must be authenticated to create a property',
-          reason: 'validation',
-        },
-      };
+      const { data: authData, error: authError } = await this.client.auth.getUser();
+      if (authError || !authData.user) {
+        return {
+          data: null,
+          error: {
+            message: authError?.message || 'User must be authenticated to create a property',
+            reason: 'validation',
+          },
+        };
+      }
+      contractorId = authData.user.id;
     }
 
     const payload = {

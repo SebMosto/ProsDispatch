@@ -35,7 +35,7 @@ const SettingsPage = () => {
     reset,
     formState: { errors },
   } = useForm<ProfileUpdateInput>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as unknown as ReturnType<typeof zodResolver>,
   });
 
   useEffect(() => {
