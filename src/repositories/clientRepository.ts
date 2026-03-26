@@ -55,18 +55,24 @@ export class ClientRepository
   }
 
   async create(input: ClientCreateInput, contractorId?: string): Promise<RepositoryResult<ClientRecord>> {
-    if (!contractorId) {
-      return {
-        data: null,
-        error: {
-          message: 'User must be authenticated to create a client',
-          reason: 'validation',
-        },
-      };
+    let finalContractorId = contractorId;
+
+    if (!finalContractorId) {
+      const { data: authData, error: authError } = await this.client.auth.getUser();
+      if (authError || !authData?.user) {
+        return {
+          data: null,
+          error: {
+            message: authError?.message || 'User must be authenticated to create a client',
+            reason: 'validation',
+          },
+        };
+      }
+      finalContractorId = authData.user.id;
     }
 
     const payload = {
-      contractor_id: contractorId,
+      contractor_id: finalContractorId,
       name: input.name,
       email: input.email ? input.email : null,
       preferred_language: input.preferred_language ?? 'en',
