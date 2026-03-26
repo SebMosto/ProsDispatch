@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r import.*from.*supabase C:UserssebmoOneDriveDocumentsGitHubProsDispatch/src/components)",
+      "Bash(wc:*)",
+      "Bash(grep -l \"TODO\\\\|STUB\\\\|FIXME\\\\|XXX\" C:UserssebmoOneDriveDocumentsGitHubProsDispatch/src/**/*.tsx C:UserssebmoOneDriveDocumentsGitHubProsDispatch/src/**/*.ts)",
+      "Bash(xargs basename:*)",
+      "Bash(grep -l \"export const\" \"C:\\\\Users\\\\sebmo\\\\OneDrive\\\\Documents\\\\GitHub\\\\ProsDispatch/src/lib\"/*.ts)",
+      "Bash(xargs -I {} bash -c \"echo {}\")",
+      "Bash(grep -h \"CREATE TABLE\\\\|CREATE FUNCTION\\\\|CREATE RPC\\\\|ALTER TABLE\" \"C:\\\\Users\\\\sebmo\\\\OneDrive\\\\Documents\\\\GitHub\\\\ProsDispatch/supabase/migrations\"/*.sql)"
+    ]
+  }
+}
