@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '../lib/auth';
 import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
 import type { RepositoryError } from '../repositories/base';
@@ -23,6 +24,7 @@ const buildPrimaryPropertyMap = (properties: PropertyRecord[]) => {
 };
 
 export const useClients = () => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['clients'], []);
 
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
@@ -50,6 +52,7 @@ export const useClients = () => {
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
     queryKey,
     queryFn,
+    enabled: !!user,
     retry: false,
   });
 
