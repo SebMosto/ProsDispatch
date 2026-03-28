@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '../lib/auth';
 import { propertyRepository, type PropertyRecord } from '../repositories/propertyRepository';
 import type { RepositoryError } from '../repositories/base';
 
 export const useProperties = (clientId?: string) => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['properties', clientId ?? 'all'], [clientId]);
 
   const queryFn = useCallback(async () => {
@@ -19,7 +21,7 @@ export const useProperties = (clientId?: string) => {
 
   const query = useQuery<PropertyRecord[], RepositoryError>({
     queryKey,
-    enabled: Boolean(clientId),
+    enabled: !!user && Boolean(clientId),
     queryFn,
   });
 

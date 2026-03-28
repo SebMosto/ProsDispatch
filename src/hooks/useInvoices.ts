@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabase';
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
+  const { user } = useAuth();
   const { t } = useTranslation();
   const tRef = useRef(t);
 
@@ -39,7 +40,7 @@ export const useInvoice = (id?: string) => {
   const query = useQuery<InvoiceWithItems, RepositoryError>({
     queryKey,
     queryFn,
-    enabled: Boolean(id),
+    enabled: !!user && Boolean(id),
     staleTime: FIVE_MINUTES,
   });
 
@@ -121,6 +122,7 @@ export const useInvoiceByToken = (token?: string) => {
 };
 
 export const useJobInvoices = (jobId?: string) => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['invoices', { jobId }], [jobId]);
 
   const queryFn = useCallback(async () => {
@@ -137,7 +139,7 @@ export const useJobInvoices = (jobId?: string) => {
   const query = useQuery<InvoiceWithItems[], RepositoryError>({
     queryKey,
     queryFn,
-    enabled: Boolean(jobId),
+    enabled: !!user && Boolean(jobId),
     staleTime: FIVE_MINUTES,
   });
 
