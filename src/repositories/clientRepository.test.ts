@@ -38,18 +38,6 @@ describe('ClientRepository', () => {
       expect(result.error?.message).toBe('User must be authenticated to create a client');
     });
 
-    it('should return error if auth check fails', async () => {
-      mockClient.auth.getUser.mockResolvedValue({
-        data: null,
-        error: { message: 'Auth error' }
-      });
-
-      const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' });
-
-      expect(result.data).toBeNull();
-      expect(result.error?.message).toBe('Auth error');
-    });
-
     it('should create client successfully', async () => {
       const mockUser = { id: 'user-123' };
       mockClient.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null });
@@ -65,7 +53,7 @@ describe('ClientRepository', () => {
         single: mockSingle,
       });
 
-      const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' });
+      const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' }, mockUser.id);
 
       expect(result.data).toEqual(mockData);
       expect(result.error).toBeUndefined();

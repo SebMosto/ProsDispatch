@@ -39,7 +39,7 @@ describe('useInvoices hooks', () => {
   });
 
   it('useInvoiceByToken returns invoice from RPC envelope', async () => {
-    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    const mockAbortSignal = vi.fn().mockResolvedValue({
       data: {
         invoice: {
           id: 'inv-1',
@@ -67,6 +67,8 @@ describe('useInvoices hooks', () => {
       },
       error: null,
     });
+    const mockRpc = { abortSignal: mockAbortSignal };
+    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(mockRpc);
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvoiceByToken('test-token'), { wrapper });
