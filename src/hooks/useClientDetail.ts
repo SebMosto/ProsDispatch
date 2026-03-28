@@ -1,5 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { useAuth } from '../lib/auth';
 import { clientRepository } from '../repositories/clientRepository';
 import { invoiceRepository, type InvoiceRecord } from '../repositories/invoiceRepository';
 import { jobRepository, type JobRecord } from '../repositories/jobRepository';
@@ -43,6 +44,7 @@ function computeSummary(jobs: JobRecord[], invoices: InvoiceRecord[]): ClientSum
 }
 
 export function useClientDetail(clientId: string | undefined) {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['clientDetail', clientId], [clientId]);
 
   const clientFn = useCallback(async () => {
@@ -78,22 +80,22 @@ export function useClientDetail(clientId: string | undefined) {
       {
         queryKey: [queryKey[0], queryKey[1], 'client'],
         queryFn: clientFn,
-        enabled: Boolean(clientId),
+        enabled: !!user && Boolean(clientId),
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'properties'],
         queryFn: propertiesFn,
-        enabled: Boolean(clientId),
+        enabled: !!user && Boolean(clientId),
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'jobs'],
         queryFn: jobsFn,
-        enabled: Boolean(clientId),
+        enabled: !!user && Boolean(clientId),
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'invoices'],
         queryFn: invoicesFn,
-        enabled: Boolean(clientId),
+        enabled: !!user && Boolean(clientId),
       },
     ],
   });
