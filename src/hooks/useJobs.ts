@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../lib/auth';
 import type { JobListParams, JobRecord } from '../repositories/jobRepository';
 import { jobRepository } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
