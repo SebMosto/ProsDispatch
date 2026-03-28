@@ -64,8 +64,9 @@ export const useInvoiceByToken = (token?: string) => {
     if (!token) {
       throw { message: tRef.current('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
     }
-    let query = supabase.rpc('get_invoice_by_token', { p_token: token });
-    if (signal) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query: any = supabase.rpc('get_invoice_by_token', { p_token: token });
+    if (signal && typeof query.abortSignal === 'function') {
       query = query.abortSignal(signal);
     }
     const { data, error } = await query;

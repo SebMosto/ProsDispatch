@@ -39,6 +39,8 @@ const CreateClientForm: React.FC = () => {
     defaultValues: initialValues,
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const selectedType = watch('type');
   const createMutation = useCreateClientMutation();
 
   const onSubmit = async (values: FormValues) => {
@@ -94,7 +96,7 @@ const CreateClientForm: React.FC = () => {
                 key={option}
                 type="button"
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                  watch('type') === option
+                  selectedType === option
                     ? 'border-slate-900 bg-slate-900 text-white'
                     : 'border-slate-200 bg-white text-slate-800'
                 }`}
