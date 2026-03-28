@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository } from '../repositories/propertyRepository';
 
+// Mock useAuth so the hook's enabled: !!user guard resolves
+vi.mock('../lib/auth', () => ({
+  useAuth: () => ({ user: { id: 'test-user-id' } }),
+}));
+
 // Mock repositories
 vi.mock('../repositories/clientRepository', () => ({
   clientRepository: {

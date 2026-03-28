@@ -3,10 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import type { JobListParams, JobRecord } from '../repositories/jobRepository';
 import { jobRepository } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
+import { useAuth } from '../lib/auth';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useJobs = (params?: JobListParams) => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['jobs', params ?? {}], [params]);
 
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
@@ -18,6 +20,7 @@ export const useJobs = (params?: JobListParams) => {
   const query = useQuery<JobRecord[], RepositoryError>({
     queryKey,
     queryFn,
+    enabled: !!user,
     staleTime: FIVE_MINUTES,
     retry: false,
   });

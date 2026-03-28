@@ -11,6 +11,11 @@ vi.mock('../repositories/jobRepository', () => ({
   },
 }));
 
+// Mock useAuth so the hook's enabled: !!user guard resolves
+vi.mock('../lib/auth', () => ({
+  useAuth: () => ({ user: { id: 'test-user-id' } }),
+}));
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {

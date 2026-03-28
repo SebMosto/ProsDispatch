@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../lib/auth';
 import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
@@ -258,6 +259,7 @@ export const useInvoiceMutations = () => {
 export const useInvoicesByJob = (jobId: string) => useJobInvoices(jobId);
 
 export const useInvoicesByContractor = () => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
@@ -269,6 +271,7 @@ export const useInvoicesByContractor = () => {
   const query = useQuery<InvoiceRecord[], RepositoryError>({
     queryKey,
     queryFn,
+    enabled: !!user,
     staleTime: FIVE_MINUTES,
     retry: false,
   });
