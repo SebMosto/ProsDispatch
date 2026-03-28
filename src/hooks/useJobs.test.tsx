@@ -11,6 +11,11 @@ vi.mock('../repositories/jobRepository', () => ({
   },
 }));
 
+// Mock useAuth so tests don't require AuthProvider
+vi.mock('../lib/auth', () => ({
+  useAuth: () => ({ user: { id: 'test-user-id' } }),
+}));
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -75,27 +75,29 @@ export function useClientDetail(clientId: string | undefined) {
     return result.data ?? [];
   }, [clientId]);
 
+  const queryEnabled = !!user && Boolean(clientId);
+
   const results = useQueries({
     queries: [
       {
         queryKey: [queryKey[0], queryKey[1], 'client'],
         queryFn: clientFn,
-        enabled: !!user && Boolean(clientId),
+        enabled: queryEnabled,
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'properties'],
         queryFn: propertiesFn,
-        enabled: !!user && Boolean(clientId),
+        enabled: queryEnabled,
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'jobs'],
         queryFn: jobsFn,
-        enabled: !!user && Boolean(clientId),
+        enabled: queryEnabled,
       },
       {
         queryKey: [queryKey[0], queryKey[1], 'invoices'],
         queryFn: invoicesFn,
-        enabled: !!user && Boolean(clientId),
+        enabled: queryEnabled,
       },
     ],
   });
