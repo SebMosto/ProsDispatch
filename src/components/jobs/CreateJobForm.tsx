@@ -42,8 +42,9 @@ const CreateJobForm = () => {
     resolver: zodResolver(JobCreateSchema) as Resolver<FormValues>,
     defaultValues: initialValues,
   });
-  const createMutation = useCreateJobMutation();
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedClientId = watch('client_id');
+  const createMutation = useCreateJobMutation();
   const { clients, loading: clientsLoading } = useClients();
   const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);
 
