@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { clientRepository } from '../repositories/clientRepository';
 import { propertyRepository } from '../repositories/propertyRepository';
 
+// Mock useAuth so tests don't require AuthProvider
+vi.mock('../lib/auth', () => ({
+  useAuth: () => ({ user: { id: 'test-user-id' } }),
+}));
+
 // Mock repositories
 vi.mock('../repositories/clientRepository', () => ({
   clientRepository: {

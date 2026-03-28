@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../lib/auth';
 import type { InvoiceDraftInput } from '../schemas/invoice';
 import type { RepositoryError } from '../repositories/base';
 import {
@@ -15,6 +16,7 @@ import { supabase } from '../lib/supabase';
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export const useInvoice = (id?: string) => {
+  const { user } = useAuth();
   const { t } = useTranslation();
   const tRef = useRef(t);
 
@@ -38,7 +40,7 @@ export const useInvoice = (id?: string) => {
   const query = useQuery<InvoiceWithItems, RepositoryError>({
     queryKey,
     queryFn,
-    enabled: Boolean(id),
+    enabled: !!user && Boolean(id),
     staleTime: FIVE_MINUTES,
   });
 
@@ -120,6 +122,7 @@ export const useInvoiceByToken = (token?: string) => {
 };
 
 export const useJobInvoices = (jobId?: string) => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['invoices', { jobId }], [jobId]);
 
   const queryFn = useCallback(async () => {
@@ -136,7 +139,7 @@ export const useJobInvoices = (jobId?: string) => {
   const query = useQuery<InvoiceWithItems[], RepositoryError>({
     queryKey,
     queryFn,
-    enabled: Boolean(jobId),
+    enabled: !!user && Boolean(jobId),
     staleTime: FIVE_MINUTES,
   });
 
@@ -258,6 +261,7 @@ export const useInvoiceMutations = () => {
 export const useInvoicesByJob = (jobId: string) => useJobInvoices(jobId);
 
 export const useInvoicesByContractor = () => {
+  const { user } = useAuth();
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
@@ -269,6 +273,7 @@ export const useInvoicesByContractor = () => {
   const query = useQuery<InvoiceRecord[], RepositoryError>({
     queryKey,
     queryFn,
+    enabled: !!user,
     staleTime: FIVE_MINUTES,
     retry: false,
   });
