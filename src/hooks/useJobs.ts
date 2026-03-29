@@ -4,7 +4,6 @@ import { useAuth } from '../lib/auth';
 import type { JobListParams, JobRecord } from '../repositories/jobRepository';
 import { jobRepository } from '../repositories/jobRepository';
 import type { RepositoryError } from '../repositories/base';
-import { useAuth } from '../lib/auth';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 

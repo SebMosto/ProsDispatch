@@ -207,6 +207,15 @@ npx playwright test
 ```
 Viewports tested: Mobile (375×667), Tablet (768×1024), Desktop (1920×1080).
 
+### TDD Write-First Ordering
+Write the failing test **before** implementing any new logic:
+1. Write the test (RED — it must fail)
+2. Run the test to confirm it fails
+3. Write the minimum implementation to pass (GREEN)
+4. Refactor if needed, keep tests green
+
+This applies to: new hooks, new repository methods, new schema fields, new utility functions, and new Edge Function handlers. Do not write implementation code first and backfill tests.
+
 ### What to Test
 - All Zod schemas
 - Repository CRUD methods (mock Supabase)
@@ -271,6 +280,7 @@ The `ci-guardrails.yml` suite includes a final `All Checks Complete` gate job �
 
 ## What NOT To Do
 
+- Do not use `console.log` in production code — remove before commit or replace with structured error handling. Use `RepositoryError` for data-layer errors and surface them through the hook's `error` return value to the UI. The Stop Hook (`npm run lint`) will catch violations if ESLint's `no-console` rule is active.
 - Do not call Supabase directly from components — use repositories
 - Do not add routes outside `src/App.tsx`
 - Do not use Next.js APIs, conventions, or imports

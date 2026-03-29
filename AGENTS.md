@@ -15,7 +15,7 @@
 **ProsDispatch** is a mobile-first, bilingual (EN/FR-CA) SaaS for Canadian contractors. It relies on a "Shadow Registry" architecture where homeowners interact via lightweight tokens, not full accounts.
 
 ### Tech Stack (Non-Negotiable)
-- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS
+- **Frontend:** React 19, Vite, TypeScript, Tailwind CSS
 - **Backend:** Supabase (PostgreSQL, Auth, RLS, Edge Functions)
 - **State Management:** React Query (Server state), Context (Client state)
 - **Validation:** Zod (localized schemas)

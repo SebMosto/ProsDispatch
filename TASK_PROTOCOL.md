@@ -31,6 +31,8 @@ Read the following before doing anything else:
 If the bead spec file does not exist, **stop and ask the operator** before proceeding.
 If the bead is already `closed` in `beads.jsonl`, **stop — this task is already done.**
 
+**Parallel agent dispatch:** For beads touching 5+ files across multiple layers (e.g., repository + hook + component + schema + migration), consider launching parallel Read agents to explore each affected area simultaneously before writing a single line. This cuts audit time and surfaces cross-layer conflicts early. Revisit this guidance at bead_015 to evaluate whether it should become a hard rule.
+
 ### Step 2 — PLAN (before writing a single line)
 
 Write out, in comments or a scratchpad, exactly what files will change and why.

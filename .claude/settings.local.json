@@ -8,7 +8,26 @@
       "Bash(grep -l \"export const\" \"C:\\\\Users\\\\sebmo\\\\OneDrive\\\\Documents\\\\GitHub\\\\ProsDispatch/src/lib\"/*.ts)",
       "Bash(xargs -I {} bash -c \"echo {}\")",
       "Bash(grep -h \"CREATE TABLE\\\\|CREATE FUNCTION\\\\|CREATE RPC\\\\|ALTER TABLE\" \"C:\\\\Users\\\\sebmo\\\\OneDrive\\\\Documents\\\\GitHub\\\\ProsDispatch/supabase/migrations\"/*.sql)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node -e \":*)",
+      "Bash(npx playwright:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"var d='';process.stdin.on('data',function(c){d+=c}).on('end',function(){try{var p=JSON.parse(d),f=p.file_path||'';if(f.endsWith('.ts')||f.endsWith('.tsx')){require('child_process').execFileSync('npx',['prettier','--write',f],{stdio:'inherit'})}}catch(e){}})\""
+          },
+          {
+            "type": "command",
+            "command": "node -e \"var d='';process.stdin.on('data',function(c){d+=c}).on('end',function(){try{var p=JSON.parse(d),f=p.file_path||'';if(f.endsWith('.ts')||f.endsWith('.tsx')){require('child_process').execSync('npm run typecheck',{cwd:'C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch',stdio:'inherit',shell:true})}}catch(e){}})\""
+          }
+        ]
+      }
     ]
   }
 }
