@@ -65,18 +65,24 @@ export class PropertyRepository
   }
 
   async create(input: PropertyCreateInput, contractorId?: string): Promise<RepositoryResult<PropertyRecord>> {
-    if (!contractorId) {
-      return {
-        data: null,
-        error: {
-          message: 'User must be authenticated to create a property',
-          reason: 'validation',
-        },
-      };
+    let finalContractorId = contractorId;
+
+    if (!finalContractorId) {
+      const { data: authData, error: authError } = await this.client.auth.getUser();
+      if (authError || !authData?.user) {
+        return {
+          data: null,
+          error: {
+            message: authError?.message || 'User must be authenticated to create a property',
+            reason: 'validation',
+          },
+        };
+      }
+      finalContractorId = authData.user.id;
     }
 
     const payload = {
-      contractor_id: contractorId,
+      contractor_id: finalContractorId,
       client_id: input.client_id,
       address_line1: input.address_line1,
       address_line2: input.address_line2 ?? null,
