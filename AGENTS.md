@@ -68,6 +68,11 @@ Every AI agent must internalize these three roles/tasks. You may be asked to per
 
 ## 3. Workflow Best Practices
 
+### Cross-Agent Interoperability
+When switching between Cursor and Claude Code Terminal, follow
+`docs/AGENT_INTEROP.md` and log each handoff in `.beads/beads.jsonl`.
+Never rely on tool memory over repository state.
+
 ### How to Plan
 1.  **Deep Planning:** Before coding, use `list_files` and `read_file` to understand the context.
 2.  **Ask Questions:** If requirements are vague, use `request_user_input`.

@@ -170,6 +170,26 @@ All must pass before committing.
 
 ---
 
+## Agent Interop Addendum (Cursor <-> Claude Terminal)
+
+When switching between agents, interoperability rules are mandatory:
+
+1. `TASK_PROTOCOL.md` remains the governing protocol for both agents.
+2. `.beads/beads.jsonl` remains the source of truth for status/history.
+3. Each switch must include a handoff record with:
+   - completed work
+   - remaining work
+   - files touched
+   - Stop Hook state
+   - blockers and required inputs
+4. If bead spec status and `beads.jsonl` status differ, reconcile before continuing.
+5. ECC workflows (skills, commands, hooks, subagents) may accelerate work but never
+   replace Audit, Verify, or Log requirements.
+
+Reference: `docs/AGENT_INTEROP.md`.
+
+---
+
 *This document is a living contract. It was formalised on 2026-03-20 after QA Run #1
 identified that piecemeal fixes without audit trails were compounding errors.
 Update it when new patterns are established — but only by adding, never by removing
