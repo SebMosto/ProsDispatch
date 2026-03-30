@@ -4,6 +4,12 @@ const BASE = 'http://localhost:4173';
 const E2E_EMAIL = 'sebmostovac@gmail.com';
 const E2E_PASSWORD = 'LavaLamp';
 
+declare global {
+  interface Window {
+    __SUPABASE_URL__?: string;
+  }
+}
+
 test('Timing: sign in + create client with network tracing', async ({ page }) => {
   test.setTimeout(60_000);
 
@@ -62,7 +68,7 @@ test('Timing: sign in + create client with network tracing', async ({ page }) =>
   // Test direct Supabase fetch from browser context
   const directFetchResult = await page.evaluate(async () => {
     try {
-      const supabaseUrl = (window as any).__SUPABASE_URL__
+      const supabaseUrl = window.__SUPABASE_URL__
         || document.querySelector('meta[name="supabase-url"]')?.getAttribute('content')
         || 'https://nctjhybvdkmyxanqiphi.supabase.co';
 

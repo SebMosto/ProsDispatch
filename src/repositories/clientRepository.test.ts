@@ -9,17 +9,18 @@ vi.mock('../lib/network', () => ({
 
 describe('ClientRepository', () => {
   let repository: ClientRepository;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  const mockGetUser = vi.fn();
+  const mockFrom = vi.fn();
+  let mockClient: { auth: { getUser: typeof mockGetUser }; from: typeof mockFrom };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockClient = {
       auth: {
-        getUser: vi.fn(),
+        getUser: mockGetUser,
       },
-      from: vi.fn(),
+      from: mockFrom,
     };
 
     // Instantiate repository with mocked client
@@ -29,31 +30,15 @@ describe('ClientRepository', () => {
   });
 
   describe('create', () => {
-    it('should return error if user is not authenticated', async () => {
-      mockClient.auth.getUser.mockResolvedValue({ data: { user: null }, error: null });
-
+    it('should return validation error when contractor id is missing', async () => {
       const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' });
 
       expect(result.data).toBeNull();
       expect(result.error?.message).toBe('User must be authenticated to create a client');
-    });
-
-    it('should return error if auth check fails', async () => {
-      mockClient.auth.getUser.mockResolvedValue({
-        data: null,
-        error: { message: 'Auth error' }
-      });
-
-      const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' });
-
-      expect(result.data).toBeNull();
-      expect(result.error?.message).toBe('Auth error');
+      expect(result.error?.reason).toBe('validation');
     });
 
     it('should create client successfully', async () => {
-      const mockUser = { id: 'user-123' };
-      mockClient.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-
       const mockData = { id: 'client-123', name: 'Test Client' };
       const mockInsert = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -65,7 +50,10 @@ describe('ClientRepository', () => {
         single: mockSingle,
       });
 
-      const result = await repository.create({ name: 'Test Client', type: 'individual', preferred_language: 'en' });
+      const result = await repository.create(
+        { name: 'Test Client', type: 'individual', preferred_language: 'en' },
+        'user-123'
+      );
 
       expect(result.data).toEqual(mockData);
       expect(result.error).toBeUndefined();

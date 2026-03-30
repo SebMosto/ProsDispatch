@@ -39,7 +39,7 @@ describe('useInvoices hooks', () => {
   });
 
   it('useInvoiceByToken returns invoice from RPC envelope', async () => {
-    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    const envelope = {
       data: {
         invoice: {
           id: 'inv-1',
@@ -66,7 +66,14 @@ describe('useInvoices hooks', () => {
         pdf_url: null,
       },
       error: null,
-    });
+    };
+
+    (supabase.rpc as unknown as ReturnType<typeof vi.fn>).mockImplementationOnce(() => ({
+      abortSignal: vi.fn().mockResolvedValue(envelope),
+      then: (resolve: (value: typeof envelope) => unknown) => Promise.resolve(resolve(envelope)),
+      catch: () => Promise.resolve(),
+      finally: () => Promise.resolve(),
+    }));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useInvoiceByToken('test-token'), { wrapper });
@@ -76,6 +83,7 @@ describe('useInvoices hooks', () => {
       expect(result.current.invoice).not.toBeNull();
     });
 
+    expect(supabase.rpc).toHaveBeenCalledWith('get_invoice_by_token', { p_token: 'test-token' });
     expect(result.current.invoice?.id).toBe('inv-1');
     expect(result.current.invoice?.invoice_items).toHaveLength(1);
   });

@@ -9,17 +9,18 @@ vi.mock('../lib/network', () => ({
 
 describe('PropertyRepository', () => {
   let repository: PropertyRepository;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  const mockGetUser = vi.fn();
+  const mockFrom = vi.fn();
+  let mockClient: { auth: { getUser: typeof mockGetUser }; from: typeof mockFrom };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockClient = {
       auth: {
-        getUser: vi.fn(),
+        getUser: mockGetUser,
       },
-      from: vi.fn(),
+      from: mockFrom,
     };
 
     // Instantiate repository with mocked client
@@ -30,9 +31,6 @@ describe('PropertyRepository', () => {
 
   describe('create', () => {
     it('should create property successfully with country default', async () => {
-      const mockUser = { id: 'user-123' };
-      mockClient.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-
       const mockData = { id: 'prop-123', address_line1: '123 Main St' };
       const mockInsert = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -53,7 +51,7 @@ describe('PropertyRepository', () => {
         country: 'CA',
       } as const;
 
-      const result = await repository.create(input);
+      const result = await repository.create(input, 'user-123');
 
       expect(result.data).toEqual(mockData);
       expect(mockInsert).toHaveBeenCalledWith({
@@ -70,9 +68,6 @@ describe('PropertyRepository', () => {
     });
 
     it('should create property successfully with custom country', async () => {
-      const mockUser = { id: 'user-123' };
-      mockClient.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-
       const mockData = { id: 'prop-123', address_line1: '123 Main St' };
       const mockInsert = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -93,7 +88,7 @@ describe('PropertyRepository', () => {
         country: 'US',
       } as const;
 
-      const result = await repository.create(input);
+      const result = await repository.create(input, 'user-123');
 
       expect(result.data).toEqual(mockData);
       expect(mockInsert).toHaveBeenCalledWith({

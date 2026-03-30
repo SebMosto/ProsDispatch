@@ -75,3 +75,37 @@ Use this plain-text format in bead history entries:
 - Never skip `.beads/beads.jsonl` update.
 - Never rely on chat memory when repo state differs.
 - Never expand scope without a new bead or explicit operator approval.
+
+## ECC Usage In This Repository
+
+ECC is installed at project scope under `.claude/` to give Cursor and Claude Terminal a
+shared baseline.
+
+Active rule sets:
+
+- `.claude/rules/*` from ECC `common`
+- `.claude/rules/*` from ECC `typescript`
+- `.claude/rules/prosdispatch-governance-priority.md` (project override)
+
+Active core skills:
+
+- coding-standards
+- frontend-patterns
+- backend-patterns
+- tdd-workflow
+- e2e-testing
+- verification-loop
+- security-review
+- strategic-compact
+- iterative-retrieval
+- ai-regression-testing
+- search-first
+
+Ralph Loop remains mandatory and authoritative. ECC does not replace any required step in
+`TASK_PROTOCOL.md`.
+
+Handoff expectation between Cursor and Claude Terminal:
+
+- Continue from bead state in `.beads/beads.jsonl`, not chat memory.
+- Include a complete handoff packet (done, next, files, verification state, blockers).
+- If ECC advice conflicts with repository governance, repository governance wins.
