@@ -228,11 +228,14 @@ export const useInvoiceMutations = () => {
         return;
       }
 
-      if (!import.meta.env.DEV) {
+      const isDevFallback = import.meta.env.DEV;
+      const isExplicitFallback = import.meta.env.VITE_ALLOW_INVOICE_FINALIZE_FALLBACK === 'true';
+
+      if (!isDevFallback && !isExplicitFallback) {
         throw (error ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
       }
 
-      // Fallback for local/dev where edge function email dependencies may be unavailable.
+      // Fallback for local/dev/E2E where edge function email dependencies may be unavailable.
       const { error: updateError } = await supabase
         .from('invoices')
         .update({ status: 'sent', date_issued: new Date().toISOString() })
