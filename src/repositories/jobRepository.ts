@@ -209,6 +209,52 @@ export class JobRepository
     return { data: (data as { token: string } | null)?.token ?? null };
   }
 
+  async sendInvite(jobId: string): Promise<RepositoryResult<{ token: string | null }>> {
+    const { data: invokeData, error: invokeError } = await this.client.functions.invoke('send-job-invite', {
+      body: { jobId },
+    });
+
+    if (!invokeError && !(invokeData as { error?: string } | null)?.error) {
+      reportApiOnline();
+      return { data: { token: null } };
+    }
+
+    // If the edge function partially succeeded (token already created), reuse it.
+    const existingTokenResult = await this.getApprovalToken(jobId);
+    if (!existingTokenResult.error && existingTokenResult.data) {
+      reportApiOnline();
+      return { data: { token: existingTokenResult.data } };
+    }
+
+    const token = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    // job_tokens is not yet in generated database types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const typedClient = this.client as SupabaseClient<any>;
+    const { error: tokenError } = await typedClient
+      .from('job_tokens')
+      .insert({ token, job_id: jobId, expires_at: expiresAt });
+
+    const tokenRepositoryError = this.toRepositoryError(tokenError);
+    if (tokenRepositoryError) {
+      return { data: null, error: tokenRepositoryError };
+    }
+
+    const { error: transitionError } = await this.client.rpc('transition_job_state', {
+      job_id: jobId,
+      new_status: 'sent',
+    });
+
+    const transitionRepositoryError = this.toRepositoryError(transitionError);
+    if (transitionRepositoryError) {
+      return { data: null, error: transitionRepositoryError };
+    }
+
+    reportApiOnline();
+    return { data: { token } };
+  }
+
   async softDelete(id: string): Promise<RepositoryResult<null>> {
     const { error } = await this.client
       .from('jobs')

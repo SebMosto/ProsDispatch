@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 import type { z } from 'zod';
 import SyncBadge from '../system/SyncBadge';
 import { useAuth } from '../../lib/auth';
 import { useNavigate } from '../../lib/router';
 import { getClientSchema, ClientSchema as StaticClientSchema } from '../../schemas/client';
-import { useCreateClientMutation } from '../../hooks/useClientMutations';
+import { clientRepository } from '../../repositories/clientRepository';
 import { useTranslation } from 'react-i18next';
 
 type FormValues = z.infer<typeof StaticClientSchema>;
@@ -22,6 +23,7 @@ const CreateClientForm: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Use useMemo to recreate the schema when the language changes
@@ -38,8 +40,6 @@ const CreateClientForm: React.FC = () => {
     resolver: zodResolver(ClientSchema) as Resolver<FormValues>,
     defaultValues: initialValues,
   });
-
-  const createMutation = useCreateClientMutation();
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
@@ -59,7 +59,11 @@ const CreateClientForm: React.FC = () => {
     }
 
     try {
-      await createMutation.mutateAsync(parsed.data);
+      const result = await clientRepository.create(parsed.data, user.id);
+      if (result.error || !result.data) {
+        throw new Error(result.error?.message ?? t('clients.create.errors.generic'));
+      }
+      void queryClient.invalidateQueries({ queryKey: ['clients'] });
       reset(initialValues);
       navigate('/clients');
     } catch (error) {
@@ -153,9 +157,9 @@ const CreateClientForm: React.FC = () => {
         <button
           type="submit"
           className="flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isSubmitting || createMutation.isPending}
+          disabled={isSubmitting}
         >
-          {isSubmitting || createMutation.isPending
+          {isSubmitting
             ? t('clients.create.actions.submitting')
             : t('clients.create.actions.submit')}
         </button>

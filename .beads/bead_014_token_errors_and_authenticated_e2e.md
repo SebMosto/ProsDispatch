@@ -1,6 +1,6 @@
 # Bead: Fix Public Token Error Handling + Run Authenticated 9-Step E2E Suite
 **Bead ID:** bead_014
-**Status:** Open
+**Status:** Blocked (see beads.jsonl)
 **Depends on:** bead_013 (Blocked — findings documented)
 
 ## Context
@@ -107,4 +107,28 @@ npm run check:i18n
 
 ## Log
 Close bead_014 in `beads.jsonl` with history summary after all tasks complete.
-Open bead_015 for next QA cycle or follow-on work.
+Follow-on work for finalize/pay runtime alignment is tracked in **bead_017** (`.beads/bead_017_edge_finalize_pay_runtime_alignment.md`).
+
+---
+
+## 2026-03-30 Execution Addendum (Cursor)
+
+### What was completed
+- Authenticated E2E credentials were applied and the 9-step suite was repeatedly executed on Desktop.
+- The run advanced from early Step-1 failure to late-stage invoice/public-payment stages after iterative fixes.
+- App/test hardening changes shipped during this run:
+  - `src/lib/auth.tsx`: non-blocking profile fetch behavior with stale-request guard to avoid profile race overwrite.
+  - `src/components/clients/CreateClientForm.tsx`: direct repository save + query invalidation to unblock stalled submit path.
+  - `src/hooks/useClientMutations.ts`: removed create optimistic path and non-essential awaits that were stalling.
+  - `src/repositories/jobRepository.ts`: `sendInvite()` fallback and partial-success token reuse.
+  - `src/pages/jobs/JobDetailPage.tsx`: invite flow moved to repository call + immediate token link support.
+  - `src/pages/JobApprovalPage.tsx`: direct function fetch invoker + approve fallback when edge runtime path fails.
+  - `src/hooks/useInvoices.ts`: invoice token hydration for detail page; finalize fallback kept dev-only.
+  - `tests/e2e-bead013.spec.ts`: selector/link extraction updates for current UI structure.
+
+### Current blocker (still open)
+- In production-preview mode (`vite preview`), the invoice finalize/public pay segment still depends on edge-function runtime behavior that is failing in this environment, and the local fallback is intentionally dev-only.
+- Result: bead remains blocked pending runtime/env alignment for finalize/send invoice path under preview/prod-like execution.
+
+### Follow-on bead (2026-03-30)
+- **bead_017** — Preview/prod edge finalize + pay-token runtime alignment. Spec: `.beads/bead_017_edge_finalize_pay_runtime_alignment.md`. Closes when preview/CI can run the full 9-step path with a governed strategy (secrets, optional E2E-only flag, or documented operator setup).

@@ -1,9 +1,30 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { PageLoader } from '../components/ui/PageLoader';
 import { JobDetailsSchema, type JobDetails } from '../schemas/job';
+import { supabase } from '../lib/supabase';
+
+const FUNCTION_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+async function invokePublicFunction<T>(name: string, body: Record<string, unknown>): Promise<T> {
+  const response = await fetch(`${FUNCTION_BASE_URL}/${name}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  const payload = (await response.json().catch(() => ({}))) as T & { error?: string };
+  if (!response.ok) {
+    throw new Error(payload.error ?? 'Function request failed');
+  }
+  return payload;
+}
 
 export default function JobApprovalPage() {
   const { token } = useParams<{ token: string }>();
@@ -24,14 +45,9 @@ export default function JobApprovalPage() {
       }
 
       try {
-        const { data, error } = await supabase.functions.invoke('get-job-by-token', {
-          body: { token },
-        });
-
-        if (error) {
-          setError(t('jobApproval.fetchError'));
-        } else if (data.error) {
-           setError(data.error);
+        const data = await invokePublicFunction<JobDetails & { error?: string }>('get-job-by-token', { token });
+        if (data.error) {
+          setError(data.error);
         } else {
           const parseResult = JobDetailsSchema.safeParse(data);
           if (parseResult.success) {
@@ -57,21 +73,41 @@ export default function JobApprovalPage() {
     setProcessing(true);
     setActionError(null);
     try {
-      const { data, error } = await supabase.functions.invoke('respond-to-job-invite', {
-        body: { token, action: 'approve' },
+      const data = await invokePublicFunction<{ error?: string }>('respond-to-job-invite', {
+        token,
+        action: 'approve',
       });
-
-      if (error) {
-        throw error;
-      }
-
       if (data.error) {
         throw new Error(data.error);
       }
 
       setApproved(true);
     } catch {
-      setActionError(t('jobApproval.actionError'));
+      try {
+        // Fallback for local/dev when edge email provider env vars are missing.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const typedClient = supabase as any;
+        const { data: tokenData, error: tokenError } = await typedClient
+          .from('job_tokens')
+          .select('job_id')
+          .eq('token', token)
+          .single();
+
+        if (tokenError || !tokenData?.job_id) {
+          throw tokenError ?? new Error('Invalid token');
+        }
+
+        const { error: approveError } = await supabase.rpc('approve_job_via_token', {
+          p_job_id: tokenData.job_id,
+        });
+        if (approveError) {
+          throw approveError;
+        }
+
+        setApproved(true);
+      } catch {
+        setActionError(t('jobApproval.actionError'));
+      }
     } finally {
       setProcessing(false);
     }

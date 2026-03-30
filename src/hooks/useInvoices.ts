@@ -32,7 +32,22 @@ export const useInvoice = (id?: string) => {
     if (result.error || !result.data) {
       throw result.error ?? { message: 'Unknown error', reason: 'unknown' };
     }
-    return result.data;
+
+    // invoice_tokens is not yet in generated types; fetch latest token for homeowner link.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const typedClient = supabase as any;
+    const { data: tokenRow } = await typedClient
+      .from('invoice_tokens')
+      .select('token')
+      .eq('invoice_id', id)
+      .order('expires_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    return {
+      ...result.data,
+      public_token: (tokenRow as { token?: string } | null)?.token ?? null,
+    } as InvoiceWithItems;
   }, [id]);
 
   const queryKey = useMemo(() => ['invoice', id], [id]);
@@ -209,8 +224,35 @@ export const useInvoiceMutations = () => {
         body: { invoice_id: id },
       });
 
-      if (error || data?.error) {
+      if (!error && !data?.error) {
+        return;
+      }
+
+      if (!import.meta.env.DEV) {
         throw (error ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
+      }
+
+      // Fallback for local/dev where edge function email dependencies may be unavailable.
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({ status: 'sent', date_issued: new Date().toISOString() })
+        .eq('id', id);
+
+      if (updateError) {
+        throw (error ?? updateError ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
+      }
+
+      const fallbackToken = crypto.randomUUID();
+      const { error: tokenError } = await supabase
+        .from('invoice_tokens')
+        .insert({ token: fallbackToken, invoice_id: id });
+
+      if (tokenError && tokenError.code !== '23505') {
+        throw {
+          message: tokenError.message,
+          reason: 'server',
+          cause: tokenError,
+        } as RepositoryError;
       }
     },
     onSuccess: (_data, id) => {

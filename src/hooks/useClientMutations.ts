@@ -29,7 +29,7 @@ export const useCreateClientMutation = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  return useMutation<ClientRecord, RepositoryError, ClientCreateInput, { previousClients: CachedClientEntries }>(
+  return useMutation<ClientRecord, RepositoryError, ClientCreateInput>(
     {
       mutationFn: async (input) => {
         if (!user?.id) {
@@ -44,30 +44,8 @@ export const useCreateClientMutation = () => {
         }
         return result.data;
       },
-      onMutate: async (input) => {
-        await queryClient.cancelQueries({ queryKey: ['clients'] });
-
-        let previousClients = queryClient.getQueriesData<CachedClient[]>({ queryKey: ['clients'] });
-
-        const optimisticClient = buildOptimisticClient(input, user?.id ?? 'local-contractor');
-
-        if (previousClients.length === 0) {
-          previousClients = [[['clients'], undefined]];
-        }
-
-        previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[]>(key, (clients ?? []).length ? [optimisticClient, ...(clients ?? [])] : [optimisticClient]);
-        });
-
-        return { previousClients };
-      },
-      onError: (_err, _input, context) => {
-        context?.previousClients.forEach(([key, clients]) => {
-          queryClient.setQueryData<CachedClient[] | undefined>(key as readonly unknown[], clients);
-        });
-      },
       onSettled: async () => {
-        await queryClient.invalidateQueries({ queryKey: ['clients'] });
+        void queryClient.invalidateQueries({ queryKey: ['clients'] });
       },
     },
   );
@@ -89,7 +67,7 @@ export const useUpdateClientMutation = (clientId: string) => {
         return result.data;
       },
       onMutate: async (input) => {
-        await queryClient.cancelQueries({ queryKey: ['clients'] });
+        void queryClient.cancelQueries({ queryKey: ['clients'] });
         const previousClients = queryClient.getQueriesData<CachedClient[]>({ queryKey: ['clients'] });
 
         previousClients.forEach(([key, clients]) => {
@@ -113,7 +91,7 @@ export const useUpdateClientMutation = (clientId: string) => {
         });
       },
       onSettled: async () => {
-        await queryClient.invalidateQueries({ queryKey: ['clients'] });
+        void queryClient.invalidateQueries({ queryKey: ['clients'] });
       },
     },
   );

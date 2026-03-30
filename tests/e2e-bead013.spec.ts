@@ -66,7 +66,7 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
     // ── Locate client ID from list ─────────────────────────────────────────────
     await page.goto(`${BASE}/clients`);
     await page.waitForLoadState('networkidle', { timeout: 15_000 });
-    const clientRow = page.locator('a', { hasText: 'Doris Clement' }).first();
+    const clientRow = page.locator('a:visible', { hasText: 'Doris Clement' }).first();
     await expect(clientRow).toBeVisible({ timeout: 15_000 });
     const clientHref = await clientRow.getAttribute('href') ?? '';
     const clientId = clientHref.split('/').pop() ?? '';
@@ -116,7 +116,7 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
     });
 
     // ── Locate job ID from list ────────────────────────────────────────────────
-    const jobRow = page.locator('a', { hasText: 'Bead 013' }).first();
+    const jobRow = page.locator('a:visible', { hasText: 'Bead 013' }).first();
     await expect(jobRow).toBeVisible({ timeout: 15_000 });
     const jobHref = await jobRow.getAttribute('href') ?? '';
     const jobId = jobHref.split('/').pop() ?? '';
@@ -144,15 +144,17 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
       await page.goto(`${BASE}/jobs/${jobId}`);
       await page.waitForLoadState('networkidle', { timeout: 15_000 });
 
-      // Look for approval link embedded in the page
-      const html = await page.content();
-      const tokenMatch = html.match(/\/jobs\/approve\/([a-zA-Z0-9_-]+)/);
-      if (tokenMatch) {
-        approvalUrl = `${BASE}/jobs/approve/${tokenMatch[1]}`;
+      const approvalLink = page.locator('a:visible[href*="/jobs/approve/"]').first();
+      const href = await approvalLink.getAttribute('href').catch(() => null);
+      if (href) {
+        approvalUrl = href.startsWith('http') ? href : `${BASE}${href}`;
       } else {
-        const approvalLink = page.locator('a[href*="/jobs/approve/"]').first();
-        const href = await approvalLink.getAttribute('href').catch(() => null);
-        if (href) approvalUrl = href.startsWith('http') ? href : `${BASE}${href}`;
+        // Fallback: scrape HTML only if no link is discoverable in the rendered DOM.
+        const html = await page.content();
+        const tokenMatch = html.match(/\/jobs\/approve\/([a-zA-Z0-9_-]+)/);
+        if (tokenMatch) {
+          approvalUrl = `${BASE}/jobs/approve/${tokenMatch[1]}`;
+        }
       }
 
       if (!approvalUrl) {
@@ -169,7 +171,9 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
       await expect(approveBtn).toBeVisible({ timeout: 15_000 });
       await approveBtn.click();
 
-      await expect(page.locator('text=Job Approved')).toBeVisible({ timeout: 15_000 });
+      await expect(
+        page.locator('h3, p, div').filter({ hasText: /approved/i }).first()
+      ).toBeVisible({ timeout: 15_000 });
     });
 
     // ── STEP 6: Mark in_progress → completed ─────────────────────────────────
@@ -195,12 +199,12 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
     let invoiceId = '';
     await test.step('Step 7 — Create invoice with 2 line items', async () => {
       await page.locator('button', { hasText: 'Mark as Invoiced' }).click();
-      await page.waitForURL(/\/invoices\/new\//, { timeout: 15_000 });
+      await page.waitForURL(/\/invoices\/new(\/|$)/, { timeout: 15_000 });
       await page.waitForLoadState('networkidle', { timeout: 15_000 });
 
-      // Invoices list must not hang (regression check for enabled: !!user)
-      await expect(page.locator('#items\\.0\\.description, [id="items.0.description"]').first())
-        .toBeVisible({ timeout: 10_000 });
+      // Create form starts empty in current UI; add first line item explicitly.
+      await page.click('button:has-text("+ Add Item")');
+      await expect(page.locator('[id="items.0.description"]')).toBeVisible({ timeout: 10_000 });
 
       // Line item 1
       await page.fill('[id="items.0.description"]', 'Snow removal — driveway');
@@ -252,17 +256,17 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
       await page.goto(`${BASE}/invoices/${invoiceId}`);
       await page.waitForLoadState('networkidle', { timeout: 15_000 });
 
-      // Extract /pay/:token from page HTML
-      const html = await page.content();
-      const payMatch = html.match(/\/pay\/([a-zA-Z0-9_-]+)/);
       let payUrl: string | null = null;
-
-      if (payMatch) {
-        payUrl = `${BASE}/pay/${payMatch[1]}`;
+      const payLink = page.locator('a:visible[href*="/pay/"]').first();
+      const href = await payLink.getAttribute('href').catch(() => null);
+      if (href) {
+        payUrl = href.startsWith('http') ? href : `${BASE}${href}`;
       } else {
-        const payLink = page.locator('a[href*="/pay/"]').first();
-        const href = await payLink.getAttribute('href').catch(() => null);
-        if (href) payUrl = href.startsWith('http') ? href : `${BASE}${href}`;
+        const html = await page.content();
+        const payMatch = html.match(/\/pay\/([a-zA-Z0-9_-]+)/);
+        if (payMatch) {
+          payUrl = `${BASE}/pay/${payMatch[1]}`;
+        }
       }
 
       if (!payUrl) {

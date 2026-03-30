@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useLocation } from './router';
 import { useTranslation } from 'react-i18next';
 import type { Session, User } from '@supabase/supabase-js';
@@ -48,20 +48,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const profileRequestIdRef = useRef(0);
 
   const fetchProfile = useCallback(async (currentUser: User) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', currentUser.id)
-      .single();
-    if (!error && data) {
-      setProfile(data as Tables<'profiles'>);
-    } else {
-      if (error) {
-        console.error('Failed to fetch profile:', error);
+    const requestId = ++profileRequestIdRef.current;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+      if (!error && data) {
+        if (requestId === profileRequestIdRef.current) {
+          setProfile(data as Tables<'profiles'>);
+        }
+      } else {
+        if (requestId === profileRequestIdRef.current) {
+          setProfile(null);
+        }
       }
-      setProfile(null);
+    } catch {
+      if (requestId === profileRequestIdRef.current) {
+        setProfile(null);
+      }
     }
   }, []);
 
@@ -75,8 +84,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const currentUser = currentSession?.user ?? null;
         setUser(currentUser);
         if (currentUser) {
-          await fetchProfile(currentUser);
+          void fetchProfile(currentUser);
         } else {
+          profileRequestIdRef.current += 1;
           setProfile(null);
         }
       } catch {
@@ -100,8 +110,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const nextUser = nextSession?.user ?? null;
         setUser(nextUser);
         if (nextUser) {
-          await fetchProfile(nextUser);
+          void fetchProfile(nextUser);
         } else {
+          profileRequestIdRef.current += 1;
           setProfile(null);
         }
       } catch {

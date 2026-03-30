@@ -11,7 +11,6 @@ import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
-import { supabase } from '../../lib/supabase';
 
 const JobDetailPage = () => {
   const { t, i18n } = useTranslation();
@@ -21,6 +20,7 @@ const JobDetailPage = () => {
   const { isOnline } = useNetworkStatus();
   const [actionError, setActionError] = useState<string | null>(null);
   const [sendingInvite, setSendingInvite] = useState(false);
+  const [sentInviteToken, setSentInviteToken] = useState<string | null>(null);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -111,14 +111,14 @@ const JobDetailPage = () => {
     setActionError(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-job-invite', {
-        body: { jobId: job.id },
-      });
-
-      if (error) throw error;
-      if (data.error) throw new Error(data.error);
+      const result = await jobRepository.sendInvite(job.id);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      if (result.data?.token) {
+        setSentInviteToken(result.data.token);
+      }
     } catch (error) {
-      console.error('Error sending invite:', error);
       const message = error instanceof Error ? error.message : 'Failed to send invite';
       setActionError(message);
     } finally {
@@ -380,17 +380,23 @@ const JobDetailPage = () => {
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
       </section>
 
-      {job.status === 'sent' && approvalTokenQuery.data ? (
+      {job.status === 'sent' && (sentInviteToken || approvalTokenQuery.data) ? (
         <section className="space-y-2 rounded-xl border border-blue-200 bg-blue-50 p-4">
           <h2 className="text-base font-semibold text-blue-900">{t('jobs.detail.approvalLink.label')}</h2>
+          {(() => {
+            const token = sentInviteToken ?? approvalTokenQuery.data;
+            if (!token) return null;
+            return (
           <a
-            href={`/jobs/approve/${approvalTokenQuery.data}`}
+            href={`/jobs/approve/${token}`}
             target="_blank"
             rel="noreferrer"
             className="block break-all text-sm text-blue-700 underline"
           >
-            {`${window.location.origin}/jobs/approve/${approvalTokenQuery.data}`}
+            {`${window.location.origin}/jobs/approve/${token}`}
           </a>
+            );
+          })()}
           <p className="text-xs text-blue-600">{t('jobs.detail.approvalLink.hint')}</p>
         </section>
       ) : null}
