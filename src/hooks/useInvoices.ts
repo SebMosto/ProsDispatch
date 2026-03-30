@@ -60,6 +60,8 @@ export const useInvoiceByToken = (token?: string) => {
     tRef.current = t;
   }, [t]);
 
+  const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
+
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
     if (!token) {
       throw { message: tRef.current('validation.invoiceTokenRequired'), reason: 'validation' } satisfies RepositoryError;
@@ -103,8 +105,6 @@ export const useInvoiceByToken = (token?: string) => {
 
     return fullInvoice;
   }, [token]);
-
-  const queryKey = useMemo(() => ['invoice', 'public', token], [token]);
 
   const query = useQuery<InvoiceWithItems, RepositoryError>({
     queryKey,
