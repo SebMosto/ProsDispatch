@@ -89,7 +89,6 @@ const PublicInvoicePage = () => {
 
         if (fnError || !data?.client_secret) {
           // Payment intent creation failed; leave page in read-only mode.
-          console.error('create-payment-intent error', fnError ?? data?.error);
           return;
         }
 

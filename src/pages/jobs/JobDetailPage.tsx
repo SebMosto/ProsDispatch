@@ -45,6 +45,16 @@ const JobDetailPage = () => {
     enabled: Boolean(jobId),
   });
 
+  const approvalTokenQuery = useQuery({
+    queryKey: ['job-approval-token', jobId],
+    queryFn: async () => {
+      const result = await jobRepository.getApprovalToken(jobId ?? '');
+      if (result.error) throw result.error;
+      return result.data;
+    },
+    enabled: Boolean(jobId) && query.data?.status === 'sent',
+  });
+
   const job = query.data;
 
   const syncState: SyncBadgeState = useMemo(() => {
@@ -100,20 +110,6 @@ const JobDetailPage = () => {
     setSendingInvite(true);
     setActionError(null);
 
-    // Optimistic update
-    const previousJob = queryClient.getQueryData<JobRecord>(['job', jobId]);
-    const previousLists = queryClient.getQueriesData<JobRecord[]>({ queryKey: ['jobs'] });
-    const optimisticJob = { ...job, status: 'sent', updated_at: new Date().toISOString() } satisfies JobRecord;
-
-    queryClient.setQueryData(['job', jobId], optimisticJob);
-    previousLists.forEach(([key, jobs]) => {
-      if (!jobs) return;
-      queryClient.setQueryData<JobRecord[]>(
-        key,
-        jobs.map((item) => (item.id === job.id ? { ...item, status: 'sent', updated_at: optimisticJob.updated_at } : item)),
-      );
-    });
-
     try {
       const { data, error } = await supabase.functions.invoke('send-job-invite', {
         body: { jobId: job.id },
@@ -123,15 +119,11 @@ const JobDetailPage = () => {
       if (data.error) throw new Error(data.error);
     } catch (error) {
       console.error('Error sending invite:', error);
-      // Revert optimistic update
-      queryClient.setQueryData(['job', jobId], previousJob);
-      previousLists.forEach(([key, jobs]) => {
-        queryClient.setQueryData<JobRecord[] | undefined>(key, jobs);
-      });
       const message = error instanceof Error ? error.message : 'Failed to send invite';
       setActionError(message);
     } finally {
       setSendingInvite(false);
+      void queryClient.invalidateQueries({ queryKey: ['job', jobId] });
       void queryClient.invalidateQueries({ queryKey: ['jobs'] });
     }
   };
@@ -387,6 +379,21 @@ const JobDetailPage = () => {
         <div className="flex flex-wrap gap-2">{renderActions()}</div>
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
       </section>
+
+      {job.status === 'sent' && approvalTokenQuery.data ? (
+        <section className="space-y-2 rounded-xl border border-blue-200 bg-blue-50 p-4">
+          <h2 className="text-base font-semibold text-blue-900">{t('jobs.detail.approvalLink.label')}</h2>
+          <a
+            href={`/jobs/approve/${approvalTokenQuery.data}`}
+            target="_blank"
+            rel="noreferrer"
+            className="block break-all text-sm text-blue-700 underline"
+          >
+            {`${window.location.origin}/jobs/approve/${approvalTokenQuery.data}`}
+          </a>
+          <p className="text-xs text-blue-600">{t('jobs.detail.approvalLink.hint')}</p>
+        </section>
+      ) : null}
 
       <button
         type="button"

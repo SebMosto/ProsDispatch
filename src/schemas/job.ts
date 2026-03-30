@@ -29,12 +29,13 @@ export const getJobCreateSchema = (t: TFunction) => z.object({
     .string()
     .max(2000, t('validation.descriptionTooLong'))
     .optional(),
-  service_date: z
-    .union([
+  service_date: z.preprocess(
+    (v) => (v === '' || v == null ? undefined : v),
+    z.union([
       z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.invalidDate')),
       z.date(),
-    ])
-    .optional(),
+    ]).optional()
+  ),
   status: z.enum(JOB_STATUSES).default('draft'),
 });
 

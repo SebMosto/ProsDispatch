@@ -1,3 +1,4 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { reportApiOnline } from '../lib/network';
 import type { Database } from '../types/database.types';
 import { JobRecordSchema, type JobCreateInput, type JobRecord, type JobStatus, type JobUpdateInput } from '../schemas/job';
@@ -186,6 +187,26 @@ export class JobRepository
 
     // Always fetch the latest record to return consistent data
     return this.get(id);
+  }
+
+  async getApprovalToken(jobId: string): Promise<RepositoryResult<string | null>> {
+    // job_tokens is not yet in the generated database types — use a type cast to access it
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.client as SupabaseClient<any>)
+      .from('job_tokens')
+      .select('token')
+      .eq('job_id', jobId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const repositoryError = this.toRepositoryError(error);
+    if (repositoryError) {
+      return { data: null, error: repositoryError };
+    }
+
+    reportApiOnline();
+    return { data: (data as { token: string } | null)?.token ?? null };
   }
 
   async softDelete(id: string): Promise<RepositoryResult<null>> {

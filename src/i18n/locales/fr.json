@@ -329,6 +329,10 @@
       "notScheduled": "Non planifié",
       "quickActions": "Actions rapides",
       "optimisticNote": "Utilise des mises à jour optimistes",
+      "approvalLink": {
+        "label": "Lien d'approbation client",
+        "hint": "Partagez ce lien avec votre client pour qu'il puisse approuver le travail."
+      },
       "labels": {
         "status": "Statut",
         "clientId": "ID Client",

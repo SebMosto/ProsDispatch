@@ -319,6 +319,10 @@
       "notScheduled": "Not scheduled",
       "quickActions": "Quick Actions",
       "optimisticNote": "Uses optimistic updates",
+      "approvalLink": {
+        "label": "Client Approval Link",
+        "hint": "Share this link with your client so they can approve the job."
+      },
       "labels": {
         "status": "Status",
         "clientId": "Client ID",

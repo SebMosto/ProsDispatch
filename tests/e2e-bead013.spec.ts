@@ -13,9 +13,9 @@ const E2E_PASSWORD = process.env.E2E_PASSWORD ?? '';
 
 async function signIn(page: Page) {
   await page.goto(`${BASE}/login`);
-  await page.waitForSelector('#email', { timeout: 10_000 });
-  await page.fill('#email', E2E_EMAIL);
-  await page.fill('#password', E2E_PASSWORD);
+  await page.waitForSelector('#login-email', { timeout: 10_000 });
+  await page.fill('#login-email', E2E_EMAIL);
+  await page.fill('#login-password', E2E_PASSWORD);
   await page.click('button[type="submit"]');
   // Accept either /dashboard or any protected route redirect
   await page.waitForURL(/\/(dashboard|jobs|clients|invoices)/, { timeout: 20_000 });
@@ -98,7 +98,7 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
       await expect(page.locator('#title')).toBeVisible({ timeout: 10_000 });
 
       await page.fill('#title', 'Bead 013 — Snow Removal');
-      await page.selectOption('#client_id', { label: /Doris Clement/ });
+      await page.selectOption('#client_id', { label: 'Doris Clement' });
       // Wait for property options to populate after client selection
       await page.waitForFunction(
         () => {

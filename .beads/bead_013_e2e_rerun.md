@@ -53,15 +53,15 @@ Run the full E2E flow in order:
 
 | Test | Mobile | Tablet | Desktop |
 |---|---|---|---|
-| App boots at / without console errors | INFRA FAIL | PASS | PASS |
-| Login page renders all required fields | INFRA FAIL | **FAIL** | **FAIL** |
-| /jobs → login, no hang (regression: enabled:!!user) | INFRA FAIL | PASS | PASS |
-| /invoices → login, no hang (regression: enabled:!!user) | INFRA FAIL | PASS | PASS |
-| /clients → login, no hang | INFRA FAIL | PASS | PASS |
-| /dashboard → login, no hang | INFRA FAIL | PASS | PASS |
-| /jobs/approve/:bogus-token renders (not blank crash) | INFRA FAIL | **FAIL** | **FAIL** |
-| /pay/:bogus-token renders (not blank crash) | INFRA FAIL | **FAIL** | **FAIL** |
-| Stripe publishable key sanity check | INFRA FAIL | PASS | PASS |
+| App boots at / without console errors | PASS | PASS | PASS |
+| Login page renders all required fields | **FAIL** | **FAIL** | **FAIL** |
+| /jobs → login, no hang (regression: enabled:!!user) | **PASS** | **PASS** | **PASS** |
+| /invoices → login, no hang (regression: enabled:!!user) | **PASS** | **PASS** | **PASS** |
+| /clients → login, no hang | PASS | PASS | PASS |
+| /dashboard → login, no hang | PASS | PASS | PASS |
+| /jobs/approve/:bogus-token renders (not blank crash) | **FAIL** | **FAIL** | **FAIL** |
+| /pay/:bogus-token renders (not blank crash) | **FAIL** | **FAIL** | **FAIL** |
+| Stripe publishable key sanity check | PASS | PASS | PASS |
 
 ### Authenticated Suite (`e2e-bead013.spec.ts`)
 
@@ -83,11 +83,9 @@ Reason: `E2E_EMAIL` and `E2E_PASSWORD` environment variables not set. Test calle
 
 ## Blocker Details
 
-### BLOCKER 1 — INFRA: Mobile/WebKit browser binary missing
-- **Error:** `browserType.launch: Executable doesn't exist at ...\webkit-2248\Playwright.exe`
-- **Scope:** All 9 static tests on Mobile viewport; authenticated test on Mobile
-- **Fix:** `npx playwright install` (downloads WebKit binary)
-- **App impact:** None — this is a local dev machine configuration issue
+### ~~BLOCKER 1 — INFRA: Mobile/WebKit browser binary missing~~ RESOLVED
+- `npx playwright install` run 2026-03-28 — Firefox + WebKit downloaded
+- Mobile viewport now runs cleanly across all tests
 
 ### BLOCKER 2 — APP: Login page `#email` / `#password` selectors not found
 - **Error:** `expect(page.locator('#email')).toBeVisible()` times out after 10s

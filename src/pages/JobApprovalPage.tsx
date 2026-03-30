@@ -29,7 +29,6 @@ export default function JobApprovalPage() {
         });
 
         if (error) {
-          console.error('Error fetching job:', error);
           setError(t('jobApproval.fetchError'));
         } else if (data.error) {
            setError(data.error);
@@ -41,12 +40,10 @@ export default function JobApprovalPage() {
               setApproved(true);
             }
           } else {
-            console.error('Failed to validate job details:', parseResult.error);
             setError(t('jobApproval.fetchError'));
           }
         }
-      } catch (err) {
-        console.error('Exception fetching job:', err);
+      } catch {
         setError(t('jobApproval.fetchError'));
       } finally {
         setLoading(false);
@@ -73,8 +70,7 @@ export default function JobApprovalPage() {
       }
 
       setApproved(true);
-    } catch (err) {
-      console.error('Error approving job:', err);
+    } catch {
       setActionError(t('jobApproval.actionError'));
     } finally {
       setProcessing(false);

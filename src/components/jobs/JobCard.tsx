@@ -27,7 +27,9 @@ const JobCard = memo(({ job }: JobCardProps) => {
       <header className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium text-slate-500">{t('jobs.card.jobNum', { id: job.id.slice(0, 8) })}</p>
-          <h3 className="text-lg font-semibold text-slate-900">{job.title}</h3>
+          <h3 className="text-lg font-semibold text-slate-900">
+            <Link to={`/jobs/${job.id}`} className="hover:underline">{job.title}</Link>
+          </h3>
           <p className="text-sm text-slate-600 line-clamp-2">{job.description || t('jobs.card.noDescription')}</p>
         </div>
         <div className="flex items-center gap-2 self-start">
