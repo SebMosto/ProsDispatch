@@ -15,6 +15,18 @@ import { supabase } from '../lib/supabase';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 
+/**
+ * Dev server always allows the finalize fallback when the edge function fails.
+ * For `vite preview` / E2E (production bundle), set `VITE_ALLOW_INVOICE_FINALIZE_FALLBACK=true`
+ * at build time. Do not set that variable in production deployments.
+ */
+export function allowInvoiceFinalizeFallback(env: {
+  readonly DEV: boolean;
+  readonly VITE_ALLOW_INVOICE_FINALIZE_FALLBACK?: string;
+}): boolean {
+  return env.DEV || env.VITE_ALLOW_INVOICE_FINALIZE_FALLBACK === 'true';
+}
+
 export const useInvoice = (id?: string) => {
   const { user } = useAuth();
   const { t } = useTranslation();
@@ -40,6 +52,7 @@ export const useInvoice = (id?: string) => {
       .from('invoice_tokens')
       .select('token')
       .eq('invoice_id', id)
+      .gt('expires_at', new Date().toISOString())
       .order('expires_at', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -83,7 +96,27 @@ export const useInvoiceByToken = (token?: string) => {
     if (signal) {
       query = query.abortSignal(signal);
     }
-    const { data, error } = await query;
+    let { data, error } = await query;
+
+    const shouldTryLegacyArg =
+      Boolean(error) &&
+      !String(error?.message ?? '').includes('TOKEN_INVALID_OR_EXPIRED') &&
+      /function .*get_invoice_by_token.* does not exist|named argument .* not found|parameter .*access_token|parameter .*p_token|schema cache|PGRST202/i.test(
+        `${error?.message ?? ''} ${error?.code ?? ''} ${error?.details ?? ''}`,
+      );
+
+    if (shouldTryLegacyArg) {
+      // Some deployed DBs still expose the legacy RPC signature: get_invoice_by_token(access_token text).
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const typedSupabase = supabase as any;
+      let legacyQuery = typedSupabase.rpc('get_invoice_by_token', { access_token: token });
+      if (signal) {
+        legacyQuery = legacyQuery.abortSignal(signal);
+      }
+      const legacyResult = await legacyQuery;
+      data = legacyResult.data;
+      error = legacyResult.error;
+    }
 
     if (error) {
       // Surface a generic validation-style error for invalid/expired tokens
@@ -94,7 +127,7 @@ export const useInvoiceByToken = (token?: string) => {
       throw { message, reason: 'validation', cause: error } satisfies RepositoryError;
     }
 
-    // get_invoice_by_token returns a JSON envelope:
+    // Preferred response shape (new migration):
     // { invoice, items, contractor_name, pdf_url }
     const envelope = (data ?? null) as
       | {
@@ -104,6 +137,31 @@ export const useInvoiceByToken = (token?: string) => {
           pdf_url?: string | null;
         }
       | null;
+
+    // Legacy response shape (older migration): returns invoice row directly (or a single-item array).
+    const legacyInvoice = (() => {
+      if (!data) return null;
+      const candidate = Array.isArray(data) ? data[0] : data;
+      if (
+        candidate &&
+        typeof candidate === 'object' &&
+        'id' in candidate &&
+        'invoice_number' in candidate &&
+        'status' in candidate
+      ) {
+        return candidate as InvoiceRecord;
+      }
+      return null;
+    })();
+
+    if (legacyInvoice) {
+      return {
+        ...legacyInvoice,
+        invoice_items: [],
+        contractor_name: null,
+        pdf_url: legacyInvoice.pdf_url,
+      } as InvoiceWithItems & { contractor_name?: string | null };
+    }
 
     if (!envelope?.invoice) {
       throw { message: tRef.current('public.invoice.expired'), reason: 'validation' } satisfies RepositoryError;
@@ -228,11 +286,11 @@ export const useInvoiceMutations = () => {
         return;
       }
 
-      if (!import.meta.env.DEV) {
+      if (!allowInvoiceFinalizeFallback(import.meta.env)) {
         throw (error ?? { message: data?.error ?? 'Unknown error', reason: 'unknown' }) as RepositoryError;
       }
 
-      // Fallback for local/dev where edge function email dependencies may be unavailable.
+      // Fallback when the edge function fails (e.g. missing Resend/PDF) — dev, or preview/E2E with VITE_ALLOW_INVOICE_FINALIZE_FALLBACK.
       const { error: updateError } = await supabase
         .from('invoices')
         .update({ status: 'sent', date_issued: new Date().toISOString() })

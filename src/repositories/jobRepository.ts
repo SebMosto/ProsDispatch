@@ -215,8 +215,12 @@ export class JobRepository
     });
 
     if (!invokeError && !(invokeData as { error?: string } | null)?.error) {
-      reportApiOnline();
-      return { data: { token: null } };
+      // Edge success is not enough for UI flow correctness; require a persisted token.
+      const edgeTokenResult = await this.getApprovalToken(jobId);
+      if (!edgeTokenResult.error && edgeTokenResult.data) {
+        reportApiOnline();
+        return { data: { token: edgeTokenResult.data } };
+      }
     }
 
     // If the edge function partially succeeded (token already created), reuse it.

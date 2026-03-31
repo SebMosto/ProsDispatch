@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { useInvoiceByToken, useFinalizeInvoice } from './useInvoices';
+import { allowInvoiceFinalizeFallback, useInvoiceByToken, useFinalizeInvoice } from './useInvoices';
 import { supabase } from '../lib/supabase';
 
 vi.mock('react-i18next', () => ({
@@ -31,6 +31,25 @@ const createWrapper = () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
+
+describe('allowInvoiceFinalizeFallback', () => {
+  it('is true in dev', () => {
+    expect(allowInvoiceFinalizeFallback({ DEV: true })).toBe(true);
+  });
+
+  it('is true when VITE flag is true even if not dev', () => {
+    expect(
+      allowInvoiceFinalizeFallback({ DEV: false, VITE_ALLOW_INVOICE_FINALIZE_FALLBACK: 'true' }),
+    ).toBe(true);
+  });
+
+  it('is false in prod-like build without flag', () => {
+    expect(allowInvoiceFinalizeFallback({ DEV: false })).toBe(false);
+    expect(allowInvoiceFinalizeFallback({ DEV: false, VITE_ALLOW_INVOICE_FINALIZE_FALLBACK: 'false' })).toBe(
+      false,
+    );
+  });
+});
 
 describe('useInvoices hooks', () => {
   beforeEach(() => {
@@ -86,6 +105,92 @@ describe('useInvoices hooks', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('get_invoice_by_token', { p_token: 'test-token' });
     expect(result.current.invoice?.id).toBe('inv-1');
     expect(result.current.invoice?.invoice_items).toHaveLength(1);
+  });
+
+  it('useInvoiceByToken retries with legacy access_token arg when p_token signature is unavailable', async () => {
+    const envelope = {
+      data: {
+        invoice: {
+          id: 'inv-legacy',
+          job_id: 'job-1',
+          contractor_id: 'ctr-1',
+          invoice_number: 'INV-LEGACY',
+          status: 'sent',
+          subtotal: 1000,
+          tax_data: [],
+          total_amount: 1000,
+          pdf_url: null,
+        },
+        items: [],
+        contractor_name: 'Legacy Contractor',
+        pdf_url: null,
+      },
+      error: null,
+    };
+
+    const rpcMock = supabase.rpc as unknown as ReturnType<typeof vi.fn>;
+    rpcMock
+      .mockImplementationOnce(() => ({
+        abortSignal: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'function public.get_invoice_by_token(p_token => text) does not exist' },
+        }),
+      }))
+      .mockImplementationOnce(() => ({
+        abortSignal: vi.fn().mockResolvedValue(envelope),
+      }));
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useInvoiceByToken('legacy-token'), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.invoice?.id).toBe('inv-legacy');
+    });
+
+    expect(rpcMock).toHaveBeenNthCalledWith(1, 'get_invoice_by_token', { p_token: 'legacy-token' });
+    expect(rpcMock).toHaveBeenNthCalledWith(2, 'get_invoice_by_token', { access_token: 'legacy-token' });
+  });
+
+  it('useInvoiceByToken accepts legacy direct-invoice RPC shape', async () => {
+    const rpcMock = supabase.rpc as unknown as ReturnType<typeof vi.fn>;
+    rpcMock
+      .mockImplementationOnce(() => ({
+        abortSignal: vi.fn().mockResolvedValue({
+          data: null,
+          error: {
+            message: 'Could not find the function public.get_invoice_by_token(p_token) in the schema cache',
+            code: 'PGRST202',
+            details: 'schema cache mismatch',
+          },
+        }),
+      }))
+      .mockImplementationOnce(() => ({
+        abortSignal: vi.fn().mockResolvedValue({
+          data: {
+            id: 'inv-legacy-flat',
+            job_id: 'job-1',
+            contractor_id: 'ctr-1',
+            invoice_number: 'INV-LEGACY-FLAT',
+            status: 'sent',
+            subtotal: 1000,
+            tax_data: [],
+            total_amount: 1000,
+            pdf_url: null,
+          },
+          error: null,
+        }),
+      }));
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useInvoiceByToken('legacy-flat-token'), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(result.current.invoice?.id).toBe('inv-legacy-flat');
+    });
+
+    expect(result.current.invoice?.invoice_items).toEqual([]);
   });
 
   it('useFinalizeInvoice calls finalize-and-send-invoice edge function', async () => {
