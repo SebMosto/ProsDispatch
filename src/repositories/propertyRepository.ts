@@ -18,24 +18,24 @@ export class PropertyRepository
   async list(params?: PropertyListParams, signal?: AbortSignal): Promise<RepositoryResult<PropertyRecord[]>> {
     const { clientIds, clientId, includeDeleted } = params ?? {};
 
-    const query = this.client
+    let query = this.client
       .from('properties')
       .select('*')
       .order('created_at', { ascending: true });
 
     if (clientIds?.length) {
-      query.in('client_id', clientIds);
+      query = query.in('client_id', clientIds);
     }
 
     if (clientId) {
-      query.eq('client_id', clientId);
+      query = query.eq('client_id', clientId);
     }
 
     if (!includeDeleted) {
-      query.is('deleted_at', null);
+      query = query.is('deleted_at', null);
     }
 
-    const { data, error } = await (signal ? query.abortSignal(signal) : query);
+    const { data, error } = await (signal && !signal.aborted ? query.abortSignal(signal) : query);
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {

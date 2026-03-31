@@ -16,16 +16,16 @@ export class ClientRepository
   async list(params?: ClientListParams, signal?: AbortSignal): Promise<RepositoryResult<ClientRecord[]>> {
     const { includeDeleted } = params ?? {};
 
-    const query = this.client
+    let query = this.client
       .from('clients')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (!includeDeleted) {
-      query.is('deleted_at', null);
+      query = query.is('deleted_at', null);
     }
 
-    const { data, error } = await (signal ? query.abortSignal(signal) : query);
+    const { data, error } = await (signal && !signal.aborted ? query.abortSignal(signal) : query);
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {

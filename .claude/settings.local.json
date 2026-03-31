@@ -34,7 +34,10 @@
       "Bash(cmd /c \"taskkill /PID 27852 /F\")",
       "Bash(cmd /c \"taskkill /PID 7640 /F\")",
       "Bash(cmd /c \"taskkill /F /PID 7632 & taskkill /F /PID 27852 & taskkill /F /PID 7640 & taskkill /F /PID 33216\" 2>&1)",
-      "Bash(powershell -Command \"Stop-Process -Id 7632, 27852, 7640, 33216 -Force\" 2>&1)"
+      "Bash(powershell -Command \"Stop-Process -Id 7632, 27852, 7640, 33216 -Force\" 2>&1)",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__list_deployments"
     ]
   },
   "hooks": {

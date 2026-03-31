@@ -90,6 +90,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setProfile(null);
         }
       } catch {
+        setUser(null);
+        setSession(null);
         setProfile(null);
       } finally {
         setLoading(false);
@@ -104,7 +106,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     //   1. UI hang after mutations (re-triggering loading on every SIGNED_IN event)
     //   2. Race condition where finally fires before initializeAuth completes
     // Per Gemini + Codex review, 2026-03-23.
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
+      // INITIAL_SESSION is handled by initializeAuth above.
+      // Processing it here risks firing after loading=false (with a null session during
+      // token refresh), which sets user=null and triggers a /login redirect.
+      if (event === 'INITIAL_SESSION') return;
       try {
         setSession(nextSession);
         const nextUser = nextSession?.user ?? null;
