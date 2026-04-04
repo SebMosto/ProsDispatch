@@ -1,3 +1,4 @@
+import AdminPortalPage from "./pages/admin/AdminPortalPage";
 import type { ReactNode } from 'react';
 import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
@@ -145,6 +146,7 @@ const App = () => (
           <Route element={<ProtectedLayout />}>
             <Route path="/subscribe" element={<SubscribePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/admin" element={<AdminPortalPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/settings/stripe" element={<StripeConnectPage />} />
