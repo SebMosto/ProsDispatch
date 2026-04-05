@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const KNOWN_STATUSES_SET = new Set(['active', 'trialing', 'canceled', 'past_due', 'unpaid', 'paused']);
 
 // Pilot: unknown/incomplete Stripe statuses default to trialing
+// eslint-disable-next-line react-refresh/only-export-components
 export const normalizeSubscriptionStatus = (status: string | null | undefined): string | null => {
   if (!status) return null;
   if (status === 'incomplete' || status === 'incomplete_expired') return null;
@@ -30,6 +31,7 @@ export const normalizeSubscriptionStatus = (status: string | null | undefined): 
   return status;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const calculateTrialDaysRemaining = (endDate: string | null): number => {
   if (!endDate) {
     return 0;
@@ -160,6 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
