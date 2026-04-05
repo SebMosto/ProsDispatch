@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo, useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useClients } from '../../hooks/useClients';
 import { useJobs } from '../../hooks/useJobs';
@@ -67,6 +67,13 @@ ClientListItem.displayName = 'ClientListItem';
 const ClientList: React.FC = () => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+
+  // Optimization: Defer the search state used for filtering.
+  // This allows React to prioritize the input state update (user typing)
+  // over the potentially expensive array filtering and re-rendering of the list.
+  // Expected impact: Eliminates typing lag on large client lists.
+  const deferredSearch = useDeferredValue(search);
+
   const { clients, loading, error } = useClients();
   const { jobs } = useJobs();
 
@@ -85,10 +92,10 @@ const ClientList: React.FC = () => {
   }, [clients, jobs]);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return clientsWithStats;
     return clientsWithStats.filter((c) => (c.name ?? '').toLowerCase().includes(q));
-  }, [clientsWithStats, search]);
+  }, [clientsWithStats, deferredSearch]);
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
