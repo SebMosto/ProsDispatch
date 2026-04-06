@@ -110,11 +110,7 @@ export class InvoiceRepository extends BaseRepository {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (signal) {
-      query = query.abortSignal(signal);
-    }
-
-    const { data, error } = await query;
+    const { data, error } = await (signal && !signal.aborted ? query.abortSignal(signal) : query);
 
     const repositoryError = this.toRepositoryError(error);
 

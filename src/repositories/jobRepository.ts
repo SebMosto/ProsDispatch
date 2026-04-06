@@ -72,11 +72,7 @@ export class JobRepository
       query = query.is('deleted_at', null);
     }
 
-    if (signal) {
-      query = query.abortSignal(signal);
-    }
-
-    const { data, error } = await query;
+    const { data, error } = await (signal && !signal.aborted ? query.abortSignal(signal) : query);
     const repositoryError = this.toRepositoryError(error);
 
     if (repositoryError) {
