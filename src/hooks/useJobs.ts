@@ -12,9 +12,14 @@ export const useJobs = (params?: JobListParams) => {
   const queryKey = useMemo(() => ['jobs', params ?? {}], [params]);
 
   const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
-    const result = await jobRepository.list(params, signal);
-    if (result.error) throw result.error;
-    return result.data ?? [];
+    try {
+      const result = await jobRepository.list(params, signal);
+      if (result.error) throw result.error;
+      return result.data ?? [];
+    } catch (error) {
+      if (signal?.aborted) return [];
+      throw error;
+    }
   }, [params]);
 
   const query = useQuery<JobRecord[], RepositoryError>({
