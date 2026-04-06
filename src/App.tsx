@@ -57,7 +57,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
 
   if (isPublicPage) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen">
         <header className="border-b border-slate-200 bg-white">
           <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="text-lg font-semibold text-slate-900" aria-label={t('layout.brand')}>
@@ -72,7 +72,7 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px]">
+    <div className="min-h-screen text-[13px]">
       <header className="flex h-[52px] items-center justify-between border-b-[1.5px] border-[#0F172A] bg-white px-5">
         <div className="flex items-center gap-[9px]">
           <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#0F172A]">
