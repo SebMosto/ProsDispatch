@@ -111,6 +111,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Processing it here risks firing after loading=false (with a null session during
       // token refresh), which sets user=null and triggers a /login redirect.
       if (event === 'INITIAL_SESSION') return;
+
+      if ((event as string) === 'TOKEN_REFRESH_FAILED') {
+        // GoTrue fires this with null session even when the access token is still valid.
+        // Do not null the user — silently re-check the actual session state instead.
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          // Access token is still valid — keep user state, do nothing.
+          return;
+        }
+        // Session is genuinely gone — fall through to setUser(null) below.
+      }
+
       try {
         setSession(nextSession);
         const nextUser = nextSession?.user ?? null;
