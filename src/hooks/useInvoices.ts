@@ -364,15 +364,10 @@ export const useInvoicesByContractor = () => {
   const { user } = useAuth();
   const queryKey = useMemo(() => ['invoices', { scope: 'contractor' }], []);
 
-  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
-    try {
-      const result = await invoiceRepository.listByContractor(signal);
-      if (result.error) throw result.error;
-      return result.data ?? [];
-    } catch (error) {
-      if (signal?.aborted) return [];
-      throw error;
-    }
+  const queryFn = useCallback(async () => {
+    const result = await invoiceRepository.listByContractor();
+    if (result.error) throw result.error;
+    return result.data ?? [];
   }, []);
 
   const query = useQuery<InvoiceRecord[], RepositoryError>({

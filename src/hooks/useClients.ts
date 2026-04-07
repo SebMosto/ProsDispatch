@@ -27,31 +27,25 @@ export const useClients = () => {
   const { user } = useAuth();
   const queryKey = useMemo(() => ['clients'], []);
 
-  const queryFn = useCallback(async ({ signal }: { signal?: AbortSignal }) => {
-    try {
-      const clientsResult = await clientRepository.list(undefined, signal);
-      if (clientsResult.error) throw clientsResult.error;
+  const queryFn = useCallback(async () => {
+    const clientsResult = await clientRepository.list();
+    if (clientsResult.error) throw clientsResult.error;
 
-      const clients = clientsResult.data ?? [];
-      if (!clients.length) return [];
+    const clients = clientsResult.data ?? [];
+    if (!clients.length) return [];
 
-      const propertiesResult = await propertyRepository.list(
-        { clientIds: clients.map((client) => client.id) },
-        signal,
-      );
-      if (propertiesResult.error) throw propertiesResult.error;
+    const propertiesResult = await propertyRepository.list({
+      clientIds: clients.map((client) => client.id),
+    });
+    if (propertiesResult.error) throw propertiesResult.error;
 
-      const properties = propertiesResult.data ?? [];
-      const propertyMap = buildPrimaryPropertyMap(properties);
+    const properties = propertiesResult.data ?? [];
+    const propertyMap = buildPrimaryPropertyMap(properties);
 
-      return clients.map((client) => ({
-        ...client,
-        primary_property: propertyMap.get(client.id) ?? null,
-      }));
-    } catch (error) {
-      if (signal?.aborted) return [];
-      throw error;
-    }
+    return clients.map((client) => ({
+      ...client,
+      primary_property: propertyMap.get(client.id) ?? null,
+    }));
   }, []);
 
   const query = useQuery<ClientWithPrimaryProperty[], RepositoryError>({
