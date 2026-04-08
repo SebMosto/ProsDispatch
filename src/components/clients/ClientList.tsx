@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useClients } from '../../hooks/useClients';
 import { useJobs } from '../../hooks/useJobs';
@@ -84,11 +84,15 @@ const ClientList: React.FC = () => {
     });
   }, [clients, jobs]);
 
+  // Optimization: useDeferredValue prevents typing lag by deferring the heavy filtering calculations
+  // while allowing React to prioritize input state updates.
+  const deferredSearch = useDeferredValue(search);
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return clientsWithStats;
     return clientsWithStats.filter((c) => (c.name ?? '').toLowerCase().includes(q));
-  }, [clientsWithStats, search]);
+  }, [clientsWithStats, deferredSearch]);
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">

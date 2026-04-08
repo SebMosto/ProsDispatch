@@ -9,3 +9,7 @@
 ## 2026-06-15 - React List Rendering with Translations
 **Learning:** When extracting list items to `React.memo` components that require localization, it's safer to call `useTranslation()` *inside* the memoized component rather than passing the `t` function as a prop. Passing `t` as a prop can break memoization if the reference is not perfectly stable, whereas calling it inside ensures the component only re-renders when the language actually changes or its specific props change.
 **Action:** Always call hooks like `useTranslation` inside the memoized list item component instead of passing them down from the parent list.
+
+## 2026-06-16 - Filtering List Rendering
+**Learning:** Using `useDeferredValue(search)` prevents typing lag when filtering large lists in React 18+. It allows React to prioritize input state updates while deferring heavy filtering calculations.
+**Action:** When creating text search functionality over large lists, use `useDeferredValue` to memoize the search string used for filtering.
