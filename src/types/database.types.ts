@@ -424,6 +424,10 @@ export type Database = {
         }
         Returns: Json
       }
+      get_admin_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_invoice_by_token: {
         Args: {
           p_token: string

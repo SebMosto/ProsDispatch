@@ -43,6 +43,7 @@ const CreateJobForm = () => {
     defaultValues: initialValues,
   });
   const createMutation = useCreateJobMutation();
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedClientId = watch('client_id');
   const { clients, loading: clientsLoading } = useClients();
   const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);

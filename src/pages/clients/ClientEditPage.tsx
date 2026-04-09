@@ -74,6 +74,7 @@ const ClientEditPage = () => {
 
   useEffect(() => {
     if (!draft.hydrated) return undefined;
+    // eslint-disable-next-line react-hooks/incompatible-library
     const subscription = watch((value) => {
       draft.setValues(value as FormValues);
     });
