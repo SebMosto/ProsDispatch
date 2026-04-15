@@ -46,7 +46,7 @@ const PaymentForm = ({ disabled }: { disabled: boolean }) => {
         onClick={handleSubmit}
         className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitting ? t('common.processing') : t('invoices.public.payNow')}
+        {submitting ? t('common.processing') : t('public.invoice.payNow')}
       </button>
     </div>
   );
@@ -241,7 +241,7 @@ const PublicInvoicePage = () => {
               disabled
               className="inline-flex w-full items-center justify-center rounded-lg bg-slate-300 px-4 py-3 text-sm font-semibold text-slate-600"
             >
-              {t('invoices.public.payNow')}
+              {t('public.invoice.payNow')}
             </button>
           )}
         </div>

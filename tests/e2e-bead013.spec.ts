@@ -279,7 +279,7 @@ test.describe('Bead 013 — Full 9-Step E2E Flow', () => {
       }
 
       await page.goto(payUrl);
-      await page.waitForLoadState('networkidle', { timeout: 20_000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 20_000 });
 
       // Pay button text depends on i18n locale (EN/FR); allow either.
       const payNowBtn = page
