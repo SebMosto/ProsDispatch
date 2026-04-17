@@ -408,6 +408,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_users: number
+          active_subscriptions: number
+          total_jobs: number
+          total_revenue_cents: number
+        }[]
+      }
       approve_job_via_token: {
         Args: {
           p_job_id: string
