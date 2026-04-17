@@ -20,6 +20,7 @@ const JobDetailPage = lazy(() => import('./pages/jobs/JobDetailPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const BillingSettingsPage = lazy(() => import('./pages/BillingSettingsPage'));
 const StripeConnectPage = lazy(() => import('./pages/StripeConnectPage'));
+const AdminPortalPage = lazy(() => import('./pages/admin/AdminPortalPage'));
 const CreateInvoicePage = lazy(() => import('./pages/invoices/CreateInvoicePage'));
 const InvoiceDetailPage = lazy(() => import('./pages/invoices/InvoiceDetailPage'));
 const InvoicesListPage = lazy(() => import('./pages/invoices/InvoicesListPage'));
@@ -145,6 +146,7 @@ const App = () => (
           <Route element={<ProtectedLayout />}>
             <Route path="/subscribe" element={<SubscribePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path={routePatterns.adminPortal} element={<AdminPortalPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/settings/stripe" element={<StripeConnectPage />} />
