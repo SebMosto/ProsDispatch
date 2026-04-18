@@ -32,6 +32,7 @@ const ClientDetailPage = lazy(() => import('./pages/clients/ClientDetailPage'));
 const ClientEditPage = lazy(() => import('./pages/clients/ClientEditPage'));
 const JobApprovalPage = lazy(() => import('./pages/JobApprovalPage'));
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+const AdminPortalPage = lazy(() => import('./pages/admin/AdminPortalPage'));
 
 const AuthRedirect = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -144,6 +145,7 @@ const App = () => (
 
           <Route element={<ProtectedLayout />}>
             <Route path="/subscribe" element={<SubscribePage />} />
+            <Route path="/admin" element={<AdminPortalPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
