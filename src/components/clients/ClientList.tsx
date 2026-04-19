@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useMemo, useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useClients } from '../../hooks/useClients';
 import { useJobs } from '../../hooks/useJobs';
@@ -69,6 +69,7 @@ const ClientList: React.FC = () => {
   const [search, setSearch] = useState('');
   const { clients, loading, error } = useClients();
   const { jobs } = useJobs();
+  const deferredSearch = useDeferredValue(search);
 
   const clientsWithStats = useMemo((): ClientWithStats[] => {
     const byClient = new Map<string, { count: number; lastDate: string | null }>();
@@ -85,10 +86,11 @@ const ClientList: React.FC = () => {
   }, [clients, jobs]);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    // ⚡ Bolt: Use deferred search value to prevent typing lag during heavy filtering
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return clientsWithStats;
     return clientsWithStats.filter((c) => (c.name ?? '').toLowerCase().includes(q));
-  }, [clientsWithStats, search]);
+  }, [clientsWithStats, deferredSearch]);
 
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
