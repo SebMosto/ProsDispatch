@@ -74,7 +74,7 @@ jobs:
         run: npm audit --audit-level=critical
       
       - name: Check for secrets in code
-        uses: trufflesecurity/trufflehog@v3.92.5
+        uses: trufflesecurity/trufflehog@v3.95.2
         with:
           path: ./
           base: "${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}"
