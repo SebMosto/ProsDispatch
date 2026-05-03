@@ -38,3 +38,12 @@ bead's scope:
 
 Once baseline is restored to green, close bead_015 and continue bead_014 authenticated
 9-step E2E run after credentials are available.
+
+---
+
+## Closure — Reconciliation 2026-04-29
+
+This bead is closed by reconciliation as part of bead_027. Superseded by bead_016.
+See `.beads/beads.jsonl` history entry for the full close note. No code changed in this
+reconciliation; the superseding bead's Stop Hook is cited as evidence per
+`prosdispatch-governance-priority.md`.

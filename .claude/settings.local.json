@@ -44,7 +44,12 @@
       "mcp__claude_ai_Vercel__get_deployment",
       "mcp__claude_ai_Vercel__get_deployment_build_logs",
       "mcp__claude_ai_Vercel__get_runtime_logs",
-      "mcp__claude_ai_Vercel__web_fetch_vercel_url"
+      "mcp__claude_ai_Vercel__web_fetch_vercel_url",
+      "Read(//tmp/everything-claude-code/**)",
+      "Read(//tmp/everything-claude-code/.agents/**)",
+      "Bash([ ! -d \"$INSTALLED_USER/$skill\" ])",
+      "Bash(cp /tmp/everything-claude-code/rules/typescript/coding-style.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-coding-style.md)",
+      "Bash(cp /tmp/everything-claude-code/rules/typescript/patterns.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-patterns.md)"
     ]
   },
   "hooks": {
