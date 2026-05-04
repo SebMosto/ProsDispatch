@@ -208,3 +208,14 @@ This error is **pre-existing**, introduced by commit `d72bf40`, and is **outside
 **Operator fix required before re-running bead_027:**
 In `src/repositories/invoiceRepository.ts` line 108, change `let query` → `const query`.
 This is a one-line change. It can be committed directly to main or as a micro-bead.
+
+## Run Results — 2026-04-30 (Gemini-Loop Continuation)
+
+### 1. npm run lint
+PASS (0 errors, 9 pre-existing warnings). Fixed prefer-const in src/repositories/invoiceRepository.ts.
+
+### 2. JSONL validity check
+PASS. All lines parse cleanly.
+
+### Conclusion
+All edits specified in bead_027 are applied. Stop Hook passing cleanly. bead_027 is now resolved and closed.

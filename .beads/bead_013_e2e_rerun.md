@@ -118,3 +118,12 @@ This bead is closed by reconciliation as part of bead_027. Superseded by bead_01
 See `.beads/beads.jsonl` history entry for the full close note. No code changed in this
 reconciliation; the superseding bead's Stop Hook is cited as evidence per
 `prosdispatch-governance-priority.md`.
+
+---
+
+## Closure — Reconciliation 2026-04-29
+
+This bead is closed by reconciliation as part of bead_027. Superseded by bead_014.
+See `.beads/beads.jsonl` history entry for the full close note. No code changed in this
+reconciliation; the superseding bead's Stop Hook is cited as evidence per
+`prosdispatch-governance-priority.md`.
