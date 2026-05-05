@@ -208,3 +208,41 @@ This error is **pre-existing**, introduced by commit `d72bf40`, and is **outside
 **Operator fix required before re-running bead_027:**
 In `src/repositories/invoiceRepository.ts` line 108, change `let query` → `const query`.
 This is a one-line change. It can be committed directly to main or as a micro-bead.
+## Run Results — 2026-04-30 (Fix)
+
+### 1. npm run typecheck
+```
+> pros-dispatch@0.0.0 typecheck
+> tsc --noEmit
+```
+**PASS**
+
+### 2. npm run build
+```
+> pros-dispatch@0.0.0 build
+> tsc -b && vite build
+```
+**PASS**
+
+### 3. npm run lint
+```
+> pros-dispatch@0.0.0 lint
+> eslint .
+```
+**PASS** (0 errors, 9 warnings)
+
+### 4. npm run test
+```
+> pros-dispatch@0.0.0 test
+> vitest run
+```
+**PASS** (148/148)
+
+### 5. npm run check:i18n
+```
+> pros-dispatch@0.0.0 check:i18n
+> node scripts/check-i18n.cjs
+
+✅ i18n verified.
+```
+**PASS**
