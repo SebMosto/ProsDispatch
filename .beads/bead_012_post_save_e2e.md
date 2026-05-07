@@ -31,6 +31,7 @@ Both bugs caused the Jobs list page and Invoices list page to show a permanent l
 ## Resolution
 Added `enabled: !!user` to both hooks, importing `useAuth` from `src/lib/auth` in each file. This matches the pattern already established in `useClients` (`enabled: !!user`). Queries now wait for a confirmed authenticated user before executing, eliminating the silent RLS failures.
 
+
 ---
 
 ## Closure — Reconciliation 2026-04-29
