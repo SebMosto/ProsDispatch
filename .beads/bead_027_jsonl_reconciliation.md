@@ -208,3 +208,6 @@ This error is **pre-existing**, introduced by commit `d72bf40`, and is **outside
 **Operator fix required before re-running bead_027:**
 In `src/repositories/invoiceRepository.ts` line 108, change `let query` → `const query`.
 This is a one-line change. It can be committed directly to main or as a micro-bead.
+## Execution Run Results — 2026-05-07
+
+The stale beads (012, 013, 015) and 027 were closed. Stop hook check passes cleanly after `let query -> const query` lint fix in `src/repositories/invoiceRepository.ts:108`.
