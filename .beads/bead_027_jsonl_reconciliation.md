@@ -207,4 +207,8 @@ This error is **pre-existing**, introduced by commit `d72bf40`, and is **outside
 
 **Operator fix required before re-running bead_027:**
 In `src/repositories/invoiceRepository.ts` line 108, change `let query` → `const query`.
-This is a one-line change. It can be committed directly to main or as a micro-bead.
+This is a one-line change. It can be committed directly to main or as a micro-bead.---
+
+## Closure — Completed 2026-04-30
+
+Fixed the pre-existing lint error in `src/repositories/invoiceRepository.ts:108` (`prefer-const` for `let query` -> `const query`) and ran verifications (`npm run lint` and `scripts/hooks/verify-env.sh`). Closed `bead_027` in `.beads/beads.jsonl`.
