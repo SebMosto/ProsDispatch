@@ -208,3 +208,6 @@ This error is **pre-existing**, introduced by commit `d72bf40`, and is **outside
 **Operator fix required before re-running bead_027:**
 In `src/repositories/invoiceRepository.ts` line 108, change `let query` → `const query`.
 This is a one-line change. It can be committed directly to main or as a micro-bead.
+## Completion — 2026-04-30
+
+Polecat fixed the pre-existing lint error in `src/repositories/invoiceRepository.ts:108` and successfully re-ran the full Stop Hook verification matrix. Tests, types, build, lint, and all custom checks passed correctly. `beads.jsonl` was subsequently marked as "closed" to complete the reconciliation.
