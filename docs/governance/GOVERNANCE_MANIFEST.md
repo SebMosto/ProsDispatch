@@ -28,6 +28,18 @@ This **Governance Manifest** defines the unified rules and standards for the Dis
 
 * **Continuous Verification:** All code and designs are continuously checked against this governance bundle. An AI Auditor agent and CI checks will enforce that no commit or merge violates the rules (e.g. adding a forbidden component will trigger an immediate block – see CI\_Guardrails). "Governance debt" (deviations from mandated practices) is treated with the same severity as technical debt.
 
+* **Mandatory Bead-First Execution:** No code change, SQL
+  statement, migration, or Cursor prompt may be executed
+  without a corresponding open bead in `.beads/beads.jsonl`.
+  Every build session must begin by reading the bead log,
+  checking for open items, and opening a new bead before the
+  first action. Diagnostic sessions (analysis and conversation
+  only) are exempt, but transition to execution requires a bead
+  to be opened immediately. Retroactive bead logging after
+  execution is a governance violation; the agent must
+  self-correct by opening the bead retroactively before closing
+  the session.
+
 ## Active Laws / Spec Registry
 
 * **SPEC-005: Monetization (SaaS Billing + Job Payments)** — **Critical (Enforced)**

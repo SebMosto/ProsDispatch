@@ -73,6 +73,36 @@ When switching between Cursor and Claude Code Terminal, follow
 `docs/AGENT_INTEROP.md` and log each handoff in `.beads/beads.jsonl`.
 Never rely on tool memory over repository state.
 
+### Mandatory Session-Start Protocol
+*Trigger: The very first action of every session, before any
+planning, SQL, prompt writing, or code review.*
+
+1. **Read the bead log:** Open `.beads/beads.jsonl` and read
+   the last 5 entries.
+2. **Check for open beads:** If any bead has `"status":"open"`,
+   that bead takes priority. Do not start new work until the
+   open bead is addressed or explicitly deferred by the user.
+3. **Classify the session:** Determine whether this is a
+   diagnostic session (analysis only, no changes) or a build
+   session (any SQL execution, Cursor prompt, code review, or
+   file change).
+4. **Open a bead before executing:** If the session is or
+   becomes a build session, a new bead MUST be opened in
+   `.beads/beads.jsonl` before the first action is taken.
+   - Diagnostic sessions that produce no changes do not require
+     a bead.
+   - The moment a diagnostic session transitions to execution
+     (e.g. "let's fix that now"), stop and open a bead first.
+5. **No bead = no action:** Any SQL, Cursor prompt, migration,
+   or file change executed without an open bead is a governance
+   violation. The agent must self-correct by retroactively
+   logging the bead before closing the session.
+
+*Rationale: On 2026-05-15, a full build session (job list UI
+overhaul, archive confirmation, sort control, data cleanup) was
+executed without opening beads first. Beads were logged
+retroactively. This protocol prevents recurrence.*
+
 ### How to Plan
 1.  **Deep Planning:** Before coding, use `list_files` and `read_file` to understand the context.
 2.  **Ask Questions:** If requirements are vague, use `request_user_input`.
