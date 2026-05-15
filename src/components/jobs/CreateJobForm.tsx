@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +26,9 @@ const CreateJobForm = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [clientSearch, setClientSearch] = useState('');
+  const [clientOpen, setClientOpen] = useState(false);
+  const clientComboboxRef = useRef<HTMLDivElement>(null);
 
   // Memoize the schema to react to language changes
   const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
@@ -47,9 +50,25 @@ const CreateJobForm = () => {
   const { clients, loading: clientsLoading } = useClients();
   const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);
 
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return clients;
+    const lower = clientSearch.toLowerCase();
+    return clients.filter((c) => c.name.toLowerCase().includes(lower));
+  }, [clients, clientSearch]);
+
   useEffect(() => {
     setValue('property_id', '');
   }, [selectedClientId, setValue]);
+
+  useEffect(() => {
+    const handleOutsideMouseDown = (e: MouseEvent) => {
+      if (clientComboboxRef.current && !clientComboboxRef.current.contains(e.target as Node)) {
+        setClientOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideMouseDown);
+    return () => document.removeEventListener('mousedown', handleOutsideMouseDown);
+  }, []);
 
   const onSubmit = async (values: FormValues) => {
     setSubmitError(null);
@@ -113,22 +132,63 @@ const CreateJobForm = () => {
             <Controller
               control={control}
               name="client_id"
-              render={({ field }) => (
-                <select
-                  id="client_id"
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                  {...field}
-                >
-                  <option value="">
-                    {clientsLoading ? t('common.processing') : t('clients.list.empty')}
-                  </option>
-                  {clients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.name}
-                    </option>
-                  ))}
-                </select>
-              )}
+              render={({ field }) => {
+                const selectedClient = clients.find((c) => c.id === field.value);
+                return (
+                  <div ref={clientComboboxRef} className="relative">
+                    <input
+                      id="client_id"
+                      type="text"
+                      autoComplete="off"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      placeholder={clientsLoading ? t('common.processing') : t('clients.list.search')}
+                      value={clientOpen ? clientSearch : (selectedClient?.name ?? '')}
+                      onChange={(e) => {
+                        setClientSearch(e.target.value);
+                        if (field.value) field.onChange('');
+                        setClientOpen(true);
+                      }}
+                      onFocus={() => {
+                        setClientSearch('');
+                        setClientOpen(true);
+                      }}
+                    />
+                    {clientOpen && (
+                      <ul
+                        role="listbox"
+                        className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+                      >
+                        {filteredClients.map((client) => (
+                          <li key={client.id} role="option" aria-selected={client.id === field.value}>
+                            <button
+                              type="button"
+                              className="w-full px-3 py-2 text-left text-sm text-slate-800 hover:bg-slate-50"
+                              onClick={() => {
+                                field.onChange(client.id);
+                                setClientSearch('');
+                                setClientOpen(false);
+                              }}
+                            >
+                              {client.name}
+                            </button>
+                          </li>
+                        ))}
+                        {filteredClients.length === 0 && (
+                          <li role="option" aria-selected={false}>
+                            <button
+                              type="button"
+                              className="w-full px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-50"
+                              onClick={() => navigate('/clients/new')}
+                            >
+                              {t('clients.list.newClient')}
+                            </button>
+                          </li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                );
+              }}
             />
             {errors.client_id?.message ? (
               <p className="text-xs text-red-600">{errors.client_id.message}</p>
