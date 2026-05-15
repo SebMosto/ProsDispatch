@@ -5,9 +5,9 @@ import { useClients } from '../../hooks/useClients';
 import type { JobStatus } from '../../schemas/job';
 import JobCard from './JobCard';
 
-type TabKey = 'all' | 'active' | 'completed' | 'invoiced' | 'paid';
+type TabKey = 'all' | 'active' | 'completed' | 'invoiced' | 'paid' | 'archived';
 
-const TABS: TabKey[] = ['all', 'active', 'completed', 'invoiced', 'paid'];
+const TABS: TabKey[] = ['all', 'active', 'completed', 'invoiced', 'paid', 'archived'];
 
 const TAB_STATUSES: Record<TabKey, Set<JobStatus> | null> = {
   all: null,
@@ -15,6 +15,7 @@ const TAB_STATUSES: Record<TabKey, Set<JobStatus> | null> = {
   completed: new Set<JobStatus>(['completed']),
   invoiced: new Set<JobStatus>(['invoiced']),
   paid: new Set<JobStatus>(['paid']),
+  archived: new Set<JobStatus>(['archived']),
 };
 
 const TAB_LABELS: Record<TabKey, string> = {
@@ -23,6 +24,7 @@ const TAB_LABELS: Record<TabKey, string> = {
   completed: 'Completed',
   invoiced: 'Invoiced',
   paid: 'Paid',
+  archived: 'Archived',
 };
 
 const TAB_EMPTY: Record<TabKey, string> = {
@@ -31,6 +33,7 @@ const TAB_EMPTY: Record<TabKey, string> = {
   completed: 'No completed jobs.',
   invoiced: 'No invoiced jobs.',
   paid: 'No paid jobs.',
+  archived: 'No archived jobs.',
 };
 
 const JobList = () => {
@@ -59,7 +62,7 @@ const JobList = () => {
             : jobs.length;
           return { ...acc, [tab]: count };
         },
-        { all: 0, active: 0, completed: 0, invoiced: 0, paid: 0 }
+        { all: 0, active: 0, completed: 0, invoiced: 0, paid: 0, archived: 0 }
       ),
     [jobs]
   );
