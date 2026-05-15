@@ -36,9 +36,10 @@ This **Governance Manifest** defines the unified rules and standards for the Dis
   first action. Diagnostic sessions (analysis and conversation
   only) are exempt, but transition to execution requires a bead
   to be opened immediately. Retroactive bead logging after
-  execution is a governance violation; the agent must
-  self-correct by opening the bead retroactively before closing
-  the session.
+  execution is a governance violation and must be noted in the
+  bead history. This rule applies equally to all agents
+  (Cursor, Claude Code, Claude.ai) and to all session types
+  including data cleanup, UI changes, and infrastructure work.
 
 ## Active Laws / Spec Registry
 
