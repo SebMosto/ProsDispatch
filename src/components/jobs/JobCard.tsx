@@ -9,9 +9,10 @@ import JobStatusBadge from './JobStatusBadge';
 
 interface JobCardProps {
   job: JobRecord;
+  clientName?: string;
 }
 
-const JobCard = memo(({ job }: JobCardProps) => {
+const JobCard = memo(({ job, clientName }: JobCardProps) => {
   const { isOnline } = useNetworkStatus();
   const { t } = useTranslation();
 
@@ -40,16 +41,18 @@ const JobCard = memo(({ job }: JobCardProps) => {
 
       <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">{t('jobs.card.clientId')}</dt>
-          <dd className="font-medium text-slate-900">{job.client_id}</dd>
+          <dt className="text-slate-600">Client</dt>
+          <dd className="font-medium text-slate-900">{clientName ?? job.client_id.slice(0, 8)}</dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-slate-600">{t('jobs.card.propertyId')}</dt>
-          <dd className="font-medium text-slate-900">{job.property_id}</dd>
+          <dt className="text-slate-600">Address</dt>
+          <dd className="font-medium text-slate-900">{job.property_id.slice(0, 8)}</dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">{t('jobs.card.serviceDate')}</dt>
-          <dd className="font-medium text-slate-900">{job.service_date || t('jobs.card.notScheduled')}</dd>
+          <dd className="font-medium text-slate-900">
+            {job.service_date ? formatDate(job.service_date) : t('jobs.card.notScheduled')}
+          </dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">{t('jobs.card.lastUpdated')}</dt>
@@ -70,8 +73,6 @@ const JobCard = memo(({ job }: JobCardProps) => {
   );
 });
 
-// Optimization: Memoize JobCard to prevent unnecessary re-renders when parent list updates
-// but job data remains unchanged.
 JobCard.displayName = 'JobCard';
 
 export default JobCard;

@@ -1,10 +1,84 @@
-import JobCard from './JobCard';
-import { useJobs } from '../../hooks/useJobs';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useJobs } from '../../hooks/useJobs';
+import { useClients } from '../../hooks/useClients';
+import type { JobStatus } from '../../schemas/job';
+import JobCard from './JobCard';
+
+type TabKey = 'all' | 'active' | 'completed' | 'invoiced' | 'paid';
+
+const TABS: TabKey[] = ['all', 'active', 'completed', 'invoiced', 'paid'];
+
+const TAB_STATUSES: Record<TabKey, Set<JobStatus> | null> = {
+  all: null,
+  active: new Set<JobStatus>(['draft', 'sent', 'approved', 'in_progress']),
+  completed: new Set<JobStatus>(['completed']),
+  invoiced: new Set<JobStatus>(['invoiced']),
+  paid: new Set<JobStatus>(['paid']),
+};
+
+const TAB_LABELS: Record<TabKey, string> = {
+  all: 'All',
+  active: 'Active',
+  completed: 'Completed',
+  invoiced: 'Invoiced',
+  paid: 'Paid',
+};
+
+const TAB_EMPTY: Record<TabKey, string> = {
+  all: '',
+  active: 'No active jobs yet.',
+  completed: 'No completed jobs.',
+  invoiced: 'No invoiced jobs.',
+  paid: 'No paid jobs.',
+};
 
 const JobList = () => {
-  const { jobs, loading, error, refetch } = useJobs();
   const { t } = useTranslation();
+  const { jobs, loading, error, refetch } = useJobs();
+  const { clients } = useClients();
+  const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState<TabKey>('active');
+
+  const clientMap = useMemo(
+    () =>
+      clients.reduce<Record<string, string>>(
+        (acc, c) => ({ ...acc, [c.id]: c.name }),
+        {}
+      ),
+    [clients]
+  );
+
+  const tabCounts = useMemo<Record<TabKey, number>>(
+    () =>
+      TABS.reduce(
+        (acc, tab) => {
+          const statuses = TAB_STATUSES[tab];
+          const count = statuses
+            ? jobs.filter((j) => statuses.has(j.status)).length
+            : jobs.length;
+          return { ...acc, [tab]: count };
+        },
+        { all: 0, active: 0, completed: 0, invoiced: 0, paid: 0 }
+      ),
+    [jobs]
+  );
+
+  const filteredJobs = useMemo(() => {
+    const statuses = TAB_STATUSES[activeTab];
+    let result = statuses ? jobs.filter((j) => statuses.has(j.status)) : [...jobs];
+
+    if (search.trim()) {
+      const lower = search.trim().toLowerCase();
+      result = result.filter(
+        (j) =>
+          j.title.toLowerCase().includes(lower) ||
+          (clientMap[j.client_id] ?? '').toLowerCase().includes(lower)
+      );
+    }
+
+    return result.slice().sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+  }, [jobs, activeTab, search, clientMap]);
 
   if (loading) {
     return (
@@ -35,26 +109,48 @@ const JobList = () => {
     );
   }
 
-  if (!jobs.length) {
-    return (
-      <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-        <h3 className="text-base font-semibold text-slate-900">{t('jobs.list.title')}</h3>
-        <p className="text-slate-600">{t('jobs.list.empty')}</p>
-      </section>
-    );
-  }
+  const emptyMessage = activeTab === 'all' ? t('jobs.list.empty') : TAB_EMPTY[activeTab];
 
   return (
-    <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-slate-900">{t('jobs.list.title')}</h3>
-        <span className="text-xs text-slate-500">{t('jobs.list.total', { count: jobs.length })}</span>
-      </div>
-      <div className="space-y-3">
-        {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+    <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search by title or client…"
+        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      />
+
+      <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab}
+            onClick={() => setActiveTab(tab)}
+            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+              activeTab === tab
+                ? 'bg-slate-900 text-white'
+                : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            {TAB_LABELS[tab]} ({tabCounts[tab]})
+          </button>
         ))}
       </div>
+
+      <div className="text-right text-xs text-slate-500">{filteredJobs.length} jobs</div>
+
+      {filteredJobs.length === 0 ? (
+        <p className="py-4 text-center text-sm text-slate-500">{emptyMessage}</p>
+      ) : (
+        <div className="space-y-3">
+          {filteredJobs.map((job) => (
+            <JobCard key={job.id} job={job} clientName={clientMap[job.client_id]} />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
