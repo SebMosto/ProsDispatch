@@ -98,8 +98,8 @@ planning, SQL, prompt writing, or code review.*
    violation. The agent must self-correct by retroactively
    logging the bead before closing the session.
 
-*Rationale: On 2026-05-15, a full build session (job list UI
-overhaul, archive confirmation, sort control, data cleanup) was
+*Rationale: On 2026-05-15, a full build session (beads 028/029/030
+— job list UI overhaul, archive confirmation, data cleanup) was
 executed without opening beads first. Beads were logged
 retroactively. This protocol prevents recurrence.*
 
