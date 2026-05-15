@@ -21,6 +21,7 @@ const JobDetailPage = () => {
   const [actionError, setActionError] = useState<string | null>(null);
   const [sendingInvite, setSendingInvite] = useState(false);
   const [sentInviteToken, setSentInviteToken] = useState<string | null>(null);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
   const jobIdFromState = (state as { jobId?: string } | null)?.jobId;
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
@@ -186,7 +187,7 @@ const JobDetailPage = () => {
           </button>
           <button
             type="button"
-            onClick={() => performStatusChange('archived')}
+            onClick={() => setShowArchiveConfirm(true)}
             className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
           >
             {t('jobs.actions.archive')}
@@ -208,7 +209,7 @@ const JobDetailPage = () => {
           </button>
           <button
             type="button"
-            onClick={() => performStatusChange('archived')}
+            onClick={() => setShowArchiveConfirm(true)}
             className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
           >
             {t('jobs.actions.archive')}
@@ -231,7 +232,7 @@ const JobDetailPage = () => {
           {job.status === 'paid' ? (
             <button
               type="button"
-              onClick={() => performStatusChange('archived')}
+              onClick={() => setShowArchiveConfirm(true)}
               className="inline-flex items-center justify-center rounded-lg bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-500"
             >
               {t('jobs.actions.archive')}
@@ -379,6 +380,33 @@ const JobDetailPage = () => {
         <div className="flex flex-wrap gap-2">{renderActions()}</div>
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
       </section>
+
+      {showArchiveConfirm && (
+        <section className="space-y-3 rounded-xl border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-800">
+            Archive this job? It will be moved to your archive and hidden from active views.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={async () => {
+                await performStatusChange('archived');
+                setShowArchiveConfirm(false);
+              }}
+              className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-500"
+            >
+              Yes, archive
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowArchiveConfirm(false)}
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      )}
 
       {job.status === 'sent' && (sentInviteToken || approvalTokenQuery.data) ? (
         <section className="space-y-2 rounded-xl border border-blue-200 bg-blue-50 p-4">
