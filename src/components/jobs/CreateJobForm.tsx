@@ -9,8 +9,20 @@ import { getJobCreateSchema, JobCreateSchema as StaticJobCreateSchema } from '..
 import { useCreateJobMutation } from '../../hooks/useJobMutations';
 import { useClients } from '../../hooks/useClients';
 import { useProperties } from '../../hooks/useProperties';
+import { propertyRepository } from '../../repositories/propertyRepository';
+import { CANADIAN_PROVINCES } from '../../schemas/property';
 
 type FormValues = z.infer<typeof StaticJobCreateSchema>;
+
+const POSTAL_CODE_RE = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+
+const blankAddress = {
+  address_line1: '',
+  address_line2: '',
+  city: '',
+  province: 'QC' as (typeof CANADIAN_PROVINCES)[number],
+  postal_code: '',
+};
 
 const initialValues: FormValues = {
   client_id: '',
@@ -29,6 +41,10 @@ const CreateJobForm = () => {
   const [clientSearch, setClientSearch] = useState('');
   const [clientOpen, setClientOpen] = useState(false);
   const clientComboboxRef = useRef<HTMLDivElement>(null);
+  const [showAddProperty, setShowAddProperty] = useState(false);
+  const [propertySubmitting, setPropertySubmitting] = useState(false);
+  const [propertyError, setPropertyError] = useState<string | null>(null);
+  const [newAddress, setNewAddress] = useState(blankAddress);
 
   // Memoize the schema to react to language changes
   const JobCreateSchema = useMemo(() => getJobCreateSchema(t), [t]);
@@ -48,7 +64,9 @@ const CreateJobForm = () => {
   const createMutation = useCreateJobMutation();
   const selectedClientId = watch('client_id');
   const { clients, loading: clientsLoading } = useClients();
-  const { properties, loading: propertiesLoading } = useProperties(selectedClientId || undefined);
+  const { properties, loading: propertiesLoading, refetch: refetchProperties } = useProperties(
+    selectedClientId || undefined,
+  );
 
   const filteredClients = useMemo(() => {
     if (!clientSearch) return clients;
@@ -58,6 +76,9 @@ const CreateJobForm = () => {
 
   useEffect(() => {
     setValue('property_id', '');
+    setShowAddProperty(false);
+    setNewAddress(blankAddress);
+    setPropertyError(null);
   }, [selectedClientId, setValue]);
 
   useEffect(() => {
@@ -95,6 +116,47 @@ const CreateJobForm = () => {
     } catch (error) {
       const message = error instanceof Error ? error.message : t('jobs.create.errors.generic');
       setSubmitError(message);
+    }
+  };
+
+  const handleSaveAddress = async (fieldOnChange: (...event: unknown[]) => void) => {
+    setPropertyError(null);
+
+    if (newAddress.address_line1.length < 5) {
+      setPropertyError(t('validation.addressTooShort'));
+      return;
+    }
+    if (newAddress.city.length < 2) {
+      setPropertyError(t('validation.cityRequired'));
+      return;
+    }
+    if (!POSTAL_CODE_RE.test(newAddress.postal_code)) {
+      setPropertyError(t('validation.invalidPostalCode'));
+      return;
+    }
+
+    setPropertySubmitting(true);
+    try {
+      const result = await propertyRepository.create(
+        { client_id: selectedClientId, ...newAddress, country: 'CA' },
+        user?.id,
+      );
+
+      if (result.error) {
+        setPropertyError(result.error.message);
+        return;
+      }
+
+      await refetchProperties();
+      if (result.data) {
+        fieldOnChange(result.data.id);
+      }
+      setNewAddress(blankAddress);
+      setShowAddProperty(false);
+    } catch (err) {
+      setPropertyError(err instanceof Error ? err.message : t('jobs.create.errors.generic'));
+    } finally {
+      setPropertySubmitting(false);
     }
   };
 
@@ -204,20 +266,110 @@ const CreateJobForm = () => {
                 control={control}
                 name="property_id"
                 render={({ field }) => (
-                  <select
-                    id="property_id"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                    {...field}
-                  >
-                    <option value="">
-                      {propertiesLoading ? t('common.processing') : t('jobs.create.labels.propertyId')}
-                    </option>
-                    {properties.map((property) => (
-                      <option key={property.id} value={property.id}>
-                        {property.address_line1}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    {properties.length > 0 && !showAddProperty ? (
+                      <>
+                        <select
+                          id="property_id"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          {...field}
+                        >
+                          <option value="">
+                            {propertiesLoading ? t('common.processing') : t('jobs.create.labels.propertyId')}
+                          </option>
+                          {properties.map((property) => (
+                            <option key={property.id} value={property.id}>
+                              {property.address_line1}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          className="text-sm text-slate-500 underline"
+                          onClick={() => setShowAddProperty(true)}
+                        >
+                          + Add new address
+                        </button>
+                      </>
+                    ) : (
+                      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                        <input
+                          type="text"
+                          placeholder="123 rue Principale"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          value={newAddress.address_line1}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({ ...prev, address_line1: e.target.value }))
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="Apt 2 (optional)"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          value={newAddress.address_line2}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({ ...prev, address_line2: e.target.value }))
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="Montréal"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          value={newAddress.city}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({ ...prev, city: e.target.value }))
+                          }
+                        />
+                        <select
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          value={newAddress.province}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({
+                              ...prev,
+                              province: e.target.value as (typeof CANADIAN_PROVINCES)[number],
+                            }))
+                          }
+                        >
+                          {CANADIAN_PROVINCES.map((p) => (
+                            <option key={p} value={p}>
+                              {p}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="H2X 1Y4"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          value={newAddress.postal_code}
+                          onChange={(e) =>
+                            setNewAddress((prev) => ({ ...prev, postal_code: e.target.value }))
+                          }
+                        />
+                        {propertyError ? (
+                          <p className="text-xs text-red-600">{propertyError}</p>
+                        ) : null}
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={propertySubmitting}
+                            onClick={() => handleSaveAddress(field.onChange)}
+                          >
+                            {propertySubmitting ? t('common.processing') : 'Save address'}
+                          </button>
+                          {properties.length > 0 ? (
+                            <button
+                              type="button"
+                              className="text-sm text-slate-500 underline"
+                              onClick={() => setShowAddProperty(false)}
+                            >
+                              Cancel
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               />
               {errors.property_id?.message ? (

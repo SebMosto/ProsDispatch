@@ -50,7 +50,17 @@
       "Bash([ ! -d \"$INSTALLED_USER/$skill\" ])",
       "Bash(cp /tmp/everything-claude-code/rules/typescript/coding-style.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-coding-style.md)",
       "Bash(cp /tmp/everything-claude-code/rules/typescript/patterns.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-patterns.md)",
-      "Bash(python -c \"import sys,json; [print\\(json.dumps\\({k: v for k,v in json.loads\\(l\\).items\\(\\) if k in \\('id','status','history'\\)}, indent=2\\)\\) for l in sys.stdin]\")"
+      "Bash(python -c \"import sys,json; [print\\(json.dumps\\({k: v for k,v in json.loads\\(l\\).items\\(\\) if k in \\('id','status','history'\\)}, indent=2\\)\\) for l in sys.stdin]\")",
+      "Bash(supabase functions *)",
+      "PowerShell(supabase functions *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(npx supabase --version 2>&1)",
+      "PowerShell(npx supabase functions deploy finalize-and-send-invoice --project-ref nctjhybvdkmyxanqiphi 2>&1)",
+      "PowerShell(npx supabase functions deploy generate-invoice-pdf --project-ref nctjhybvdkmyxanqiphi 2>&1)",
+      "PowerShell(npx supabase functions deploy create-payment-intent --project-ref nctjhybvdkmyxanqiphi 2>&1)",
+      "PowerShell(npx supabase functions deploy create-connect-onboarding --project-ref nctjhybvdkmyxanqiphi 2>&1)",
+      "PowerShell(npx supabase functions deploy create-billing-portal-session --project-ref nctjhybvdkmyxanqiphi 2>&1)",
+      "PowerShell(npm run *)"
     ]
   },
   "hooks": {
