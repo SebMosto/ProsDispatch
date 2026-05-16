@@ -49,7 +49,8 @@
       "Read(//tmp/everything-claude-code/.agents/**)",
       "Bash([ ! -d \"$INSTALLED_USER/$skill\" ])",
       "Bash(cp /tmp/everything-claude-code/rules/typescript/coding-style.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-coding-style.md)",
-      "Bash(cp /tmp/everything-claude-code/rules/typescript/patterns.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-patterns.md)"
+      "Bash(cp /tmp/everything-claude-code/rules/typescript/patterns.md C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.claude/rules/ts-patterns.md)",
+      "Bash(python -c \"import sys,json; [print\\(json.dumps\\({k: v for k,v in json.loads\\(l\\).items\\(\\) if k in \\('id','status','history'\\)}, indent=2\\)\\) for l in sys.stdin]\")"
     ]
   },
   "hooks": {
