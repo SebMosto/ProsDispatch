@@ -34,8 +34,6 @@ type ProfileRow = {
   full_name: string | null;
   business_name: string | null;
   preferred_language?: string | null;
-  tax_gst_rate?: number | null;
-  tax_qst_rate?: number | null;
 };
 
 type ClientRow = {
@@ -272,19 +270,19 @@ Deno.serve(async (req) => {
     // 4. Calculate totals based on contractor tax configuration
     const { data: profile } = await service
       .from("profiles")
-      .select("id, full_name, business_name, preferred_language, tax_gst_rate, tax_qst_rate")
+      .select("id, full_name, business_name, preferred_language")
       .eq("id", invoice.contractor_id)
       .single<ProfileRow>();
 
-    const gstRate = profile?.tax_gst_rate ?? 0.05;
-    const qstRate = profile?.tax_qst_rate ?? 0.0;
+    const gstRate = 0.05;
+    const qstRate = 0.09975;
 
     const { subtotal, taxData, total } = calculateTotals(items, gstRate, qstRate);
 
     const today = new Date().toISOString().slice(0, 10);
 
     // 5. Generate PDF via internal Edge Function call
-    const pdfResponse = await fetch(`${siteUrl}/functions/v1/generate-invoice-pdf`, {
+    const pdfResponse = await fetch(`${supabaseUrl}/functions/v1/generate-invoice-pdf`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

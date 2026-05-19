@@ -60,7 +60,8 @@
       "PowerShell(npx supabase functions deploy create-payment-intent --project-ref nctjhybvdkmyxanqiphi 2>&1)",
       "PowerShell(npx supabase functions deploy create-connect-onboarding --project-ref nctjhybvdkmyxanqiphi 2>&1)",
       "PowerShell(npx supabase functions deploy create-billing-portal-session --project-ref nctjhybvdkmyxanqiphi 2>&1)",
-      "PowerShell(npm run *)"
+      "PowerShell(npm run *)",
+      "Bash(npx supabase *)"
     ]
   },
   "hooks": {
