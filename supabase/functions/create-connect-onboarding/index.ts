@@ -77,9 +77,6 @@ Deno.serve(async (req) => {
         type: "standard",
         country: "CA",
         email: user.email ?? undefined,
-        capabilities: {
-          transfers: { requested: true },
-        },
       });
 
       connectAccountId = account.id;
