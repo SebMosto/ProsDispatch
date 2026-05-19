@@ -107,7 +107,6 @@ Deno.serve(async (req) => {
       .from("invoice_items")
       .select("*")
       .eq("invoice_id", invoice.id)
-      .order("created_at", { ascending: true })
       .returns<InvoiceItemRow[]>();
 
     if (itemsError) {
