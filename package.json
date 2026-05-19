@@ -13,8 +13,10 @@
     "typegen": "supabase gen types typescript --local --schema public > src/types/database.types.ts",
     "typegen:remote": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/types/database.types.ts",
     "check:i18n": "node scripts/check-i18n.cjs",
+    "check:schema": "node scripts/checkSchema.cjs",
     "check:stack": "node scripts/check-stack.cjs",
-    "check:forbidden": "grep -rE 'bidding|escrow|marketplace|proposal' src/ && exit 1 || exit 0"
+    "check:forbidden": "grep -rE 'bidding|escrow|marketplace|proposal' src/ && exit 1 || exit 0",
+    "stop-hook": "npm run typecheck && npm run build && npm run lint && npm run test && npm run check:i18n && npm run check:schema"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

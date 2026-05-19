@@ -36,8 +36,6 @@ type ProfileRow = {
   city?: string | null;
   province?: string | null;
   postal_code?: string | null;
-  tax_gst_rate?: number | null;
-  tax_qst_rate?: number | null;
   preferred_language?: string | null;
 };
 
@@ -120,7 +118,7 @@ Deno.serve(async (req) => {
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, business_name, address_line1, address_line2, city, province, postal_code, tax_gst_rate, tax_qst_rate, preferred_language",
+        "id, full_name, business_name, address_line1, address_line2, city, province, postal_code, preferred_language",
       )
       .eq("id", invoice.contractor_id)
       .single<ProfileRow>();
