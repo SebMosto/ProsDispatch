@@ -62,7 +62,9 @@
       "PowerShell(npx supabase functions deploy create-billing-portal-session --project-ref nctjhybvdkmyxanqiphi 2>&1)",
       "PowerShell(npm run *)",
       "Bash(npx supabase *)",
-      "mcp__plugin_supabase_supabase__apply_migration"
+      "mcp__plugin_supabase_supabase__apply_migration",
+      "mcp__plugin_supabase_supabase__get_logs",
+      "mcp__plugin_supabase_supabase__execute_sql"
     ]
   },
   "hooks": {
