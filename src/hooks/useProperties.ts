@@ -9,9 +9,7 @@ export const useProperties = (clientId?: string) => {
   const queryKey = useMemo(() => ['properties', clientId ?? 'all'], [clientId]);
 
   const queryFn = useCallback(async () => {
-    if (!clientId) return [];
-
-    const result = await propertyRepository.list({ clientId });
+    const result = await propertyRepository.list(clientId ? { clientId } : undefined);
     if (result.error) {
       throw result.error;
     }
@@ -21,7 +19,7 @@ export const useProperties = (clientId?: string) => {
 
   const query = useQuery<PropertyRecord[], RepositoryError>({
     queryKey,
-    enabled: !!user && Boolean(clientId),
+    enabled: !!user,
     queryFn,
   });
 

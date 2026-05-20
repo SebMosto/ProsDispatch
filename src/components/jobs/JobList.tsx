@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useJobs } from '../../hooks/useJobs';
 import { useClients } from '../../hooks/useClients';
+import { useProperties } from '../../hooks/useProperties';
 import type { JobStatus } from '../../schemas/job';
 import JobCard from './JobCard';
 
@@ -40,8 +41,21 @@ const JobList = () => {
   const { t } = useTranslation();
   const { jobs, loading, error, refetch } = useJobs();
   const { clients } = useClients();
+  const { properties } = useProperties();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<TabKey>('active');
+
+  const propertyMap = useMemo(
+    () =>
+      properties.reduce<Record<string, string>>((acc, p) => {
+        const { address_line1, city, province, postal_code } = p;
+        if (address_line1 && city && province && postal_code) {
+          acc[p.id] = `${address_line1}, ${city}, ${province} ${postal_code}`;
+        }
+        return acc;
+      }, {}),
+    [properties]
+  );
 
   const clientMap = useMemo(
     () =>
@@ -150,7 +164,7 @@ const JobList = () => {
       ) : (
         <div className="space-y-3">
           {filteredJobs.map((job) => (
-            <JobCard key={job.id} job={job} clientName={clientMap[job.client_id]} />
+            <JobCard key={job.id} job={job} clientName={clientMap[job.client_id]} propertyAddress={job.property_id ? propertyMap[job.property_id] : undefined} />
           ))}
         </div>
       )}

@@ -72,8 +72,7 @@ const PublicInvoicePage = () => {
   }, [invoice?.tax_data]);
 
   const contractorLabel =
-    (invoice as { contractor_name?: string } | null)?.contractor_name ??
-    t('jobs.invoices.publicPage.contractorDefault');
+    (invoice as { contractor_name?: string } | null)?.contractor_name ?? '';
 
   const status = invoice?.status;
 

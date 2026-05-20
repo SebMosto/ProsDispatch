@@ -386,9 +386,6 @@
     },
     "invoices": {
       "title": "Factures",
-      "publicPage": {
-        "contractorDefault": "Entrepreneur Pros Dispatch"
-      },
       "draftInvoice": "Créer une facture",
       "errorLoading": "Impossible de charger les factures pour ce travail.",
       "emptyState": "Aucune facture pour le moment. Créez un brouillon pour commencer.",
