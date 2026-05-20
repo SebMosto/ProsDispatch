@@ -12,7 +12,7 @@ import { formatDate } from '../../lib/date';
 import { isSafeUrl } from '../../lib/security';
 
 const statusStyles: Record<string, string> = {
-  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-700',
+  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100',
   sent: 'bg-amber-100 text-amber-700',
   paid: 'bg-emerald-100 text-emerald-700',
   void: 'bg-red-100 text-red-700',

@@ -89,7 +89,7 @@ const InvoicesListPage = () => {
                             ? 'bg-green-100 text-green-700'
                             : invoice.status === 'void'
                               ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-700'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100'
                       }`}
                     >
                       {t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`)}

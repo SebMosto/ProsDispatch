@@ -124,7 +124,7 @@ const ClientDetailPage = () => {
               >
                 {client.type === 'business' ? t('clients.detail.types.business') : t('clients.detail.types.individual')}
               </span>
-              <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700">
+              <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700 dark:text-slate-100">
                 {client.preferred_language === 'fr' ? 'FR' : 'EN'}
               </span>
             </div>
@@ -208,13 +208,13 @@ const ClientDetailPage = () => {
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {properties.map((property) => (
-              <li key={property.id} className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 p-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+              <li key={property.id} className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3 shadow-sm">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-400">
                   {property.nickname ?? t('clients.detail.primaryProperty')}
                 </p>
-                <p className="text-xs text-slate-700">{property.address_line1}</p>
-                {property.address_line2 ? <p className="text-xs text-slate-600">{property.address_line2}</p> : null}
-                <p className="text-xs text-slate-700">
+                <p className="text-xs text-slate-700 dark:text-slate-200">{property.address_line1}</p>
+                {property.address_line2 ? <p className="text-xs text-slate-600 dark:text-slate-200">{property.address_line2}</p> : null}
+                <p className="text-xs text-slate-700 dark:text-slate-200">
                   {property.city}, {property.province} {property.postal_code}
                 </p>
               </li>
@@ -287,7 +287,7 @@ const ClientDetailPage = () => {
                     className="flex min-h-[44px] flex-wrap items-center justify-between gap-2 py-3 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded"
                   >
                     <span className="font-medium text-slate-900 dark:text-slate-100">{inv.invoice_number}</span>
-                    <span className="rounded bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700">
+                    <span className="rounded bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700 dark:text-slate-100">
                       {inv.status}
                     </span>
                     <span className="text-sm text-slate-700">

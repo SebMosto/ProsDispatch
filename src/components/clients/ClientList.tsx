@@ -158,8 +158,8 @@ const ClientList: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 pr-2 text-slate-600 dark:text-slate-300">{client.email ?? '—'}</td>
-                      <td className="py-3 pr-2">{client.jobCount}</td>
-                      <td className="py-3">{formatLastJob(client.lastJobDate, t)}</td>
+                      <td className="py-3 pr-2 dark:text-slate-300">{client.jobCount}</td>
+                      <td className="py-3 dark:text-slate-300">{formatLastJob(client.lastJobDate, t)}</td>
                     </tr>
                   ))}
                 </tbody>

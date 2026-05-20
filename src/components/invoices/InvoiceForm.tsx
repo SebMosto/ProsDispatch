@@ -246,7 +246,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">{t('jobs.invoices.form.statusLabel')}</label>
-            <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-100">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
               {t('jobs.invoices.form.statusDraft')}
             </div>
           </div>
@@ -364,7 +364,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">{t('jobs.invoices.form.amountLabel')}</label>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-100">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
                       {formatCurrency(lineAmount / 100, 'CAD', locale)}
                     </div>
                   </div>
