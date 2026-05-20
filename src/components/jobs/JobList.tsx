@@ -19,15 +19,6 @@ const TAB_STATUSES: Record<TabKey, Set<JobStatus> | null> = {
   archived: new Set<JobStatus>(['archived']),
 };
 
-const TAB_LABELS: Record<TabKey, string> = {
-  all: 'All',
-  active: 'Active',
-  completed: 'Completed',
-  invoiced: 'Invoiced',
-  paid: 'Paid',
-  archived: 'Archived',
-};
-
 const TAB_EMPTY: Record<TabKey, string> = {
   all: '',
   active: 'No active jobs yet.',
@@ -134,7 +125,7 @@ const JobList = () => {
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search by title or client…"
+        placeholder={t('jobs.list.searchPlaceholder')}
         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
       />
 
@@ -152,12 +143,12 @@ const JobList = () => {
                 : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
-            {TAB_LABELS[tab]} ({tabCounts[tab]})
+            {t(`jobs.list.tabs.${tab}`)} ({tabCounts[tab]})
           </button>
         ))}
       </div>
 
-      <div className="text-right text-xs text-slate-500">{filteredJobs.length} jobs</div>
+      <div className="text-right text-xs text-slate-500">{t('jobs.list.jobsCount', { count: filteredJobs.length })}</div>
 
       {filteredJobs.length === 0 ? (
         <p className="py-4 text-center text-sm text-slate-500">{emptyMessage}</p>

@@ -372,7 +372,17 @@
       "retry": "Retry",
       "title": "Jobs",
       "empty": "No jobs found. Create your first job to get started.",
-      "total": "{{count}} total"
+      "total": "{{count}} total",
+      "searchPlaceholder": "Search by title or client…",
+      "jobsCount": "{{count}} jobs",
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "completed": "Completed",
+        "invoiced": "Invoiced",
+        "paid": "Paid",
+        "archived": "Archived"
+      }
     },
     "invoices": {
       "title": "Invoices",

@@ -382,7 +382,17 @@
       "retry": "Réessayer",
       "title": "Travaux",
       "empty": "Aucun travail trouvé. Créez votre premier travail pour commencer.",
-      "total": "{{count}} total"
+      "total": "{{count}} total",
+      "searchPlaceholder": "Rechercher par titre ou client…",
+      "jobsCount": "{{count}} travaux",
+      "tabs": {
+        "all": "Tous",
+        "active": "Actifs",
+        "completed": "Terminés",
+        "invoiced": "Facturés",
+        "paid": "Payés",
+        "archived": "Archivés"
+      }
     },
     "invoices": {
       "title": "Factures",
