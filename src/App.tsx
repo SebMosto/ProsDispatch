@@ -104,7 +104,7 @@ const [isDark, setIsDark] = useState(() => {
           <button
             type="button"
             onClick={() => setIsDark((prev) => !prev)}
-            className="flex h-[34px] w-[34px] items-center justify-center rounded-[8px] text-[#64748B] transition-colors hover:bg-[#F1F5F9]"
+className="flex h-[34px] w-[34px] items-center justify-center rounded-[8px] text-[#64748B] transition-colors hover:bg-[#F1F5F9] dark:text-slate-400 dark:hover:bg-slate-700"
             aria-label={t('layout.darkModeAria')}
           >
             {isDark ? (
