@@ -177,7 +177,7 @@ const CreateJobForm = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-800" htmlFor="title">
+          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="title">
             {t('jobs.create.labels.title')}
           </label>
           <input
@@ -191,7 +191,7 @@ const CreateJobForm = () => {
 
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-800" htmlFor="client_id">
+            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="client_id">
               {t('jobs.create.labels.clientId')}
             </label>
             <Controller
@@ -262,7 +262,7 @@ const CreateJobForm = () => {
 
           {selectedClientId ? (
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-800" htmlFor="property_id">
+              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="property_id">
                 {t('jobs.create.labels.propertyId')}
               </label>
               <Controller
@@ -384,7 +384,7 @@ const CreateJobForm = () => {
 
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-slate-800" htmlFor="description">
+            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="description">
               {t('jobs.create.labels.description')}
             </label>
           </div>
@@ -400,7 +400,7 @@ const CreateJobForm = () => {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-800" htmlFor="service_date">
+          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="service_date">
             {t('jobs.create.labels.serviceDate')}
           </label>
           <input

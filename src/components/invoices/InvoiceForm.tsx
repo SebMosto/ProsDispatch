@@ -212,11 +212,11 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   return (
     <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <header className="space-y-1">
-        <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.form.header')}</p>
+        <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{t('jobs.invoices.form.header')}</p>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {activeInvoice ? t('jobs.invoices.form.invoiceTitle', { number: activeInvoice.invoice_number }) : t('jobs.invoices.form.createTitle')}
         </h2>
-        <p className="text-sm text-slate-600">{t('jobs.invoices.form.subtitle')}</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">{t('jobs.invoices.form.subtitle')}</p>
       </header>
 
       {actionSuccess ? (
@@ -233,7 +233,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
       <form className="space-y-4" onSubmit={onSaveDraft} noValidate>
         <div className="grid gap-3 md:grid-cols-3">
           <div className="space-y-1 md:col-span-2">
-            <label className="block text-sm font-medium text-slate-800" htmlFor="invoice_number">
+            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="invoice_number">
               {t('jobs.invoices.form.invoiceNumberLabel')}
             </label>
             <input
@@ -245,8 +245,8 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             />
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-slate-800">{t('jobs.invoices.form.statusLabel')}</label>
-            <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
+            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">{t('jobs.invoices.form.statusLabel')}</label>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-100">
               {t('jobs.invoices.form.statusDraft')}
             </div>
           </div>
@@ -286,7 +286,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             return (
               <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
                     type="button"
                     onClick={() => setItems((prev) => prev.filter((_entry, entryIndex) => entryIndex !== index))}
@@ -296,7 +296,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   </button>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.description`}>
+                  <label className="block text-xs font-medium text-slate-600 dark:text-slate-300" htmlFor={`items.${index}.description`}>
                     {t('jobs.invoices.form.descriptionLabel')}
                   </label>
                   <input
@@ -317,7 +317,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
                   <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.quantity`}>
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-300" htmlFor={`items.${index}.quantity`}>
                       {t('jobs.invoices.form.qtyLabel')}
                     </label>
                     <input
@@ -339,7 +339,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                     {getItemError(index, 'quantity') ? <p className="text-xs text-red-600">{getItemError(index, 'quantity')}</p> : null}
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600" htmlFor={`items.${index}.unitPrice`}>
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-300" htmlFor={`items.${index}.unitPrice`}>
                       {t('jobs.invoices.form.unitPriceLabel')}
                     </label>
                     <input
@@ -363,8 +363,8 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                     {getItemError(index, 'unitPrice') ? <p className="text-xs text-red-600">{getItemError(index, 'unitPrice')}</p> : null}
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">{t('jobs.invoices.form.amountLabel')}</label>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-100">
                       {formatCurrency(lineAmount / 100, 'CAD', locale)}
                     </div>
                   </div>
@@ -375,11 +375,11 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
         </div>
 
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
-          <div className="flex items-center justify-between text-sm text-slate-700">
+          <div className="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300">
             <span>{t('jobs.invoices.form.subtotalLabel')}</span>
             <span className="font-semibold">{formatCurrency(totals.subtotal / 100, 'CAD', locale)}</span>
           </div>
-          <div className="mt-2 space-y-1 text-sm text-slate-700">
+          <div className="mt-2 space-y-1 text-sm text-slate-700 dark:text-slate-300">
             {totals.taxData.map((tax) => (
               <div key={tax.label} className="flex items-center justify-between">
                 <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>

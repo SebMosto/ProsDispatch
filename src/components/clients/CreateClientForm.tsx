@@ -78,7 +78,7 @@ const CreateClientForm: React.FC = () => {
       <header className="flex items-center justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.create.title')}</h2>
-          <p className="text-sm text-slate-600">{t('clients.create.subtitle')}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{t('clients.create.subtitle')}</p>
         </div>
         <SyncBadge state="ONLINE_SYNCED" />
       </header>
@@ -91,7 +91,7 @@ const CreateClientForm: React.FC = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-1">
-          <span className="block text-sm font-medium text-slate-800">{t('clients.create.labels.type')}</span>
+          <span className="block text-sm font-medium text-slate-800 dark:text-slate-200">{t('clients.create.labels.type')}</span>
           <div className="grid grid-cols-2 gap-2" role="group" aria-label={t('clients.create.labels.type')}>
             {(['individual', 'business'] as const).map((option) => (
               <button
@@ -112,7 +112,7 @@ const CreateClientForm: React.FC = () => {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-800" htmlFor="name">
+          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="name">
             {t('clients.create.labels.name')}
           </label>
           <input
@@ -125,7 +125,7 @@ const CreateClientForm: React.FC = () => {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-800" htmlFor="email">
+          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="email">
             {t('clients.create.labels.email')}
           </label>
           <input
@@ -138,7 +138,7 @@ const CreateClientForm: React.FC = () => {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-800" htmlFor="preferred_language">
+          <label className="block text-sm font-medium text-slate-800 dark:text-slate-200" htmlFor="preferred_language">
             {t('clients.create.labels.preferredLanguage')}
           </label>
           <select
