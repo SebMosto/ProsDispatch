@@ -74,6 +74,17 @@
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"var d='';process.stdin.on('data',function(c){d+=c}).on('end',function(){try{var p=JSON.parse(d),f=p.file_path||(p.tool_input&&p.tool_input.file_path)||'';if(f.includes('beads.jsonl')||f.includes('.claude')){process.exit(0);}var fs=require('fs'),lines=fs.readFileSync('C:/Users/sebmo/OneDrive/Documents/GitHub/ProsDispatch/.beads/beads.jsonl','utf8').trim().split('\\n'),ok=lines.some(function(l){try{return JSON.parse(l).status==='open'}catch(e){return false}});if(!ok){process.stderr.write('\\n[BEAD GUARD] Blocked: no open bead found.\\nOpen a bead in .beads/beads.jsonl before editing source files.\\n\\n');process.exit(1);}process.exit(0);}catch(e){process.exit(0);}});\""
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
