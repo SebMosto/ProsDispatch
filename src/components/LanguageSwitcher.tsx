@@ -18,7 +18,7 @@ const LanguageSwitcher = () => {
     <button
       type="button"
       onClick={handleToggle}
-      className="flex items-center gap-[6px] rounded-full border border-[#CBD5E1] bg-[#E2E8F0] px-[10px] py-[5px] pr-[14px] text-[13px] font-medium text-[#0F172A] transition-colors hover:bg-[#CBD5E1]"
+className="flex items-center gap-[6px] rounded-full border border-[#CBD5E1] bg-[#E2E8F0] px-[10px] py-[5px] pr-[14px] text-[13px] font-medium text-[#0F172A] transition-colors hover:bg-[#CBD5E1] dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-600"
       aria-label={t('layout.languageLabel')}
     >
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
