@@ -85,7 +85,7 @@ const [isDark, setIsDark] = useState(() => {
 
   return (
     <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px]">
-      <header className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] bg-white px-5">
+<header className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] bg-white px-5 dark:bg-slate-800 dark:border-slate-700">
         <Link to="/dashboard" className="flex items-center gap-[9px]" aria-label={t('layout.brand')}>
           <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#0F172A]">
             <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
