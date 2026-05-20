@@ -74,11 +74,12 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px]">
       <header className="flex h-[52px] items-center justify-between border-b-[1.5px] border-[#0F172A] bg-white px-5">
-        <div className="flex items-center gap-[9px]">
-          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#0F172A]">
-            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
-              <rect x="9" y="1" width="7" height="4.5" rx="1" transform="rotate(45 9 1)" fill="white" />
-              <rect x="2" y="8" width="2" height="8" rx="1" transform="rotate(-45 2 8)" fill="white" />
+        <div className="flex items-center gap-2">
+          <div className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] bg-[#0F172A]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3l8.5-8.5"/>
+              <path d="M17.64 15 22 10.64"/>
+              <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 5.6a5.009 5.009 0 0 0-6.22.78l1.7 1.71"/>
             </svg>
           </div>
           <div className="flex items-center gap-2">
