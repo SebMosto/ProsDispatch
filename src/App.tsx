@@ -43,7 +43,13 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
   const { pathname } = useLocation();
-  const [isDark, setIsDark] = useState(false);
+const [isDark, setIsDark] = useState(() => {
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    return saved === 'dark';
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+});
   const initials = useMemo(() => {
     const fullName = profile?.full_name?.trim() ?? '';
     if (!fullName) return t('layout.initials');
