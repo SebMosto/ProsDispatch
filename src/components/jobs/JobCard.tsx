@@ -10,9 +10,10 @@ import JobStatusBadge from './JobStatusBadge';
 interface JobCardProps {
   job: JobRecord;
   clientName?: string;
+  propertyAddress?: string;
 }
 
-const JobCard = memo(({ job, clientName }: JobCardProps) => {
+const JobCard = memo(({ job, clientName, propertyAddress }: JobCardProps) => {
   const { isOnline } = useNetworkStatus();
   const { t } = useTranslation();
 
@@ -42,11 +43,11 @@ const JobCard = memo(({ job, clientName }: JobCardProps) => {
       <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">Client</dt>
-          <dd className="font-medium text-slate-900">{clientName ?? job.client_id.slice(0, 8)}</dd>
+          <dd className="font-medium text-slate-900">{clientName ?? '—'}</dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">Address</dt>
-          <dd className="font-medium text-slate-900">{job.property_id.slice(0, 8)}</dd>
+          <dd className="font-medium text-slate-900">{propertyAddress ?? '—'}</dd>
         </div>
         <div className="flex flex-col gap-1">
           <dt className="text-slate-600">{t('jobs.card.serviceDate')}</dt>

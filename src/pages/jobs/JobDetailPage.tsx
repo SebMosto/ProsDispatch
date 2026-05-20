@@ -5,7 +5,9 @@ import { Link, routePaths, useLocation, useNavigate } from '../../lib/router';
 import { advanceJobStatus } from '../../lib/jobStatus';
 import { useUpdateJobMutation } from '../../hooks/useJobMutations';
 import { useJobInvoices } from '../../hooks/useInvoices';
+import { useClients } from '../../hooks/useClients';
 import { jobRepository, type JobRecord } from '../../repositories/jobRepository';
+import { propertyRepository } from '../../repositories/propertyRepository';
 import SyncBadge, { type SyncBadgeState } from '../../components/system/SyncBadge';
 import JobStatusBadge from '../../components/jobs/JobStatusBadge';
 import { useNetworkStatus } from '../../lib/network';
@@ -26,6 +28,7 @@ const JobDetailPage = () => {
   const jobIdFromPath = pathname.split('/').filter(Boolean)[1];
   const jobId = jobIdFromState || jobIdFromPath;
   const { invoices, loading: invoicesLoading, error: invoicesError } = useJobInvoices(jobId);
+  const { clients } = useClients();
 
   const queryClient = useQueryClient();
   const updateMutation = useUpdateJobMutation(jobId ?? '');
@@ -57,6 +60,22 @@ const JobDetailPage = () => {
   });
 
   const job = query.data;
+
+  const clientRecord = useMemo(
+    () => clients.find((c) => c.id === job?.client_id) ?? null,
+    [clients, job?.client_id],
+  );
+
+  const propertyQuery = useQuery({
+    queryKey: ['property', job?.property_id],
+    queryFn: async () => {
+      if (!job?.property_id) return null;
+      const result = await propertyRepository.get(job.property_id);
+      return result.data ?? null;
+    },
+    enabled: Boolean(job?.property_id),
+  });
+  const property = propertyQuery.data ?? null;
 
   const syncState: SyncBadgeState = useMemo(() => {
     if (!job) return 'ONLINE_SYNCING';
@@ -292,7 +311,7 @@ const JobDetailPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold text-slate-500">{t('jobs.card.jobNum', { id: job.id })}</p>
+          <p className="text-xs font-semibold text-slate-500">{t('jobs.card.jobNum', { id: job.id.slice(0, 8) })}</p>
           <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
           <p className="text-sm text-slate-600">{job.description || t('jobs.detail.noDescription')}</p>
         </div>
@@ -309,16 +328,39 @@ const JobDetailPage = () => {
             </dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">{t('jobs.detail.labels.clientId')}</dt>
-            <dd className="font-medium text-slate-900">{job.client_id}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.client')}</dt>
+            <dd className="font-medium text-slate-900">
+              {clientRecord ? (
+                <Link to={`/clients/${job.client_id}`} className="text-blue-600 hover:underline">
+                  {clientRecord.name}
+                </Link>
+              ) : (
+                job.client_id.slice(0, 8)
+              )}
+            </dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-slate-600">{t('jobs.detail.labels.propertyId')}</dt>
-            <dd className="font-medium text-slate-900">{job.property_id}</dd>
+            <dt className="text-slate-600">{t('jobs.detail.labels.address')}</dt>
+            <dd className="font-medium text-slate-900">
+              {property ? (
+                <span>
+                  {[property.address_line1, property.city, property.province].filter(Boolean).join(', ')}
+                  {job.property_id ? (
+                    <span className="ml-1 text-xs text-slate-400">{job.property_id.slice(0, 8)}</span>
+                  ) : null}
+                </span>
+              ) : job.property_id ? (
+                job.property_id.slice(0, 8)
+              ) : (
+                '—'
+              )}
+            </dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.serviceDate')}</dt>
-            <dd className="font-medium text-slate-900">{job.service_date || t('jobs.detail.notScheduled')}</dd>
+            <dd className="font-medium text-slate-900">
+              {job.service_date ? formatDate(job.service_date) : t('jobs.detail.notScheduled')}
+            </dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.created')}</dt>

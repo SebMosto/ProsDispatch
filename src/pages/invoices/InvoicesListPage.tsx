@@ -1,11 +1,32 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '../../lib/router';
 import { useInvoicesByContractor } from '../../hooks/useInvoices';
+import { useJobs } from '../../hooks/useJobs';
+import { useClients } from '../../hooks/useClients';
+import { formatCurrency } from '../../lib/currency';
+import { formatDate } from '../../lib/date';
 
 const InvoicesListPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.language || 'en').startsWith('fr') ? 'fr-CA' : 'en-CA';
   const { invoices, loading, error, refetch } = useInvoicesByContractor();
+  const { jobs } = useJobs();
+  const { clients } = useClients();
   const errorText = error?.reason === 'network' ? t('errors.timeout') : t('errors.unexpected');
+
+  const jobMap = useMemo(
+    () => jobs.reduce<Record<string, { title: string; client_id: string }>>(
+      (acc, j) => ({ ...acc, [j.id]: { title: j.title, client_id: j.client_id } }),
+      {}
+    ),
+    [jobs]
+  );
+
+  const clientMap = useMemo(
+    () => clients.reduce<Record<string, string>>((acc, c) => ({ ...acc, [c.id]: c.name }), {}),
+    [clients]
+  );
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
@@ -33,31 +54,51 @@ const InvoicesListPage = () => {
         <p className="py-8 text-center text-sm text-slate-500">{t('invoices.list.empty')}</p>
       ) : (
         <ul className="space-y-2">
-          {invoices.map((invoice) => (
-            <li key={invoice.id}>
-              <Link
-                to={`/invoices/${invoice.id}`}
-                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm transition hover:bg-slate-50"
-              >
-                <span className="font-semibold text-slate-900">
-                  {invoice.invoice_number ?? `#${invoice.id.slice(0, 8)}`}
-                </span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                    invoice.status === 'overdue'
-                      ? 'bg-red-100 text-red-700'
-                      : invoice.status === 'paid'
-                        ? 'bg-green-100 text-green-700'
-                        : invoice.status === 'void'
-                          ? 'bg-slate-100 text-slate-500'
-                          : 'bg-slate-100 text-slate-700'
-                  }`}
+          {invoices.map((invoice) => {
+            const jobData = jobMap[invoice.job_id];
+            const clientName = jobData ? (clientMap[jobData.client_id] ?? null) : null;
+            return (
+              <li key={invoice.id}>
+                <Link
+                  to={`/invoices/${invoice.id}`}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm transition hover:bg-slate-50"
                 >
-                  {t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`)}
-                </span>
-              </Link>
-            </li>
-          ))}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-slate-900">
+                      {invoice.invoice_number ?? `#${invoice.id.slice(0, 8)}`}
+                    </p>
+                    {clientName ? (
+                      <p className="truncate text-xs text-slate-500">{clientName}</p>
+                    ) : null}
+                    {jobData?.title ? (
+                      <p className="truncate text-xs text-slate-400">{jobData.title}</p>
+                    ) : null}
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="font-semibold text-slate-900">
+                      {formatCurrency((invoice.total_amount ?? 0) / 100, 'CAD', locale)}
+                    </span>
+                    {invoice.date_issued ? (
+                      <span className="text-xs text-slate-500">{formatDate(invoice.date_issued)}</span>
+                    ) : null}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        invoice.status === 'overdue'
+                          ? 'bg-red-100 text-red-700'
+                          : invoice.status === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : invoice.status === 'void'
+                              ? 'bg-slate-100 text-slate-500'
+                              : 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`)}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>

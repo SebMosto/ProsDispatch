@@ -350,6 +350,8 @@ export type Database = {
       invoices: {
         Row: {
           contractor_id: string
+          date_due: string
+          date_issued: string | null
           id: string
           invoice_number: string
           job_id: string
@@ -365,6 +367,8 @@ export type Database = {
         }
         Insert: {
           contractor_id: string
+          date_due?: string
+          date_issued?: string | null
           id?: string
           invoice_number: string
           job_id: string
@@ -380,6 +384,8 @@ export type Database = {
         }
         Update: {
           contractor_id?: string
+          date_due?: string
+          date_issued?: string | null
           id?: string
           invoice_number?: string
           job_id?: string

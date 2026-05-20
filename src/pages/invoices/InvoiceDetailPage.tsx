@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import InvoiceForm from '../../components/invoices/InvoiceForm';
 import MarkPaidModal from '../../components/invoices/MarkPaidModal';
 import { useInvoice, useVoidInvoice } from '../../hooks/useInvoices';
+import { useClients } from '../../hooks/useClients';
 import { Link, useLocation, useNavigate } from '../../lib/router';
+import { jobRepository } from '../../repositories/jobRepository';
 import { formatCurrency } from '../../lib/currency';
 import { formatDate } from '../../lib/date';
 import { isSafeUrl } from '../../lib/security';
@@ -25,6 +28,24 @@ const InvoiceDetailPage = () => {
   const invoiceId = segments[1];
 
   const { invoice, loading, error } = useInvoice(invoiceId);
+  const { clients } = useClients();
+
+  const jobQuery = useQuery({
+    queryKey: ['job', invoice?.job_id],
+    queryFn: async () => {
+      if (!invoice?.job_id) return null;
+      const result = await jobRepository.get(invoice.job_id);
+      return result.data ?? null;
+    },
+    enabled: Boolean(invoice?.job_id),
+  });
+  const job = jobQuery.data ?? null;
+
+  const clientName = useMemo(
+    () => clients.find((c) => c.id === job?.client_id)?.name ?? null,
+    [clients, job?.client_id],
+  );
+
   const voidMutation = useVoidInvoice();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -34,7 +55,7 @@ const InvoiceDetailPage = () => {
       return [] as { label: string; rate: number; amount: number }[];
     }
     return invoice.tax_data as { label: string; rate: number; amount: number }[];
-  }, [invoice?.tax_data]);
+  }, [invoice]);
 
   if (!invoiceId) {
     return (
@@ -97,6 +118,15 @@ const InvoiceDetailPage = () => {
         <div className="space-y-1">
           <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.detailPage.invoiceLabel', { number: invoice.invoice_number })}</p>
           <h1 className="text-2xl font-semibold text-slate-900">{t('jobs.invoices.detailPage.title')}</h1>
+          {clientName ? (
+            <p className="text-sm text-slate-600">{clientName}</p>
+          ) : null}
+          {job?.title ? (
+            <p className="text-sm text-slate-500">{job.title}</p>
+          ) : null}
+          {invoice.date_issued ? (
+            <p className="text-xs text-slate-400">{formatDate(invoice.date_issued)}</p>
+          ) : null}
         </div>
         <span
           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize ${

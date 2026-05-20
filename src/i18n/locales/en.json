@@ -327,6 +327,8 @@
         "status": "Status",
         "clientId": "Client ID",
         "propertyId": "Property ID",
+        "client": "Client",
+        "address": "Address",
         "serviceDate": "Service Date",
         "created": "Created",
         "updated": "Updated"
