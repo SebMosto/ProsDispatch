@@ -68,7 +68,9 @@
       "mcp__plugin_supabase_supabase__list_projects",
       "Bash(npx tsc *)",
       "Bash(dir \"C:\\\\Users\\\\sebmo\\\\OneDrive\\\\Documents\\\\GitHub\\\\ProsDispatch\" /b)",
-      "Bash(findstr tailwind *)"
+      "Bash(findstr tailwind *)",
+      "Bash(cat src/lib/taxCalculator.ts)",
+      "Bash(find src *)"
     ]
   },
   "hooks": {
