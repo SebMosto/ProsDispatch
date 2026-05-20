@@ -203,7 +203,7 @@ const ClientEditPage = () => {
             <input
               id="edit-name"
               type="text"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('name')}
             />
             {errors.name?.message ? <p className="text-xs text-red-600">{errors.name.message}</p> : null}
@@ -216,7 +216,7 @@ const ClientEditPage = () => {
             <input
               id="edit-email"
               type="email"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('email')}
             />
             {errors.email?.message ? <p className="text-xs text-red-600">{errors.email.message}</p> : null}
@@ -228,7 +228,7 @@ const ClientEditPage = () => {
             </label>
             <select
               id="edit-preferred_language"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('preferred_language')}
             >
               <option value="en">{t('clients.create.labels.languages.en')}</option>
@@ -242,7 +242,7 @@ const ClientEditPage = () => {
           <div className="flex flex-wrap gap-2">
             <button
               type="submit"
-              className="min-h-[44px] flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-70"
+              className="min-h-[44px] flex-1 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-70"
               disabled={isSubmitting}
             >
               {isSubmitting ? t('clients.create.actions.submitting') : t('clients.create.actions.submit')}

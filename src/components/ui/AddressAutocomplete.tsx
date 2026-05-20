@@ -209,7 +209,7 @@ const AddressAutocomplete = ({ value, onChange, onSelect, ...inputProps }: Addre
         {...inputProps}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={`w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
+        className={`w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
       />
     );
   }
@@ -221,7 +221,7 @@ const AddressAutocomplete = ({ value, onChange, onSelect, ...inputProps }: Addre
         value={value}
         onFocus={() => setShowSuggestions(true)}
         onChange={(event) => onChange(event.target.value)}
-        className={`w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
+        className={`w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
         aria-autocomplete="list"
         aria-expanded={showSuggestions}
         aria-busy={isLoading}

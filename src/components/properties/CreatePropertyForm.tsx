@@ -51,7 +51,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           </label>
           <select
             id="client_id"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('client_id')}
             disabled={clientsLoading || clients.length === 0}
           >
@@ -100,7 +100,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           <input
             id="address_line2"
             type="text"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('address_line2')}
           />
           {errors.address_line2?.message ? <p className="text-xs text-red-600">{errors.address_line2.message}</p> : null}
@@ -114,7 +114,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
             <input
               id="city"
               type="text"
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('city')}
             />
             {errors.city?.message ? <p className="text-xs text-red-600">{errors.city.message}</p> : null}
@@ -126,7 +126,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
             </label>
             <select
               id="province"
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('province')}
             >
               {CANADIAN_PROVINCES.map((province) => (
@@ -146,7 +146,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           <input
             id="postal_code"
             type="text"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('postal_code')}
           />
           {errors.postal_code?.message ? <p className="text-xs text-red-600">{errors.postal_code.message}</p> : null}
@@ -159,7 +159,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
           <input
             id="nickname"
             type="text"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('nickname')}
           />
           {errors.nickname?.message ? <p className="text-xs text-red-600">{errors.nickname.message}</p> : null}
@@ -167,7 +167,7 @@ const CreatePropertyForm = ({ clientId }: CreatePropertyFormProps) => {
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSubmitting}
         >
           {isSubmitting ? t('auth.shared.loading') : t('properties.create.actions.submit')}

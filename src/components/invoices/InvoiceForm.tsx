@@ -241,12 +241,12 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
               type="text"
               value={activeInvoice?.invoice_number ?? t('jobs.invoices.form.invoiceNumberPlaceholder')}
               readOnly
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-600 dark:text-slate-100 shadow-sm"
             />
           </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800">{t('jobs.invoices.form.statusLabel')}</label>
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
               {t('jobs.invoices.form.statusDraft')}
             </div>
           </div>
@@ -284,7 +284,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
@@ -302,7 +302,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   <input
                     id={`items.${index}.description`}
                     type="text"
-                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                     value={item.description}
                     onChange={(event) => {
                       const nextValue = event.target.value;
@@ -325,7 +325,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                       type="number"
                       step="0.1"
                       min="0"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       value={item.quantity}
                       onChange={(event) => {
                         const nextValue = Number.parseFloat(event.target.value || '0');
@@ -347,7 +347,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                       type="number"
                       step="0.01"
                       min="0"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       value={item.unitPrice}
                       onChange={(event) => {
                         const nextValue = Number.parseFloat(event.target.value || '0');
@@ -364,7 +364,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-slate-100">
                       {formatCurrency(lineAmount / 100, 'CAD', locale)}
                     </div>
                   </div>
@@ -382,7 +382,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {totals.taxData.map((tax) => (
               <div key={tax.label} className="flex items-center justify-between">
-                <span>{`${t(`taxes.${tax.label}`, tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
+                <span>{`${t(tax.label)} (${(tax.rate * 100).toFixed(2)}%)`}</span>
                 <span className="font-semibold">{formatCurrency(tax.amount / 100, 'CAD', locale)}</span>
               </div>
             ))}
@@ -397,7 +397,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           <button
             type="submit"
             disabled={loadingState}
-            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loadingState ? t('jobs.invoices.form.saving') : t('jobs.invoices.form.saveDraft')}
           </button>

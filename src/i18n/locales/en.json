@@ -292,8 +292,8 @@
       "descriptionWarning": "Do not include access codes or personal information.",
       "labels": {
         "title": "Job title",
-        "clientId": "Client ID",
-        "propertyId": "Property ID",
+        "clientId": "Client",
+        "propertyId": "Address",
         "description": "Description (optional)",
         "serviceDate": "Service date (optional)"
       },

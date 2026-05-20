@@ -63,7 +63,7 @@ const ClientDetailPage = () => {
         <p className="text-sm text-red-700">{t('clients.detail.noSelection')}</p>
         <Link
           to="/clients"
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('clients.detail.backToClients')}
         </Link>
@@ -89,7 +89,7 @@ const ClientDetailPage = () => {
         <p className="text-sm text-red-700">{t('clients.detail.error')}</p>
         <Link
           to="/clients"
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('clients.detail.backToClients')}
         </Link>
@@ -140,7 +140,7 @@ const ClientDetailPage = () => {
           <div className="flex min-h-[44px] flex-wrap items-center gap-2">
             <Link
               to={`/clients/${client.id}/edit`}
-              className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               {t('clients.detail.editClient')}
             </Link>
@@ -178,7 +178,7 @@ const ClientDetailPage = () => {
             <button
               type="button"
               onClick={() => setDeleteConfirmOpen(false)}
-              className="rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800"
+              className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200"
             >
               {t('jobs.invoices.markPaidModal.cancel')}
             </button>
@@ -198,7 +198,7 @@ const ClientDetailPage = () => {
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.detail.properties')}</h2>
           <Link
             to={`/clients/${client.id}/properties/new`}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             {t('clients.detail.addProperty')}
           </Link>

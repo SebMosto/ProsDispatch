@@ -70,7 +70,7 @@ const Sidebar = () => {
             to={item.href}
             className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
               active
-                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A] dark:text-slate-100'
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] dark:bg-slate-700 font-bold text-[#0F172A] dark:text-slate-100'
                 : 'border-transparent font-medium text-[#64748B] dark:text-slate-400 hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A] dark:hover:text-white'
             }`}
           >
@@ -98,7 +98,7 @@ const Sidebar = () => {
             to={item.href}
             className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
               active
-                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A] dark:text-slate-100'
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] dark:bg-slate-700 font-bold text-[#0F172A] dark:text-slate-100'
                 : 'border-transparent font-medium text-[#64748B] dark:text-slate-400 hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A] dark:hover:text-white'
             }`}
           >

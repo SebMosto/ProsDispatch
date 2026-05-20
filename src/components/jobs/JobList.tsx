@@ -40,8 +40,9 @@ const JobList = () => {
     () =>
       properties.reduce<Record<string, string>>((acc, p) => {
         const { address_line1, city, province, postal_code } = p;
-        if (address_line1 && city && province && postal_code) {
-          acc[p.id] = `${address_line1}, ${city}, ${province} ${postal_code}`;
+        if (address_line1) {
+          const parts = [address_line1, city, province, postal_code].filter(Boolean);
+          acc[p.id] = parts.join(', ');
         }
         return acc;
       }, {}),
@@ -126,7 +127,7 @@ const JobList = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={t('jobs.list.searchPlaceholder')}
-        className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:placeholder:text-slate-500"
       />
 
       <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
@@ -139,8 +140,8 @@ const JobList = () => {
             onClick={() => setActiveTab(tab)}
             className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
               activeTab === tab
-                ? 'bg-slate-900 text-white'
-                : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 hover:bg-slate-50'
+                ? 'bg-slate-900 dark:bg-slate-700 text-white'
+                : 'border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
             }`}
           >
             {t(`jobs.list.tabs.${tab}`)} ({tabCounts[tab]})

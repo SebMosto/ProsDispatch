@@ -18,7 +18,7 @@ const CreateInvoicePage = () => {
         <button
           type="button"
           onClick={() => navigate('/jobs')}
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('jobs.invoices.createPage.backToJobs')}
         </button>

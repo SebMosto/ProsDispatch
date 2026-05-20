@@ -65,7 +65,7 @@ const JobCard = memo(({ job, clientName, propertyAddress }: JobCardProps) => {
         <div className="text-xs text-slate-500 dark:text-slate-400">{t('jobs.card.created', { date: formatDate(job.created_at) })}</div>
         <Link
           to={`/jobs/${job.id}`}
-          className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('jobs.card.viewDetails')}
         </Link>

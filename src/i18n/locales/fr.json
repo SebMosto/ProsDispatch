@@ -302,8 +302,8 @@
       "descriptionWarning": "N'incluez pas de codes d'accès ou d'informations personnelles.",
       "labels": {
         "title": "Titre du travail",
-        "clientId": "ID client",
-        "propertyId": "ID de la propriété",
+        "clientId": "Client",
+        "propertyId": "Adresse",
         "description": "Description (optionnelle)",
         "serviceDate": "Date de service (optionnelle)"
       },

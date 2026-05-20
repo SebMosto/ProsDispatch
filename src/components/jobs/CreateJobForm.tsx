@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +37,7 @@ const initialValues: FormValues = {
 const CreateJobForm = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [clientSearch, setClientSearch] = useState('');
@@ -147,6 +149,7 @@ const CreateJobForm = () => {
         return;
       }
 
+      await queryClient.invalidateQueries({ queryKey: ['properties'] });
       await refetchProperties();
       if (result.data) {
         fieldOnChange(result.data.id);
@@ -180,7 +183,7 @@ const CreateJobForm = () => {
           <input
             id="title"
             type="text"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('title')}
           />
           {errors.title?.message ? <p className="text-xs text-red-600">{errors.title.message}</p> : null}
@@ -202,7 +205,7 @@ const CreateJobForm = () => {
                       id="client_id"
                       type="text"
                       autoComplete="off"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       placeholder={clientsLoading ? t('common.processing') : t('clients.list.search')}
                       value={clientOpen ? clientSearch : (selectedClient?.name ?? '')}
                       onChange={(e) => {
@@ -218,13 +221,13 @@ const CreateJobForm = () => {
                     {clientOpen && (
                       <ul
                         role="listbox"
-                        className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 shadow-lg"
+                        className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 py-1 shadow-lg"
                       >
                         {filteredClients.map((client) => (
                           <li key={client.id} role="option" aria-selected={client.id === field.value}>
                             <button
                               type="button"
-                              className="w-full px-3 py-2 text-left text-sm text-slate-800 hover:bg-slate-50"
+                              className="w-full px-3 py-2 text-left text-sm text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-600"
                               onClick={() => {
                                 field.onChange(client.id);
                                 setClientSearch('');
@@ -271,7 +274,7 @@ const CreateJobForm = () => {
                       <>
                         <select
                           id="property_id"
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           {...field}
                         >
                           <option value="">
@@ -296,7 +299,7 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="123 rue Principale"
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.address_line1}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, address_line1: e.target.value }))
@@ -305,7 +308,7 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="Apt 2 (optional)"
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.address_line2}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, address_line2: e.target.value }))
@@ -314,14 +317,14 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="Montréal"
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.city}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, city: e.target.value }))
                           }
                         />
                         <select
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.province}
                           onChange={(e) =>
                             setNewAddress((prev) => ({
@@ -339,7 +342,7 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="H2X 1Y4"
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.postal_code}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, postal_code: e.target.value }))
@@ -351,7 +354,7 @@ const CreateJobForm = () => {
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
                             disabled={propertySubmitting}
                             onClick={() => handleSaveAddress(field.onChange)}
                           >
@@ -388,7 +391,7 @@ const CreateJobForm = () => {
           <textarea
             id="description"
             rows={4}
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('description')}
           />
           {errors.description?.message ? (
@@ -403,7 +406,7 @@ const CreateJobForm = () => {
           <input
             id="service_date"
             type="date"
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('service_date')}
           />
           {errors.service_date?.message ? (
@@ -414,7 +417,7 @@ const CreateJobForm = () => {
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-[7px] border-2 border-[#0F172A] bg-[#FF5C1B] px-[13px] py-2 text-sm font-bold text-[#1F1308] shadow-brutal transition hover:translate-x-[-1px] hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isSubmitting || createMutation.isPending}
           >
             {isSubmitting || createMutation.isPending

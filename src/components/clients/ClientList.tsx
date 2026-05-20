@@ -36,9 +36,9 @@ const ClientListItem = memo(({ client }: ClientListItemProps) => {
               {client.name ?? t('clients.list.unnamed')}
             </p>
             {client.email ? (
-              <p className="text-xs text-slate-600">{client.email}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-300">{client.email}</p>
             ) : null}
-            <p className="text-xs text-slate-700">{client.primary_property?.city ?? t('clients.list.cityFallback')}</p>
+            <p className="text-xs text-slate-700 dark:text-slate-300">{client.primary_property?.city ?? t('clients.list.cityFallback')}</p>
           </div>
           <span
             className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold shrink-0 ${
@@ -50,7 +50,7 @@ const ClientListItem = memo(({ client }: ClientListItemProps) => {
             {client.type === 'business' ? t('clients.list.types.business') : t('clients.list.types.individual')}
           </span>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 dark:text-slate-300">
           <span>{t('clients.list.jobCount', { count: client.jobCount })}</span>
           <span>{formatLastJob(client.lastJobDate, t)}</span>
         </div>
@@ -103,7 +103,7 @@ const ClientList: React.FC = () => {
           placeholder={t('clients.list.search')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="min-h-[44px] w-full max-w-xs rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="min-h-[44px] w-full max-w-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder:text-slate-500 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
           aria-label={t('clients.list.search')}
         />
       </header>
@@ -121,7 +121,7 @@ const ClientList: React.FC = () => {
             <p className="text-sm text-slate-600">{t('clients.list.empty')}</p>
             <Link
               to="/clients/new"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
             >
               {t('clients.list.newClient')}
             </Link>
@@ -157,7 +157,7 @@ const ClientList: React.FC = () => {
                           {client.type === 'business' ? t('clients.list.types.business') : t('clients.list.types.individual')}
                         </span>
                       </td>
-                      <td className="py-3 pr-2 text-slate-600">{client.email ?? '—'}</td>
+                      <td className="py-3 pr-2 text-slate-600 dark:text-slate-300">{client.email ?? '—'}</td>
                       <td className="py-3 pr-2">{client.jobCount}</td>
                       <td className="py-3">{formatLastJob(client.lastJobDate, t)}</td>
                     </tr>

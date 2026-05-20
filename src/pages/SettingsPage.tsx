@@ -95,22 +95,22 @@ const SettingsPage = () => {
       <h1 className="mb-5 text-[19px] font-bold text-[#0F172A] dark:text-slate-100">{t('settings.title')}</h1>
 
       <section className="mb-6">
-        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.profile.title')}</p>
+        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8] dark:text-slate-400">{t('settings.profile.title')}</p>
         <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
               <label htmlFor="firstName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.fields.firstName')}</label>
-              <input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
+              <input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] dark:bg-slate-800 px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
               <label htmlFor="lastName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.fields.lastName')}</label>
-              <input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
+              <input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] dark:bg-slate-800 px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
               <label htmlFor="business_name" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.profile.businessName')}</label>
-              <input id="business_name" type="text" {...register('business_name')} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
+              <input id="business_name" type="text" {...register('business_name')} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] dark:bg-slate-800 px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 px-[18px] py-[13px]">
@@ -130,13 +130,13 @@ const SettingsPage = () => {
       </section>
 
       <section className="mb-6">
-        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.language')}</p>
+        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8] dark:text-slate-400">{t('settings.sections.language')}</p>
         <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 px-[18px] py-[13px]">
             <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.sections.interfaceLanguage')}</div>
             <div className="inline-flex">
-              <button type="button" onClick={() => i18n.changeLanguage('en').catch(() => {})} className={`h-[34px] border-[1.5px] border-[#0F172A] px-4 text-xs font-semibold ${!isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-900 text-[#64748B] dark:text-slate-400'}`}>EN</button>
-              <button type="button" onClick={() => i18n.changeLanguage('fr').catch(() => {})} className={`h-[34px] border-[1.5px] border-l-0 border-[#0F172A] px-4 text-xs font-semibold ${isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-900 text-[#64748B] dark:text-slate-400'}`}>FR</button>
+              <button type="button" onClick={() => i18n.changeLanguage('en').catch(() => {})} className={`h-[34px] border-[1.5px] border-[#0F172A] px-4 text-xs font-semibold ${!isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400'}`}>EN</button>
+              <button type="button" onClick={() => i18n.changeLanguage('fr').catch(() => {})} className={`h-[34px] border-[1.5px] border-l-0 border-[#0F172A] px-4 text-xs font-semibold ${isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-800 text-[#64748B] dark:text-slate-400'}`}>FR</button>
             </div>
             <div />
           </div>
@@ -144,7 +144,7 @@ const SettingsPage = () => {
       </section>
 
       <section className="mb-6">
-        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.notifications')}</p>
+        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8] dark:text-slate-400">{t('settings.sections.notifications')}</p>
         <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           {([
             ['jobApprovals', t('settings.notifications.jobApprovals.title'), t('settings.notifications.jobApprovals.description')],
@@ -175,7 +175,7 @@ const SettingsPage = () => {
       </section>
 
       <section className="mb-6">
-        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.billing')}</p>
+        <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8] dark:text-slate-400">{t('settings.sections.billing')}</p>
         <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="flex items-center justify-between gap-3 px-[18px] py-4">
             <div>

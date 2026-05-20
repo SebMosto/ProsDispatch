@@ -244,7 +244,7 @@ const JobDetailPage = () => {
           <button
             type="button"
             onClick={() => navigate(routePaths.invoiceDetail(latestInvoice.id))}
-            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
           >
             {t('jobs.invoices.detailPage.title')}
           </button>
@@ -272,7 +272,7 @@ const JobDetailPage = () => {
         <button
           type="button"
           onClick={() => navigate('/jobs')}
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('jobs.detail.backToJobs')}
         </button>
@@ -299,7 +299,7 @@ const JobDetailPage = () => {
         <button
           type="button"
           onClick={() => navigate('/jobs')}
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
         >
           {t('jobs.detail.backToJobs')}
         </button>
@@ -345,12 +345,9 @@ const JobDetailPage = () => {
               {property ? (
                 <span>
                   {[property.address_line1, property.city, property.province].filter(Boolean).join(', ')}
-                  {job.property_id ? (
-                    <span className="ml-1 text-xs text-slate-400">{job.property_id.slice(0, 8)}</span>
-                  ) : null}
                 </span>
               ) : job.property_id ? (
-                job.property_id.slice(0, 8)
+                '—'
               ) : (
                 '—'
               )}
@@ -378,7 +375,7 @@ const JobDetailPage = () => {
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.title')}</h2>
           <Link
             to={routePaths.createInvoice(jobId)}
-            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
           >
             {t('jobs.invoices.draftInvoice')}
           </Link>
@@ -442,7 +439,7 @@ const JobDetailPage = () => {
             <button
               type="button"
               onClick={() => setShowArchiveConfirm(false)}
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               Cancel
             </button>
@@ -474,7 +471,7 @@ const JobDetailPage = () => {
       <button
         type="button"
         onClick={() => navigate('/jobs')}
-        className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+        className="inline-flex w-fit items-center justify-center rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-600"
       >
         {t('jobs.detail.backToJobs')}
       </button>
