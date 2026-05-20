@@ -63,6 +63,7 @@ const [isDark, setIsDark] = useState(() => {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }, [isDark]);
   const isPublicPage = pathname.startsWith('/pay/') || pathname.startsWith('/jobs/approve/');
 
