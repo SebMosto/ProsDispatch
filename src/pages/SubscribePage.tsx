@@ -109,7 +109,7 @@ const SubscribePage = () => {
           >
             {t('subscribe.trialing.cta')}
           </button>
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
             {t('subscribe.trialing.support')}
           </p>
         </>
@@ -138,11 +138,11 @@ const SubscribePage = () => {
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="text-center">
-        <h1 className="text-2xl font-semibold text-slate-900">{t('subscribe.title')}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('subscribe.title')}</h1>
         <p className="mt-2 text-sm text-slate-600">{t('subscribe.subtitle')}</p>
       </header>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
         {error && (
           <div className="mb-3 rounded-md bg-red-50 p-2 text-sm text-red-700">
             {error}

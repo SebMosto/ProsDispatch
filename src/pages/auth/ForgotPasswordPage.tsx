@@ -27,7 +27,7 @@ const ForgotPasswordPage = () => {
   };
 
   const inputClass =
-    'mt-1 h-11 w-full rounded-[10px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]';
+    'mt-1 h-11 w-full rounded-[10px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] dark:text-slate-100 placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]';
 
   return (
     <div
@@ -37,7 +37,7 @@ const ForgotPasswordPage = () => {
     >
       {/* Public topbar — same as Login */}
       <header
-        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] px-5"
+        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] dark:border-slate-700 px-5"
         style={{ background: 'hsl(220 20% 97%)' }}
       >
         <div className="flex items-center gap-2">
@@ -51,28 +51,28 @@ const ForgotPasswordPage = () => {
             </svg>
           </div>
           <span className="h-[15px] w-px shrink-0 bg-[#94A3B8]" aria-hidden />
-          <span className="font-bold text-[14px] leading-none text-[#0F172A]">
+          <span className="font-bold text-[14px] leading-none text-[#0F172A] dark:text-slate-100">
             Dispatch <span className="text-[#94A3B8]">|</span> Labs
           </span>
         </div>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <Link to="/" className="text-[13px] text-[#64748B] hover:text-[#FF5C1B]">
+          <Link to="/" className="text-[13px] text-[#64748B] dark:text-slate-400 hover:text-[#FF5C1B]">
             {t('login.pilot')}
           </Link>
-          <Link to="/login" className="font-bold text-[13px] text-[#0F172A] hover:text-[#FF5C1B]">
+          <Link to="/login" className="font-bold text-[13px] text-[#0F172A] dark:text-slate-100 hover:text-[#FF5C1B]">
             {t('login.navLink')}
           </Link>
         </div>
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal-auth">
+        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 p-10 shadow-brutal-auth">
           {!success ? (
             <>
               <Link
                 to="/login"
-                className="mb-6 flex items-center gap-1.5 text-[12px] font-semibold text-[#64748B] hover:text-[#0F172A]"
+                className="mb-6 flex items-center gap-1.5 text-[12px] font-semibold text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white"
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 11L5 7l4-4" />
@@ -88,14 +88,14 @@ const ForgotPasswordPage = () => {
               <p className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]">
                 {t('forgot.label')}
               </p>
-              <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A]">
+              <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A] dark:text-slate-100">
                 {t('forgot.title')}
               </h1>
-              <p className="mt-2 text-[14px] leading-relaxed text-[#64748B]">
+              <p className="mt-2 text-[14px] leading-relaxed text-[#64748B] dark:text-slate-400">
                 {t('forgot.subtitle')}
               </p>
               <form className="mt-6" onSubmit={handleSubmit} noValidate>
-                <label htmlFor="forgot-email" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+                <label htmlFor="forgot-email" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                   {t('forgot.email')}
                 </label>
                 <input
@@ -131,15 +131,15 @@ const ForgotPasswordPage = () => {
                   <path d="M3 13l7 7L23 6" />
                 </svg>
               </div>
-              <h2 className="text-[22px] font-bold text-[#0F172A]">
+              <h2 className="text-[22px] font-bold text-[#0F172A] dark:text-slate-100">
                 {t('forgot.success_title')}
               </h2>
-              <p className="mt-2 text-[14px] leading-relaxed text-[#64748B]">
+              <p className="mt-2 text-[14px] leading-relaxed text-[#64748B] dark:text-slate-400">
                 {t('forgot.success_body', { email: email || 'you@example.com' })}
               </p>
               <Link
                 to="/login"
-                className="mt-6 flex h-12 w-full items-center justify-center rounded-[10px] border-2 border-[#0F172A] bg-transparent text-[15px] font-bold text-[#0F172A] shadow-[3px_3px_0_0_rgba(15,23,42,0.9)] hover:bg-[#F1F5F9]"
+                className="mt-6 flex h-12 w-full items-center justify-center rounded-[10px] border-2 border-[#0F172A] bg-transparent text-[15px] font-bold text-[#0F172A] dark:text-slate-100 shadow-[3px_3px_0_0_rgba(15,23,42,0.9)] hover:bg-[#F1F5F9]"
               >
                 {t('forgot.back_cta')}
               </Link>

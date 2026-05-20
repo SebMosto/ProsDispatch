@@ -28,11 +28,11 @@ const ClientListItem = memo(({ client }: ClientListItemProps) => {
   const { t } = useTranslation();
 
   return (
-    <li className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
+    <li className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 p-3 shadow-sm">
       <Link to={`/clients/${client.id}`} className="block focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded-md -m-3 p-3 min-h-[44px] flex flex-col justify-center">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-0.5">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
               {client.name ?? t('clients.list.unnamed')}
             </p>
             {client.email ? (
@@ -55,7 +55,7 @@ const ClientListItem = memo(({ client }: ClientListItemProps) => {
           <span>{formatLastJob(client.lastJobDate, t)}</span>
         </div>
         {client.primary_property?.address_line1 ? (
-          <p className="mt-1 text-xs text-slate-500">{client.primary_property.address_line1}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{client.primary_property.address_line1}</p>
         ) : null}
       </Link>
     </li>
@@ -91,9 +91,9 @@ const ClientList: React.FC = () => {
   }, [clientsWithStats, search]);
 
   return (
-    <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">{t('clients.list.title')}</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.list.title')}</h2>
         <label className="sr-only" htmlFor="clients-search">
           {t('clients.list.search')}
         </label>
@@ -103,7 +103,7 @@ const ClientList: React.FC = () => {
           placeholder={t('clients.list.search')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="min-h-[44px] w-full max-w-xs rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="min-h-[44px] w-full max-w-xs rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
           aria-label={t('clients.list.search')}
         />
       </header>
@@ -137,18 +137,18 @@ const ClientList: React.FC = () => {
               <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
                 <thead>
                   <tr>
-                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900">{t('clients.list.pageTitle')}</th>
-                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900">{t('clients.list.typeHeader')}</th>
-                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900">{t('auth.shared.email')}</th>
-                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900">{t('clients.list.jobsColumn')}</th>
-                    <th scope="col" className="py-3 font-semibold text-slate-900">{t('clients.list.lastJob')}</th>
+                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900 dark:text-slate-100">{t('clients.list.pageTitle')}</th>
+                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900 dark:text-slate-100">{t('clients.list.typeHeader')}</th>
+                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900 dark:text-slate-100">{t('auth.shared.email')}</th>
+                    <th scope="col" className="py-3 pr-2 font-semibold text-slate-900 dark:text-slate-100">{t('clients.list.jobsColumn')}</th>
+                    <th scope="col" className="py-3 font-semibold text-slate-900 dark:text-slate-100">{t('clients.list.lastJob')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filtered.map((client) => (
                     <tr key={client.id}>
                       <td className="py-3 pr-2">
-                        <Link to={`/clients/${client.id}`} className="font-medium text-slate-900 hover:underline focus:outline-none focus:ring-2 focus:ring-slate-400 rounded">
+                        <Link to={`/clients/${client.id}`} className="font-medium text-slate-900 dark:text-slate-100 hover:underline focus:outline-none focus:ring-2 focus:ring-slate-400 rounded">
                           {client.name ?? t('clients.list.unnamed')}
                         </Link>
                       </td>

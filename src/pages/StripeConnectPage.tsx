@@ -88,11 +88,11 @@ const StripeConnectPage = () => {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <header className="mb-6 space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">{t('settings.stripe.title')}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('settings.stripe.title')}</h1>
         <p className="text-sm text-slate-600">{t('settings.stripe.subtitle')}</p>
       </header>
 
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         {isConnected ? (
           <div className="space-y-2">
             <p className="text-sm text-emerald-700">{t('settings.stripe.connected')}</p>

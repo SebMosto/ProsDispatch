@@ -83,10 +83,10 @@ const AppShell = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px]">
-      <header className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] bg-white px-5 dark:border-slate-700 dark:bg-slate-800">
+    <div className="min-h-screen bg-[hsl(220_20%_97%)] text-[13px] dark:bg-slate-900">
+      <header className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] bg-white px-5 dark:border-slate-700 dark:bg-slate-900">
         <Link to="/dashboard" className="flex items-center gap-2" aria-label={t('layout.brand')}>
-          <div className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] bg-[#0F172A]">
+          <div className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] bg-[#0F172A] dark:bg-slate-700">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3l8.5-8.5"/>
               <path d="M17.64 15 22 10.64"/>
@@ -94,9 +94,9 @@ const AppShell = ({ children }: { children: ReactNode }) => {
             </svg>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[14px] font-bold text-[#0F172A]">Dispatch</span>
-            <span className="mx-2 h-[15px] w-px bg-[#94A3B8]" />
-            <span className="text-[14px] font-bold text-[#0F172A]">Labs</span>
+            <span className="text-[14px] font-bold text-[#0F172A] dark:text-white">Dispatch</span>
+            <span className="mx-2 h-[15px] w-px bg-[#94A3B8] dark:bg-slate-500" />
+            <span className="text-[14px] font-bold text-[#0F172A] dark:text-white">Labs</span>
           </div>
         </Link>
         <div className="flex items-center gap-2">

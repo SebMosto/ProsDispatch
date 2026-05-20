@@ -58,7 +58,7 @@ const Sidebar = () => {
   ], [t, overdueCount]);
 
   return (
-    <aside className="hidden w-[160px] shrink-0 border-r-[1.5px] border-[#0F172A] bg-white py-3 md:flex md:flex-col">
+    <aside className="hidden w-[160px] shrink-0 border-r-[1.5px] border-[#0F172A] bg-white dark:bg-slate-900 py-3 md:flex md:flex-col">
       <div className="mb-1 mt-[14px] px-3 text-[9px] font-bold uppercase tracking-[1px] text-[#CBD5E1]">
         {t('layout.nav.main')}
       </div>
@@ -70,8 +70,8 @@ const Sidebar = () => {
             to={item.href}
             className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
               active
-                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A]'
-                : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A] dark:text-slate-100'
+                : 'border-transparent font-medium text-[#64748B] dark:text-slate-400 hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A] dark:hover:text-white'
             }`}
           >
             <span className="size-[14px]">{item.icon}</span>
@@ -98,8 +98,8 @@ const Sidebar = () => {
             to={item.href}
             className={`flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-[12px] transition-colors ${
               active
-                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A]'
-                : 'border-transparent font-medium text-[#64748B] hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A]'
+                ? 'border-[#FF5C1B] bg-[hsl(220_20%_97%)] font-bold text-[#0F172A] dark:text-slate-100'
+                : 'border-transparent font-medium text-[#64748B] dark:text-slate-400 hover:bg-[hsl(220_20%_97%)] hover:text-[#0F172A] dark:hover:text-white'
             }`}
           >
             <span className="size-[14px]">{item.icon}</span>
@@ -113,7 +113,7 @@ const Sidebar = () => {
             {initials}
           </div>
           <div>
-            <div className="text-[11px] font-bold text-[#0F172A]">{profile?.full_name ?? t('layout.brand')}</div>
+            <div className="text-[11px] font-bold text-[#0F172A] dark:text-slate-100">{profile?.full_name ?? t('layout.brand')}</div>
             <div className="text-[10px] text-[#94A3B8]">{profile?.business_name ?? 'Contractor'}</div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export const BottomNav = () => {
   ], [t, overdueCount]);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-10 h-[56px] border-t-[1.5px] border-[#0F172A] bg-white md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-10 h-[56px] border-t-[1.5px] border-[#0F172A] bg-white dark:bg-slate-900 md:hidden">
       <ul className="flex h-full items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = isActive(pathname, item.href);
@@ -145,7 +145,7 @@ export const BottomNav = () => {
               <Link
                 to={item.href}
                 className={`relative flex h-full flex-col items-center justify-center gap-1 px-3 py-2 text-xs font-semibold transition ${
-                  active ? 'text-[#0F172A]' : 'text-[#64748B]'
+                  active ? 'text-[#0F172A] dark:text-slate-100' : 'text-[#64748B] dark:text-slate-400'
                 }`}
               >
                 <span>{item.label}</span>

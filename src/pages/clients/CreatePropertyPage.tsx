@@ -15,7 +15,7 @@ const CreatePropertyPage = () => {
       <header className="flex items-center justify-between gap-3">
         <div className="space-y-1">
           <p className="text-sm font-medium text-slate-600">{t('properties.createPage.breadCrumb')}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{t('properties.createPage.header')}</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('properties.createPage.header')}</h1>
           <p className="text-sm text-slate-600">{t('properties.createPage.subHeader')}</p>
         </div>
         <Link className="text-sm font-semibold text-slate-800 underline-offset-2 hover:underline" to={clientId ? `/clients/${clientId}` : '/clients'}>

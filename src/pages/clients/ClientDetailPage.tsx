@@ -76,8 +76,8 @@ const ClientDetailPage = () => {
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-10 w-32 animate-pulse rounded bg-slate-200" />
         <div className="space-y-2">
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
         </div>
       </main>
     );
@@ -106,13 +106,13 @@ const ClientDetailPage = () => {
           {t('clients.list.pageTitle')}
         </Link>
         <span className="mx-2" aria-hidden>›</span>
-        <span className="font-medium text-slate-900">{client.name}</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100">{client.name}</span>
       </nav>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-slate-900">{client.name}</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{client.name}</h1>
             {client.email ? (
               <p className="text-sm text-slate-700">{client.email}</p>
             ) : null}
@@ -124,7 +124,7 @@ const ClientDetailPage = () => {
               >
                 {client.type === 'business' ? t('clients.detail.types.business') : t('clients.detail.types.individual')}
               </span>
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+              <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700">
                 {client.preferred_language === 'fr' ? 'FR' : 'EN'}
               </span>
             </div>
@@ -140,7 +140,7 @@ const ClientDetailPage = () => {
           <div className="flex min-h-[44px] flex-wrap items-center gap-2">
             <Link
               to={`/clients/${client.id}/edit`}
-              className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
             >
               {t('clients.detail.editClient')}
             </Link>
@@ -153,7 +153,7 @@ const ClientDetailPage = () => {
                 {t('clients.detail.deleteClient')}
               </button>
             ) : (
-              <span className="text-xs text-slate-500" title={t('clients.detail.deleteBlocked')}>
+              <span className="text-xs text-slate-500 dark:text-slate-400" title={t('clients.detail.deleteBlocked')}>
                 {t('clients.detail.deleteBlocked')}
               </span>
             )}
@@ -178,7 +178,7 @@ const ClientDetailPage = () => {
             <button
               type="button"
               onClick={() => setDeleteConfirmOpen(false)}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800"
+              className="rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800"
             >
               {t('jobs.invoices.markPaidModal.cancel')}
             </button>
@@ -193,12 +193,12 @@ const ClientDetailPage = () => {
         </div>
       ) : null}
 
-      <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <header className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-slate-900">{t('clients.detail.properties')}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.detail.properties')}</h2>
           <Link
             to={`/clients/${client.id}/properties/new`}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
           >
             {t('clients.detail.addProperty')}
           </Link>
@@ -208,8 +208,8 @@ const ClientDetailPage = () => {
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {properties.map((property) => (
-              <li key={property.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 shadow-sm">
-                <p className="text-sm font-semibold text-slate-900">
+              <li key={property.id} className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 p-3 shadow-sm">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   {property.nickname ?? t('clients.detail.primaryProperty')}
                 </p>
                 <p className="text-xs text-slate-700">{property.address_line1}</p>
@@ -223,8 +223,8 @@ const ClientDetailPage = () => {
         )}
       </section>
 
-      <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">
+      <section className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {t('clients.detail.jobHistory')} ({summary.totalJobs})
         </h2>
         {jobs.length === 0 ? (
@@ -238,7 +238,7 @@ const ClientDetailPage = () => {
                   className="flex min-h-[44px] flex-wrap items-center justify-between gap-2 py-3 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded"
                 >
                   <div className="min-w-0">
-                    <p className="font-medium text-slate-900">{job.title}</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{job.title}</p>
                     <p className="text-xs text-slate-600">
                       {job.service_date
                         ? new Date(job.service_date).toLocaleDateString()
@@ -253,8 +253,8 @@ const ClientDetailPage = () => {
         )}
       </section>
 
-      <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">{t('clients.detail.invoiceSummary')}</h2>
+      <section className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.detail.invoiceSummary')}</h2>
         {invoices.length === 0 ? (
           <p className="text-sm text-slate-700">{t('clients.detail.noInvoices')}</p>
         ) : (
@@ -262,19 +262,19 @@ const ClientDetailPage = () => {
             <div className="grid grid-cols-1 gap-2 rounded-md bg-slate-50 p-3 sm:grid-cols-3">
               <div>
                 <p className="text-xs font-medium text-slate-600">{t('clients.detail.totalInvoiced')}</p>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   {formatCurrency(summary.totalInvoiced / 100, 'CAD', locale)}
                 </p>
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-600">{t('clients.detail.totalPaid')}</p>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   {formatCurrency(summary.totalPaid / 100, 'CAD', locale)}
                 </p>
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-600">{t('clients.detail.outstanding')}</p>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   {formatCurrency(summary.outstandingBalance / 100, 'CAD', locale)}
                 </p>
               </div>
@@ -286,8 +286,8 @@ const ClientDetailPage = () => {
                     to={`/invoices/${inv.id}`}
                     className="flex min-h-[44px] flex-wrap items-center justify-between gap-2 py-3 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded"
                   >
-                    <span className="font-medium text-slate-900">{inv.invoice_number}</span>
-                    <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{inv.invoice_number}</span>
+                    <span className="rounded bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs font-medium text-slate-700">
                       {inv.status}
                     </span>
                     <span className="text-sm text-slate-700">

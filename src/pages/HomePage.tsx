@@ -28,11 +28,11 @@ const HomePage = () => {
 
   const cardClass = isDarkMode
     ? 'rounded-[10px] border-2 border-slate-700 bg-slate-900 text-slate-100 shadow-[3px_3px_0_0_rgba(51,65,85,0.8)]'
-    : 'rounded-[10px] border-2 border-[#0F172A] bg-white text-[#0F172A] shadow-[3px_3px_0_0_rgba(15,23,42,0.9)]';
+    : 'rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 shadow-[3px_3px_0_0_rgba(15,23,42,0.9)]';
 
-  const pageClass = isDarkMode ? 'bg-[#0B1120] text-slate-100' : 'bg-[hsl(220_20%_97%)] text-[#0F172A]';
-  const subtleTextClass = isDarkMode ? 'text-slate-400' : 'text-slate-500';
-  const headingClass = isDarkMode ? 'text-slate-100' : 'text-[#0F172A]';
+  const pageClass = isDarkMode ? 'bg-[#0B1120] text-slate-100' : 'bg-[hsl(220_20%_97%)] text-[#0F172A] dark:text-slate-100';
+  const subtleTextClass = isDarkMode ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400';
+  const headingClass = isDarkMode ? 'text-slate-100' : 'text-[#0F172A] dark:text-slate-100';
 
   return (
     <main className={`min-h-screen font-sans transition-colors duration-200 ${pageClass}`}>
@@ -41,7 +41,7 @@ const HomePage = () => {
       >
         <div className="flex items-center gap-[9px]">
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-[8px] ${isDarkMode ? 'bg-slate-100' : 'bg-[#0F172A]'}`}
+            className={`flex h-8 w-8 items-center justify-center rounded-[8px] ${isDarkMode ? 'bg-slate-100 dark:bg-slate-700' : 'bg-[#0F172A]'}`}
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
               <rect
@@ -75,7 +75,7 @@ const HomePage = () => {
           <button
             type="button"
             onClick={toggleLanguage}
-            className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium ${isDarkMode ? 'bg-slate-800 text-slate-100 hover:bg-slate-700' : 'bg-slate-200 text-[#0F172A] hover:bg-slate-300'}`}
+            className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium ${isDarkMode ? 'bg-slate-800 text-slate-100 hover:bg-slate-700' : 'bg-slate-200 text-[#0F172A] dark:text-slate-100 hover:bg-slate-300'}`}
             aria-label={t('home.topbar.languageAria')}
           >
             <svg
@@ -97,7 +97,7 @@ const HomePage = () => {
           <button
             type="button"
             onClick={() => setIsDarkMode((prev) => !prev)}
-            className={`flex h-[34px] w-[34px] items-center justify-center rounded-[8px] ${isDarkMode ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-500 hover:bg-slate-200'}`}
+            className={`flex h-[34px] w-[34px] items-center justify-center rounded-[8px] ${isDarkMode ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200'}`}
             aria-label={t('home.topbar.darkModeAria')}
           >
             {isDarkMode ? (
@@ -148,12 +148,12 @@ const HomePage = () => {
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className={`h-12 whitespace-nowrap rounded-[10px] border-2 px-5 text-[14px] font-bold shadow-[2px_2px_0_0_rgba(15,23,42,0.9)] transition hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[4px_4px_0_0_rgba(15,23,42,0.9)] ${isDarkMode ? 'border-slate-100 text-slate-100' : 'border-[#0F172A] text-[#0F172A]'}`}
+              className={`h-12 whitespace-nowrap rounded-[10px] border-2 px-5 text-[14px] font-bold shadow-[2px_2px_0_0_rgba(15,23,42,0.9)] transition hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[4px_4px_0_0_rgba(15,23,42,0.9)] ${isDarkMode ? 'border-slate-100 text-slate-100' : 'border-[#0F172A] text-[#0F172A] dark:text-slate-100'}`}
             >
               {t('home.hero.demoCta')}
             </button>
           </div>
-          <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{t('home.hero.trialNote')}</p>
+          <p className={`text-[11px] ${isDarkMode ? 'text-slate-500 dark:text-slate-400' : 'text-slate-400'}`}>{t('home.hero.trialNote')}</p>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -233,7 +233,7 @@ const HomePage = () => {
             >
               {t('home.pilot.cta')}
             </button>
-            <p className="text-[11px] text-slate-500">{t('home.pilot.spots')}</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">{t('home.pilot.spots')}</p>
           </div>
         </div>
       </section>
@@ -243,7 +243,7 @@ const HomePage = () => {
         <h2 className={`mb-2 text-[26px] font-bold tracking-[-0.4px] ${headingClass}`}>{t('home.pricing.title')}</h2>
         <p className={`text-[14px] leading-[1.6] ${subtleTextClass}`}>{t('home.pricing.subtitle')}</p>
         <article
-          className={`mx-auto mt-8 max-w-[460px] rounded-[12px] border-2 border-[#FF5C1B] p-8 shadow-[3px_3px_0_0_rgba(255,92,27,0.5)] ${isDarkMode ? 'bg-slate-900' : 'bg-white'}`}
+          className={`mx-auto mt-8 max-w-[460px] rounded-[12px] border-2 border-[#FF5C1B] p-8 shadow-[3px_3px_0_0_rgba(255,92,27,0.5)] ${isDarkMode ? 'bg-slate-900' : 'bg-white dark:bg-slate-900'}`}
         >
           <span className="mb-3 inline-flex rounded-[4px] border border-[#FF5C1B] bg-[#FFF1EC] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.5px] text-[#FF5C1B]">
             {t('home.pricing.badge')}
@@ -256,7 +256,7 @@ const HomePage = () => {
           <p className="mb-5 text-[12px] text-slate-400">{t('home.pricing.trial')}</p>
           <div className={`mb-4 h-px ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`} />
           {pricingFeatureKeys.map((key) => (
-            <div key={key} className="mb-2 flex items-start gap-2 text-[12px] leading-[1.5] text-slate-500">
+            <div key={key} className="mb-2 flex items-start gap-2 text-[12px] leading-[1.5] text-slate-500 dark:text-slate-400">
               <span className="mt-[1px] inline-flex h-[15px] w-[15px] items-center justify-center rounded-full bg-[#FF5C1B] text-[9px] text-white">✓</span>
               <span>{t(`home.pricing.features.${key}`)}</span>
             </div>
@@ -271,7 +271,7 @@ const HomePage = () => {
         </article>
       </section>
 
-      <div className={`w-full border-t ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
+      <div className={`w-full border-t ${isDarkMode ? 'border-slate-800' : 'border-slate-200 dark:border-slate-700'}`}>
         <footer className="mx-auto flex w-full max-w-[960px] flex-col items-start justify-between gap-4 px-4 py-6 md:flex-row md:items-center md:px-8">
           <p className={`text-[13px] font-bold ${headingClass}`}>{t('home.footer.logo')}</p>
           <div className="flex items-center gap-5">

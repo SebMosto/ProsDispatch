@@ -63,10 +63,10 @@ const BillingSettingsPage = () => {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-slate-900">{t('billing.title')}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('billing.title')}</h1>
       </div>
 
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-slate-800">

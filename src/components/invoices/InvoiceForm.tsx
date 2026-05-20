@@ -210,10 +210,10 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
   };
 
   return (
-    <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <header className="space-y-1">
         <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.form.header')}</p>
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {activeInvoice ? t('jobs.invoices.form.invoiceTitle', { number: activeInvoice.invoice_number }) : t('jobs.invoices.form.createTitle')}
         </h2>
         <p className="text-sm text-slate-600">{t('jobs.invoices.form.subtitle')}</p>
@@ -241,12 +241,12 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
               type="text"
               value={activeInvoice?.invoice_number ?? t('jobs.invoices.form.invoiceNumberPlaceholder')}
               readOnly
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm"
             />
           </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-800">{t('jobs.invoices.form.statusLabel')}</label>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 px-3 py-2 text-sm text-slate-700">
               {t('jobs.invoices.form.statusDraft')}
             </div>
           </div>
@@ -254,7 +254,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">{t('jobs.invoices.form.lineItemsTitle')}</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.form.lineItemsTitle')}</h3>
             <button
               type="button"
               onClick={() =>
@@ -275,7 +275,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           </div>
 
           {items.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+            <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
               {t('jobs.invoices.form.noItems')}
             </div>
           ) : null}
@@ -284,7 +284,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
             const lineAmount = computedItems[index]?.amount ?? 0;
 
             return (
-              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div key={item.id} className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-700">{t('jobs.invoices.form.itemLabel', { number: index + 1 })}</p>
                   <button
@@ -302,7 +302,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   <input
                     id={`items.${index}.description`}
                     type="text"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                     value={item.description}
                     onChange={(event) => {
                       const nextValue = event.target.value;
@@ -325,7 +325,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                       type="number"
                       step="0.1"
                       min="0"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       value={item.quantity}
                       onChange={(event) => {
                         const nextValue = Number.parseFloat(event.target.value || '0');
@@ -347,7 +347,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                       type="number"
                       step="0.01"
                       min="0"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       value={item.unitPrice}
                       onChange={(event) => {
                         const nextValue = Number.parseFloat(event.target.value || '0');
@@ -364,7 +364,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
                   </div>
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-slate-600">{t('jobs.invoices.form.amountLabel')}</label>
-                    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700">
                       {formatCurrency(lineAmount / 100, 'CAD', locale)}
                     </div>
                   </div>
@@ -374,7 +374,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
           })}
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
           <div className="flex items-center justify-between text-sm text-slate-700">
             <span>{t('jobs.invoices.form.subtotalLabel')}</span>
             <span className="font-semibold">{formatCurrency(totals.subtotal / 100, 'CAD', locale)}</span>
@@ -387,7 +387,7 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
               </div>
             ))}
           </div>
-          <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
+          <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900 dark:text-slate-100">
             <span>{t('jobs.invoices.form.totalDueLabel')}</span>
             <span>{formatCurrency(totals.total / 100, 'CAD', locale)}</span>
           </div>
@@ -414,8 +414,8 @@ const InvoiceForm = ({ jobId, invoice }: InvoiceFormProps) => {
 
       {showFinalizeDialog ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-slate-900">{t('jobs.invoices.form.finalizeDialogTitle')}</h3>
+          <div className="w-full max-w-md rounded-lg bg-white dark:bg-slate-900 p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.form.finalizeDialogTitle')}</h3>
             <p className="mt-2 text-sm text-slate-600">{t('jobs.invoices.form.finalizeDialogMessage')}</p>
             <div className="mt-4 flex items-center justify-end gap-3">
               <button

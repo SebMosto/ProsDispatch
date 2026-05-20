@@ -183,7 +183,7 @@ const AddressAutocomplete = ({ value, onChange, onSelect, ...inputProps }: Addre
     if (!showSuggestions || !predictions.length) return null;
 
     return (
-      <ul className="mt-1 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white shadow-lg" role="listbox">
+      <ul className="mt-1 divide-y divide-slate-100 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg" role="listbox">
         {predictions.map((prediction) => (
           <li key={prediction.place_id}>
             <button
@@ -209,7 +209,7 @@ const AddressAutocomplete = ({ value, onChange, onSelect, ...inputProps }: Addre
         {...inputProps}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={`w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
+        className={`w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
       />
     );
   }
@@ -221,7 +221,7 @@ const AddressAutocomplete = ({ value, onChange, onSelect, ...inputProps }: Addre
         value={value}
         onFocus={() => setShowSuggestions(true)}
         onChange={(event) => onChange(event.target.value)}
-        className={`w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
+        className={`w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200 ${inputProps.className ?? ''}`}
         aria-autocomplete="list"
         aria-expanded={showSuggestions}
         aria-busy={isLoading}

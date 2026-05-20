@@ -92,25 +92,25 @@ const SettingsPage = () => {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-      <h1 className="mb-5 text-[19px] font-bold text-[#0F172A]">{t('settings.title')}</h1>
+      <h1 className="mb-5 text-[19px] font-bold text-[#0F172A] dark:text-slate-100">{t('settings.title')}</h1>
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.profile.title')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
-              <label htmlFor="firstName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.fields.firstName')}</label>
-              <input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]" />
+              <label htmlFor="firstName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.fields.firstName')}</label>
+              <input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
-              <label htmlFor="lastName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.fields.lastName')}</label>
-              <input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]" />
+              <label htmlFor="lastName" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.fields.lastName')}</label>
+              <input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 border-b border-[#F1F5F9] px-[18px] py-[13px]">
-              <label htmlFor="business_name" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.profile.businessName')}</label>
-              <input id="business_name" type="text" {...register('business_name')} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A]" />
+              <label htmlFor="business_name" className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.profile.businessName')}</label>
+              <input id="business_name" type="text" {...register('business_name')} className="h-9 w-full rounded-[7px] border-[1.5px] border-[#CBD5E1] dark:border-slate-700 bg-[hsl(220_20%_97%)] px-3 text-[13px] text-[#0F172A] dark:text-slate-100" />
               <div />
             </div>
             <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 px-[18px] py-[13px]">
@@ -131,12 +131,12 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.language')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="grid grid-cols-[160px_1fr_auto] items-center gap-3 px-[18px] py-[13px]">
-            <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.sections.interfaceLanguage')}</div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.sections.interfaceLanguage')}</div>
             <div className="inline-flex">
-              <button type="button" onClick={() => i18n.changeLanguage('en').catch(() => {})} className={`h-[34px] border-[1.5px] border-[#0F172A] px-4 text-xs font-semibold ${!isFrench ? 'bg-[#0F172A] text-white' : 'bg-white text-[#64748B]'}`}>EN</button>
-              <button type="button" onClick={() => i18n.changeLanguage('fr').catch(() => {})} className={`h-[34px] border-[1.5px] border-l-0 border-[#0F172A] px-4 text-xs font-semibold ${isFrench ? 'bg-[#0F172A] text-white' : 'bg-white text-[#64748B]'}`}>FR</button>
+              <button type="button" onClick={() => i18n.changeLanguage('en').catch(() => {})} className={`h-[34px] border-[1.5px] border-[#0F172A] px-4 text-xs font-semibold ${!isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-900 text-[#64748B] dark:text-slate-400'}`}>EN</button>
+              <button type="button" onClick={() => i18n.changeLanguage('fr').catch(() => {})} className={`h-[34px] border-[1.5px] border-l-0 border-[#0F172A] px-4 text-xs font-semibold ${isFrench ? 'bg-[#0F172A] text-white' : 'bg-white dark:bg-slate-900 text-[#64748B] dark:text-slate-400'}`}>FR</button>
             </div>
             <div />
           </div>
@@ -145,7 +145,7 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.notifications')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           {([
             ['jobApprovals', t('settings.notifications.jobApprovals.title'), t('settings.notifications.jobApprovals.description')],
             ['invoicePaid', t('settings.notifications.invoicePaid.title'), t('settings.notifications.invoicePaid.description')],
@@ -156,7 +156,7 @@ const SettingsPage = () => {
             return (
               <div key={key} className="flex items-center justify-between border-b border-[#F1F5F9] px-[18px] py-[13px] last:border-b-0">
                 <div>
-                  <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{title}</div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{title}</div>
                   <div className={`text-xs ${isOn ? 'text-[#374151]' : 'text-[#94A3B8]'}`}>{description}</div>
                 </div>
                 <button
@@ -166,7 +166,7 @@ const SettingsPage = () => {
                   onClick={() => setNotifState((prev) => ({ ...prev, [key]: !prev[key] }))}
                   className={`relative h-[22px] w-[40px] rounded-full ${isOn ? 'bg-[#0F172A]' : 'bg-[#CBD5E1]'}`}
                 >
-                  <span className={`absolute left-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform ${isOn ? 'translate-x-[18px]' : 'translate-x-0'}`} />
+                  <span className={`absolute left-[3px] top-[3px] h-4 w-4 rounded-full bg-white dark:bg-slate-900 transition-transform ${isOn ? 'translate-x-[18px]' : 'translate-x-0'}`} />
                 </button>
               </div>
             );
@@ -176,23 +176,23 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.billing')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="flex items-center justify-between gap-3 px-[18px] py-4">
             <div>
-              <div className="text-[15px] font-bold text-[#0F172A]">{t('billing.title')}</div>
-              <div className="text-xs text-[#64748B]">{subscriptionLabel}{subscriptionStatus === 'trialing' ? ` • ${trialDaysRemaining}d` : ''}</div>
+              <div className="text-[15px] font-bold text-[#0F172A] dark:text-slate-100">{t('billing.title')}</div>
+              <div className="text-xs text-[#64748B] dark:text-slate-400">{subscriptionLabel}{subscriptionStatus === 'trialing' ? ` • ${trialDaysRemaining}d` : ''}</div>
             </div>
-            <a href="/settings/billing" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] shadow-brutal">{t('billing.manage')}</a>
+            <a href="/settings/billing" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] dark:text-slate-100 shadow-brutal">{t('billing.manage')}</a>
           </div>
         </div>
       </section>
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.stripe')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="flex items-center justify-between gap-3 px-[18px] py-4">
             <div>
-              <div className="text-[13px] font-bold text-[#0F172A]">{stripeConnected ? t('settings.stripe.connected') : t('settings.stripe.incomplete')}</div>
+              <div className="text-[13px] font-bold text-[#0F172A] dark:text-slate-100">{stripeConnected ? t('settings.stripe.connected') : t('settings.stripe.incomplete')}</div>
               <div className="text-xs text-[#94A3B8]">{profile?.stripe_connect_id ?? t('settings.stripe.cta')}</div>
             </div>
             <a href="/settings/stripe" className="h-[30px] rounded-[5px] border-[1.5px] border-[#FF5C1B] px-3 py-1.5 text-[11px] font-bold text-[#FF5C1B]">{stripeConnected ? t('settings.stripe.managePayouts') : t('settings.stripe.retry')}</a>
@@ -202,17 +202,17 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.passwordSecurity')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="flex items-center justify-between border-b border-[#F1F5F9] px-[18px] py-[13px]">
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.profile.email')}</div>
-              <div className="text-[13px] text-[#0F172A]">{user?.email ?? ''}</div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.profile.email')}</div>
+              <div className="text-[13px] text-[#0F172A] dark:text-slate-100">{user?.email ?? ''}</div>
             </div>
             <button type="button" className="h-[30px] rounded-[5px] border-[1.5px] border-[#FF5C1B] px-3 text-[11px] font-bold text-[#FF5C1B]">{t('settings.actions.change')}</button>
           </div>
           <div className="flex items-center justify-between px-[18px] py-[13px]">
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B]">{t('settings.sections.password')}</div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748B] dark:text-slate-400">{t('settings.sections.password')}</div>
               <div className="text-xs text-[#94A3B8]">{t('settings.password.lastChanged')}</div>
             </div>
             <button type="button" className="h-[30px] rounded-[5px] border-[1.5px] border-[#FF5C1B] px-3 text-[11px] font-bold text-[#FF5C1B]">{t('settings.actions.reset')}</button>
@@ -222,13 +222,13 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#94A3B8]">{t('settings.sections.privacy')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white shadow-brutal">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 shadow-brutal">
           <div className="px-[18px] py-[14px]">
-            <p className="mb-3 text-xs leading-relaxed text-[#64748B]">{t('settings.privacy.body')}</p>
+            <p className="mb-3 text-xs leading-relaxed text-[#64748B] dark:text-slate-400">{t('settings.privacy.body')}</p>
             <div className="flex flex-wrap gap-2">
-              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] shadow-brutal">{t('settings.privacy.export')}</button>
-              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] shadow-brutal">{t('settings.privacy.policy')}</button>
-              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] shadow-brutal">{t('settings.privacy.contact')}</button>
+              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] dark:text-slate-100 shadow-brutal">{t('settings.privacy.export')}</button>
+              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] dark:text-slate-100 shadow-brutal">{t('settings.privacy.policy')}</button>
+              <button type="button" className="rounded-[6px] border-[1.5px] border-[#0F172A] px-3 py-1.5 text-[11px] font-bold text-[#0F172A] dark:text-slate-100 shadow-brutal">{t('settings.privacy.contact')}</button>
             </div>
           </div>
         </div>
@@ -236,10 +236,10 @@ const SettingsPage = () => {
 
       <section className="mb-6">
         <p className="mb-2 pl-[2px] text-[10px] font-bold uppercase tracking-[1px] text-[#EF4444]">{t('settings.sections.danger')}</p>
-        <div className="overflow-hidden rounded-[10px] border-2 border-[#EF4444] bg-white shadow-brutal-red">
+        <div className="overflow-hidden rounded-[10px] border-2 border-[#EF4444] bg-white dark:bg-slate-900 shadow-brutal-red">
           <div className="flex items-center justify-between gap-3 px-[18px] py-[14px]">
             <div>
-              <div className="text-[13px] font-semibold text-[#0F172A]">{t('settings.danger.title')}</div>
+              <div className="text-[13px] font-semibold text-[#0F172A] dark:text-slate-100">{t('settings.danger.title')}</div>
               <div className="mt-0.5 text-[11px] text-[#94A3B8]">{t('settings.danger.description')}</div>
             </div>
             <button type="button" className="rounded-[6px] border-[1.5px] border-[#EF4444] bg-transparent px-3 py-1.5 text-[11px] font-bold text-[#EF4444]">{t('settings.danger.delete')}</button>

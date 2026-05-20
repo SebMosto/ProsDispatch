@@ -12,7 +12,7 @@ import { formatDate } from '../../lib/date';
 import { isSafeUrl } from '../../lib/security';
 
 const statusStyles: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-700',
+  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-700',
   sent: 'bg-amber-100 text-amber-700',
   paid: 'bg-emerald-100 text-emerald-700',
   void: 'bg-red-100 text-red-700',
@@ -77,8 +77,8 @@ const InvoiceDetailPage = () => {
       <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-8 w-40 animate-pulse rounded bg-slate-200" />
         <div className="space-y-2">
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
         </div>
       </main>
     );
@@ -117,12 +117,12 @@ const InvoiceDetailPage = () => {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
           <p className="text-sm font-medium text-slate-600">{t('jobs.invoices.detailPage.invoiceLabel', { number: invoice.invoice_number })}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{t('jobs.invoices.detailPage.title')}</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.detailPage.title')}</h1>
           {clientName ? (
             <p className="text-sm text-slate-600">{clientName}</p>
           ) : null}
           {job?.title ? (
-            <p className="text-sm text-slate-500">{job.title}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{job.title}</p>
           ) : null}
           {invoice.date_issued ? (
             <p className="text-xs text-slate-400">{formatDate(invoice.date_issued)}</p>
@@ -130,7 +130,7 @@ const InvoiceDetailPage = () => {
         </div>
         <span
           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-            statusStyles[invoice.status] ?? 'bg-slate-100 text-slate-700'
+            statusStyles[invoice.status] ?? 'bg-slate-100 dark:bg-slate-700 text-slate-700'
           }`}
         >
           {t(`jobs.status.${invoice.status}`, { defaultValue: invoice.status })}
@@ -146,7 +146,7 @@ const InvoiceDetailPage = () => {
             {t('jobs.invoices.detailPage.viewAsHomeowner')}
           </Link>
         ) : (
-          <span className="rounded-lg border border-dashed border-slate-200 px-4 py-2 text-sm text-slate-400">
+          <span className="rounded-lg border border-dashed border-slate-200 dark:border-slate-700 px-4 py-2 text-sm text-slate-400">
             {t('jobs.invoices.detailPage.homeownerLinkUnavailable')}
           </span>
         )}
@@ -188,7 +188,7 @@ const InvoiceDetailPage = () => {
         </p>
       ) : null}
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-slate-600">{t('jobs.invoices.detailPage.pdfLabel')}</p>
@@ -202,7 +202,7 @@ const InvoiceDetailPage = () => {
                 {t('jobs.invoices.detailPage.downloadPdf')}
               </a>
             ) : (
-              <p className="text-sm text-slate-500">{t('jobs.invoices.detailPage.pdfNotAvailable')}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('jobs.invoices.detailPage.pdfNotAvailable')}</p>
             )}
           </div>
         </div>
@@ -223,28 +223,28 @@ const InvoiceDetailPage = () => {
         ) : null}
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">{t('jobs.invoices.detailPage.lineItemsTitle')}</h2>
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.detailPage.lineItemsTitle')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
               <div key={item.id} className="flex flex-col gap-2 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-800">{item.description}</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(item.amount / 100, 'CAD', locale)}</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(item.amount / 100, 'CAD', locale)}</p>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {t('jobs.invoices.detailPage.qtyFormat', { quantity: item.quantity, price: formatCurrency(item.unit_price / 100, 'CAD', locale) })}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">{t('jobs.invoices.detailPage.noLineItems')}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t('jobs.invoices.detailPage.noLineItems')}</p>
           )}
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
           <span>{t('jobs.invoices.detailPage.subtotalLabel')}</span>
           <span className="font-semibold">{formatCurrency(invoice.subtotal / 100, 'CAD', locale)}</span>
@@ -257,7 +257,7 @@ const InvoiceDetailPage = () => {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
+        <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900 dark:text-slate-100">
           <span>{t('jobs.invoices.detailPage.totalDueLabel')}</span>
           <span>{formatCurrency(invoice.total_amount / 100, 'CAD', locale)}</span>
         </div>

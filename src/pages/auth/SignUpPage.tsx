@@ -91,7 +91,7 @@ const SignUpPage = () => {
   };
 
   const inputBase =
-    'h-11 w-full rounded-[10px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]';
+    'h-11 w-full rounded-[10px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] dark:text-slate-100 placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]';
 
   return (
     <div
@@ -101,7 +101,7 @@ const SignUpPage = () => {
     >
       {/* Public topbar — same as Login */}
       <header
-        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] px-5"
+        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] dark:border-slate-700 px-5"
         style={{ background: 'hsl(220 20% 97%)' }}
       >
         <div className="flex items-center gap-2">
@@ -112,41 +112,41 @@ const SignUpPage = () => {
             </svg>
           </div>
           <span className="h-[17px] w-px shrink-0 bg-[#94A3B8]" aria-hidden />
-          <span className="font-bold text-[15px] leading-none tracking-tight text-[#0F172A]">
+          <span className="font-bold text-[15px] leading-none tracking-tight text-[#0F172A] dark:text-slate-100">
             Dispatch <span className="text-[#94A3B8]">|</span> Labs
           </span>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <span className="h-[18px] w-px bg-[#CBD5E1]" aria-hidden />
-          <Link to="/" className="text-[13px] font-medium text-[#64748B] hover:text-[#0F172A]">
+          <Link to="/" className="text-[13px] font-medium text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white">
             {t('login.pilot')}
           </Link>
-          <Link to="/login" className="text-[13px] font-bold text-[#0F172A] hover:bg-[#E2E8F0] hover:rounded-md px-2 py-1">
+          <Link to="/login" className="text-[13px] font-bold text-[#0F172A] dark:text-slate-100 hover:bg-[#E2E8F0] dark:bg-slate-700 hover:rounded-md px-2 py-1">
             {t('login.navLink')}
           </Link>
         </div>
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
-        <div className="w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[14px] border-2 border-[#0F172A] bg-white px-10 pt-10 pb-9 shadow-brutal-auth">
+        <div className="w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[14px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 px-10 pt-10 pb-9 shadow-brutal-auth">
           <p className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]">
             {t('register.label')}
           </p>
-          <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A]">
+          <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A] dark:text-slate-100">
             {t('register.title')}
           </h1>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-[#64748B]">
+          <p className="mt-1.5 text-[14px] leading-relaxed text-[#64748B] dark:text-slate-400">
             {t('register.subtitle')}
           </p>
 
           <form className="mt-7" onSubmit={handleSubmit} noValidate>
-            <p className="mb-4 text-[11px] text-[#64748B]">
+            <p className="mb-4 text-[11px] text-[#64748B] dark:text-slate-400">
               {t('register.required_note')}
             </p>
             <div className="grid grid-cols-2 gap-3.5">
               <div>
-                <label htmlFor="reg-first" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+                <label htmlFor="reg-first" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                   {t('register.first')} <span className="text-[#FF5C1B]">*</span>
                 </label>
                 <input
@@ -161,7 +161,7 @@ const SignUpPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="reg-last" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+                <label htmlFor="reg-last" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                   {t('register.last')} <span className="text-[#FF5C1B]">*</span>
                 </label>
                 <input
@@ -177,7 +177,7 @@ const SignUpPage = () => {
               </div>
             </div>
             <div className="mt-4">
-              <label htmlFor="reg-biz" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+              <label htmlFor="reg-biz" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                 {t('register.biz')}
               </label>
               <input
@@ -192,7 +192,7 @@ const SignUpPage = () => {
               />
             </div>
             <div className="mt-4">
-              <label htmlFor="reg-trade" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+              <label htmlFor="reg-trade" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                 {t('register.trade')} <span className="text-[#FF5C1B]">*</span>
               </label>
               <div className="relative mt-1.5">
@@ -230,14 +230,14 @@ const SignUpPage = () => {
               </div>
             </div>
             <div className="my-5 flex items-center gap-3">
-              <span className="h-px flex-1 bg-[#E2E8F0]" aria-hidden />
+              <span className="h-px flex-1 bg-[#E2E8F0] dark:bg-slate-700" aria-hidden />
               <span className="text-[11px] font-semibold uppercase tracking-wide text-[#94A3B8]">
                 {t('register.div_account')}
               </span>
-              <span className="h-px flex-1 bg-[#E2E8F0]" aria-hidden />
+              <span className="h-px flex-1 bg-[#E2E8F0] dark:bg-slate-700" aria-hidden />
             </div>
             <div>
-              <label htmlFor="reg-email" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+              <label htmlFor="reg-email" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                 {t('register.email')} <span className="text-[#FF5C1B]">*</span>
               </label>
               <input
@@ -255,7 +255,7 @@ const SignUpPage = () => {
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3.5">
               <div>
-                <label htmlFor="reg-password" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+                <label htmlFor="reg-password" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                   {t('register.password')} <span className="text-[#FF5C1B]">*</span>
                 </label>
                 <input
@@ -271,7 +271,7 @@ const SignUpPage = () => {
                 />
               </div>
               <div>
-                <label htmlFor="reg-confirm" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A]">
+                <label htmlFor="reg-confirm" className="block text-[11px] font-bold uppercase tracking-wide text-[#0F172A] dark:text-slate-100">
                   {t('register.confirm')} <span className="text-[#FF5C1B]">*</span>
                 </label>
                 <input
@@ -302,11 +302,11 @@ const SignUpPage = () => {
           </form>
           <p className="mt-4 text-center text-[11px] leading-relaxed text-[#94A3B8]">
             {t('register.terms')}
-            <a href="/terms" className="text-[#64748B] underline hover:text-[#0F172A]">{t('register.terms_tos')}</a>
+            <a href="/terms" className="text-[#64748B] dark:text-slate-400 underline hover:text-[#0F172A] dark:hover:text-white">{t('register.terms_tos')}</a>
             {t('register.terms_and')}
-            <a href="/privacy" className="text-[#64748B] underline hover:text-[#0F172A]">{t('register.terms_pp')}</a>.
+            <a href="/privacy" className="text-[#64748B] dark:text-slate-400 underline hover:text-[#0F172A] dark:hover:text-white">{t('register.terms_pp')}</a>.
           </p>
-          <p className="mt-4 text-center text-[13px] text-[#64748B]">
+          <p className="mt-4 text-center text-[13px] text-[#64748B] dark:text-slate-400">
             {t('register.signin_pre')}
             <Link to="/login" className="font-bold text-[#FF5C1B] hover:underline">
               {t('register.signin')}

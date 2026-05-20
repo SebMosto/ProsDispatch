@@ -9,7 +9,7 @@ const JobsListPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">{t('jobs.list.pageTitle')}</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('jobs.list.pageTitle')}</h1>
         </div>
         <div className="mt-2 sm:mt-0">
           <Link

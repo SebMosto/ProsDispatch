@@ -74,10 +74,10 @@ const CreateClientForm: React.FC = () => {
   };
 
   return (
-    <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <header className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{t('clients.create.title')}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.create.title')}</h2>
           <p className="text-sm text-slate-600">{t('clients.create.subtitle')}</p>
         </div>
         <SyncBadge state="ONLINE_SYNCED" />
@@ -100,7 +100,7 @@ const CreateClientForm: React.FC = () => {
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
                   watch('type') === option
                     ? 'border-slate-900 bg-slate-900 text-white'
-                    : 'border-slate-200 bg-white text-slate-800'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800'
                 }`}
                 onClick={() => setValue('type', option)}
               >
@@ -118,7 +118,7 @@ const CreateClientForm: React.FC = () => {
           <input
             id="name"
             type="text"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('name')}
           />
           {errors.name?.message ? <p className="text-xs text-red-600">{errors.name.message}</p> : null}
@@ -131,7 +131,7 @@ const CreateClientForm: React.FC = () => {
           <input
             id="email"
             type="email"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('email')}
           />
           {errors.email?.message ? <p className="text-xs text-red-600">{errors.email.message}</p> : null}
@@ -143,7 +143,7 @@ const CreateClientForm: React.FC = () => {
           </label>
           <select
             id="preferred_language"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('preferred_language')}
           >
             <option value="en">{t('clients.create.labels.languages.en')}</option>

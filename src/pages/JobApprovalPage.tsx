@@ -117,7 +117,7 @@ export default function JobApprovalPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-slate-800 px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">{t('jobApproval.errorTitle')}</h2>
           <p className="text-gray-600">{error}</p>
@@ -129,7 +129,7 @@ export default function JobApprovalPage() {
   if (!job) return null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-slate-800 py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
           {job.contractor.business_name || job.contractor.name}
@@ -140,7 +140,7 @@ export default function JobApprovalPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white dark:bg-slate-900 px-4 py-8 shadow sm:rounded-lg sm:px-10">
           {approved ? (
             <div className="rounded-md bg-green-50 p-4">
               <div className="flex">

@@ -90,11 +90,11 @@ const JobList = () => {
 
   if (loading) {
     return (
-      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="h-4 w-24 animate-pulse rounded bg-slate-200" />
         <div className="space-y-2">
-          <div className="h-24 animate-pulse rounded-lg bg-slate-100" />
-          <div className="h-24 animate-pulse rounded-lg bg-slate-100" />
+          <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
+          <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
         </div>
       </section>
     );
@@ -120,13 +120,13 @@ const JobList = () => {
   const emptyMessage = activeTab === 'all' ? t('jobs.list.empty') : TAB_EMPTY[activeTab];
 
   return (
-    <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={t('jobs.list.searchPlaceholder')}
-        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
       />
 
       <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
@@ -140,7 +140,7 @@ const JobList = () => {
             className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
               activeTab === tab
                 ? 'bg-slate-900 text-white'
-                : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 hover:bg-slate-50'
             }`}
           >
             {t(`jobs.list.tabs.${tab}`)} ({tabCounts[tab]})
@@ -148,10 +148,10 @@ const JobList = () => {
         ))}
       </div>
 
-      <div className="text-right text-xs text-slate-500">{t('jobs.list.jobsCount', { count: filteredJobs.length })}</div>
+      <div className="text-right text-xs text-slate-500 dark:text-slate-400">{t('jobs.list.jobsCount', { count: filteredJobs.length })}</div>
 
       {filteredJobs.length === 0 ? (
-        <p className="py-4 text-center text-sm text-slate-500">{emptyMessage}</p>
+        <p className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">{emptyMessage}</p>
       ) : (
         <div className="space-y-3">
           {filteredJobs.map((job) => (

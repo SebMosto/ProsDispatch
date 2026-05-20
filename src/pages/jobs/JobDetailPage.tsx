@@ -285,8 +285,8 @@ const JobDetailPage = () => {
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-10 w-32 animate-pulse rounded bg-slate-200" />
         <div className="space-y-2">
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
-          <div className="h-24 animate-pulse rounded bg-slate-100" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+          <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
         </div>
       </main>
     );
@@ -311,25 +311,25 @@ const JobDetailPage = () => {
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold text-slate-500">{t('jobs.card.jobNum', { id: job.id.slice(0, 8) })}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t('jobs.card.jobNum', { id: job.id.slice(0, 8) })}</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{job.title}</h1>
           <p className="text-sm text-slate-600">{job.description || t('jobs.detail.noDescription')}</p>
         </div>
         <SyncBadge state={syncState} />
       </div>
 
-      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.sectionTitle')}</h2>
+      <section className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t('jobs.detail.sectionTitle')}</h2>
         <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.status')}</dt>
-            <dd className="font-medium text-slate-900">
+            <dd className="font-medium text-slate-900 dark:text-slate-100">
               <JobStatusBadge status={job.status} />
             </dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.client')}</dt>
-            <dd className="font-medium text-slate-900">
+            <dd className="font-medium text-slate-900 dark:text-slate-100">
               {clientRecord ? (
                 <Link to={`/clients/${job.client_id}`} className="text-blue-600 hover:underline">
                   {clientRecord.name}
@@ -341,7 +341,7 @@ const JobDetailPage = () => {
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.address')}</dt>
-            <dd className="font-medium text-slate-900">
+            <dd className="font-medium text-slate-900 dark:text-slate-100">
               {property ? (
                 <span>
                   {[property.address_line1, property.city, property.province].filter(Boolean).join(', ')}
@@ -358,24 +358,24 @@ const JobDetailPage = () => {
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.serviceDate')}</dt>
-            <dd className="font-medium text-slate-900">
+            <dd className="font-medium text-slate-900 dark:text-slate-100">
               {job.service_date ? formatDate(job.service_date) : t('jobs.detail.notScheduled')}
             </dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.created')}</dt>
-            <dd className="font-medium text-slate-900">{formatDate(job.created_at)}</dd>
+            <dd className="font-medium text-slate-900 dark:text-slate-100">{formatDate(job.created_at)}</dd>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-slate-600">{t('jobs.detail.labels.updated')}</dt>
-            <dd className="font-medium text-slate-900">{formatDate(job.updated_at)}</dd>
+            <dd className="font-medium text-slate-900 dark:text-slate-100">{formatDate(job.updated_at)}</dd>
           </div>
         </dl>
       </section>
 
-      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-slate-900">{t('jobs.invoices.title')}</h2>
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t('jobs.invoices.title')}</h2>
           <Link
             to={routePaths.createInvoice(jobId)}
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
@@ -385,8 +385,8 @@ const JobDetailPage = () => {
         </div>
         {invoicesLoading ? (
           <div className="space-y-2">
-            <div className="h-12 animate-pulse rounded-lg bg-slate-100" />
-            <div className="h-12 animate-pulse rounded-lg bg-slate-100" />
+            <div className="h-12 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
+            <div className="h-12 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
           </div>
         ) : invoicesError ? (
           <p className="text-sm text-red-700">{t('jobs.invoices.errorLoading')}</p>
@@ -398,13 +398,13 @@ const JobDetailPage = () => {
               <li key={invoice.id}>
                 <Link
                   to={routePaths.invoiceDetail(invoice.id)}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                 >
                   <div>
-                    <p className="font-semibold text-slate-900">{invoice.invoice_number}</p>
-                    <p className="text-xs text-slate-500">{t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`, invoice.status)}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{invoice.invoice_number}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`, invoice.status)}</p>
                   </div>
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency((invoice.total_amount ?? 0) / 100, 'CAD', locale)}
                   </div>
                 </Link>
@@ -414,10 +414,10 @@ const JobDetailPage = () => {
         )}
       </section>
 
-      <section className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-slate-900">{t('jobs.detail.quickActions')}</h2>
-          <span className="text-xs text-slate-500">{t('jobs.detail.optimisticNote')}</span>
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t('jobs.detail.quickActions')}</h2>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{t('jobs.detail.optimisticNote')}</span>
         </div>
         <div className="flex flex-wrap gap-2">{renderActions()}</div>
         {actionError ? <p className="text-xs text-red-700">{actionError}</p> : null}
@@ -442,7 +442,7 @@ const JobDetailPage = () => {
             <button
               type="button"
               onClick={() => setShowArchiveConfirm(false)}
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
             >
               Cancel
             </button>

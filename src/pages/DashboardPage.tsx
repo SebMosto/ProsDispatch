@@ -209,7 +209,7 @@ const DashboardPage = () => {
   if (loading && loadingTimedOut && !error) {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-5xl flex-col items-start justify-center gap-3 px-4 py-6 sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold text-slate-900">{t('dashboard.loadingTimeout.title')}</p>
+        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('dashboard.loadingTimeout.title')}</p>
         <p className="text-sm text-slate-600">{t('dashboard.loadingTimeout.message')}</p>
         <button
           type="button"
@@ -227,15 +227,15 @@ const DashboardPage = () => {
       {/* Page header */}
       <header className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-[19px] font-bold text-slate-900">
+          <h1 className="text-[19px] font-bold text-slate-900 dark:text-slate-100">
             {firstName ? t('dashboard.greeting', { name: firstName }) : t('dashboard.greetingFallback')}
           </h1>
-          <p className="text-xs text-slate-500">{formatDate(new Date())}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(new Date())}</p>
         </div>
         <div className="mt-3 flex flex-wrap gap-2 sm:mt-0">
           <Link
             to="/clients/new"
-            className="inline-flex h-9 min-h-[36px] items-center justify-center rounded-[7px] border-2 border-slate-900 bg-white px-3 font-bold text-slate-900 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)] transition hover:shadow-[4px_4px_0_0_rgba(15,23,42,0.9)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0_0_rgba(15,23,42,0.9)] active:translate-x-px active:translate-y-px"
+            className="inline-flex h-9 min-h-[36px] items-center justify-center rounded-[7px] border-2 border-slate-900 bg-white dark:bg-slate-900 px-3 font-bold text-slate-900 dark:text-slate-100 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)] transition hover:shadow-[4px_4px_0_0_rgba(15,23,42,0.9)] hover:translate-x-[-1px] hover:translate-y-[-1px] active:shadow-[1px_1px_0_0_rgba(15,23,42,0.9)] active:translate-x-px active:translate-y-px"
           >
             {t('dashboard.newClient')}
           </Link>
@@ -286,10 +286,10 @@ const DashboardPage = () => {
       {/* Calm alert — overdue invoices */}
       {overdueCount > 0 && (
         <section
-          className="rounded-[10px] border-2 border-[#FF5C1B] bg-white p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]"
+          className="rounded-[10px] border-2 border-[#FF5C1B] bg-white dark:bg-slate-900 p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]"
           role="alert"
         >
-          <p className="text-sm text-slate-900">
+          <p className="text-sm text-slate-900 dark:text-slate-100">
             {t('dashboard.alert.overdue', { count: overdueCount, amount: overdueAmountFormatted })}
           </p>
           <Link
@@ -319,41 +319,41 @@ const DashboardPage = () => {
         <>
           {/* KPI stat cards — 4-column grid */}
           <section className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-[10px] border-2 border-[#FF5C1B] bg-white p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            <div className="rounded-[10px] border-2 border-[#FF5C1B] bg-white dark:bg-slate-900 p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {t('dashboard.stats.needAttention')}
               </p>
-              <p className="mt-1 text-lg font-bold text-slate-900">
+              <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                 {loading ? '—' : needAttentionCount}
               </p>
             </div>
-            <div className="rounded-[10px] border-2 border-[#FF5C1B] bg-white p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            <div className="rounded-[10px] border-2 border-[#FF5C1B] bg-white dark:bg-slate-900 p-4 shadow-[2px_2px_0_0_rgba(255,92,27,0.35)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {t('dashboard.stats.overdueInvoices')}
               </p>
-              <p className="mt-1 text-lg font-bold text-slate-900">
+              <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                 {loading ? '—' : t('dashboard.stats.countAndAmount', { count: overdueCount, amount: overdueAmountFormatted })}
               </p>
             </div>
-            <div className="rounded-[10px] border-2 border-[#16A34A] bg-white p-4 shadow-[2px_2px_0_0_rgba(22,101,52,0.9)]">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            <div className="rounded-[10px] border-2 border-[#16A34A] bg-white dark:bg-slate-900 p-4 shadow-[2px_2px_0_0_rgba(22,101,52,0.9)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {t('dashboard.stats.revenueMonth')}
               </p>
-              <p className="mt-1 text-lg font-bold text-slate-900">{loading ? '—' : revenueFormatted}</p>
+              <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{loading ? '—' : revenueFormatted}</p>
             </div>
-            <div className="rounded-[10px] border-2 border-slate-900 bg-white p-4 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            <div className="rounded-[10px] border-2 border-slate-900 bg-white dark:bg-slate-900 p-4 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {t('dashboard.stats.totalClients')}
               </p>
-              <p className="mt-1 text-lg font-bold text-slate-900">{loading ? '—' : totalClients}</p>
+              <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{loading ? '—' : totalClients}</p>
             </div>
           </section>
 
           {/* Two-column: Recent Jobs | Overdue + Upcoming */}
           <div className="flex flex-col gap-4 lg:flex-row">
             {/* Left: Recent Jobs */}
-            <section className="min-w-0 flex-1 rounded-[10px] border-2 border-slate-900 bg-white shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-xs font-bold text-slate-900">
+            <section className="min-w-0 flex-1 rounded-[10px] border-2 border-slate-900 bg-white dark:bg-slate-900 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-xs font-bold text-slate-900 dark:text-slate-100">
                 <span>{t('dashboard.recentJobs')}</span>
                 <Link to="/jobs" className="font-bold text-[#FF5C1B] hover:underline">
                   {t('dashboard.viewAll')}
@@ -361,9 +361,9 @@ const DashboardPage = () => {
               </div>
               <div className="divide-y divide-slate-100 p-4">
                 {loading ? (
-                  <p className="text-sm text-slate-500">{t('common.processing')}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('common.processing')}</p>
                 ) : recentJobs.length === 0 ? (
-                  <p className="text-sm text-slate-500">{t('dashboard.emptyJobs')}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('dashboard.emptyJobs')}</p>
                 ) : (
                   recentJobs.map((job) => {
                     const address =
@@ -376,7 +376,7 @@ const DashboardPage = () => {
                     return (
                       <div key={job.id} className="py-3 first:pt-0 last:pb-0">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-[13px] font-bold text-slate-900">{address}</p>
+                          <p className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{address}</p>
                           <button
                             type="button"
                             onClick={() => tappable && handleStatusChipClick(job)}
@@ -387,11 +387,11 @@ const DashboardPage = () => {
                             <JobStatusBadge status={job.status} className="text-[9px]" />
                           </button>
                         </div>
-                        <p className="mt-0.5 text-[11px] text-slate-500">
+                        <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
                           {(job.description ?? '').trim() || job.title}
                           {clientName !== '—' ? ` · ${clientName}` : ''}
                         </p>
-                        <p className="mt-0.5 text-[10px] text-slate-500">
+                        <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
                           {job.service_date ? formatDate(job.service_date) : '—'}
                         </p>
                       </div>
@@ -404,8 +404,8 @@ const DashboardPage = () => {
             {/* Right: Overdue + Upcoming */}
             <aside className="flex w-full flex-col gap-3.5 lg:w-[280px] lg:shrink-0">
               {/* Overdue Invoices card */}
-              <section className="rounded-[10px] border-2 border-slate-900 bg-white shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
-                <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-xs font-bold text-slate-900">
+              <section className="rounded-[10px] border-2 border-slate-900 bg-white dark:bg-slate-900 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-xs font-bold text-slate-900 dark:text-slate-100">
                   <span>{t('dashboard.overdueCard.title')}</span>
                   <Link to="/invoices" className="font-bold text-[#FF5C1B] hover:underline">
                     {t('dashboard.viewAll')}
@@ -413,9 +413,9 @@ const DashboardPage = () => {
                 </div>
                 <div className="divide-y divide-slate-100 p-4">
                   {loading ? (
-                    <p className="text-sm text-slate-500">{t('common.processing')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('common.processing')}</p>
                   ) : overdueInvoices.length === 0 ? (
-                    <p className="text-sm text-slate-500">{t('dashboard.overdueCard.empty')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('dashboard.overdueCard.empty')}</p>
                   ) : (
                     overdueInvoices.slice(0, 5).map((inv) => {
                       const job = (jobs ?? []).find((j) => j.id === inv.job_id);
@@ -424,11 +424,11 @@ const DashboardPage = () => {
                       return (
                         <div key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0 last:pb-0">
                           <div className="min-w-0">
-                            <p className="text-[13px] font-bold text-slate-900">{clientName}</p>
-                            <p className="text-[11px] text-slate-500">
+                            <p className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{clientName}</p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
                               {amountFormatted} · INV-{inv.invoice_number}
                             </p>
-                            <p className="text-[10px] text-slate-500">
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400">
                               {t('dashboard.overdueCard.overdue')}
                             </p>
                           </div>
@@ -447,8 +447,8 @@ const DashboardPage = () => {
               </section>
 
               {/* Upcoming card */}
-              <section className="rounded-[10px] border-2 border-slate-900 bg-white shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
-                <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 text-xs font-bold text-slate-900">
+              <section className="rounded-[10px] border-2 border-slate-900 bg-white dark:bg-slate-900 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-xs font-bold text-slate-900 dark:text-slate-100">
                   <span>{t('dashboard.upcoming.title')}</span>
                   <Link to="/jobs" className="font-bold text-[#FF5C1B] hover:underline">
                     {t('dashboard.upcoming.calendar')}
@@ -456,9 +456,9 @@ const DashboardPage = () => {
                 </div>
                 <div className="divide-y divide-slate-100 p-4">
                   {loading ? (
-                    <p className="text-sm text-slate-500">{t('common.processing')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('common.processing')}</p>
                   ) : upcomingJobs.length === 0 ? (
-                    <p className="text-sm text-slate-500">{t('dashboard.upcoming.empty')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('dashboard.upcoming.empty')}</p>
                   ) : (
                     upcomingJobs.map((job) => {
                       const clientName = clientMap.get(job.client_id) ?? '—';
@@ -473,11 +473,11 @@ const DashboardPage = () => {
                         <div key={job.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
                           <div className="flex shrink-0 flex-col rounded-md border-2 border-slate-900 p-1.5 text-center">
                             <span className="text-[10px] font-bold uppercase text-[#FF5C1B]">{month}</span>
-                            <span className="text-sm font-bold text-slate-900">{day}</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{day}</span>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[13px] font-bold text-slate-900">{job.title}</p>
-                            <p className="text-[11px] text-slate-500">
+                            <p className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{job.title}</p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
                               {clientName}
                               {sd ? ` · ${formatDate(sd)}` : ''}
                             </p>
@@ -496,7 +496,7 @@ const DashboardPage = () => {
       {/* Toast — fixed bottom */}
       {toast && (
         <div
-          className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-lg border-2 border-slate-900 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]"
+          className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-lg border-2 border-slate-900 bg-white dark:bg-slate-900 px-4 py-3 text-sm font-medium text-slate-900 dark:text-slate-100 shadow-[2px_2px_0_0_rgba(15,23,42,0.9)]"
           role="status"
           aria-live="polite"
         >

@@ -31,7 +31,7 @@ const InvoicesListPage = () => {
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-4xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-slate-900">{t('invoices.list.pageTitle')}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{t('invoices.list.pageTitle')}</h1>
       </header>
 
       {error ? (
@@ -47,11 +47,11 @@ const InvoicesListPage = () => {
       ) : loading ? (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100" />
+            <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
           ))}
         </div>
       ) : invoices.length === 0 ? (
-        <p className="py-8 text-center text-sm text-slate-500">{t('invoices.list.empty')}</p>
+        <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">{t('invoices.list.empty')}</p>
       ) : (
         <ul className="space-y-2">
           {invoices.map((invoice) => {
@@ -61,25 +61,25 @@ const InvoicesListPage = () => {
               <li key={invoice.id}>
                 <Link
                   to={`/invoices/${invoice.id}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm transition hover:bg-slate-50"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm shadow-sm transition hover:bg-slate-50"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">
                       {invoice.invoice_number ?? `#${invoice.id.slice(0, 8)}`}
                     </p>
                     {clientName ? (
-                      <p className="truncate text-xs text-slate-500">{clientName}</p>
+                      <p className="truncate text-xs text-slate-500 dark:text-slate-400">{clientName}</p>
                     ) : null}
                     {jobData?.title ? (
                       <p className="truncate text-xs text-slate-400">{jobData.title}</p>
                     ) : null}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency((invoice.total_amount ?? 0) / 100, 'CAD', locale)}
                     </span>
                     {invoice.date_issued ? (
-                      <span className="text-xs text-slate-500">{formatDate(invoice.date_issued)}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{formatDate(invoice.date_issued)}</span>
                     ) : null}
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
@@ -88,8 +88,8 @@ const InvoicesListPage = () => {
                           : invoice.status === 'paid'
                             ? 'bg-green-100 text-green-700'
                             : invoice.status === 'void'
-                              ? 'bg-slate-100 text-slate-500'
-                              : 'bg-slate-100 text-slate-700'
+                              ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-700'
                       }`}
                     >
                       {t(`jobs.invoices.form.status${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`)}

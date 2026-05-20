@@ -49,7 +49,7 @@ const SignInPage = () => {
     >
       {/* Public topbar — DESIGN_SYSTEM §3.8 public variant */}
       <header
-        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] px-5 md:px-5"
+        className="flex h-[52px] items-center justify-between border-b border-[#CBD5E1] dark:border-slate-700 px-5 md:px-5"
         style={{ background: 'hsl(220 20% 97%)' }}
       >
         <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ const SignInPage = () => {
             </svg>
           </div>
           <span className="h-[15px] w-px shrink-0 bg-[#94A3B8]" aria-hidden />
-          <span className="font-bold text-[14px] leading-none text-[#0F172A]">
+          <span className="font-bold text-[14px] leading-none text-[#0F172A] dark:text-slate-100">
             Dispatch <span className="text-[#94A3B8]">|</span> Labs
           </span>
         </div>
@@ -82,11 +82,11 @@ const SignInPage = () => {
           <span className="h-4 w-px shrink-0 bg-[#CBD5E1]" aria-hidden />
           <Link
             to="/"
-            className="text-[13px] text-[#64748B] hover:text-[#FF5C1B]"
+            className="text-[13px] text-[#64748B] dark:text-slate-400 hover:text-[#FF5C1B]"
           >
             {t('login.pilot')}
           </Link>
-          <Link to="/login" className="font-bold text-[13px] text-[#0F172A] hover:text-[#FF5C1B]">
+          <Link to="/login" className="font-bold text-[13px] text-[#0F172A] dark:text-slate-100 hover:text-[#FF5C1B]">
             {t('login.navLink')}
           </Link>
         </div>
@@ -94,17 +94,17 @@ const SignInPage = () => {
 
       {/* Centered card — SCREEN_SPECS §1 Login */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white p-10 shadow-brutal-auth">
+        <div className="w-full max-w-[420px] overflow-hidden rounded-[14px] border-2 border-[#0F172A] bg-white dark:bg-slate-900 p-10 shadow-brutal-auth">
           <p
             className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#FF5C1B]"
             aria-hidden
           >
             {t('login.label')}
           </p>
-          <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A]">
+          <h1 className="mt-2 text-[24px] font-bold leading-tight text-[#0F172A] dark:text-slate-100">
             {t('login.title')}
           </h1>
-          <p className="mt-1 text-[14px] text-[#64748B]">
+          <p className="mt-1 text-[14px] text-[#64748B] dark:text-slate-400">
             {t('login.subtitle')}
           </p>
 
@@ -122,7 +122,7 @@ const SignInPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 maxLength={254}
-                className="mt-1 h-11 w-full rounded-[7px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]"
+                className="mt-1 h-11 w-full rounded-[7px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] dark:text-slate-100 placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]"
                 placeholder={t('login.email')}
               />
             </div>
@@ -139,14 +139,14 @@ const SignInPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 maxLength={128}
-                className="mt-1 h-11 w-full rounded-[7px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]"
+                className="mt-1 h-11 w-full rounded-[7px] border-2 border-[#0F172A] bg-[hsl(220,20%,97%)] px-3.5 text-[14px] text-[#0F172A] dark:text-slate-100 placeholder:text-[#94A3B8] focus:border-[#FF5C1B] focus:outline-none focus:ring-[3px] focus:ring-[rgba(255,92,27,0.15)]"
                 placeholder={t('login.password')}
               />
             </div>
             <div className="flex justify-end">
               <Link
                 to="/forgot-password"
-                className="text-[12px] text-[#64748B] hover:text-[#FF5C1B]"
+                className="text-[12px] text-[#64748B] dark:text-slate-400 hover:text-[#FF5C1B]"
               >
                 {t('login.forgot')}
               </Link>
@@ -168,7 +168,7 @@ const SignInPage = () => {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-[12px] text-[#64748B]">
+          <p className="mt-6 text-center text-[12px] text-[#64748B] dark:text-slate-400">
             {t('login.divider')}
           </p>
           <p className="mt-2 text-center">

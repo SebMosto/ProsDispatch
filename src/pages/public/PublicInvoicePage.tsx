@@ -103,7 +103,7 @@ const PublicInvoicePage = () => {
     return (
       <main className="flex min-h-[60vh] flex-col gap-4">
         <div className="h-8 w-40 animate-pulse rounded bg-slate-200" />
-        <div className="h-24 animate-pulse rounded bg-slate-100" />
+        <div className="h-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
       </main>
     );
   }
@@ -111,7 +111,7 @@ const PublicInvoicePage = () => {
   if (error || !invoice) {
     return (
       <main className="flex min-h-[60vh] flex-col gap-2">
-        <h1 className="text-xl font-semibold text-slate-900">{t('invoices.public.expired')}</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t('invoices.public.expired')}</h1>
         <p className="text-sm text-slate-600">{t('public.invoice.expired')}</p>
       </main>
     );
@@ -120,7 +120,7 @@ const PublicInvoicePage = () => {
   if (status === 'paid') {
     return (
       <main className="flex min-h-[60vh] flex-col gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">{t('invoices.public.alreadyPaid')}</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t('invoices.public.alreadyPaid')}</h1>
         <p className="text-sm text-slate-600">{t('invoices.public.thankYou')}</p>
       </main>
     );
@@ -129,7 +129,7 @@ const PublicInvoicePage = () => {
   if (status === 'void') {
     return (
       <main className="flex min-h-[60vh] flex-col gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">{t('invoices.public.voided')}</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t('invoices.public.voided')}</h1>
         <p className="text-sm text-slate-600">{t('public.invoice.expired')}</p>
       </main>
     );
@@ -139,7 +139,7 @@ const PublicInvoicePage = () => {
 
   return (
     <main className="flex min-h-[60vh] flex-col gap-6 pb-20">
-      <header className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <header className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
             {t('layout.initials')}
@@ -148,18 +148,18 @@ const PublicInvoicePage = () => {
             <p className="text-sm text-slate-600">
               {t('public.invoice.header', { number: invoice.invoice_number })}
             </p>
-            <h1 className="text-2xl font-semibold text-slate-900">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
               {t('public.invoice.from', { name: contractorLabel })}
             </h1>
           </div>
         </div>
-        <div className="mt-3 text-lg font-semibold text-slate-900">
+        <div className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
           {t('public.invoice.totalDue')}: {formatCurrency(invoice.total_amount / 100, 'CAD', locale)}
         </div>
       </header>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-900">{t('public.invoice.lineItems')}</h2>
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('public.invoice.lineItems')}</h2>
         <div className="mt-3 space-y-3">
           {invoice.invoice_items?.length ? (
             invoice.invoice_items.map((item) => (
@@ -169,11 +169,11 @@ const PublicInvoicePage = () => {
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-800">{item.description}</p>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(item.amount / 100, 'CAD', locale)}
                   </p>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {t('jobs.invoices.detailPage.qtyFormat', {
                     quantity: item.quantity,
                     price: formatCurrency(item.unit_price / 100, 'CAD', locale),
@@ -182,12 +182,12 @@ const PublicInvoicePage = () => {
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">{t('public.invoice.noItems')}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t('public.invoice.noItems')}</p>
           )}
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm text-slate-700">
           <span>{t('public.invoice.subtotal')}</span>
           <span className="font-semibold">{formatCurrency(invoice.subtotal / 100, 'CAD', locale)}</span>
@@ -202,13 +202,13 @@ const PublicInvoicePage = () => {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
+        <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900 dark:text-slate-100">
           <span>{t('public.invoice.totalDue')}</span>
           <span>{formatCurrency(invoice.total_amount / 100, 'CAD', locale)}</span>
         </div>
       </section>
 
-      <section className="fixed inset-x-0 bottom-0 z-10 border-t border-slate-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
+      <section className="fixed inset-x-0 bottom-0 z-10 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 sm:px-6 lg:px-8">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
           {!isOnline ? (
             <p className="text-xs text-slate-600">{t('invoices.public.offline')}</p>

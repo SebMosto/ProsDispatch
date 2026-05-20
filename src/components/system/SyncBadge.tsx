@@ -34,7 +34,7 @@ const BADGE_CONFIG: Record<SyncBadgeState, { translationKey: string; tone: 'succ
 const toneStyles: Record<'success' | 'warning' | 'muted' | 'danger', string> = {
   success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
   warning: 'bg-amber-50 text-amber-900 border-amber-200',
-  muted: 'bg-slate-50 text-slate-700 border-slate-200',
+  muted: 'bg-slate-50 text-slate-700 border-slate-200 dark:border-slate-700',
   danger: 'bg-red-50 text-red-700 border-red-200',
 };
 

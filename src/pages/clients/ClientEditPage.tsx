@@ -129,7 +129,7 @@ const ClientEditPage = () => {
     return (
       <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-10 w-48 animate-pulse rounded bg-slate-200" />
-        <div className="h-64 animate-pulse rounded bg-slate-100" />
+        <div className="h-64 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
       </main>
     );
   }
@@ -156,13 +156,13 @@ const ClientEditPage = () => {
           {client.name}
         </Link>
         <span className="mx-2" aria-hidden>›</span>
-        <span className="font-medium text-slate-900">{t('clients.detail.editClient')}</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100">{t('clients.detail.editClient')}</span>
       </nav>
 
-      <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <header className="flex items-center justify-between gap-2">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">{t('clients.detail.editClient')}</h1>
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('clients.detail.editClient')}</h1>
             <p className="text-sm text-slate-600">{client.name}</p>
           </div>
           <SyncBadge state={syncState} />
@@ -185,7 +185,7 @@ const ClientEditPage = () => {
                   className={`min-h-[44px] rounded-lg border px-3 py-2 text-sm font-medium transition ${
                     draft.values.type === option
                       ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-white text-slate-800'
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800'
                   }`}
                   onClick={() => setValue('type', option)}
                 >
@@ -203,7 +203,7 @@ const ClientEditPage = () => {
             <input
               id="edit-name"
               type="text"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('name')}
             />
             {errors.name?.message ? <p className="text-xs text-red-600">{errors.name.message}</p> : null}
@@ -216,7 +216,7 @@ const ClientEditPage = () => {
             <input
               id="edit-email"
               type="email"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('email')}
             />
             {errors.email?.message ? <p className="text-xs text-red-600">{errors.email.message}</p> : null}
@@ -228,7 +228,7 @@ const ClientEditPage = () => {
             </label>
             <select
               id="edit-preferred_language"
-              className="min-h-[44px] w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              className="min-h-[44px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               {...register('preferred_language')}
             >
               <option value="en">{t('clients.create.labels.languages.en')}</option>
@@ -249,7 +249,7 @@ const ClientEditPage = () => {
             </button>
             <Link
               to={`/clients/${id}`}
-              className="min-h-[44px] inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+              className="min-h-[44px] inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-800"
             >
               {t('jobs.invoices.markPaidModal.cancel')}
             </Link>

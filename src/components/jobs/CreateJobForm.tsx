@@ -161,9 +161,9 @@ const CreateJobForm = () => {
   };
 
   return (
-    <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       <header>
-        <h2 className="text-lg font-semibold text-slate-900">{t('jobs.create.title')}</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('jobs.create.title')}</h2>
       </header>
 
       {submitError ? (
@@ -180,7 +180,7 @@ const CreateJobForm = () => {
           <input
             id="title"
             type="text"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('title')}
           />
           {errors.title?.message ? <p className="text-xs text-red-600">{errors.title.message}</p> : null}
@@ -202,7 +202,7 @@ const CreateJobForm = () => {
                       id="client_id"
                       type="text"
                       autoComplete="off"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                       placeholder={clientsLoading ? t('common.processing') : t('clients.list.search')}
                       value={clientOpen ? clientSearch : (selectedClient?.name ?? '')}
                       onChange={(e) => {
@@ -218,7 +218,7 @@ const CreateJobForm = () => {
                     {clientOpen && (
                       <ul
                         role="listbox"
-                        className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+                        className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 shadow-lg"
                       >
                         {filteredClients.map((client) => (
                           <li key={client.id} role="option" aria-selected={client.id === field.value}>
@@ -239,7 +239,7 @@ const CreateJobForm = () => {
                           <li role="option" aria-selected={false}>
                             <button
                               type="button"
-                              className="w-full px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-50"
+                              className="w-full px-3 py-2 text-left text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50"
                               onClick={() => navigate('/clients/new')}
                             >
                               {t('clients.list.newClient')}
@@ -271,7 +271,7 @@ const CreateJobForm = () => {
                       <>
                         <select
                           id="property_id"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           {...field}
                         >
                           <option value="">
@@ -285,18 +285,18 @@ const CreateJobForm = () => {
                         </select>
                         <button
                           type="button"
-                          className="text-sm text-slate-500 underline"
+                          className="text-sm text-slate-500 dark:text-slate-400 underline"
                           onClick={() => setShowAddProperty(true)}
                         >
                           + Add new address
                         </button>
                       </>
                     ) : (
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+                      <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 p-3 space-y-2">
                         <input
                           type="text"
                           placeholder="123 rue Principale"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.address_line1}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, address_line1: e.target.value }))
@@ -305,7 +305,7 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="Apt 2 (optional)"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.address_line2}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, address_line2: e.target.value }))
@@ -314,14 +314,14 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="Montréal"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.city}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, city: e.target.value }))
                           }
                         />
                         <select
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.province}
                           onChange={(e) =>
                             setNewAddress((prev) => ({
@@ -339,7 +339,7 @@ const CreateJobForm = () => {
                         <input
                           type="text"
                           placeholder="H2X 1Y4"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
                           value={newAddress.postal_code}
                           onChange={(e) =>
                             setNewAddress((prev) => ({ ...prev, postal_code: e.target.value }))
@@ -360,7 +360,7 @@ const CreateJobForm = () => {
                           {properties.length > 0 ? (
                             <button
                               type="button"
-                              className="text-sm text-slate-500 underline"
+                              className="text-sm text-slate-500 dark:text-slate-400 underline"
                               onClick={() => setShowAddProperty(false)}
                             >
                               Cancel
@@ -388,7 +388,7 @@ const CreateJobForm = () => {
           <textarea
             id="description"
             rows={4}
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('description')}
           />
           {errors.description?.message ? (
@@ -403,7 +403,7 @@ const CreateJobForm = () => {
           <input
             id="service_date"
             type="date"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
             {...register('service_date')}
           />
           {errors.service_date?.message ? (
