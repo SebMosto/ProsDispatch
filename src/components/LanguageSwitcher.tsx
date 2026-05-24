@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation();
   const isFrench = i18n.language.startsWith('fr');
-  const activeLanguage = isFrench ? 'FR' : 'EN';
 
   const handleToggle = () => {
     const nextLanguage = isFrench ? 'en' : 'fr';
