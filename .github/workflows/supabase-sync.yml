@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2
         with:
           version: latest
 
@@ -88,7 +88,7 @@ jobs:
     if: ${{ always() && github.ref == 'refs/heads/main' && secrets.SUPABASE_ACCESS_TOKEN && secrets.SUPABASE_PROJECT_ID && needs.verify-types.result == 'success' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2
 
       - name: Deploy Edge Functions
         env:
