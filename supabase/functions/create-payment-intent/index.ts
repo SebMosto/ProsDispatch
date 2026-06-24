@@ -156,7 +156,7 @@ Deno.serve(async (req) => {
 
     console.error("create-payment-intent error", { message });
 
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
