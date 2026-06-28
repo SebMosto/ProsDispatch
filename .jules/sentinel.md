@@ -12,3 +12,8 @@
 **Vulnerability:** Supabase Edge Functions accepted an arbitrary `returnUrl` from the client for Stripe checkout success/cancel URLs.
 **Learning:** Developers often assume `returnUrl` will be a relative path or safe, but it can be any URL, allowing attackers to phish users after a legitimate payment flow.
 **Prevention:** Always validate `returnUrl` against a strict allowlist of origins (e.g., `SITE_URL` env var) before passing it to third-party services like Stripe.
+
+## 2026-06-28 - Uncaptured Sanitization Function Results
+**Vulnerability:** The `validateReturnUrl` function was called to sanitize the `returnUrl` input in `create-portal-session`, but its return value was not captured and assigned. As a result, the unsanitized raw `returnUrl` was passed to the Stripe API, leaving the open redirect vulnerability unmitigated despite the validation logic existing.
+**Learning:** Security sanitization functions often return the sanitized value rather than modifying the input in-place. Calling them without capturing their output creates a false sense of security while leaving the vulnerability intact.
+**Prevention:** Always explicitly assign and use the return value of sanitization functions (e.g., `const safeValue = sanitize(value);`). Code reviews and static analysis should flag uncaptured return values from known security functions.
